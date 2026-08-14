@@ -8,6 +8,7 @@
 
 @section('content')
     <div class="dashboard-grid">
-        <p1>Este es el módulo de reportes</p1>
+        <h2>Reportes</h2>
+        <p>Este es el módulo de reportes</p>
     </div>
 @endsection 

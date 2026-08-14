@@ -7,7 +7,21 @@
 @endpush
 
 @section('content')
-    <div class="dashboard-grid">
-        <p1>Probando</p1>
+    <div class="pos-grid">
+        <div class="box">
+            <div class="boxhead">
+                <h2>Productos</h2>
+            </div>
+            <p>Lista de productos disponibles para venta.</p>
+
+        </div>
+        <div class="box">
+            <div class="boxhead">
+
+                <h2>Carrito de compras</h2>
+            </div>
+            <p>Lista de productos seleccionados para la venta.</p>
+
+        </div>
     </div>
 @endsection

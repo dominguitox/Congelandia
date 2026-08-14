@@ -21,6 +21,8 @@
     /* Textos */
     --color-text-main: #1E293B;
     --color-text-light: #E0E1DD;
+    --color-text-lighter: #eff0ee;
+
     --color-text-muted: #94A3B8;
 }
 
@@ -29,6 +31,7 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 
 }
+
 /*
 HEADER
 */
@@ -37,7 +40,10 @@ HEADER
     display: flex;
     padding: 20px 0px 12px 20px;
     align-items: flex-end;
+    user-select: none;
+
 }
+
 
 .header .logo {
     width: 60px;
@@ -46,7 +52,8 @@ HEADER
     color: var(--color-navy-dark);
 }
 
-.header > h1 {
+.header>h1 {
+    
     font-size: xx-large;
     padding-left: 12px;
     color: var(--color-text-light);
@@ -81,11 +88,15 @@ NAVBAR
     font-weight: bold;
     color: var(--color-text-light);
     text-decoration: none;
+    border-top: 1px solid #00000000;
+    border-bottom: 2px solid #00000000;
 }
 
 .navbar ul li a:hover {
     background-color: var(--color-navy-dark);
     color: var(--color-ice-hover);
+    /* border-bottom: 2px solid var(--color-ice-hover);
+*/
 }
 
 /*
@@ -113,10 +124,14 @@ FIN BODY
 FOOTER
 */
 footer {
+    position: absolute;
+    bottom: 0;
     background-color: var(--color-navy-dark);
     color: var(--color-text-light);
     text-align: center;
-    padding: 10px;
+    padding: 4px;
+    width: 100%;
+    user-select: none;
 }
 
 /*
