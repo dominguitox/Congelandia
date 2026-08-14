@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio o dashboard')
+@section('title', 'Inicio')
 
 @section('content')
     <div class="dashboard-grid">

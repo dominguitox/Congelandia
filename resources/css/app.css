@@ -73,15 +73,17 @@ FIN NAVBAR
 /*
 BODY
 */
-body{
-        background-color: #888;
+body {
+    background-color: #888;
 
 }
+
 main {
     background-color: wheat;
     margin: 20px;
     padding: 8px;
 }
+
 /*
 BODY
 */
