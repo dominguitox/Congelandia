@@ -3,16 +3,37 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+:root {
+    /* Azules Oscuros (Estructura) */
+    --color-navy-dark: #0B132B;
+    --color-navy-mid: #1C2541;
+    --color-navy-border: #3A506B;
+
+    /* Azules Hielo (Acentos, Detalles y Hovers) */
+    --color-ice-primary: #00B4D8;
+    --color-ice-hover: #38BDF8;
+
+    /* Fondos y Marcos */
+    --color-bg-main: #F0F4F8;
+    --color-card-bg: #FFFFFF;
+    --color-card-border: #CBD5E1;
+
+    /* Textos */
+    --color-text-main: #1E293B;
+    --color-text-light: #E0E1DD;
+    --color-text-muted: #94A3B8;
+}
+
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-}
 
+}
 /*
 HEADER
 */
 .header {
-    background-color: #555;
+    background-color: var(--color-navy-dark);
     display: flex;
     padding: 20px 0px 12px 20px;
     align-items: flex-end;
@@ -21,14 +42,14 @@ HEADER
 .header .logo {
     width: 60px;
     height: 60px;
-    background-color: red;
-    color: white;
+    background-color: var(--color-ice-primary);
+    color: var(--color-navy-dark);
 }
 
-.header>h1 {
+.header > h1 {
     font-size: xx-large;
     padding-left: 12px;
-    color: white;
+    color: var(--color-text-light);
     font-weight: bolder;
 }
 
@@ -40,30 +61,31 @@ FIN HEADER
 NAVBAR
 */
 .navbar ul {
-    background-color: #444;
+    background-color: var(--color-navy-mid);
     list-style-type: none;
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: space-around;
 }
 
 .navbar ul li {
-    padding: 4px 14px;
+    flex: 1;
 }
 
-.navbar ul li:hover {
-    background-color: #222;
-}
+.navbar ul li:hover {}
 
 .navbar ul li a {
+    display: block;
+    padding: 4px 0;
+    text-align: center;
     font-weight: bold;
-    color: white;
+    color: var(--color-text-light);
     text-decoration: none;
 }
 
 .navbar ul li a:hover {
-    color: red;
+    background-color: var(--color-navy-dark);
+    color: var(--color-ice-hover);
 }
 
 /*
@@ -74,16 +96,29 @@ FIN NAVBAR
 BODY
 */
 body {
-    background-color: #888;
-
+    background-color: var(--color-bg-main);
 }
 
 main {
-    background-color: wheat;
+    background-color: var(--color-card-bg);
     margin: 20px;
     padding: 8px;
 }
 
 /*
-BODY
+FIN BODY
+*/
+
+/*
+FOOTER
+*/
+footer {
+    background-color: var(--color-navy-dark);
+    color: var(--color-text-light);
+    text-align: center;
+    padding: 10px;
+}
+
+/*
+FIN FOOTER
 */
