@@ -1,0 +1,19 @@
+.pos-grid {
+    display: grid;
+    grid-template-columns: 4fr 3fr;
+    text-align: center;
+    background-color: var(--color-navy-mid);
+    border-radius: 8px;
+}
+
+h2 {
+    font-size: xx-large;
+    padding-left: 0;
+    color: var(--color-text-lighter);
+    font-weight: bolder;
+}
+
+.box p {
+    color: var(--color-text-lighter);
+
+}
