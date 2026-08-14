@@ -1,13 +1,13 @@
-<nav>
-    <li>
-        <ul>
+<nav class="navbar">
+    <ul>
+        <li>
             <a href="/">Inicio</a>
-        </ul>
-        <ul>
+        </li>
+        <li>
             <a href="/pos">Sistema de ventas</a>
-        </ul>
-        <ul>
+        </li>
+        <li>
             <a href="/inventario">Inventario</a>
-        </ul>
-    </li>
+        </li>
+    </ul>
 </nav>

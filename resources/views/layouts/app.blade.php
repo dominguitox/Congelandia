@@ -8,14 +8,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>@yield('title', 'titulo de la pagina')</title>
 </head>
+<header>
+    @include('partials.navbar')
+    @include('partials.header')
+
+</header>
 
 <body>
 
-
-    @include('partials.navbar')
-
     <main>
-        <h1>@yield('title', 'titulo de la pagina')</h1>
         @yield('content')
     </main>
 
