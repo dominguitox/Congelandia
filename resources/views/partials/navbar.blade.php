@@ -9,5 +9,8 @@
         <li>
             <a href="/inventario">Inventario</a>
         </li>
+        <li>
+            <a href="/reportes">Reportes</a>
+        </li>
     </ul>
 </nav>

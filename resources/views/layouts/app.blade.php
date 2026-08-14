@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('css')
     <title>@yield('title', 'titulo de la pagina')</title>
 </head>
 <header>
@@ -19,7 +20,8 @@
     <main>
         @yield('content')
     </main>
-
+    @include('partials.footer')
+    @stack('scripts')
 </body>
 
 </html>

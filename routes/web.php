@@ -13,3 +13,7 @@ Route::get('/pos', function () {
 Route::get('/inventario', function () {
     return view('inventario.index');
 });
+
+Route::get('/reportes', function () {
+    return view('reportes.index');
+});
