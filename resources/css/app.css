@@ -7,3 +7,62 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/*
+HEADER
+*/
+.header {
+    background-color: #555;
+    display: flex;
+    padding: 20px 0px 12px 20px;
+    align-items: flex-end;
+}
+
+.header .logo {
+    width: 60px;
+    height: 60px;
+    background-color: red;
+    color: white;
+}
+
+.header>h1 {
+    font-size: xx-large;
+    padding-left: 12px;
+    color: white;
+    font-weight: bolder;
+}
+
+
+/*
+NAVBAR
+*/
+.navbar ul {
+    background-color: #444;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.navbar ul li {
+    padding: 4px 14px;
+}
+
+.navbar ul li:hover {
+    background-color: #222;
+}
+
+.navbar ul li a {
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar ul li a:hover {
+    color: red;
+}
+
+/*
+FIN NAVBAR
+*/
