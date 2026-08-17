@@ -1,7 +1,12 @@
 <div class="header">
-    <div class="logo" src="public\logo.png">
-        LOGO
+
+    <div class="itemsheader" id="hola">
+        <div class="logo">LOGO </div>
+        <h1>@yield('title', 'titulo de la pagina')</h1>
     </div>
-    <h1>@yield('title', 'titulo de la pagina')</h1>
+    <div class="itemsheader" id="userinfo">
+        <h2>Usuario: Admin</h2>
+        <h2>Sistema Online</h2>
+    </div>
 
 </div>

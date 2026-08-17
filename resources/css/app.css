@@ -37,11 +37,11 @@ HEADER
 */
 .header {
     background-color: var(--color-navy-dark);
-    display: flex;
-    padding: 20px 0px 12px 20px;
+    display: grid;
+    padding: 20px 20px 12px 20px;
     align-items: flex-end;
     user-select: none;
-
+    grid-template-columns: 1fr 1fr;
 }
 
 
@@ -52,12 +52,40 @@ HEADER
     color: var(--color-navy-dark);
 }
 
-.header>h1 {
-    
+.header h1 {
+
     font-size: xx-large;
     padding-left: 12px;
     color: var(--color-text-light);
     font-weight: bolder;
+}
+
+.header h2 {
+
+    font-size: x-large;
+    color: var(--color-text-light);
+    font-weight: bolder;
+}
+
+.header h3 {
+
+    font-size: large;
+    color: var(--color-text-light);
+    font-weight: bolder;
+}
+
+.itemsheader {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+#userinfo {
+    display: flex;
+}
+#hola{
+  justify-self: flex-start;
+    padding-left: 12px;
 }
 
 /*
