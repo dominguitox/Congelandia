@@ -8,6 +8,6 @@
 
 @section('content')
     <div class="dashboard-grid">
-        <p1>Probando</p1>
+        <p>Probando</p>
     </div>
 @endsection
