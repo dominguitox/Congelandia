@@ -6,7 +6,7 @@
     </div>
     <div class="itemsheader" id="userinfo">
         <h2>Usuario: Admin</h2>
-        <h2>Sistema Online</h2>
+        <h2>Sistema: Online</h2>
     </div>
 
 </div>

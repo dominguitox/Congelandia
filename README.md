@@ -1,15 +1,28 @@
-Clonar y descargar proyecto: <br>
-**git clone https://github.com/dominguitox/Congelandia <br>
-**cd Congelandia <br>
-<br>
-Actualizar dependencias y chotas: <br>
-**composer install <br>
-**cp .env.example .env <br>
-**php artisan key:generate <br>
-**npm install <br>
-**npm run build <br>
-<br>
+# Congelandia
 
-Cada vez que se inicie el desarrollo: <br>
-**php artisan migrate <br>
-**php artisan serve <br>
+## Requisitos
+
+- PHP >= 8.3
+- Composer
+- Node.js
+- Git
+
+Opcional: Laravel Herd instala PHP, Composer y Node.js automáticamente (con PHP reciente).
+
+## Instalación
+
+```bash
+git clone <url-del-repositorio>
+cd Congelandia
+composer run setup
+```
+
+## Desarrollo
+
+```bash
+composer run dev
+```
+
+Abrir http://localhost:8000
+
+Base de datos: SQLite, se crea sola al migrar.
