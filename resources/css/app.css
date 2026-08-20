@@ -61,14 +61,12 @@ HEADER
 }
 
 .header h2 {
-
     font-size: x-large;
     color: var(--color-text-light);
     font-weight: bolder;
 }
 
 .header h3 {
-
     font-size: large;
     color: var(--color-text-light);
     font-weight: bolder;
@@ -83,8 +81,9 @@ HEADER
 #userinfo {
     display: flex;
 }
-#hola{
-  justify-self: flex-start;
+
+#hola {
+    justify-self: flex-start;
     padding-left: 12px;
 }
 
@@ -160,7 +159,23 @@ footer {
     padding: 4px;
     width: 100%;
     user-select: none;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
+
+footer .div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer .div h3 {
+    font-size: medium;
+    color: var(--color-text-light);
+    font-weight: bolder;
+}
+
 
 /*
 FIN FOOTER
