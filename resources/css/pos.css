@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: 4fr 3fr;
     text-align: center;
-    background-color: var(--color-navy-mid);
+    background-color: var(--color-ice-primary);
     border-radius: 8px;
 }
 
@@ -16,4 +16,9 @@ h2 {
 .box p {
     color: var(--color-text-lighter);
 
+}
+.box .boxhead {
+    background-color: var(--color-navy-mid);
+    padding: 8px;
+    border-radius: 8px 8px 0 0;
 }

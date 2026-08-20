@@ -13,7 +13,9 @@
                 <h2>Productos</h2>
             </div>
             <p>Lista de productos disponibles para venta.</p>
-
+            <div class="productos-box">
+                
+            </div>
         </div>
         <div class="box">
             <div class="boxhead">
