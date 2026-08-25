@@ -8,22 +8,22 @@
 
 @section('content')
     <div class="pos-grid">
-        <div class="box">
+        <div class="box inventario-productos">
             <div class="boxhead">
                 <h2>Productos</h2>
+                <p>Lista de productos disponibles para venta.</p>
+
             </div>
-            <p>Lista de productos disponibles para venta.</p>
             <div class="productos-box">
-                
+                <p>*Productos*</p>
             </div>
         </div>
-        <div class="box">
+        <div class="box inventario-carrito">
             <div class="boxhead">
-
                 <h2>Carrito de compras</h2>
+                <p>Lista de productos seleccionados para la venta.</p>
             </div>
-            <p>Lista de productos seleccionados para la venta.</p>
-
+            <p>*Contenido*</p>
         </div>
     </div>
 @endsection

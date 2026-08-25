@@ -1,7 +1,7 @@
 <footer>
     <div class="div">
         <h3>
-            Conectado: Admin
+            Conectado: Dev
         </h3>
     </div>
     <div class="div">
