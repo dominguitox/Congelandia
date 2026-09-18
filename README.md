@@ -12,7 +12,7 @@ Opcional: Laravel Herd instala PHP, Composer y Node.js automáticamente (con PHP
 ## Instalación
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/dominguitox/Congelandia
 cd Congelandia
 composer run setup
 ```

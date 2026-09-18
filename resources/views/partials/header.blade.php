@@ -1,12 +1,12 @@
-<div class="header">
+<header class="navbar navbar-dark fixed-top shadow-sm"
+    style="background-color: var(--color-navy-dark, #0a192f); height: 60px; z-index: 1010; padding: 0 20px;">
+    <div class="container-fluid p-0 d-flex align-items-center">
 
-    <div class="itemsheader" id="hola">
-        <div class="logo">LOGO </div>
-        <h1>@yield('title', 'titulo de la pagina')</h1>
-    </div>
-    <div class="itemsheader" id="userinfo">
-        <h2>Usuario: Admin</h2>
-        <h2>Sistema: Online</h2>
-    </div>
+        <a class="navbar-brand fw-bold mb-0 h1" href="/">Congelandia</a>
 
-</div>
+        <div class="ms-auto text-white">
+            <span class="me-2">👤 {{ auth()->user()->name ?? 'Usuario' }}</span>
+            <span class="badge bg-info text-dark">{{ auth()->user()->rol ?? 'Rol' }}</span>
+        </div>
+    </div>
+</header>

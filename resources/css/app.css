@@ -1,182 +1,42 @@
-@import 'tailwindcss';
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-
-:root {
-    /* Azules Oscuros (Estructura) */
-    --color-navy-dark: #0B132B;
-    --color-navy-mid: #1C2541;
-    --color-navy-border: #3A506B;
-
-    /* Azules Hielo (Acentos, Detalles y Hovers) */
-    --color-ice-primary: #00B4D8;
-    --color-ice-hover: #38BDF8;
-
-    /* Fondos y Marcos */
-    --color-bg-main: #F0F4F8;
-    --color-card-bg: #FFFFFF;
-    --color-card-border: #CBD5E1;
-
-    /* Textos */
-    --color-text-main: #1E293B;
-    --color-text-light: #E0E1DD;
-    --color-text-lighter: #eff0ee;
-
-    --color-text-muted: #94A3B8;
+/* --- Sidebar Permanente --- */
+.sidebar {
+    position: fixed;
+    top: 60px;
+    /* Justo debajo de tu header de 60px */
+    left: 0;
+    width: 250px;
+    /* Ancho fijo */
+    height: calc(100vh - 60px);
+    /* Altura restante de la pantalla */
+    background-color: var(--color-navy-mid, #112240);
+    z-index: 1000;
+    overflow-y: auto;
+    /* Permite scroll vertical en el menú si hay muchas opciones */
 }
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-
-}
-
-/*
-HEADER
-*/
-.header {
-    background-color: var(--color-navy-dark);
-    display: grid;
-    padding: 20px 20px 12px 20px;
-    align-items: flex-end;
-    user-select: none;
-    grid-template-columns: 1fr 1fr;
-}
-
-
-.header .logo {
-    width: 60px;
-    height: 60px;
-    background-color: var(--color-ice-primary);
-    color: var(--color-navy-dark);
-}
-
-.header h1 {
-
-    font-size: xx-large;
-    padding-left: 12px;
-    color: var(--color-text-light);
-    font-weight: bolder;
-}
-
-.header h2 {
-    font-size: x-large;
-    color: var(--color-text-light);
-    font-weight: bolder;
-}
-
-.header h3 {
-    font-size: large;
-    color: var(--color-text-light);
-    font-weight: bolder;
-}
-
-.itemsheader {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-#userinfo {
-    display: flex;
-}
-
-#hola {
-    justify-self: flex-start;
-    padding-left: 12px;
-}
-
-/*
-FIN HEADER
-*/
-
-/*
-NAVBAR
-*/
-.navbar ul {
-    background-color: var(--color-navy-mid);
+/* Lista del menú */
+.sidebar ul {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 15px 0;
     display: flex;
+    flex-direction: column;
 }
 
-.navbar ul li {
-    flex: 1;
-}
-
-.navbar ul li:hover {}
-
-.navbar ul li a {
+.sidebar ul li a {
     display: block;
-    padding: 4px 0;
-    text-align: center;
+    padding: 10px 20px;
     font-weight: bold;
-    color: var(--color-text-light);
+    color: var(--color-text-light, #ffffff);
     text-decoration: none;
-    border-top: 1px solid #00000000;
-    border-bottom: 2px solid #00000000;
+    border-left: 3px solid transparent;
+    transition: background-color 0.2s, border-left-color 0.2s;
 }
 
-.navbar ul li a:hover {
-    background-color: var(--color-navy-dark);
-    color: var(--color-ice-hover);
-    /* border-bottom: 2px solid var(--color-ice-hover);
-*/
+.sidebar ul li a:hover {
+    background-color: var(--color-navy-dark, #0a192f);
+    color: var(--color-ice-hover, #64ffda);
+    border-left-color: var(--color-ice-hover, #64ffda);
 }
-
-/*
-FIN NAVBAR
-*/
-
-/*
-BODY
-*/
-body {
-    background-color: var(--color-bg-main);
-}
-
-main {
-    background-color: var(--color-card-bg);
-    margin: 20px;
-    padding: 8px;
-}
-
-/*
-FIN BODY
-*/
-
-/*
-FOOTER
-*/
-footer {
-    position: absolute;
-    bottom: 0;
-    background-color: var(--color-navy-dark);
-    color: var(--color-text-light);
-    text-align: center;
-    padding: 4px;
-    width: 100%;
-    user-select: none;
-
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-}
-
-footer .div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-footer .div h3 {
-    font-size: medium;
-    color: var(--color-text-light);
-    font-weight: bolder;
-}
-
-
-/*
-FIN FOOTER
-*/
