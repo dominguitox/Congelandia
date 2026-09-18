@@ -1,0 +1,22 @@
+procedimientos:
+	PRODUCTO
+	(C) crear producto
+	(R) listar todos los productos / get producto by id
+	(U) editar producto
+	(D) ocultar producto (soft delete)
+
+	TIPO PRODUCTO
+	(C) crear tipo producto
+	(R) listar todos los tipo productos / get producto by id
+	(U) editar tipo producto
+	(D) ocultar tipo producto (soft delete)
+
+	TIPO PROVEEDOR
+	(C) crear proveedor
+	(R) listar todos los proveedores / get proveedor by id
+	(U) editar proveedor
+	(D) ocultar proveedor (soft delete)
+
+
+	listar proveedores
+	listar categorias
