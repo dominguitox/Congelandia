@@ -4,9 +4,9 @@ DELIMITER //
 DROP PROCEDURE SP_RegistrarSalida_Basica;
 DROP PROCEDURE SP_CrearProducto;
 DROP PROCEDURE SP_ListarProductos;
-
+DROP PROCEDURE SP_ListarProveedores;
+sELECT * FROM Lista_Precio 
 DELIMITER //
-
 CREATE PROCEDURE SP_CrearProducto(
     -- 1. Datos del Catálogo (Tabla Producto y Categoria)
     IN p_codigo VARCHAR(50),
@@ -64,7 +64,6 @@ BEGIN
     COMMIT;
 END //
 DELIMITER //
-
 CREATE PROCEDURE SP_ListarProductos()
 BEGIN
     SELECT 
@@ -90,7 +89,6 @@ BEGIN
     FROM Producto p
     LEFT JOIN Categoria c ON p.idCategoria = c.idCategoria;
 END //
-
 DELIMITER //
 CREATE PROCEDURE SP_ObtenerProductoPorId(
     IN p_codigoBuscado VARCHAR(50)
@@ -122,10 +120,45 @@ BEGIN
     -- Filtramos específicamente por el código ingresado
     WHERE p.codigo = p_codigoBuscado; 
 END //
+DELIMITER //
+
+
+SELECT * FROM PROVEEDOR;
+DELIMITER //
+CREATE PROCEDURE SP_listarProveedores()
+BEGIN
+select * from proveedor;
+END //
+
+DELIMITER //
+CREATE PROCEDURE SP_listarCategorias()
+BEGIN
+select * from categoria;
+END //
 
 DELIMITER ;
-call SP_ObtenerProductoPorId(780123456789);
+
+SELECT * FROM categoria;
+
+
+
+
+call SP_ObtenerProductoPorId('PROD-001');
+call SP_ObtenerProductoPorId('2323');
+
+
+
+
+
+
+
+
+
+call SP_ListarProductos;
 SELECT * FROM PRODUCTO;
+
+SELECT * FROM USUARIOS;
+
 
 DELIMITER ;
 

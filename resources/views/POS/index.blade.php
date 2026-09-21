@@ -16,8 +16,25 @@
                         <input type="text" class="form-control mb-3" placeholder="Buscar por código o nombre...">
                     </div>
                     <div class="card-body bg-light">
-                        <!-- Aquí incluyes el archivo partials/productos.blade.php -->
-                        @include('partials.productos')
+                        <div class="row">
+                            @foreach ($productos as $producto)
+                                <div class="col-md-3 mb-3"> <!-- Ajusta las clases de tu grilla -->
+                                    <div class="card producto-card" data-id="{{ $producto->codigo }}"> <!-- Usa el ID correcto -->
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ $producto->nombre }}</h5>
+                                            <p class="card-text text-muted">{{ $producto->categoria }}</p>
+
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                <span
+                                                    class="fs-5 fw-bold">${{ number_format($producto->precio, 0, ',', '.') }}</span>
+                                                <span class="badge bg-info">Stock: {{ $producto->stock }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
                     </div>
                 </div>
             </div>

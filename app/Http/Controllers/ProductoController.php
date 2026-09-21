@@ -8,10 +8,10 @@ use Exception;
 
 class ProductoController extends Controller
 {
-    // 1. Cambiamos el nombre a 'store' para coincidir con tu web.php
     public function crearProducto(Request $request)
     {
         $request->validate([
+
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
@@ -24,8 +24,7 @@ class ProductoController extends Controller
         ]);
 
         try {
-            $idUsuario = auth()->user()->idUsuario;
-
+            $idUsuario = auth()->user()->id;
             DB::statement('CALL SP_CrearProducto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
                 $request->codigo,
                 $request->nombre,
@@ -42,20 +41,24 @@ class ProductoController extends Controller
 
             return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
         } catch (Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
-            
+
         }
     }
-
     public function listarProductos(Request $request)
     {
         try {
             $productos = DB::select('CALL SP_ListarProductos()');
-            return view('inventario.index', compact('productos'));
+            $proveedores = DB::select('CALL SP_ListarProveedores()');
+            $categorias = DB::select('CALL SP_ListarCategorias()');
+
+            return view('inventario.index', compact('productos', 'proveedores', 'categorias'));
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
 
     // 2. Renombramos a 'show' y pasamos el $codigo como string (el código de barras no siempre es un número entero)
     public function show(string $codigo)
@@ -73,4 +76,7 @@ class ProductoController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
+
+
 }
