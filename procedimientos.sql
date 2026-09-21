@@ -15,10 +15,8 @@ CREATE PROCEDURE SP_CrearProducto(
     IN p_nombre VARCHAR(150),
     IN p_descripcion TEXT,
     IN p_idCategoria INT,
-    
     -- 2. Dato de Venta (Tabla Lista_Precio)
     IN p_precioVenta INT,
-    
     -- 3. Datos de Abastecimiento Inicial (Tablas Ingreso y Detalle_Ingreso)
     IN p_idProveedor INT,
     IN p_idUsuario INT, -- El ID del trabajador/jefe que está creando el producto
@@ -54,7 +52,6 @@ BEGIN
         INSERT INTO Detalle_Ingreso (idIngreso, codigoProducto, cantidad, precioCompra, fechaVencimiento)
         VALUES (v_idIngreso, p_codigo, p_stockInicial, p_precioCompra, p_fechaVencimiento);
     END IF;
-
     -- Confirmar todos los cambios
     COMMIT;
 END //

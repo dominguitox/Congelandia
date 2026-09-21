@@ -38,7 +38,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 
     //Rutas del historial
-
     Route::get('/historial', [historialController::class, 'index'])->name('historial.index');
 
     // Cierre de sesión
