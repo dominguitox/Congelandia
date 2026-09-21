@@ -1,8 +1,6 @@
-<x-layout>
-    <x-slot:title>
-        Sign In
-    </x-slot:title>
-
+@extends('layouts.app')
+@section('title', 'Sign In')
+@section('content')
     <div class="hero min-h-[calc(100vh-16rem)]">
         <div class="hero-content flex-col">
             <div class="card w-96 bg-base-100">
@@ -53,13 +51,9 @@
                         </div>
                     </form>
 
-                    <div class="divider">OR</div>
-                    <p class="text-center text-sm">
-                        Don't have an account?
-                        <a href="/register" class="link link-primary">Register</a>
-                    </p>
+
                 </div>
             </div>
         </div>
     </div>
-</x-layout>
+@endsection

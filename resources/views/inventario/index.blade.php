@@ -21,7 +21,7 @@
                     <th scope="col">Categoria</th>
                     <th scope="col">Proveedor</th>
                     <th scope="col">Costo</th>
-                    <th scope="col">Precio</th>
+                    <th scope="col">Precio Venta</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Acciones</th>
                 </tr>
@@ -56,6 +56,7 @@
                         aria-label="Close"></button>
                 </div>
                 <!-- Formulario conectado a la ruta que configuraste previamente -->
+                @if($errors->any()) {{ dd($errors) }} @endif
                 <form action="{{ route('productos.crearProducto') }}" method="POST">
                     @csrf <!-- Token de seguridad obligatorio en Laravel -->
                     <div class="modal-body">
@@ -86,8 +87,9 @@
                                 <label for="idCategoria" class="form-label">Categoría *</label>
                                 <select class="form-select" name="idCategoria" id="idCategoria" required>
                                     <option value="">Seleccione una categoría...</option>
-                                    <option value="1">Carnes</option>
-                                    <option value="2">Bebidas</option>
+                                    @foreach ($categorias as $categoria)
+                                        <option value="{{ $categoria->idCategoria }}">{{ $categoria->nombre }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -113,8 +115,9 @@
                                 <label for="idProveedor" class="form-label">Proveedor *</label>
                                 <select class="form-select" name="idProveedor" id="idProveedor" required>
                                     <option value="">Seleccione proveedor...</option>
-                                    <!-- Iterar proveedores reales -->
-                                    <option value="1">Proveedor de Hielo</option>
+                                    @foreach ($proveedores as $proveedor)
+                                        <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-4">

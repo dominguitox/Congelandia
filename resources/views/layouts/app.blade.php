@@ -11,6 +11,13 @@
 </head>
 
 <body class="bg-light">
+    <!-- Esto es una alerta roja que tira mensajes de error-->
+    @if (session('error'))
+        <div
+            style="background-color: #f8d7da; color:#842029; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;  position: absolute; left: 40px; bottom: 20px; z-index: 9999; max-width: 60%; justify-self: center;">
+            <strong>Error:</strong> {{ session('error') }}
+        </div>
+    @endif
 
     <!-- Inclusión de los módulos de la cabecera y menú lateral -->
     @include('partials.header')
@@ -22,6 +29,7 @@
     </main>
 
     @include('partials.footer')
+
 
 
 </body>
