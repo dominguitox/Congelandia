@@ -38,7 +38,6 @@
                         <td>{{ $salida->idUsuario ?? 'No registrado' }}</td>
                         <td>{{ $salida->rutCliente ?? 'No registrado' }}</td>
                         <td>{{ $salida->totalSalida ?? '$' }}</td>
-
                     </tr>
                 @endforeach
             </tbody>
