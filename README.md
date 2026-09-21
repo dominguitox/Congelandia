@@ -25,4 +25,4 @@ composer run dev
 
 Abrir http://localhost:8000
 
-Base de datos: SQLite, se crea sola al migrar.
+Base de datos: MySQL
