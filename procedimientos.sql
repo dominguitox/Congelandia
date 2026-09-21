@@ -6,6 +6,8 @@ DROP PROCEDURE SP_CrearProducto;
 DROP PROCEDURE SP_ListarProductos;
 DROP PROCEDURE SP_ListarProveedores;
 sELECT * FROM Lista_Precio 
+
+
 DELIMITER //
 CREATE PROCEDURE SP_CrearProducto(
     -- 1. Datos del Catálogo (Tabla Producto y Categoria)
@@ -27,34 +29,27 @@ CREATE PROCEDURE SP_CrearProducto(
 BEGIN
     -- Variable para guardar el ID del ingreso generado
     DECLARE v_idIngreso INT;
-
     -- Manejador de errores: Si algo falla, deshace todo (Rollback) para no dejar datos huérfanos
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
-
     -- Iniciar la transacción
     START TRANSACTION;
-
     -- PASO 1: Registrar el producto base en el catálogo
     INSERT INTO Producto (codigo, nombre, descripcion, idCategoria)
     VALUES (p_codigo, p_nombre, p_descripcion, p_idCategoria);
-
     -- PASO 2: Registrar el precio de venta actual vigente
     INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
     VALUES (p_codigo, p_precioVenta, NOW(), NULL);
-
     -- PASO 3: Si se ingresó un stock inicial mayor a 0, registrar automáticamente la compra (Ingreso)
     IF p_stockInicial > 0 THEN
         -- Crear la cabecera del ingreso
         INSERT INTO Ingreso (fecha, idProveedor, idUsuario, totalCompra)
         VALUES (NOW(), p_idProveedor, p_idUsuario, (p_precioCompra * p_stockInicial));
-        
         -- Capturar el ID del ingreso recién creado
         SET v_idIngreso = LAST_INSERT_ID();
-        
         -- Crear el detalle del ingreso con el costo y vencimiento de este lote
         INSERT INTO Detalle_Ingreso (idIngreso, codigoProducto, cantidad, precioCompra, fechaVencimiento)
         VALUES (v_idIngreso, p_codigo, p_stockInicial, p_precioCompra, p_fechaVencimiento);
@@ -135,26 +130,35 @@ CREATE PROCEDURE SP_listarCategorias()
 BEGIN
 select * from categoria;
 END //
+DELIMITER //
 
+DELIMITER //
+CREATE PROCEDURE SP_listarHistorial()
+select * from salida;
+
+DELIMITER //
+DROP PROCEDURE SP_listarSalidas;
+CREATE PROCEDURE SP_listarSalidas()
+BEGIN
+SELECT 
+	s.idSalida,
+    s.fecha,
+    (select u.nombre from usuario u where idUsuario = s.idUsuario) as usuario
+    FROM SALIDA s;
+END //
+call SP_ListarSalidas;
+DELIMITER //
+
+DELIMITER //
 DELIMITER ;
 
 SELECT * FROM categoria;
 
-
-
-
 call SP_ObtenerProductoPorId('PROD-001');
 call SP_ObtenerProductoPorId('2323');
+call SP_listarSalidas;
 
 
-
-
-
-
-
-
-
-call SP_ListarProductos;
 SELECT * FROM PRODUCTO;
 
 SELECT * FROM USUARIOS;

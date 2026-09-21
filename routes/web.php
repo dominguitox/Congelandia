@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/historial', [historialController::class, 'index'])->name('historial.index');
 
     // Cierre de sesión
-    Route::post('/logout    ', Logout::class)->name('logout');
+    Route::post('/logout', Logout::class)->name('logout');
 });
 
 // Rutas específicas protegidas por autenticación y rol de Administrador
