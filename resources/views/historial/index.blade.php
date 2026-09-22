@@ -34,8 +34,8 @@
                         <td>{{ $salida->idSalida ?? 'Id' }}</td>
                         <td>{{ $salida->fecha ?? 'Sin proveedor' }}</td>
                         <td>{{ $salida->articulos ?? 'Articulos' }}</td>
-                        <td>{{ $salida->idTipo ?? 'Sin categoría' }}</td>
-                        <td>{{ $salida->idUsuario ?? 'No registrado' }}</td>
+                        <td>{{ $salida->tipo ?? 'Sin categoría' }}</td>
+                        <td>{{ $salida->usuario ?? 'No registrado' }}</td>
                         <td>{{ $salida->rutCliente ?? 'No registrado' }}</td>
                         <td>{{ $salida->totalSalida ?? '$' }}</td>
                     </tr>

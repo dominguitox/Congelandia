@@ -56,6 +56,7 @@ BEGIN
     COMMIT;
 END //
 DELIMITER //
+
 CREATE PROCEDURE SP_ListarProductos()
 BEGIN
     SELECT 
@@ -140,13 +141,20 @@ BEGIN
 SELECT 
 	s.idSalida,
     s.fecha,
-    (select u.nombre from usuario u where idUsuario = s.idUsuario) as usuario
+	(select t.nombre from tipo_salida t where idTIpo = s.idTipo) as tipo,
+    (select u.nombre from usuario u where idUsuario = s.idUsuario) as usuario,
+    s.rutCliente,
+    s.totalSalida
     FROM SALIDA s;
 END //
 call SP_ListarSalidas;
 DELIMITER //
 
 DELIMITER //
+select * from salida;
+select * from detalle_salida;
+select * from tipo_salida;
+
 DELIMITER ;
 
 SELECT * FROM categoria;
@@ -162,5 +170,4 @@ SELECT * FROM USUARIOS;
 
 
 DELIMITER ;
-
 DELIMITER ;
