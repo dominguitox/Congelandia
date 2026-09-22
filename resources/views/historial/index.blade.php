@@ -32,7 +32,7 @@
                 @foreach($salidas as $salida)
                     <tr>
                         <td>{{ $salida->idSalida ?? 'Id' }}</td>
-                        <td>{{ $salida->fecha ?? 'Sin proveedor' }}</td>
+                        <td>{{ $salida->fecha ?? 'Sin fecha' }}</td>
                         <td>{{ $salida->articulos ?? 'Articulos' }}</td>
                         <td>{{ $salida->tipo ?? 'Sin categoría' }}</td>
                         <td>{{ $salida->usuario ?? 'No registrado' }}</td>

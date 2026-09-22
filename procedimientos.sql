@@ -140,7 +140,7 @@ CREATE PROCEDURE SP_listarSalidas()
 BEGIN
 SELECT 
 	s.idSalida,
-    s.fecha,
+    UNIX_TIMESTAMP(fecha) as fecha,
 	(select t.nombre from tipo_salida t where idTIpo = s.idTipo) as tipo,
     (select u.nombre from usuario u where idUsuario = s.idUsuario) as usuario,
     s.rutCliente,
