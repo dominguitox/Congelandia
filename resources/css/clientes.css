@@ -1,18 +1,32 @@
-/* CONTENEDOR GENERAL */
+/* ================================
+   CONTENEDOR GENERAL
+================================ */
 
 .clientes-container {
-    padding: 10px;
-    color: #123047;
+
+    padding: 28px;
+
+    background: #eefaff;
+
+    min-height: calc(100vh - 60px);
+
+    color: #102b42;
+
 }
 
 
-/* TITULO */
+
+/* ================================
+   HEADER
+================================ */
 
 .clientes-header h2 {
 
-    font-size: 32px;
+    font-size: 34px;
+
     font-weight: 700;
-    margin-bottom: 5px;
+
+    margin-bottom: 8px;
 
 }
 
@@ -20,19 +34,27 @@
 .clientes-header p {
 
     color: #47738c;
+
+    font-size: 16px;
+
     margin-bottom: 35px;
 
 }
 
 
 
-/* TARJETAS SUPERIORES */
+/* ================================
+   TARJETAS SUPERIORES
+================================ */
 
 .clientes-cards {
 
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns: repeat(3,1fr);
+
     gap: 25px;
+
     margin-bottom: 35px;
 
 }
@@ -41,20 +63,23 @@
 
 .cliente-card {
 
-    background: white;
-    border-radius: 18px;
-    padding: 25px;
+    background:white;
 
-    height: 110px;
+    height:120px;
 
-    display: flex;
-    flex-direction: column;
+    border-radius:20px;
 
-    justify-content: center;
+    padding:25px;
 
-    position: relative;
+    position:relative;
 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
 
 }
 
@@ -62,37 +87,46 @@
 
 .cliente-card span {
 
-    color: #47738c;
-    font-size: 15px;
+    color:#47738c;
+
+    font-size:15px;
 
 }
-
 
 
 .cliente-card strong {
 
-    font-size: 32px;
-    color: #102b42;
+    font-size:36px;
+
+    font-weight:700;
+
+    color:#102b42;
 
 }
 
 
 
+/* ICONOS */
+
 .icon {
 
-    position: absolute;
+    position:absolute;
 
-    right: 25px;
-    top: 30px;
+    right:25px;
 
-    width: 45px;
-    height: 45px;
+    top:35px;
 
-    border-radius: 15px;
+    width:48px;
+
+    height:48px;
+
+    border-radius:15px;
 
     display:flex;
-    align-items:center;
+
     justify-content:center;
+
+    align-items:center;
 
     font-size:25px;
 
@@ -102,8 +136,9 @@
 
 .warning {
 
-    background:#ffe8c2;
-    color:#ff6b00;
+    background:#ffe9c9;
+
+    color:#ff7800;
 
 }
 
@@ -111,7 +146,8 @@
 
 .danger {
 
-    background:#ffdede;
+    background:#ffe0e0;
+
     color:#ff0000;
 
 }
@@ -120,14 +156,17 @@
 
 .success {
 
-    background:#d9ffe6;
+    background:#d8ffe7;
+
     color:#00b85c;
 
 }
 
 
 
-/* BUSCADOR */
+/* ================================
+   BUSCADOR Y BOTON
+================================ */
 
 .clientes-actions {
 
@@ -135,7 +174,7 @@
 
     gap:15px;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
 
 }
 
@@ -147,13 +186,15 @@
 
     height:50px;
 
-    border-radius:15px;
+    border-radius:16px;
 
-    border:1px solid #b9dbea;
+    border:1px solid #c5e2ef;
 
     padding:0 20px;
 
     font-size:16px;
+
+    background:white;
 
 }
 
@@ -161,15 +202,16 @@
 
 .clientes-actions button {
 
+
     background:#009fc3;
 
     color:white;
 
     border:none;
 
-    border-radius:15px;
+    border-radius:16px;
 
-    padding:0 30px;
+    padding:0 28px;
 
     font-size:16px;
 
@@ -181,19 +223,35 @@
 
 
 
-/* TITULO TABLA */
+.clientes-actions button:hover {
 
-.clientes-container h3 {
-
-    font-size:22px;
-
-    margin-bottom:20px;
+    background:#0085a3;
 
 }
 
 
 
-/* TABLA */
+/* ================================
+   TITULOS TABLAS
+================================ */
+
+
+.clientes-container h3 {
+
+    font-size:23px;
+
+    margin-bottom:18px;
+
+    font-weight:700;
+
+}
+
+
+
+/* ================================
+   TABLAS
+================================ */
+
 
 .clientes-table {
 
@@ -203,7 +261,9 @@
 
     overflow:hidden;
 
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    margin-bottom:35px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
 
 }
 
@@ -221,7 +281,7 @@
 
 .clientes-table thead {
 
-    background:#d8f0f8;
+    background:#d9f1f8;
 
 }
 
@@ -229,9 +289,10 @@
 
 .clientes-table th {
 
-    text-align:left;
 
     padding:18px 25px;
+
+    text-align:left;
 
     color:#35667c;
 
@@ -243,9 +304,10 @@
 
 .clientes-table td {
 
+
     padding:18px 25px;
 
-    border-top:1px solid #d8eaf1;
+    border-top:1px solid #e1edf2;
 
     color:#41677d;
 
@@ -255,15 +317,30 @@
 
 .clientes-table td:first-child {
 
-    font-weight:600;
+    color:#102b42;
 
-    color:#132c43;
+    font-weight:600;
 
 }
 
 
 
-/* BOTONES ACCIONES */
+/* DEUDA */
+
+.clientes-table td:nth-child(3) {
+
+    color:#ff0000;
+
+    font-weight:700;
+
+}
+
+
+
+/* ================================
+   BOTONES ACCIONES
+================================ */
+
 
 .acciones {
 
@@ -281,9 +358,9 @@
 
     height:38px;
 
-    border-radius:12px;
-
     border:none;
+
+    border-radius:12px;
 
     display:flex;
 
@@ -302,30 +379,247 @@
 .historial {
 
     background:#f0ddff;
+
     color:#9b38ff;
 
 }
 
 
+
 .pago {
 
     background:#d8ffe7;
+
     color:#00a85a;
 
 }
 
 
+
 .editar {
 
     background:#dbe8ff;
+
     color:#1e6cff;
 
 }
 
 
+
 .eliminar {
 
     background:#ffe0e0;
+
     color:#ff1e1e;
+
+}
+
+
+
+/* ================================
+   FORMULARIO NUEVO CLIENTE
+================================ */
+
+
+.nuevo-cliente {
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+
+
+.nuevo-cliente h3 {
+
+    margin-bottom:20px;
+
+}
+
+
+
+.nuevo-cliente input {
+
+    height:50px;
+
+    border-radius:14px;
+
+    border:1px solid #c5e2ef;
+
+    padding:0 15px;
+
+}
+
+
+
+.btn-agregar {
+
+    background:#009fc3;
+
+    color:white;
+
+}
+
+
+.btn-cancelar {
+
+    background:#dceef5;
+
+    color:#35667c;
+
+}
+/* ================================
+   FORMULARIO NUEVO CLIENTE
+================================ */
+
+
+.nuevo-cliente {
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+
+
+.nuevo-cliente-header {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.nuevo-cliente-header h3 {
+
+    margin:0;
+
+    font-size:22px;
+
+}
+
+
+
+.nuevo-cliente-header button {
+
+    border:none;
+
+    background:none;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+    color:#47738c;
+
+}
+
+
+
+.form-grid {
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+
+
+.form-grid label {
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+
+
+.form-grid input {
+
+    width:100%;
+
+    height:50px;
+
+    border-radius:14px;
+
+    border:1px solid #c5e2ef;
+
+    padding:0 15px;
+
+    font-size:16px;
+
+}
+
+
+
+.form-buttons {
+
+    margin-top:25px;
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+
+
+.btn-agregar {
+
+    background:#009fc3;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 25px;
+
+    border-radius:14px;
+
+    font-weight:600;
+
+}
+
+
+
+.btn-cancelar {
+
+    background:#dceef5;
+
+    color:#35667c;
+
+    border:none;
+
+    padding:12px 25px;
+
+    border-radius:14px;
+
+    font-weight:600;
 
 }
