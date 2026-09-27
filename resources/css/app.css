@@ -1,5 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
-
+html {
+    width: 100vw;
+}
 /* --- Sidebar Permanente --- */
 .sidebar {
     position: fixed;

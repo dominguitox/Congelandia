@@ -41,20 +41,18 @@ function actualizarTicketVenta() {
         // Dibuja cada producto dentro del ticket visual
         let fila = `
             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-                <div>
-                    <h6 class="mb-0">${item.nombre}</h6>
-                    <small class="text-muted">$${item.precio} c/u</small>
+                    <div>
+                        <h6 class="mb-0">${item.nombre}</h6>
+                        <small class="text-muted">$${item.precio} c/u</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-outline-secondary px-2 me-1" onclick="restarAlCarrito(${indice})">-</button>
+                        <span class="badge bg-secondary me-1">Cant. ${item.cantidad}</span>
+                        <button class="btn btn-sm btn-outline-secondary px-2 me-2" onclick="sumarAlCarrito(${indice})">+</button>
+                        <strong class="me-2">$${subtotal}</strong>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${indice})">&times;</button>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center">
-                    <span class="badge bg-secondary me-2">Qty: ${item.cantidad}</span>
-                    <strong class="me-3">$${subtotal}</strong>
-                <div style= "gap: 4px">
-                    <button class="btn btn-sm btn-warning" onclick="restarAlCarrito(${indice})">-</button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${indice})">&times;</button>
-                    <button class="btn btn-sm btn-success" onclick="sumarAlCarrito(${indice})">+</button>
-                </div>
-                </div>
-            </div>
         `;
         contenedorTicket.innerHTML += fila;
     });
@@ -68,6 +66,61 @@ window.eliminarDelCarrito = function (indice) {
     carrito.splice(indice, 1);
     actualizarTicketVenta();
 }
-window.actualizrEtiquetaStock = function () {
 
+window.sumarAlCarrito = function (indice) {
+    // Valida que la cantidad actual no supere el stock disponible del producto
+    if (carrito[indice].cantidad < carrito[indice].stock) {
+        carrito[indice].cantidad++;
+        actualizarTicketVenta();
+    } else {
+        alert("Stock insuficiente para " + carrito[indice].nombre);
+    }
+}
+
+window.restarAlCarrito = function (indice) {
+    // Si la cantidad es mayor a 1, simplemente resta uno
+    if (carrito[indice].cantidad > 1) {
+        carrito[indice].cantidad--;
+        actualizarTicketVenta();
+    } else {
+        // Si llega a 1 y se vuelve a restar, elimina el producto del carrito
+        eliminarDelCarrito(indice);
+    }
+}
+
+window.procesarCobro = function (metodoPagoSeleccionado) {
+    if (carrito.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+    }
+
+    // Obtenemos el token CSRF obligatorio de Laravel desde el meta tag del HTML
+    let tokenCsrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('/venta/registrar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': tokenCsrf
+        },
+        body: JSON.stringify({
+            carrito: carrito,
+            metodoPago: metodoPagoSeleccionado
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // Limpiamos el carrito local y la interfaz
+                carrito = [];
+                actualizarTicketVenta();
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+            alert("Ocurrió un error al procesar el pago.");
+        });
 }

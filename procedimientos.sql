@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
 
 
-DROP PROCEDURE IF EXISTS SP_RegistrarSalida_Basica;
+DROP PROCEDURE IF EXISTS SP_RegistrarSalida;
 DROP PROCEDURE IF EXISTS SP_CrearProducto;
 DROP PROCEDURE IF EXISTS SP_ListarProductos;
 DROP PROCEDURE IF EXISTS SP_ListarCategorias;
@@ -13,6 +13,33 @@ DROP PROCEDURE IF EXISTS SP_listarHistorial;
 DROP PROCEDURE IF EXISTS SP_DetalleSalida;
 
 DELIMITER //
+CREATE PROCEDURE SP_RegistrarSalida()
+BEGIN    
+DECLARE v_idIngreso INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    START TRANSACTION;
+    
+    INSERT INTO Salida (codigo, nombre, descripcion, idCategoria)
+    VALUES (p_codigo, p_nombre, p_descripcion, p_idCategoria);
+    
+    INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
+    VALUES (p_codigo, p_precioVenta, NOW(), NULL);
+    
+    IF p_stockInicial > 0 THEN
+        INSERT INTO Ingreso (fecha, idProveedor, idUsuario, totalCompra)
+        VALUES (NOW(), p_idProveedor, p_idUsuario, (p_precioCompra * p_stockInicial));
+        
+        SET v_idIngreso = LAST_INSERT_ID();
+        
+        INSERT INTO Detalle_Ingreso (idIngreso, codigoProducto, cantidad, precioCompra, fechaVencimiento)
+        VALUES (v_idIngreso, p_codigo, p_stockInicial, p_precioCompra, p_fechaVencimiento);
+    END IF;
+    COMMIT;
+END;
 
 CREATE PROCEDURE SP_CrearProducto(
     IN p_codigo VARCHAR(50),
@@ -142,6 +169,7 @@ BEGIN
         ON ds.codigoProducto = p.codigo
     WHERE ds.idSalida = p_idSalida;
 END //
+
 
 
 DELIMITER ;
