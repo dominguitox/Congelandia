@@ -70,7 +70,7 @@
                             <span>Cliente:</span>
                             <span id="ticket-total">Papito</span>
                         </div>
-                        <button class="btn btn-success btn-lg w-100 fw-bold" onclick="">Cobrar</button>
+                        <button class="btn btn-success btn-lg w-100 fw-bold" onclick="registrarVenta()">Cobrar</button>
                     </div>
                 </div>
             </div>

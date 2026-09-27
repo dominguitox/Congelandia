@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
     //Rutas del pos
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('/venta/registrar', [posController::class, 'registrarVenta'])->name('venta.registrar');
 
     //Rutas del historial
     Route::get('/historial', [historialController::class, 'index'])->name('historial.index');

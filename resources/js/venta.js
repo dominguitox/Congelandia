@@ -127,70 +127,78 @@ window.restarAlCarrito = function (indice) {
         eliminarDelCarrito(indice);
     }
 }
-// !! Esto está mal, el cobro no lo procesamos nosotros, pero despues lo arreglamos......... !!
-window.procesarCobro = function (metodoPagoSeleccionado) {
-    if (carrito.length === 0) {
+window.registrarVenta = function (e, metodoPagoSeleccionado) {
+    // 1. Prevenir la recarga de la página si el botón está en un formulario
+    if (e) e.preventDefault();
+
+    // 2. Validar que el carrito exista globalmente y tenga productos
+    if (typeof carrito === 'undefined' || carrito.length === 0) {
         alert("El ticket está vacío. Agrega productos antes de cobrar.");
         return;
     }
 
-    let tokenCsrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    // 3. Extracción segura del token CSRF para Laravel
+    let metaCsrf = document.querySelector('meta[name="csrf-token"]');
+    if (!metaCsrf) {
+        console.error("Error: Falta la etiqueta <meta name='csrf-token'> en el HTML (Blade).");
+        alert("Error de configuración del sistema (Token CSRF faltante).");
+        return;
+    }
+    let tokenCsrf = metaCsrf.getAttribute('content');
 
-    // 1. Capturar el cliente seleccionado en la vista (si existe un select con id "cliente_select")
+    // 4. Capturar el cliente (opcional)
     let selectCliente = document.getElementById('cliente_select');
     let rutClienteSeleccionado = selectCliente ? selectCliente.value : null;
 
-    // Convertir a null si el cajero dejó la opción "Ninguno" por defecto
     if (rutClienteSeleccionado === "Ninguno" || rutClienteSeleccionado === "") {
         rutClienteSeleccionado = null;
     }
 
-    // 2. Calcular el total de la venta sumando cantidad * precio de cada ítem en el carrito
+    // 5. Calcular el total
     let totalCalculado = carrito.reduce((acumulador, item) => {
-        return acumulador + (item.cantidad * item.precio); // Asegúrate de usar el nombre de la llave de precio de tu carrito
+        return acumulador + (item.cantidad * item.precio);
     }, 0);
 
-    // 3. Enviar la petición al backend inmediatamente
+    // 6. Enviar la petición al backend en Laravel
     fetch('/venta/registrar', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': tokenCsrf,
-            'Accept': 'application/json' // Obliga a Laravel a devolver JSON incluso en errores
+            'Accept': 'application/json'
         },
         body: JSON.stringify({
-            idTipo: 1, // ID fijo que corresponde a "Venta" en tu tabla de tipos de salida
+            idTipo: 1, // ID fijo configurado para identificar "Venta" vs "Merma"
             rutCliente: rutClienteSeleccionado,
             totalVenta: totalCalculado,
             metodoPago: metodoPagoSeleccionado,
             productos: carrito
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            // Validación directa de éxito
-            if (data.success || response.ok) {
-                alert("Venta registrada exitosamente.");
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.success || data.ok) {
+            alert("Venta registrada exitosamente.");
 
-                // Limpieza inmediata del frontend
-                carrito = [];
-                localStorage.removeItem('carrito');
+            // Limpiar carrito
+            carrito = [];
+            localStorage.removeItem('carrito');
 
-                if (typeof actualizarTicketVenta === 'function') {
-                    actualizarTicketVenta();
-                }
-
-                // Opcional: limpiar montos y el selector de cliente en la interfaz
-                if (selectCliente) selectCliente.value = "Ninguno";
-                let inputMonto = document.getElementById('monto_recibido');
-                if (inputMonto) inputMonto.value = "";
-
-            } else {
-                alert("Error al registrar: " + (data.message || data.error || "Datos inválidos."));
+            if (typeof actualizarTicketVenta === 'function') {
+                actualizarTicketVenta();
             }
-        })
-        .catch(error => {
-            console.error('Error en la petición AJAX:', error);
-            alert("Ocurrió un error de conexión al intentar guardar la venta en el sistema.");
-        });
+            // Limpiar interfaz
+            if (selectCliente) selectCliente.value = "Ninguno";
+            let inputMonto = document.getElementById('monto_recibido');
+            if (inputMonto) inputMonto.value = "";
+
+        } else {
+            alert("Error al registrar: " + (data.message || "Datos inválidos."));
+        }
+    })
+    .catch(error => {
+        console.error('Error en la petición AJAX:', error);
+        alert("Ocurrió un error de conexión al intentar guardar la venta en el sistema.");
+    });
 }
