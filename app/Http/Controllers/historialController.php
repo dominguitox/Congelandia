@@ -9,19 +9,36 @@ use Exception;
 class historialController extends Controller
 {
     public function index()
-    {
-        try {
-            // Trae solo salidas
-            $salidas = DB::select('CALL SP_listarSalidas()');
-            // salidas + entradas (historial)
-        //    $salidas = DB::select('CALL SP_ListarHistorial()');
+{
+    try {
+
+        // Obtiene las ventas generales
+        $salidas = DB::select('CALL SP_listarSalidas()');
 
 
-            // Envías ambas variables a la vista del POS
-            return view('historial.index', compact('salidas'));
+        // Obtiene los productos de cada venta
+        foreach ($salidas as $salida) {
 
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error al cargar el historial: ' . $e->getMessage());
+            $salida->detalle = DB::select(
+                'CALL SP_DetalleSalida(?)',
+                [$salida->idSalida]
+            );
+
         }
+
+
+        return view('historial.index', compact('salidas'));
+
+
+    } catch (Exception $e) {
+
+        return redirect()
+            ->back()
+            ->with(
+                'error',
+                'Error al cargar el historial: ' . $e->getMessage()
+            );
+
     }
+}
 }

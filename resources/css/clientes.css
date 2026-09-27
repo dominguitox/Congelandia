@@ -1,0 +1,331 @@
+/* CONTENEDOR GENERAL */
+
+.clientes-container {
+    padding: 10px;
+    color: #123047;
+}
+
+
+/* TITULO */
+
+.clientes-header h2 {
+
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 5px;
+
+}
+
+
+.clientes-header p {
+
+    color: #47738c;
+    margin-bottom: 35px;
+
+}
+
+
+
+/* TARJETAS SUPERIORES */
+
+.clientes-cards {
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
+
+}
+
+
+
+.cliente-card {
+
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+
+    height: 110px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    position: relative;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+}
+
+
+
+.cliente-card span {
+
+    color: #47738c;
+    font-size: 15px;
+
+}
+
+
+
+.cliente-card strong {
+
+    font-size: 32px;
+    color: #102b42;
+
+}
+
+
+
+.icon {
+
+    position: absolute;
+
+    right: 25px;
+    top: 30px;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+
+}
+
+
+
+.warning {
+
+    background:#ffe8c2;
+    color:#ff6b00;
+
+}
+
+
+
+.danger {
+
+    background:#ffdede;
+    color:#ff0000;
+
+}
+
+
+
+.success {
+
+    background:#d9ffe6;
+    color:#00b85c;
+
+}
+
+
+
+/* BUSCADOR */
+
+.clientes-actions {
+
+    display:flex;
+
+    gap:15px;
+
+    margin-bottom:30px;
+
+}
+
+
+
+.clientes-actions input {
+
+    flex:1;
+
+    height:50px;
+
+    border-radius:15px;
+
+    border:1px solid #b9dbea;
+
+    padding:0 20px;
+
+    font-size:16px;
+
+}
+
+
+
+.clientes-actions button {
+
+    background:#009fc3;
+
+    color:white;
+
+    border:none;
+
+    border-radius:15px;
+
+    padding:0 30px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+}
+
+
+
+/* TITULO TABLA */
+
+.clientes-container h3 {
+
+    font-size:22px;
+
+    margin-bottom:20px;
+
+}
+
+
+
+/* TABLA */
+
+.clientes-table {
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+
+
+.clientes-table table {
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+
+.clientes-table thead {
+
+    background:#d8f0f8;
+
+}
+
+
+
+.clientes-table th {
+
+    text-align:left;
+
+    padding:18px 25px;
+
+    color:#35667c;
+
+    font-weight:600;
+
+}
+
+
+
+.clientes-table td {
+
+    padding:18px 25px;
+
+    border-top:1px solid #d8eaf1;
+
+    color:#41677d;
+
+}
+
+
+
+.clientes-table td:first-child {
+
+    font-weight:600;
+
+    color:#132c43;
+
+}
+
+
+
+/* BOTONES ACCIONES */
+
+.acciones {
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+
+.btn-accion {
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:12px;
+
+    border:none;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+}
+
+
+
+.historial {
+
+    background:#f0ddff;
+    color:#9b38ff;
+
+}
+
+
+.pago {
+
+    background:#d8ffe7;
+    color:#00a85a;
+
+}
+
+
+.editar {
+
+    background:#dbe8ff;
+    color:#1e6cff;
+
+}
+
+
+.eliminar {
+
+    background:#ffe0e0;
+    color:#ff1e1e;
+
+}

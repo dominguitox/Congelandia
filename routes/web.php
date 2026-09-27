@@ -6,6 +6,7 @@ use App\Models\Proveedor;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
 
@@ -40,6 +41,9 @@ Route::middleware('auth')->group(function () {
     //Rutas del historial
     Route::get('/historial', [historialController::class, 'index'])->name('historial.index');
 
+    // Rutas de clientes
+    Route::get('/clientes', [ClienteController::class, 'index'])
+    ->name('clientes.index');
     // Cierre de sesión
     Route::post('/logout', Logout::class)->name('logout');
 });
