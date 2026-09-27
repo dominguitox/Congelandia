@@ -44,6 +44,9 @@ Route::middleware('auth')->group(function () {
     // Rutas de clientes
     Route::get('/clientes', [ClienteController::class, 'index'])
     ->name('clientes.index');
+    
+    Route::post('/clientes', [ClienteController::class, 'store'])
+    ->name('clientes.store');
     // Cierre de sesión
     Route::post('/logout', Logout::class)->name('logout');
 });
