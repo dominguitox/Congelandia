@@ -1,12 +1,29 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
-	
+	drop table if exists detalle_ingreso;
+	drop table if exists ingreso;
+    drop table if exists  detalle_salida;
+	drop table if exists  devolucion;
+	drop table if exists  pago_salida;
+	drop table if exists  salida;
+	drop table if exists  Usuario;
+	drop table if exists  cliente;
+	drop table if exists  lista_precio;
+	drop table if exists  promocion;
+	drop table if exists  producto;
+	drop table if exists  categoria;
+	drop table if exists  proveedor;
+	drop table if exists  tipo_salida;
+	drop table if exists  tipo_devolucion;  
+	drop table if exists  metodo_pago;    
+    
 -- 1. Usuarios y Clientes
 CREATE TABLE Usuario (
     idUsuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     contrasena VARCHAR(255) NOT NULL,
     rol VARCHAR(50) NOT NULL,
+    email varchar(100) not null,
     activo BOOLEAN DEFAULT TRUE,
     deleted_at DATETIME NULL DEFAULT NULL -- Campo para Soft Deletes en Laravel
 );
