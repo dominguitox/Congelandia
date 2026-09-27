@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/historial.css',
                 'resources/css/clientes.css',
+                'resources/css/pos.css'
             ],
             refresh: true,
             fonts: [
