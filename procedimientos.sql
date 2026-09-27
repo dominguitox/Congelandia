@@ -13,33 +13,28 @@ DROP PROCEDURE IF EXISTS SP_listarHistorial;
 DROP PROCEDURE IF EXISTS SP_DetalleSalida;
 
 DELIMITER //
-CREATE PROCEDURE SP_RegistrarSalida()
-BEGIN    
-DECLARE v_idIngreso INT;
+DELIMITER //
+
+CREATE PROCEDURE SP_RegistrarSalida(
+    IN p_idTipo INT,
+    IN p_idUsuario INT,
+    IN p_rutCliente VARCHAR(20),
+    IN p_idMetodoPago INT,
+    IN p_totalSalida DECIMAL(10,2),
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
     START TRANSACTION;
-    
-    INSERT INTO Salida (codigo, nombre, descripcion, idCategoria)
-    VALUES (p_codigo, p_nombre, p_descripcion, p_idCategoria);
-    
-    INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
-    VALUES (p_codigo, p_precioVenta, NOW(), NULL);
-    
-    IF p_stockInicial > 0 THEN
-        INSERT INTO Ingreso (fecha, idProveedor, idUsuario, totalCompra)
-        VALUES (NOW(), p_idProveedor, p_idUsuario, (p_precioCompra * p_stockInicial));
-        
-        SET v_idIngreso = LAST_INSERT_ID();
-        
-        INSERT INTO Detalle_Ingreso (idIngreso, codigoProducto, cantidad, precioCompra, fechaVencimiento)
-        VALUES (v_idIngreso, p_codigo, p_stockInicial, p_precioCompra, p_fechaVencimiento);
-    END IF;
+    INSERT INTO Venta (fechaHora, totalVenta, CLIENTE, USUARIO, METODO_PAGO)
+    VALUES (NOW(), p_totalSalida, p_rutCliente, p_idUsuario, p_idMetodoPago);
     COMMIT;
-END;
+END //
 
 CREATE PROCEDURE SP_CrearProducto(
     IN p_codigo VARCHAR(50),
@@ -151,7 +146,8 @@ BEGIN
         (SELECT t.nombre FROM tipo_salida t WHERE idTIpo = s.idTipo) AS tipo,
         (SELECT u.nombre FROM usuario u WHERE idUsuario = s.idUsuario) AS usuario,
         s.rutCliente,
-        s.totalSalida
+        s.totalSalida,
+       (SELECT sum(CANTIDAD) FROM DETALLE_SALIDA WHERE idSalida = s.idSalida) as cantidad
     FROM SALIDA s;
 END //
 

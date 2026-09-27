@@ -1,4 +1,16 @@
-let carrito = [];
+// 1. Cargamos el carrito desde localStorage al iniciar, o iniciamos un arreglo vacío
+let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+// Al cargar la página, dibujamos inmediatamente los productos si existen en caché
+document.addEventListener("DOMContentLoaded", () => {
+    actualizarTicketVenta();
+});
+
+// Función auxiliar para guardar el estado actual en localStorage y actualizar la vista
+function guardarYActualizar() {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarTicketVenta();
+}
 
 window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDisponible) {
     let indice = carrito.findIndex(item => item.id === idProducto);
@@ -8,6 +20,7 @@ window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDispon
             carrito[indice].cantidad++;
         } else {
             alert("Stock insuficiente para " + nombre);
+            return;
         }
     } else {
         carrito.push({
@@ -20,27 +33,27 @@ window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDispon
     }
 
     console.log(carrito);
-    actualizarTicketVenta(); // <--- Llamamos a la función que dibuja el ticket
+    guardarYActualizar(); // Guarda en caché y actualiza la interfaz
 }
 
 function actualizarTicketVenta() {
-    // Selecciona el contenedor donde van los items en tu ticket de venta
     let contenedorTicket = document.getElementById('ticket-items');
     let spanTotal = document.getElementById('ticket-total');
 
-    // Si aún no tienes estos elementos creados en tu HTML, asegúrate de ponerles estos IDs
     if (!contenedorTicket) return;
 
     contenedorTicket.innerHTML = '';
     let totalFinal = 0;
 
-    carrito.forEach((item, indice) => {
-        let subtotal = item.precio * item.cantidad;
-        totalFinal += subtotal;
+    if (carrito.length === 0) {
+        contenedorTicket.innerHTML = `<p class="text-center text-muted mt-5">El carrito está vacío</p>`;
+    } else {
+        carrito.forEach((item, indice) => {
+            let subtotal = item.precio * item.cantidad;
+            totalFinal += subtotal;
 
-        // Dibuja cada producto dentro del ticket visual
-        let fila = `
-            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+            let fila = `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
                     <div>
                         <h6 class="mb-0">${item.nombre}</h6>
                         <small class="text-muted">$${item.precio} c/u</small>
@@ -53,9 +66,10 @@ function actualizarTicketVenta() {
                         <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${indice})">&times;</button>
                     </div>
                 </div>
-        `;
-        contenedorTicket.innerHTML += fila;
-    });
+            `;
+            contenedorTicket.innerHTML += fila;
+        });
+    }
 
     if (spanTotal) {
         spanTotal.innerText = `$${totalFinal}`;
@@ -64,37 +78,33 @@ function actualizarTicketVenta() {
 
 window.eliminarDelCarrito = function (indice) {
     carrito.splice(indice, 1);
-    actualizarTicketVenta();
+    guardarYActualizar();
 }
 
 window.sumarAlCarrito = function (indice) {
-    // Valida que la cantidad actual no supere el stock disponible del producto
     if (carrito[indice].cantidad < carrito[indice].stock) {
         carrito[indice].cantidad++;
-        actualizarTicketVenta();
+        guardarYActualizar();
     } else {
         alert("Stock insuficiente para " + carrito[indice].nombre);
     }
 }
 
 window.restarAlCarrito = function (indice) {
-    // Si la cantidad es mayor a 1, simplemente resta uno
     if (carrito[indice].cantidad > 1) {
         carrito[indice].cantidad--;
-        actualizarTicketVenta();
+        guardarYActualizar();
     } else {
-        // Si llega a 1 y se vuelve a restar, elimina el producto del carrito
         eliminarDelCarrito(indice);
     }
 }
-
+// !! Esto está mal, el cobro no lo procesamos nosotros, pero despues lo arreglamos......... !!
 window.procesarCobro = function (metodoPagoSeleccionado) {
     if (carrito.length === 0) {
         alert("El carrito está vacío.");
         return;
     }
 
-    // Obtenemos el token CSRF obligatorio de Laravel desde el meta tag del HTML
     let tokenCsrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     fetch('/venta/registrar', {
@@ -112,8 +122,9 @@ window.procesarCobro = function (metodoPagoSeleccionado) {
         .then(data => {
             if (data.success) {
                 alert(data.message);
-                // Limpiamos el carrito local y la interfaz
+                // Limpiamos el carrito local, borramos la caché y actualizamos
                 carrito = [];
+                localStorage.removeItem('carrito');
                 actualizarTicketVenta();
             } else {
                 alert("Error: " + data.message);

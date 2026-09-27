@@ -55,9 +55,13 @@
 
                     <!-- Botonera fija de pago -->
                     <div class="card-footer bg-white p-3">
-                        <div class="d-flex justify-content-between mb-3 fs-5 fw-bold">
+                        <div class="d-flex justify-content-between mb-1 fs-5 fw-bold">
                             <span>Total:</span>
                             <span id="ticket-total">$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 fs-5 fw-bold">
+                            <span>Cliente:</span>
+                            <span id="ticket-total">Papito</span>
                         </div>
                         <button class="btn btn-success btn-lg w-100 fw-bold">Cobrar</button>
                     </div>

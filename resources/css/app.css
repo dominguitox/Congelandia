@@ -1,7 +1,9 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+
 html {
     width: 100vw;
 }
+
 /* --- Sidebar Permanente --- */
 .sidebar {
     position: fixed;
@@ -41,4 +43,9 @@ html {
     background-color: var(--color-navy-dark, #0a192f);
     color: var(--color-ice-hover, #64ffda);
     border-left-color: var(--color-ice-hover, #64ffda);
+}
+
+.link-sidebar-seleccionado {
+    background-color: var(--color-navy-mid, #0a192f);
+    border-left-color: var(--color-ice-hover, #64ffda) !important;
 }
