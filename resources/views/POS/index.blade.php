@@ -68,4 +68,5 @@
     </div>
     @vite(['resources/js/venta.js'])
     @vite(['resources/css/pos.css'])
+
 @endsection
