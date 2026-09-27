@@ -36,6 +36,14 @@ window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDispon
     guardarYActualizar(); // Guarda en caché y actualiza la interfaz
 }
 
+function actualizarBadges() {
+
+    let badgeStock = document.getElementById('ticket-items');
+    let badgeSeleccionado = document.getElementById('ticket-total');
+
+}
+
+
 function actualizarTicketVenta() {
     let contenedorTicket = document.getElementById('ticket-items');
     let spanTotal = document.getElementById('ticket-total');
@@ -74,7 +82,28 @@ function actualizarTicketVenta() {
     if (spanTotal) {
         spanTotal.innerText = `$${totalFinal}`;
     }
+
+    document.querySelectorAll('.producto-card').forEach(card => {
+        let idProd = card.getAttribute('data-id');
+
+        // Capturamos los badges correspondientes a este producto específico
+        let badgeCarrito = document.getElementById('badge-carrito-' + idProd);
+        let badgeStock = document.getElementById('badge-stock-' + idProd);
+
+        if (badgeCarrito && badgeStock) {
+            let stockInicial = parseInt(badgeStock.getAttribute('data-stock-inicial'));
+
+            // Buscamos si este producto está actualmente en el arreglo del carrito
+            let itemEnCarrito = carrito.find(i => i.id === idProd);
+            let cantidadSeleccionada = itemEnCarrito ? itemEnCarrito.cantidad : 0;
+
+            // Actualizamos los textos visuales
+            badgeCarrito.innerText = "En carrito: " + cantidadSeleccionada;
+            badgeStock.innerText = "Stock: " + (stockInicial - cantidadSeleccionada);
+        }
+    });
 }
+
 
 window.eliminarDelCarrito = function (indice) {
     carrito.splice(indice, 1);
@@ -101,37 +130,67 @@ window.restarAlCarrito = function (indice) {
 // !! Esto está mal, el cobro no lo procesamos nosotros, pero despues lo arreglamos......... !!
 window.procesarCobro = function (metodoPagoSeleccionado) {
     if (carrito.length === 0) {
-        alert("El carrito está vacío.");
+        alert("El ticket está vacío. Agrega productos antes de cobrar.");
         return;
     }
 
     let tokenCsrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+    // 1. Capturar el cliente seleccionado en la vista (si existe un select con id "cliente_select")
+    let selectCliente = document.getElementById('cliente_select');
+    let rutClienteSeleccionado = selectCliente ? selectCliente.value : null;
+
+    // Convertir a null si el cajero dejó la opción "Ninguno" por defecto
+    if (rutClienteSeleccionado === "Ninguno" || rutClienteSeleccionado === "") {
+        rutClienteSeleccionado = null;
+    }
+
+    // 2. Calcular el total de la venta sumando cantidad * precio de cada ítem en el carrito
+    let totalCalculado = carrito.reduce((acumulador, item) => {
+        return acumulador + (item.cantidad * item.precio); // Asegúrate de usar el nombre de la llave de precio de tu carrito
+    }, 0);
+
+    // 3. Enviar la petición al backend inmediatamente
     fetch('/venta/registrar', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': tokenCsrf
+            'X-CSRF-TOKEN': tokenCsrf,
+            'Accept': 'application/json' // Obliga a Laravel a devolver JSON incluso en errores
         },
         body: JSON.stringify({
-            carrito: carrito,
-            metodoPago: metodoPagoSeleccionado
+            idTipo: 1, // ID fijo que corresponde a "Venta" en tu tabla de tipos de salida
+            rutCliente: rutClienteSeleccionado,
+            totalVenta: totalCalculado,
+            metodoPago: metodoPagoSeleccionado,
+            productos: carrito
         })
     })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                alert(data.message);
-                // Limpiamos el carrito local, borramos la caché y actualizamos
+            // Validación directa de éxito
+            if (data.success || response.ok) {
+                alert("Venta registrada exitosamente.");
+
+                // Limpieza inmediata del frontend
                 carrito = [];
                 localStorage.removeItem('carrito');
-                actualizarTicketVenta();
+
+                if (typeof actualizarTicketVenta === 'function') {
+                    actualizarTicketVenta();
+                }
+
+                // Opcional: limpiar montos y el selector de cliente en la interfaz
+                if (selectCliente) selectCliente.value = "Ninguno";
+                let inputMonto = document.getElementById('monto_recibido');
+                if (inputMonto) inputMonto.value = "";
+
             } else {
-                alert("Error: " + data.message);
+                alert("Error al registrar: " + (data.message || data.error || "Datos inválidos."));
             }
         })
         .catch(error => {
-            console.error('Error en la petición:', error);
-            alert("Ocurrió un error al procesar el pago.");
+            console.error('Error en la petición AJAX:', error);
+            alert("Ocurrió un error de conexión al intentar guardar la venta en el sistema.");
         });
 }
