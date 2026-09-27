@@ -7,6 +7,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                'resources/js/venta.js',
                 'resources/css/app.css',
                 'resources/css/reportes.css',
                 'resources/js/app.js',

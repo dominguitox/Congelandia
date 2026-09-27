@@ -18,8 +18,11 @@
                     <div class="card-body bg-light">
                         <div class="row">
                             @foreach ($productos as $producto)
-                                <div class="col-md-3 mb-3"> <!-- Ajusta las clases de tu grilla -->
-                                    <div class="card producto-card" data-id="{{ $producto->codigo }}"> <!-- Usa el ID correcto -->
+                                <div class="col-md-3 mb-3"
+                                    onclick="agregarAlCarrito('{{ $producto->codigo }}', '{{ $producto->nombre }}', {{ $producto->precio }}, {{ $producto->stock }})">
+                                    <!-- Ajusta las clases de tu grilla -->
+                                    <div class="card producto-card" data-id="{{ $producto->codigo }}">
+                                        <!-- Usa el ID correcto -->
                                         <div class="card-body">
                                             <h5 class="card-title">{{ $producto->nombre }}</h5>
                                             <p class="card-text text-muted">{{ $producto->categoria }}</p>
@@ -38,7 +41,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Columna Derecha: Boleta / Carrito (Ocupa 4 de 12 columnas) -->
             <div class="col-lg-4 col-md-5">
                 <div class="card shadow-sm border-0 h-100">
@@ -47,7 +49,7 @@
                     </div>
 
                     <!-- Área con scroll para los items del carrito -->
-                    <div class="card-body overflow-auto" style="min-height: 400px; max-height: 60vh;">
+                    <div id="ticket-items" class="card-body overflow-auto" style="min-height: 400px; max-height: 60vh;">
                         <p class="text-center text-muted mt-5">No hay productos en la boleta.</p>
                     </div>
 
@@ -55,7 +57,7 @@
                     <div class="card-footer bg-white p-3">
                         <div class="d-flex justify-content-between mb-3 fs-5 fw-bold">
                             <span>Total:</span>
-                            <span>$0</span>
+                            <span id="ticket-total">$0</span>
                         </div>
                         <button class="btn btn-success btn-lg w-100 fw-bold">Cobrar</button>
                     </div>
@@ -64,4 +66,5 @@
 
         </div>
     </div>
+    @vite(['resources/js/venta.js'])
 @endsection
