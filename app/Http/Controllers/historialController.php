@@ -18,12 +18,10 @@ class historialController extends Controller
 
             // Obtiene los productos de cada venta
             foreach ($salidas as $salida) {
-
                 $salida->detalle = DB::select(
                     'CALL SP_DetalleSalida(?)',
                     [$salida->idSalida]
                 );
-
             }
 
             return view('historial.index', compact('salidas'));

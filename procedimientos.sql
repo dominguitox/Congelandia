@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
 
 
-DROP PROCEDURE IF EXISTS SP_RegistrarSalida_Basica;
+DROP PROCEDURE IF EXISTS SP_RegistrarSalida;
 DROP PROCEDURE IF EXISTS SP_CrearProducto;
 DROP PROCEDURE IF EXISTS SP_ListarProductos;
 DROP PROCEDURE IF EXISTS SP_ListarCategorias;
@@ -13,6 +13,82 @@ DROP PROCEDURE IF EXISTS SP_listarHistorial;
 DROP PROCEDURE IF EXISTS SP_DetalleSalida;
 
 DELIMITER //
+DELIMITER //
+
+DELIMITER //
+
+CREATE PROCEDURE SP_RegistrarVenta(
+	IN p_idTipo INT,
+    IN p_idUsuario INT,
+    IN p_rutCliente VARCHAR(20),
+    IN p_totalVenta DECIMAL(10,2),
+    OUT p_idVenta INT,       -- Parámetro de salida para usarlo en el detalle
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET p_resultado = 0;
+        SET p_mensaje = 'Error al registrar la venta.';
+    END;
+
+    START TRANSACTION;    
+    -- Inserción en la tabla Venta
+	INSERT INTO salida (fecha, idTipo, idUsuario, rutCliente, totalSalida)
+	VALUES (NOW(), p_idTipo, p_idUsuario, p_rutCliente, p_totalVenta);
+    
+    -- Capturar el ID generado para la venta actual
+    SET p_idVenta = LAST_INSERT_ID();
+    SET p_resultado = 1;
+    SET p_mensaje = 'Venta registrada exitosamente.';
+    COMMIT;
+END //
+DELIMITER //
+
+CREATE PROCEDURE SP_RegistrarDetalleVenta(
+    IN p_idVenta INT,
+    IN p_codigoProducto VARCHAR(50),
+    IN p_cantidad INT,
+    IN p_precioCobrado DECIMAL(10,2),
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_stock_actual INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET p_resultado = 0;
+        SET p_mensaje = 'Error al registrar el detalle o actualizar el stock.';
+    END;
+    START TRANSACTION;
+
+    -- Consultar y bloquear temporalmente la fila del producto para asegurar consistencia
+    SELECT stock INTO v_stock_actual 
+    FROM Producto 
+    WHERE codigo = p_codigoProducto FOR UPDATE;
+
+    -- Validar que el stock sea suficiente antes de confirmar, tal como lo exige el sistema de Congelandia
+    IF v_stock_actual >= p_cantidad THEN
+        -- 1. Insertar en la tabla DetalleVenta
+        INSERT INTO DetalleVenta (idVenta, producto_codigo, cantidad, precioCobrado)
+        VALUES (p_idVenta, p_codigoProducto, p_cantidad, p_precioCobrado);
+        -- 2. Descontar el stock automáticamente en la tabla Producto
+        UPDATE Producto 
+        SET stock = stock - p_cantidad 
+        WHERE codigo = p_codigoProducto;
+        SET p_resultado = 1;
+        SET p_mensaje = 'Detalle registrado y stock actualizado con éxito.';
+        COMMIT;
+    ELSE
+        -- Si el stock es insuficiente, se anula la transacción de este detalle
+        ROLLBACK;
+        SET p_resultado = 0;
+        SET p_mensaje = 'Stock insuficiente para confirmar la cantidad solicitada.';
+    END IF;
+END //
 
 CREATE PROCEDURE SP_CrearProducto(
     IN p_codigo VARCHAR(50),
@@ -124,7 +200,8 @@ BEGIN
         (SELECT t.nombre FROM tipo_salida t WHERE idTIpo = s.idTipo) AS tipo,
         (SELECT u.nombre FROM usuario u WHERE idUsuario = s.idUsuario) AS usuario,
         s.rutCliente,
-        s.totalSalida
+        s.totalSalida,
+       (SELECT sum(CANTIDAD) FROM DETALLE_SALIDA WHERE idSalida = s.idSalida) as cantidad
     FROM SALIDA s;
 END //
 
@@ -142,6 +219,7 @@ BEGIN
         ON ds.codigoProducto = p.codigo
     WHERE ds.idSalida = p_idSalida;
 END //
+
 
 
 DELIMITER ;

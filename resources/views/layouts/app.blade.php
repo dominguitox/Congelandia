@@ -4,7 +4,6 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -51,9 +50,7 @@
             <strong>Error:</strong>
 
             {{ session('error') }}
-
         </div>
-
     @endif
 
 
@@ -61,7 +58,6 @@
     {{-- Componentes generales --}}
 
     @include('partials.header')
-
     @include('partials.sidebar')
 
 
@@ -78,10 +74,7 @@
     >
 
         @yield('content')
-
     </main>
-
-
 
     @include('partials.footer')
 
