@@ -30,7 +30,7 @@ CREATE TABLE Usuario (
     nombre VARCHAR(100) NOT NULL,
     contrasena VARCHAR(255) NOT NULL,
     rol VARCHAR(50) NOT NULL,
-    email varchar(100) not null,
+    email varchar(100) not null unique,
     activo BOOLEAN DEFAULT TRUE,
     deleted_at DATETIME NULL DEFAULT NULL
 );
