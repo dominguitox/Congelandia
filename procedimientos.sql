@@ -1,8 +1,11 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
 
-
 DROP PROCEDURE IF EXISTS SP_RegistrarSalida;
+DROP PROCEDURE IF EXISTS SP_RegistrarVenta;
+DROP PROCEDURE IF EXISTS SP_DetalleSalida;
+DROP PROCEDURE IF EXISTS SP_RegistrarDetalleVenta;
+DROP PROCEDURE IF EXISTS SP_DetalleVenta;
 DROP PROCEDURE IF EXISTS SP_CrearProducto;
 DROP PROCEDURE IF EXISTS SP_ListarProductos;
 DROP PROCEDURE IF EXISTS SP_ListarCategorias;
@@ -27,14 +30,9 @@ CREATE PROCEDURE SP_RegistrarVenta(
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
         SET p_resultado = 0;
         SET p_mensaje = 'Error al registrar la venta.';
-    END;
 
-    START TRANSACTION;    
     -- Inserción en la tabla Venta
 	INSERT INTO salida (fecha, idTipo, idUsuario, rutCliente, totalSalida)
 	VALUES (NOW(), p_idTipo, p_idUsuario, p_rutCliente, p_totalVenta);
@@ -43,7 +41,6 @@ BEGIN
     SET p_idVenta = LAST_INSERT_ID();
     SET p_resultado = 1;
     SET p_mensaje = 'Venta registrada exitosamente.';
-    COMMIT;
 END //
 DELIMITER //
 
@@ -57,18 +54,8 @@ CREATE PROCEDURE SP_RegistrarDetalleVenta(
 )
 BEGIN
     DECLARE v_stock_actual INT;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
         SET p_resultado = 0;
         SET p_mensaje = 'Error al registrar el detalle o actualizar el stock.';
-    END;
-    START TRANSACTION;
-
-    -- Consultar y bloquear temporalmente la fila del producto para asegurar consistencia
-    SELECT stock INTO v_stock_actual 
-    FROM Producto 
-    WHERE codigo = p_codigoProducto FOR UPDATE;
 
     -- Validar que el stock sea suficiente antes de confirmar, tal como lo exige el sistema de Congelandia
     IF v_stock_actual >= p_cantidad THEN
@@ -76,15 +63,11 @@ BEGIN
         INSERT INTO DetalleVenta (idVenta, producto_codigo, cantidad, precioCobrado)
         VALUES (p_idVenta, p_codigoProducto, p_cantidad, p_precioCobrado);
         -- 2. Descontar el stock automáticamente en la tabla Producto
-        UPDATE Producto 
-        SET stock = stock - p_cantidad 
-        WHERE codigo = p_codigoProducto;
+		INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
+		VALUES (p_codigo, p_precioVenta, NOW(), NULL);
         SET p_resultado = 1;
         SET p_mensaje = 'Detalle registrado y stock actualizado con éxito.';
-        COMMIT;
     ELSE
-        -- Si el stock es insuficiente, se anula la transacción de este detalle
-        ROLLBACK;
         SET p_resultado = 0;
         SET p_mensaje = 'Stock insuficiente para confirmar la cantidad solicitada.';
     END IF;

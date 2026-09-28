@@ -16,6 +16,8 @@ class PosController extends Controller
             // Traes las categorías para los botones de filtro (Bebestibles, Carnes, etc.)
             $categorias = DB::select('CALL SP_ListarCategorias()');
 
+            //Listar los clientes tambien
+
             // Envías ambas variables a la vista del POS
             return view('pos.index', compact('productos', 'categorias'));
 
@@ -28,6 +30,7 @@ class PosController extends Controller
 
     public function registrarVenta(Request $request)
     {
+
         $request->validate([
             'idTipo' => 'required|integer',
             'rutCliente' => 'nullable|string',
@@ -36,32 +39,42 @@ class PosController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $idUsuario = auth()->user()->id;
-            DB::select('CALL SP_RegistrarVenta(?, ?, ?, ?, @p_idVenta)', [
+            if (!auth()->check()) {
+                return response()->json(['success' => false, 'error' => 'Usuario no autenticado.'], 401);
+            }
+            $idUsuario = auth()->id();
+
+            DB::select('CALL SP_RegistrarVenta(?, ?, ?, ?, @p_idVenta, @p_resultado, @p_mensaje)', [
                 $request->idTipo,
                 $idUsuario,
                 $request->rutCliente,
-                $request->totalVenta
+                $request->totalVenta,
             ]);
 
-            $consulta = DB::select('SELECT @p_idVenta AS idVenta');
+            $consulta = DB::select('SELECT @p_idVenta AS idVenta, @p_resultado AS resultado, @p_mensaje AS mensaje');
             $idVenta = $consulta[0]->idVenta;
             foreach ($request->productos as $producto) {
-                DB::select('CALL SP_RegistrarDetalleVenta(?, ?, ?, ?)', [
+                DB::select('CALL SP_RegistrarDetalleVenta(?, ?, ?, ?, @p_resultado, @p_mensaje)', [
                     $idVenta,
-                    $producto['codigoProducto'],
-                    $producto['productoCantidad'],
-                    $producto['productoPrecioCobrado']
+                    $producto['id'],
+                    $producto['cantidad'],
+                    $producto['precio']
                 ]);
             }
             DB::commit();
-            return redirect()->back()->with('success', 'Venta registrada e ingresada correctamente.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Venta registrada e ingresada correctamente.'
+            ]);
 
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error al registrar la venta: ' . $e->getMessage());
+            // En caso de error, success es false y se añade el código de estado HTTP 500
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al registrar la venta: ' . $e->getMessage()
+            ], 500);
         }
     }
-
 
 }
