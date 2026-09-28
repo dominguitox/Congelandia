@@ -104,12 +104,12 @@ INSERT INTO Metodo_Pago (nombre) VALUES
 ('Fiado / Pendiente');
 
 -- 14. Pagos de Salida
-INSERT INTO Pago_Salida (idSalida, idMetodo, montoPagado) VALUES 
-(1, 1, 7000.00),
-(2, 2, 4000.00),
-(3, 5, 6000.00),
-(4, 1, 0.00),
-(5, 1, 1200.00);
+INSERT INTO Pago_Salida (idSalida, idMetodo, montoPagado, fechaPago) VALUES 
+(1, 1, 7000.00, '2026-07-06'),
+(2, 2, 4000.00, '2026-04-09'),
+(3, 5, 6000.00, '2026-08-14'),
+(4, 1, 0.00, '2026-09-16'),
+(5, 1, 1200.00, '2026-09-20');
 
 -- 15. Tipos de Devolución
 INSERT INTO Tipo_Devolucion (nombre, reintegraStock) VALUES 

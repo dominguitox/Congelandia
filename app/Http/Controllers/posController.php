@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
+use App\Models\Cliente;
+
+
 class PosController extends Controller
 {
     public function index()
@@ -17,14 +20,14 @@ class PosController extends Controller
             $categorias = DB::select('CALL SP_ListarCategorias()');
 
             //Listar los clientes tambien
+            $clientes = Cliente::whereNull('deleted_at')->get();
 
-            // Envías ambas variables a la vista del POS
-            return view('pos.index', compact('productos', 'categorias'));
+            // Enviar las variables a la vista del POS
+            return view('pos.index', compact('productos', 'categorias', 'clientes'));
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al cargar el POS: ' . $e->getMessage());
         }
-
 
     }
 
@@ -52,13 +55,13 @@ class PosController extends Controller
             ]);
 
             $consulta = DB::select('SELECT @p_idVenta AS idVenta, @p_resultado AS resultado, @p_mensaje AS mensaje');
-            $idVenta = $consulta[0]->idVenta;
+            $idSalida = $consulta[0]->idVenta;
             foreach ($request->productos as $producto) {
-                DB::select('CALL SP_RegistrarDetalleVenta(?, ?, ?, ?, @p_resultado, @p_mensaje)', [
-                    $idVenta,
-                    $producto['id'],
-                    $producto['cantidad'],
-                    $producto['precio']
+                DB::table('Detalle_Salida')->insert([
+                    'idSalida' => $idSalida,
+                    'codigoProducto' => $producto['id'],
+                    'cantidad' => $producto['cantidad'],
+                    'precioCobrado' => $producto['precio']
                 ]);
             }
             DB::commit();

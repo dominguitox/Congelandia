@@ -68,7 +68,15 @@
                         </div>
                         <div class="d-flex justify-content-between mb-3 fs-5 fw-bold">
                             <span>Cliente:</span>
-                            <span id="ticket-total">Papito</span>
+                            <select id="cliente_select" class="form-control">
+                                <option value="Ninguno">Ninguno</option>
+                                @foreach($clientes as $cliente)
+                                    <!-- Guardamos el RUT como value para enviarlo al JS y backend -->
+                                    <option value="{{ $cliente->rutCliente }}">
+                                        {{ $cliente->nombre }} <!-- Muestra el nombre en el desplegable -->
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <button class="btn btn-success btn-lg w-100 fw-bold" onclick="registrarVenta()">Cobrar</button>
                     </div>
