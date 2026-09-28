@@ -150,6 +150,7 @@ CREATE TABLE Pago_Salida (
     idSalida INT NOT NULL,
     idMetodo INT NOT NULL,
     montoPagado DECIMAL(12, 2) NOT NULL,
+    fechaPago date not null,
     CONSTRAINT fk_pago_salida FOREIGN KEY (idSalida) REFERENCES Salida(idSalida) ON DELETE CASCADE,
     CONSTRAINT fk_pago_metodo FOREIGN KEY (idMetodo) REFERENCES Metodo_Pago(idMetodo)
 );

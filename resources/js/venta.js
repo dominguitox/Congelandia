@@ -36,13 +36,6 @@ window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDispon
     guardarYActualizar(); // Guarda en caché y actualiza la interfaz
 }
 
-function actualizarBadges() {
-
-    let badgeStock = document.getElementById('ticket-items');
-    let badgeSeleccionado = document.getElementById('ticket-total');
-
-}
-
 
 function actualizarTicketVenta() {
     let contenedorTicket = document.getElementById('ticket-items');

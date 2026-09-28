@@ -53,24 +53,12 @@ CREATE PROCEDURE SP_RegistrarDetalleVenta(
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    DECLARE v_stock_actual INT;
-        SET p_resultado = 0;
-        SET p_mensaje = 'Error al registrar el detalle o actualizar el stock.';
+    -- Insertar directamente en la tabla de detalle (ajusta la llave foránea idVenta/idSalida según tu tabla)
+    INSERT INTO Detalle_Salida (idVenta, codigoProducto, cantidad, precioCobrado)
+    VALUES (p_idVenta, p_codigoProducto, p_cantidad, p_precioCobrado);
 
-    -- Validar que el stock sea suficiente antes de confirmar, tal como lo exige el sistema de Congelandia
-    IF v_stock_actual >= p_cantidad THEN
-        -- 1. Insertar en la tabla DetalleVenta
-        INSERT INTO DetalleVenta (idVenta, producto_codigo, cantidad, precioCobrado)
-        VALUES (p_idVenta, p_codigoProducto, p_cantidad, p_precioCobrado);
-        -- 2. Descontar el stock automáticamente en la tabla Producto
-		INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
-		VALUES (p_codigo, p_precioVenta, NOW(), NULL);
-        SET p_resultado = 1;
-        SET p_mensaje = 'Detalle registrado y stock actualizado con éxito.';
-    ELSE
-        SET p_resultado = 0;
-        SET p_mensaje = 'Stock insuficiente para confirmar la cantidad solicitada.';
-    END IF;
+    SET p_resultado = 1;
+    SET p_mensaje = 'Detalle registrado con éxito.';
 END //
 
 CREATE PROCEDURE SP_CrearProducto(

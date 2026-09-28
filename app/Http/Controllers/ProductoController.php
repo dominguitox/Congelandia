@@ -1,17 +1,30 @@
 <?php
-
+//El controlador de la tabla Producto. 
+// Tiene los metodos: 
+// Crear, 
 namespace App\Http\Controllers;
 
+use App\Models\Producto;
+use App\Models\ListaPrecio;
+use App\Models\Ingreso;
+use App\Models\DetalleIngreso;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Exception;
+
+use Illuminate\Support\Facades\DB;
+
 
 class ProductoController extends Controller
 {
+    public function index()
+    {
+        $productos = Producto::whereNull('deleted_at')->get();
+
+    }
     public function crearProducto(Request $request)
     {
         $request->validate([
-
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
@@ -24,27 +37,44 @@ class ProductoController extends Controller
         ]);
 
         try {
-            $idUsuario = auth()->user()->id;
-            DB::statement('CALL SP_CrearProducto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-                $request->codigo,
-                $request->nombre,
-                $request->descripcion,
-                $request->idCategoria,
-                $request->precioVenta,
-                $request->idProveedor,
-                $idUsuario,
-                $request->stockInicial,
-                $request->precioCompra,
-                $request->fechaVencimiento
+            DB::transaction(function () use ($request) {
 
-            ]);
+                $idUsuario = auth()->user()->idUsuario;
+                Producto::create([
+                    'codigo' => $request->codigo,
+                    'nombre' => $request->nombre,
+                    'descripcion' => $request->descripcion,
+                    'idCategoria' => $request->idCategoria,
+                ]);
+                ListaPrecio::create([
+                    'codigoProducto' => $request->codigo,
+                    'precioVenta' => $request->precioVenta,
+                    'fechaInicio' => now(),
+                ]);
+                if ($request->stockInicial > 0) {
+                    $totalCompra = $request->precioCompra * $request->stockInicial;
+                    $ingreso = Ingreso::create([
+                        'fecha' => now(),
+                        'idProveedor' => $request->idProveedor,
+                        'idUsuario' => $idUsuario,
+                        'totalCompra' => $totalCompra,
+                    ]);
+                    DetalleIngreso::create([
+                        'idIngreso' => $ingreso->idIngreso,
+                        'codigoProducto' => $request->codigo,
+                        'cantidad' => $request->stockInicial,
+                        'precioCompra' => $request->precioCompra,
+                        'fechaVencimiento' => $request->fechaVencimiento
+                    ]);
+                }
 
+            });
             return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
-        } catch (Exception $e) {
-            dd($e->getMessage());
-            return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
 
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
         }
+
     }
     public function listarProductos(Request $request)
     {
