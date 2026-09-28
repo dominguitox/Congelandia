@@ -1,14 +1,5 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
-select * from salida;
-
-
-select * from pago_salida;
-
-
-select * from cliente;
-
-select * from detalle_salida;
 
 -- 1. Desactivar revisión de llaves foráneas para borrar sin errores de dependencia
 SET FOREIGN_KEY_CHECKS = 0;
