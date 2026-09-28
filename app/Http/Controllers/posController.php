@@ -16,6 +16,8 @@ class PosController extends Controller
             // Traes las categorías para los botones de filtro (Bebestibles, Carnes, etc.)
             $categorias = DB::select('CALL SP_ListarCategorias()');
 
+            //Listar los clientes tambien
+
             // Envías ambas variables a la vista del POS
             return view('pos.index', compact('productos', 'categorias'));
 
