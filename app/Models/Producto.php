@@ -21,6 +21,7 @@ class Producto extends Model
         'descripcion',
         'idCategoria'
     ];
+    
 
 
 }

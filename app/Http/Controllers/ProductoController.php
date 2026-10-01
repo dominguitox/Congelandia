@@ -5,10 +5,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Categoria;
 use App\Models\ListaPrecio;
 use App\Models\Ingreso;
 use App\Models\DetalleIngreso;
 
+use App\Models\Proveedor;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -79,18 +81,49 @@ class ProductoController extends Controller
     public function listarProductos(Request $request)
     {
         try {
-            $productos = DB::select('CALL SP_ListarProductos()');
-            $proveedores = DB::select('CALL SP_ListarProveedores()');
-            $categorias = DB::select('CALL SP_ListarCategorias()');
+            $productos = Producto::select(
+                'Producto.codigo',
+                'Producto.nombre',
+                'Categoria.nombre as categoria'
+            )
+                ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
+                ->addSelect([
+                    'precio' => DB::table('Lista_Precio')
+                        ->select('precioVenta')
+                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->whereNull('fechaFin')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'costo' => DB::table('Detalle_Ingreso')
+                        ->select('Detalle_Ingreso.precioCompra')
+                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
+                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->orderByDesc('Ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'proveedor' => DB::table('Detalle_Ingreso')
+                        ->select('Proveedor.nombre')
+                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
+                        ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
+                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->orderByDesc('Ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
+                ->get();
 
+            $proveedores = Proveedor::whereNull('deleted_at')->get();
+            $categorias = Categoria::whereNull('deleted_at')->get();
             return view('inventario.index', compact('productos', 'proveedores', 'categorias'));
+
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
 
-    // 2. Renombramos a 'show' y pasamos el $codigo como string (el código de barras no siempre es un número entero)
     public function show(string $codigo)
     {
         try {
