@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\historialController;
-use App\Http\Controllers\ProveedorController;
-use App\Models\Proveedor;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
@@ -19,7 +17,6 @@ use App\Http\Middleware\CheckRole;
 // RUTAS DE ACCESO
 // =========================================================
 
-// Login
 Route::view('/login', 'auth.login')
     ->middleware('guest')
     ->name('login');
@@ -33,7 +30,6 @@ Route::post('/login', Login::class)
 // =========================================================
 
 Route::middleware('auth')->group(function () {
-
 
     // =====================================================
     // DASHBOARD
@@ -66,7 +62,6 @@ Route::middleware('auth')->group(function () {
         [ProductoController::class, 'listarProductos']
     )->name('inventario.index');
 
-
     Route::get(
         '/inventario/{codigo}',
         [ProductoController::class, 'show']
@@ -81,6 +76,11 @@ Route::middleware('auth')->group(function () {
         '/pos',
         [PosController::class, 'index']
     )->name('pos.index');
+
+    Route::post(
+        '/venta/registrar',
+        [PosController::class, 'registrarVenta']
+    )->name('venta.registrar');
 
 
     // =====================================================

@@ -1,0 +1,7 @@
+.card.producto-card:hover {
+  background: #e2ecfa;
+  box-shadow: 1px 1px 0.5px #999;
+}
+.card.producto-card:active {
+  background-color: #bbd4f8;
+}

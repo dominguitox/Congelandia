@@ -1,61 +1,104 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
-DELIMITER //
-DROP PROCEDURE SP_RegistrarSalida_Basica;
-DROP PROCEDURE SP_CrearProducto;
-DROP PROCEDURE SP_ListarProductos;
-DROP PROCEDURE SP_ListarProveedores;
-sELECT * FROM Lista_Precio 
 
+DROP PROCEDURE IF EXISTS SP_RegistrarSalida;
+DROP PROCEDURE IF EXISTS SP_RegistrarVenta;
+DROP PROCEDURE IF EXISTS SP_DetalleSalida;
+DROP PROCEDURE IF EXISTS SP_RegistrarDetalleVenta;
+DROP PROCEDURE IF EXISTS SP_DetalleVenta;
+DROP PROCEDURE IF EXISTS SP_CrearProducto;
+DROP PROCEDURE IF EXISTS SP_ListarProductos;
+DROP PROCEDURE IF EXISTS SP_ListarCategorias;
+DROP PROCEDURE IF EXISTS SP_ObtenerProductoPorId;
+DROP PROCEDURE IF EXISTS SP_ListarProveedores;
+DROP PROCEDURE IF EXISTS SP_listarSalidas;
+DROP PROCEDURE IF EXISTS SP_listarHistorial;
+DROP PROCEDURE IF EXISTS SP_DetalleSalida;
 
 DELIMITER //
+DELIMITER //
+
+DELIMITER //
+
+CREATE PROCEDURE SP_RegistrarVenta(
+	IN p_idTipo INT,
+    IN p_idUsuario INT,
+    IN p_rutCliente VARCHAR(20),
+    IN p_totalVenta DECIMAL(10,2),
+    OUT p_idVenta INT,       -- Parámetro de salida para usarlo en el detalle
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+        SET p_resultado = 0;
+        SET p_mensaje = 'Error al registrar la venta.';
+
+    -- Inserción en la tabla Venta
+	INSERT INTO salida (fecha, idTipo, idUsuario, rutCliente, totalSalida)
+	VALUES (NOW(), p_idTipo, p_idUsuario, p_rutCliente, p_totalVenta);
+    
+    -- Capturar el ID generado para la venta actual
+    SET p_idVenta = LAST_INSERT_ID();
+    SET p_resultado = 1;
+    SET p_mensaje = 'Venta registrada exitosamente.';
+END //
+DELIMITER //
+
+CREATE PROCEDURE SP_RegistrarDetalleVenta(
+    IN p_idVenta INT,
+    IN p_codigoProducto VARCHAR(50),
+    IN p_cantidad INT,
+    IN p_precioCobrado DECIMAL(10,2),
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    -- Insertar directamente en la tabla de detalle (ajusta la llave foránea idVenta/idSalida según tu tabla)
+    INSERT INTO Detalle_Salida (idVenta, codigoProducto, cantidad, precioCobrado)
+    VALUES (p_idVenta, p_codigoProducto, p_cantidad, p_precioCobrado);
+
+    SET p_resultado = 1;
+    SET p_mensaje = 'Detalle registrado con éxito.';
+END //
+
 CREATE PROCEDURE SP_CrearProducto(
-    -- 1. Datos del Catálogo (Tabla Producto y Categoria)
     IN p_codigo VARCHAR(50),
     IN p_nombre VARCHAR(150),
     IN p_descripcion TEXT,
     IN p_idCategoria INT,
-    -- 2. Dato de Venta (Tabla Lista_Precio)
     IN p_precioVenta INT,
-    -- 3. Datos de Abastecimiento Inicial (Tablas Ingreso y Detalle_Ingreso)
     IN p_idProveedor INT,
-    IN p_idUsuario INT, -- El ID del trabajador/jefe que está creando el producto
+    IN p_idUsuario INT,
     IN p_stockInicial INT,
     IN p_precioCompra DECIMAL(10,2),
     IN p_fechaVencimiento DATE
 )
 BEGIN
-    -- Variable para guardar el ID del ingreso generado
     DECLARE v_idIngreso INT;
-    -- Manejador de errores: Si algo falla, deshace todo (Rollback) para no dejar datos huérfanos
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
-    -- Iniciar la transacción
     START TRANSACTION;
-    -- PASO 1: Registrar el producto base en el catálogo
+    
     INSERT INTO Producto (codigo, nombre, descripcion, idCategoria)
     VALUES (p_codigo, p_nombre, p_descripcion, p_idCategoria);
-    -- PASO 2: Registrar el precio de venta actual vigente
+    
     INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
     VALUES (p_codigo, p_precioVenta, NOW(), NULL);
-    -- PASO 3: Si se ingresó un stock inicial mayor a 0, registrar automáticamente la compra (Ingreso)
+    
     IF p_stockInicial > 0 THEN
-        -- Crear la cabecera del ingreso
         INSERT INTO Ingreso (fecha, idProveedor, idUsuario, totalCompra)
         VALUES (NOW(), p_idProveedor, p_idUsuario, (p_precioCompra * p_stockInicial));
-        -- Capturar el ID del ingreso recién creado
+        
         SET v_idIngreso = LAST_INSERT_ID();
-        -- Crear el detalle del ingreso con el costo y vencimiento de este lote
+        
         INSERT INTO Detalle_Ingreso (idIngreso, codigoProducto, cantidad, precioCompra, fechaVencimiento)
         VALUES (v_idIngreso, p_codigo, p_stockInicial, p_precioCompra, p_fechaVencimiento);
     END IF;
-    -- Confirmar todos los cambios
     COMMIT;
 END //
-DELIMITER //
 
 CREATE PROCEDURE SP_ListarProductos()
 BEGIN
@@ -63,26 +106,22 @@ BEGIN
         p.codigo, 
         p.nombre, 
         c.nombre AS categoria,
-        -- 1. Obtener el precio de venta actual (el que no tiene fecha de fin)
         (SELECT precioVenta FROM Lista_Precio WHERE codigoProducto = p.codigo AND fechaFin IS NULL LIMIT 1) AS precio,
-        -- 2. Obtener el último costo de compra desde el historial de ingresos
         (SELECT di.precioCompra FROM Detalle_Ingreso di 
-			JOIN Ingreso i ON di.idIngreso = i.idIngreso 
+            JOIN Ingreso i ON di.idIngreso = i.idIngreso 
          WHERE di.codigoProducto = p.codigo 
          ORDER BY i.fecha DESC LIMIT 1) AS costo,
-        -- 3. Obtener el proveedor al que se le hizo la última compra de este producto
         (SELECT prov.nombre FROM Detalle_Ingreso di 
-			JOIN Ingreso i ON di.idIngreso = i.idIngreso 
-			JOIN Proveedor prov ON i.idProveedor = prov.idProveedor
+            JOIN Ingreso i ON di.idIngreso = i.idIngreso 
+            JOIN Proveedor prov ON i.idProveedor = prov.idProveedor
          WHERE di.codigoProducto = p.codigo 
          ORDER BY i.fecha DESC LIMIT 1) AS proveedor,
-        -- 4. Calcular el stock real (Suma de todo lo que entró - Suma de todo lo que salió)
         (IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = p.codigo), 0) 
         - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = p.codigo), 0)) AS stock
     FROM Producto p
     LEFT JOIN Categoria c ON p.idCategoria = c.idCategoria;
 END //
-DELIMITER //
+
 CREATE PROCEDURE SP_ObtenerProductoPorId(
     IN p_codigoBuscado VARCHAR(50)
 )
@@ -91,83 +130,67 @@ BEGIN
         p.codigo, 
         p.nombre, 
         c.nombre AS categoria,
-        -- 1. Obtener el precio de venta actual (el que no tiene fecha de fin)
         (SELECT precioVenta FROM Lista_Precio WHERE codigoProducto = p.codigo AND fechaFin IS NULL LIMIT 1) AS precio,
-        -- 2. Obtener el último costo de compra desde el historial de ingresos
         (SELECT di.precioCompra FROM Detalle_Ingreso di 
          JOIN Ingreso i ON di.idIngreso = i.idIngreso 
          WHERE di.codigoProducto = p.codigo 
          ORDER BY i.fecha DESC LIMIT 1) AS costo,
-        -- 3. Obtener el proveedor al que se le hizo la última compra de este producto
         (SELECT prov.nombre FROM Detalle_Ingreso di 
          JOIN Ingreso i ON di.idIngreso = i.idIngreso 
          JOIN Proveedor prov ON i.idProveedor = prov.idProveedor
          WHERE di.codigoProducto = p.codigo 
          ORDER BY i.fecha DESC LIMIT 1) AS proveedor,
-        -- 4. Calcular el stock real (Suma de todo lo que entró - Suma de todo lo que salió)
         (IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = p.codigo), 0) 
         - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = p.codigo), 0)
         ) AS stock
     FROM Producto p
     LEFT JOIN Categoria c ON p.idCategoria = c.idCategoria
-    -- Filtramos específicamente por el código ingresado
     WHERE p.codigo = p_codigoBuscado; 
 END //
-DELIMITER //
 
-
-SELECT * FROM PROVEEDOR;
-DELIMITER //
 CREATE PROCEDURE SP_listarProveedores()
 BEGIN
-select * from proveedor;
+    SELECT * FROM proveedor;
 END //
 
-DELIMITER //
 CREATE PROCEDURE SP_listarCategorias()
 BEGIN
-select * from categoria;
+    SELECT * FROM categoria;
 END //
-DELIMITER //
 
-DELIMITER //
 CREATE PROCEDURE SP_listarHistorial()
-select * from salida;
+BEGIN
+    SELECT * FROM salida;
+END //
 
-DELIMITER //
-DROP PROCEDURE SP_listarSalidas;
 CREATE PROCEDURE SP_listarSalidas()
 BEGIN
-SELECT 
-	s.idSalida,
-    UNIX_TIMESTAMP(fecha) as fecha,
-	(select t.nombre from tipo_salida t where idTIpo = s.idTipo) as tipo,
-    (select u.nombre from usuario u where idUsuario = s.idUsuario) as usuario,
-    s.rutCliente,
-    s.totalSalida
+    SELECT 
+        s.idSalida,
+        s.fecha,
+        (SELECT t.nombre FROM tipo_salida t WHERE idTIpo = s.idTipo) AS tipo,
+        (SELECT u.nombre FROM usuario u WHERE idUsuario = s.idUsuario) AS usuario,
+        s.rutCliente,
+        s.totalSalida,
+       (SELECT sum(CANTIDAD) FROM DETALLE_SALIDA WHERE idSalida = s.idSalida) as cantidad
     FROM SALIDA s;
 END //
-call SP_ListarSalidas;
-DELIMITER //
 
-DELIMITER //
-select * from salida;
-select * from detalle_salida;
-select * from tipo_salida;
-
-DELIMITER ;
-
-SELECT * FROM categoria;
-
-call SP_ObtenerProductoPorId('PROD-001');
-call SP_ObtenerProductoPorId('2323');
-call SP_listarSalidas;
-
-
-SELECT * FROM PRODUCTO;
-
-SELECT * FROM USUARIOS;
+CREATE PROCEDURE SP_DetalleSalida(
+    IN p_idSalida INT
+)
+BEGIN
+    SELECT
+        p.nombre AS producto,
+        ds.cantidad,
+        ds.precioCobrado AS subtotal,
+        (ds.precioCobrado / ds.cantidad) AS precioUnitario
+    FROM Detalle_Salida ds
+    INNER JOIN Producto p
+        ON ds.codigoProducto = p.codigo
+    WHERE ds.idSalida = p_idSalida;
+END //
 
 
-DELIMITER ;
+
 DELIMITER ;

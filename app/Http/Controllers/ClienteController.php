@@ -7,7 +7,6 @@ use App\Models\Salida;
 use App\Models\PagoSalida;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
@@ -23,9 +22,7 @@ class ClienteController extends Controller
         $clientes = Cliente::whereNull('deleted_at')->get();
 
         $clientesDeudores = collect();
-
         $clientesPagadosRecientes = collect();
-
         $deudaTotal = 0;
 
         foreach ($clientes as $cliente) {
@@ -44,7 +41,6 @@ class ClienteController extends Controller
             $totalPagado = 0;
 
             foreach ($ventas as $venta) {
-
                 $totalPagado += $venta->pagos
                     ->sum('montoPagado');
             }
@@ -116,7 +112,6 @@ class ClienteController extends Controller
 
         ]);
 
-
         Cliente::create([
 
             'rutCliente' => $request->rutCliente,
@@ -128,7 +123,6 @@ class ClienteController extends Controller
             'saldoDeuda' => 0
 
         ]);
-
 
         return redirect()
             ->route('clientes.index')
@@ -147,24 +141,12 @@ class ClienteController extends Controller
 
     public function update(Request $request, $rutCliente)
     {
-        /*
-         * Buscar solamente clientes activos.
-         */
-
+        // Buscar solamente clientes activos
         $cliente = Cliente::where('rutCliente', $rutCliente)
             ->whereNull('deleted_at')
             ->firstOrFail();
 
-
-        /*
-         * Validar los datos.
-         *
-         * El RUT no se modifica.
-         * Solamente se permite cambiar:
-         * - nombre
-         * - teléfono
-         */
-
+        // El RUT no se modifica
         $request->validate([
 
             'nombre' => [
@@ -181,17 +163,11 @@ class ClienteController extends Controller
 
         ]);
 
-
-        /*
-         * Actualizar información del cliente.
-         */
-
+        // Actualizar información
         $cliente->nombre = $request->nombre;
-
         $cliente->telefono = $request->telefono;
 
         $cliente->save();
-
 
         return redirect()
             ->route('clientes.index')
@@ -214,16 +190,10 @@ class ClienteController extends Controller
             ->whereNull('deleted_at')
             ->firstOrFail();
 
-
-        /*
-         * Obtener solamente las salidas cuyo tipo sea Venta.
-         */
-
+        // Obtener solamente las ventas
         $ventas = $cliente->salidas()
             ->whereHas('tipo', function ($query) {
-
                 $query->where('nombre', 'Venta');
-
             })
             ->with([
                 'pagos',
@@ -232,22 +202,18 @@ class ClienteController extends Controller
             ->orderBy('fecha', 'desc')
             ->get();
 
-
-        /*
-         * Preparar información para JavaScript.
-         */
-
+        // Preparar información para JavaScript
         $historial = $ventas->map(function ($venta) {
 
-            // Suma de todos los pagos realizados
-            $totalPagado = $venta->pagos->sum('montoPagado');
+            // Total pagado
+            $totalPagado = $venta->pagos
+                ->sum('montoPagado');
 
             // Saldo pendiente
             $saldoPendiente = max(
                 0,
                 $venta->totalSalida - $totalPagado
             );
-
 
             // Estado de la venta
             if ($saldoPendiente <= 0) {
@@ -262,7 +228,6 @@ class ClienteController extends Controller
 
                 $estado = 'Pendiente';
             }
-
 
             return [
 
@@ -282,7 +247,6 @@ class ClienteController extends Controller
 
             ];
         });
-
 
         return response()->json([
 
@@ -309,10 +273,7 @@ class ClienteController extends Controller
 
     public function registrarPago(Request $request, $idSalida)
     {
-        /*
-         * Validar datos recibidos.
-         */
-
+        // Validar datos
         $request->validate([
 
             'montoPagado' => [
@@ -329,12 +290,7 @@ class ClienteController extends Controller
 
         ]);
 
-
-        /*
-         * Buscar la venta y registrar el pago
-         * dentro de una transacción.
-         */
-
+        // Registrar dentro de una transacción
         DB::transaction(function () use ($request, $idSalida) {
 
             $venta = Salida::where('idSalida', $idSalida)
@@ -344,16 +300,13 @@ class ClienteController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
-
             // Total pagado anteriormente
             $totalPagado = $venta->pagos()
                 ->sum('montoPagado');
 
-
             // Saldo pendiente
             $saldoPendiente =
                 $venta->totalSalida - $totalPagado;
-
 
             // Venta ya pagada
             if ($saldoPendiente <= 0) {
@@ -364,10 +317,8 @@ class ClienteController extends Controller
                 );
             }
 
-
             // Monto del nuevo pago
             $montoPago = (float) $request->montoPagado;
-
 
             // No permitir pagar más que el saldo
             if ($montoPago > $saldoPendiente) {
@@ -377,7 +328,6 @@ class ClienteController extends Controller
                     'El monto del pago no puede superar el saldo pendiente de la venta.'
                 );
             }
-
 
             // Registrar pago
             PagoSalida::create([
@@ -390,7 +340,6 @@ class ClienteController extends Controller
 
             ]);
         });
-
 
         return redirect()
             ->route('clientes.index')
@@ -409,14 +358,10 @@ class ClienteController extends Controller
 
     public function destroy($rutCliente)
     {
-        /*
-         * Buscar solamente clientes activos.
-         */
-
+        // Buscar solamente clientes activos
         $cliente = Cliente::where('rutCliente', $rutCliente)
             ->whereNull('deleted_at')
             ->firstOrFail();
-
 
         /*
          * Eliminación lógica.
@@ -428,7 +373,6 @@ class ClienteController extends Controller
         $cliente->deleted_at = now();
 
         $cliente->save();
-
 
         return redirect()
             ->route('clientes.index')
