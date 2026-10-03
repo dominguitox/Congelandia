@@ -1,58 +1,167 @@
 <?php
 
 use App\Http\Controllers\historialController;
-use App\Http\Controllers\ProveedorController;
-use App\Models\Proveedor;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
+
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
 
 use App\Http\Middleware\CheckRole;
 
 
-// Rutas de acceso (públicas para no logueados)
-Route::view('/login', 'auth.login')->middleware('guest')->name('login');
-Route::post('/login', Login::class)->middleware('guest');
+// =========================================================
+// RUTAS DE ACCESO
+// =========================================================
 
-// Rutas del sistema (protegidas por sesión)
+Route::view('/login', 'auth.login')
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/login', Login::class)
+    ->middleware('guest');
+
+
+// =========================================================
+// RUTAS DEL SISTEMA
+// =========================================================
+
 Route::middleware('auth')->group(function () {
+
+    // =====================================================
+    // DASHBOARD
+    // =====================================================
+
     Route::get('/', function () {
         return view('dashboard.index');
     });
+
     Route::get('/dashboard', function () {
         return view('dashboard.index');
     });
+
+
+    // =====================================================
+    // REPORTES
+    // =====================================================
 
     Route::get('/reportes', function () {
         return view('reportes.index');
     });
 
-    // Rutas de Inventario
-    Route::get('/inventario', [ProductoController::class, 'listarProductos'])->name('inventario.index');
 
-    Route::get('/inventario/{codigo}', [ProductoController::class, 'show'])->name('inventario.show');
+    // =====================================================
+    // INVENTARIO
+    // =====================================================
 
-    //Rutas del pos
-    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-    Route::post('/venta/registrar', [posController::class, 'registrarVenta'])->name('venta.registrar');
+    Route::get(
+        '/inventario',
+        [ProductoController::class, 'listarProductos']
+    )->name('inventario.index');
 
-    //Rutas del historial
-    Route::get('/historial', [historialController::class, 'index'])->name('historial.index');
+    Route::get(
+        '/inventario/{codigo}',
+        [ProductoController::class, 'show']
+    )->name('inventario.show');
 
-    // Rutas de clientes
-    Route::get('/clientes', [ClienteController::class, 'index'])
-    ->name('clientes.index');
-    
-    Route::post('/clientes', [ClienteController::class, 'store'])
-    ->name('clientes.store');
-    // Cierre de sesión
-    Route::post('/logout', Logout::class)->name('logout');
+
+    // =====================================================
+    // POS
+    // =====================================================
+
+    Route::get(
+        '/pos',
+        [PosController::class, 'index']
+    )->name('pos.index');
+
+    Route::post(
+        '/venta/registrar',
+        [PosController::class, 'registrarVenta']
+    )->name('venta.registrar');
+
+
+    // =====================================================
+    // HISTORIAL GENERAL
+    // =====================================================
+
+    Route::get(
+        '/historial',
+        [historialController::class, 'index']
+    )->name('historial.index');
+
+
+    // =====================================================
+    // CLIENTES
+    // =====================================================
+
+    // Página principal
+    Route::get(
+        '/clientes',
+        [ClienteController::class, 'index']
+    )->name('clientes.index');
+
+
+    // Crear cliente
+    Route::post(
+        '/clientes',
+        [ClienteController::class, 'store']
+    )->name('clientes.store');
+
+
+    // Historial de un cliente
+    Route::get(
+        '/clientes/{rutCliente}/historial',
+        [ClienteController::class, 'historial']
+    )->name('clientes.historial');
+
+
+    // Registrar pago de una venta
+    Route::post(
+        '/clientes/venta/{idSalida}/pago',
+        [ClienteController::class, 'registrarPago']
+    )->name('clientes.registrarPago');
+
+
+    // Editar cliente
+    Route::put(
+        '/clientes/{rutCliente}',
+        [ClienteController::class, 'update']
+    )->name('clientes.update');
+
+
+    // Eliminar cliente
+    Route::delete(
+        '/clientes/{rutCliente}',
+        [ClienteController::class, 'destroy']
+    )->name('clientes.destroy');
+
+
+    // =====================================================
+    // CIERRE DE SESIÓN
+    // =====================================================
+
+    Route::post(
+        '/logout',
+        Logout::class
+    )->name('logout');
 });
 
-// Rutas específicas protegidas por autenticación y rol de Administrador
-Route::middleware(['auth', CheckRole::class . ':Administrador'])->group(function () {
-    Route::post('/productos/guardar', [ProductoController::class, 'crearProducto'])->name('productos.crearProducto');
+
+// =========================================================
+// RUTAS ADMINISTRADOR
+// =========================================================
+
+Route::middleware([
+    'auth',
+    CheckRole::class . ':Administrador'
+])->group(function () {
+
+    Route::post(
+        '/productos/guardar',
+        [ProductoController::class, 'crearProducto']
+    )->name('productos.crearProducto');
+
 });
