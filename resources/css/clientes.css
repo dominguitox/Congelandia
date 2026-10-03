@@ -1,625 +1,1144 @@
-/* ================================
+/* =========================================================
    CONTENEDOR GENERAL
-================================ */
+   ========================================================= */
 
 .clientes-container {
-
     padding: 28px;
-
     background: #eefaff;
-
     min-height: calc(100vh - 60px);
-
     color: #102b42;
-
+    box-sizing: border-box;
 }
 
 
-
-/* ================================
+/* =========================================================
    HEADER
-================================ */
+   ========================================================= */
 
 .clientes-header h2 {
-
     font-size: 34px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #102b42;
+    letter-spacing: -0.5px;
+}
+
+.clientes-header p {
+    color: #47738c;
+    font-size: 16px;
+    margin: 0 0 35px 0;
+}
+
+
+/* =========================================================
+   TARJETAS SUPERIORES
+   ========================================================= */
+
+.clientes-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.cliente-card {
+    background: #ffffff;
+    min-height: 120px;
+
+    border-radius: 20px;
+    padding: 25px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+
+    box-sizing: border-box;
+}
+
+.cliente-card span {
+    color: #47738c;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.cliente-card strong {
+    font-size: 36px;
+    font-weight: 700;
+    color: #102b42;
+    line-height: 1.1;
+}
+
+
+/* =========================================================
+   ICONOS TARJETAS
+   ========================================================= */
+
+.icon {
+    position: absolute;
+
+    right: 25px;
+    top: 35px;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+.warning {
+    background: #ffe9c9;
+    color: #ff7800;
+}
+
+.danger {
+    background: #ffe0e0;
+    color: #ff0000;
+}
+
+.success {
+    background: #d8ffe7;
+    color: #00b85c;
+}
+
+
+/* =========================================================
+   BUSCADOR Y BOTÓN
+   ========================================================= */
+
+.clientes-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin-bottom: 35px;
+}
+
+.clientes-actions input {
+    flex: 1;
+
+    height: 50px;
+
+    border-radius: 16px;
+    border: 1px solid #c5e2ef;
+
+    padding: 0 20px 0 42px;
+
+    font-size: 15px;
+    color: #35667c;
+
+    background-color: #ffffff;
+
+    box-sizing: border-box;
+    outline: none;
+
+    /* Ícono de lupa */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2347738c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 19px 19px;
+}
+
+.clientes-actions input:focus {
+    border-color: #009fc3;
+
+    box-shadow:
+        0 0 0 3px rgba(0, 159, 195, 0.10);
+}
+
+.clientes-actions input::placeholder {
+    color: #6c8797;
+}
+
+.clientes-actions button {
+    height: 50px;
+
+    min-width: 165px;
+
+    background: #009fc3;
+    color: #ffffff;
+
+    border: none;
+    border-radius: 16px;
+
+    padding: 0 25px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+.clientes-actions button:hover {
+    background: #0085a3;
+}
+
+.clientes-actions button:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   TÍTULOS DE SECCIONES
+   ========================================================= */
+
+.clientes-container > h3 {
+    font-size: 23px;
+
+    margin: 0 0 18px 0;
 
     font-weight: 700;
 
-    margin-bottom: 8px;
-
+    color: #102b42;
 }
 
 
-.clientes-header p {
+/* =========================================================
+   TABLAS
+   ========================================================= */
 
+.clientes-table {
+    width: 100%;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    margin-bottom: 35px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.clientes-table table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+
+/* =========================================================
+   CABECERA DE TABLAS
+   ========================================================= */
+
+.clientes-table thead {
+    background: #d9f1f8;
+}
+
+.clientes-table th {
+    padding: 17px 20px;
+
+    text-align: left;
+
+    color: #35667c;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    border-bottom: 1px solid #c5e2ef;
+}
+
+
+/* =========================================================
+   DISTRIBUCIÓN DE COLUMNAS
+   ========================================================= */
+
+.clientes-table th:nth-child(1),
+.clientes-table td:nth-child(1) {
+    width: 20%;
+}
+
+.clientes-table th:nth-child(2),
+.clientes-table td:nth-child(2) {
+    width: 20%;
+}
+
+.clientes-table th:nth-child(3),
+.clientes-table td:nth-child(3) {
+    width: 15%;
+}
+
+.clientes-table th:nth-child(4),
+.clientes-table td:nth-child(4) {
+    width: 20%;
+}
+
+.clientes-table th:nth-child(5),
+.clientes-table td:nth-child(5) {
+    width: 25%;
+}
+
+
+/* =========================================================
+   FILAS
+   ========================================================= */
+
+.clientes-table td {
+    padding: 18px 20px;
+
+    border-top: 1px solid #e1edf2;
+
+    color: #41677d;
+
+    font-size: 14px;
+
+    vertical-align: middle;
+}
+
+.clientes-table tbody tr {
+    background: #ffffff;
+
+    transition: background 0.15s ease;
+}
+
+.clientes-table tbody tr:hover {
+    background: #f8fcfe;
+}
+
+
+/* =========================================================
+   NOMBRE DEL CLIENTE
+   ========================================================= */
+
+.clientes-table tbody td:first-child {
+    color: #102b42;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   TELÉFONO
+   ========================================================= */
+
+.clientes-table tbody td:nth-child(2) {
     color: #47738c;
+    white-space: nowrap;
+}
+
+/*
+   Agrega visualmente un pequeño icono de teléfono
+   antes del número.
+*/
+
+.clientes-table tbody td:nth-child(2)::before {
+    content: "⌕";
+
+    display: inline-block;
+
+    margin-right: 8px;
 
     font-size: 16px;
 
-    margin-bottom: 35px;
+    color: #47738c;
 
+    transform: rotate(-25deg);
 }
 
 
+/* =========================================================
+   DEUDA
+   ========================================================= */
 
-/* ================================
-   TARJETAS SUPERIORES
-================================ */
+/*
+   La primera tabla corresponde a Deudas Activas.
+*/
 
-.clientes-cards {
+.clientes-table:first-of-type td:nth-child(3) {
+    color: #ff0000;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PAGOS
+   ========================================================= */
+
+/*
+   La segunda tabla corresponde a Pagados Recientemente.
+*/
+
+.clientes-table:last-of-type td:nth-child(3) {
+    color: #00a85a;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FECHAS
+   ========================================================= */
+
+.clientes-table td:nth-child(4) {
+    color: #47738c;
+}
+
+
+/* =========================================================
+   BOTONES DE ACCIONES
+   ========================================================= */
+
+.acciones {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 10px;
+}
+
+.btn-accion {
+    width: 38px;
+    height: 38px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 0;
+
+    transition:
+        transform 0.15s ease,
+        filter 0.15s ease;
+}
+
+.btn-accion:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.96);
+}
+
+.btn-accion::before {
+    font-size: 17px;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   HISTORIAL
+   ========================================================= */
+
+.historial {
+    background: #f0ddff;
+    color: #9b38ff;
+}
+
+.historial::before {
+    content: "▣";
+}
+
+
+/* =========================================================
+   PAGO
+   ========================================================= */
+
+.pago {
+    background: #d8ffe7;
+    color: #00a85a;
+}
+
+.pago::before {
+    content: "▤";
+}
+
+
+/* =========================================================
+   EDITAR
+   ========================================================= */
+
+.editar {
+    background: #dbe8ff;
+    color: #1e6cff;
+}
+
+.editar::before {
+    content: "✎";
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   ELIMINAR
+   ========================================================= */
+
+.eliminar {
+    background: #ffe0e0;
+    color: #ff1e1e;
+}
+
+.eliminar::before {
+    content: "♜";
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   FORMULARIO NUEVO CLIENTE
+   ========================================================= */
+
+.nuevo-cliente {
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+
+    box-sizing: border-box;
+}
+
+.nuevo-cliente-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.nuevo-cliente-header h3 {
+    margin: 0;
+
+    font-size: 22px;
+
+    color: #102b42;
+}
+
+.nuevo-cliente-header button {
+    border: none;
+
+    background: transparent;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+    color: #47738c;
+
+    padding: 5px 8px;
+}
+
+.nuevo-cliente-header button:hover {
+    color: #102b42;
+}
+
+
+/* =========================================================
+   CAMPOS DEL FORMULARIO
+   ========================================================= */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+}
+
+.form-grid label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #102b42;
+}
+
+.form-grid input {
+    width: 100%;
+
+    height: 50px;
+
+    border-radius: 14px;
+
+    border: 1px solid #c5e2ef;
+
+    padding: 0 15px;
+
+    font-size: 16px;
+
+    box-sizing: border-box;
+
+    outline: none;
+}
+
+.form-grid input:focus {
+    border-color: #009fc3;
+
+    box-shadow:
+        0 0 0 3px rgba(0, 159, 195, 0.10);
+}
+
+
+/* =========================================================
+   BOTONES DEL FORMULARIO
+   ========================================================= */
+
+.form-buttons {
+    margin-top: 25px;
+
+    display: flex;
+
+    gap: 15px;
+}
+
+.btn-agregar {
+    background: #009fc3;
+
+    color: #ffffff;
+
+    border: none;
+
+    padding: 12px 25px;
+
+    border-radius: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-agregar:hover {
+    background: #0085a3;
+}
+
+.btn-cancelar {
+    background: #dceef5;
+
+    color: #35667c;
+
+    border: none;
+
+    padding: 12px 25px;
+
+    border-radius: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-cancelar:hover {
+    background: #cce6ef;
+}
+
+
+/* =========================================================
+   SIN RESULTADOS
+   ========================================================= */
+
+.clientes-table td[colspan] {
+    padding: 22px 20px;
+
+    color: #102b42;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .clientes-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .clientes-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .clientes-actions button {
+        width: 100%;
+    }
+
+    .clientes-table {
+        overflow-x: auto;
+    }
+
+    .clientes-table table {
+        min-width: 750px;
+    }
+}
+/* =========================================================
+   MODAL HISTORIAL DEL CLIENTE
+   ========================================================= */
+
+.modal-historial {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(16, 43, 66, 0.45);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+    z-index: 9999;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONTENIDO DEL MODAL
+   ========================================================= */
+
+.modal-historial-contenido {
+
+    width: 100%;
+
+    max-width: 850px;
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.20);
+
+    padding: 30px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER DEL MODAL
+   ========================================================= */
+
+.modal-historial-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 25px;
+}
+
+
+.modal-historial-header h3 {
+
+    margin: 0 0 5px 0;
+
+    font-size: 25px;
+
+    color: #102b42;
+}
+
+
+.modal-historial-header p {
+
+    margin: 0;
+
+    color: #47738c;
+
+    font-size: 15px;
+}
+
+
+.cerrar-historial {
+
+    width: 40px;
+
+    height: 40px;
+
+    border: none;
+
+    background: #eef7fa;
+
+    color: #35667c;
+
+    border-radius: 12px;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.cerrar-historial:hover {
+
+    background: #dceef5;
+}
+
+
+/* =========================================================
+   INFORMACIÓN DEL CLIENTE
+   ========================================================= */
+
+.historial-info {
 
     display: grid;
 
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(3, 1fr);
 
-    gap: 25px;
+    gap: 15px;
 
-    margin-bottom: 35px;
-
+    margin-bottom: 30px;
 }
 
 
+.historial-info > div {
 
-.cliente-card {
+    background: #f3fbfd;
 
-    background:white;
+    border-radius: 14px;
 
-    height:120px;
+    padding: 15px 18px;
 
-    border-radius:20px;
-
-    padding:25px;
-
-    position:relative;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    box-shadow:0 5px 15px rgba(0,0,0,0.08);
-
+    border: 1px solid #dceef5;
 }
 
 
+.historial-info span {
 
-.cliente-card span {
+    display: block;
 
-    color:#47738c;
+    color: #47738c;
 
-    font-size:15px;
+    font-size: 13px;
 
+    margin-bottom: 5px;
 }
 
 
-.cliente-card strong {
+.historial-info strong {
 
-    font-size:36px;
+    color: #102b42;
 
-    font-weight:700;
-
-    color:#102b42;
-
+    font-size: 16px;
 }
 
 
+/* =========================================================
+   TÍTULO DE VENTAS
+   ========================================================= */
 
-/* ICONOS */
+.historial-ventas h4 {
 
-.icon {
+    margin: 0 0 15px 0;
 
-    position:absolute;
+    font-size: 19px;
 
-    right:25px;
-
-    top:35px;
-
-    width:48px;
-
-    height:48px;
-
-    border-radius:15px;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-size:25px;
-
+    color: #102b42;
 }
 
 
+/* =========================================================
+   VENTA INDIVIDUAL
+   ========================================================= */
 
-.warning {
+.historial-venta {
 
-    background:#ffe9c9;
+    border: 1px solid #dceef5;
 
-    color:#ff7800;
+    border-radius: 17px;
 
+    margin-bottom: 15px;
+
+    overflow: hidden;
+
+    background: #ffffff;
 }
 
 
+.historial-venta-header {
 
-.danger {
+    display: flex;
 
-    background:#ffe0e0;
+    justify-content: space-between;
 
-    color:#ff0000;
+    align-items: center;
 
+    padding: 16px 20px;
+
+    background: #eefaff;
+
+    border-bottom: 1px solid #dceef5;
 }
 
 
+.historial-venta-header > div {
 
-.success {
+    display: flex;
 
-    background:#d8ffe7;
+    flex-direction: column;
 
-    color:#00b85c;
-
+    gap: 4px;
 }
 
 
+.historial-venta-header strong {
 
-/* ================================
-   BUSCADOR Y BOTON
-================================ */
+    color: #102b42;
 
-.clientes-actions {
-
-    display:flex;
-
-    gap:15px;
-
-    margin-bottom:35px;
-
+    font-size: 15px;
 }
 
 
+.historial-venta-header span {
 
-.clientes-actions input {
+    color: #47738c;
 
-    flex:1;
-
-    height:50px;
-
-    border-radius:16px;
-
-    border:1px solid #c5e2ef;
-
-    padding:0 20px;
-
-    font-size:16px;
-
-    background:white;
-
+    font-size: 13px;
 }
 
 
+/* =========================================================
+   ESTADOS
+   ========================================================= */
 
-.clientes-actions button {
+.estado-pagada,
+.estado-parcial,
+.estado-pendiente {
 
+    padding: 7px 12px;
 
-    background:#009fc3;
+    border-radius: 10px;
 
-    color:white;
+    font-size: 12px !important;
 
-    border:none;
-
-    border-radius:16px;
-
-    padding:0 28px;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
+    font-weight: 600;
 }
 
 
+.estado-pagada {
 
-.clientes-actions button:hover {
+    background: #d8ffe7;
 
-    background:#0085a3;
-
+    color: #00a85a !important;
 }
 
 
+.estado-parcial {
 
-/* ================================
-   TITULOS TABLAS
-================================ */
+    background: #fff0cf;
 
-
-.clientes-container h3 {
-
-    font-size:23px;
-
-    margin-bottom:18px;
-
-    font-weight:700;
-
+    color: #d88600 !important;
 }
 
 
+.estado-pendiente {
 
-/* ================================
-   TABLAS
-================================ */
+    background: #ffe0e0;
 
-
-.clientes-table {
-
-    background:white;
-
-    border-radius:20px;
-
-    overflow:hidden;
-
-    margin-bottom:35px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-
+    color: #ff1e1e !important;
 }
 
 
+/* =========================================================
+   MONTOS
+   ========================================================= */
 
-.clientes-table table {
+.historial-montos {
 
-    width:100%;
+    display: grid;
 
-    border-collapse:collapse;
+    grid-template-columns: repeat(3, 1fr);
 
+    gap: 15px;
+
+    padding: 18px 20px;
 }
 
 
+.historial-montos > div {
 
-.clientes-table thead {
+    display: flex;
 
-    background:#d9f1f8;
+    flex-direction: column;
 
+    gap: 4px;
 }
 
 
+.historial-montos span {
 
-.clientes-table th {
+    color: #47738c;
 
-
-    padding:18px 25px;
-
-    text-align:left;
-
-    color:#35667c;
-
-    font-weight:600;
-
+    font-size: 12px;
 }
 
 
+.historial-montos strong {
 
-.clientes-table td {
+    color: #102b42;
 
-
-    padding:18px 25px;
-
-    border-top:1px solid #e1edf2;
-
-    color:#41677d;
-
+    font-size: 17px;
 }
 
 
+.historial-montos .monto-pagado {
 
-.clientes-table td:first-child {
-
-    color:#102b42;
-
-    font-weight:600;
-
+    color: #00a85a;
 }
 
 
+.historial-montos .monto-saldo {
 
-/* DEUDA */
-
-.clientes-table td:nth-child(3) {
-
-    color:#ff0000;
-
-    font-weight:700;
-
+    color: #ff0000;
 }
 
 
+/* =========================================================
+   PRODUCTOS
+   ========================================================= */
 
-/* ================================
-   BOTONES ACCIONES
-================================ */
+.historial-productos {
 
-
-.acciones {
-
-    display:flex;
-
-    gap:10px;
-
+    padding: 0 20px 18px 20px;
 }
 
 
+.historial-productos h5 {
 
-.btn-accion {
+    margin: 0 0 10px 0;
 
-    width:38px;
+    color: #35667c;
 
-    height:38px;
-
-    border:none;
-
-    border-radius:12px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    cursor:pointer;
-
-    font-size:18px;
-
+    font-size: 14px;
 }
 
 
+.historial-producto {
 
-.historial {
+    display: grid;
 
-    background:#f0ddff;
+    grid-template-columns: 1fr 80px 120px;
 
-    color:#9b38ff;
+    align-items: center;
 
+    padding: 9px 12px;
+
+    background: #f8fcfe;
+
+    border-radius: 8px;
+
+    margin-bottom: 5px;
+
+    font-size: 13px;
+
+    color: #41677d;
 }
 
 
+.historial-producto strong {
 
-.pago {
+    text-align: right;
 
-    background:#d8ffe7;
-
-    color:#00a85a;
-
+    color: #102b42;
 }
 
 
+/* =========================================================
+   ESTADOS ESPECIALES
+   ========================================================= */
 
-.editar {
+.historial-cargando,
+.historial-vacio,
+.historial-error,
+.sin-detalles {
 
-    background:#dbe8ff;
+    padding: 20px;
 
-    color:#1e6cff;
+    text-align: center;
 
+    color: #47738c;
 }
 
 
+.historial-error {
 
-.eliminar {
+    color: #ff1e1e;
 
-    background:#ffe0e0;
+    background: #fff0f0;
 
-    color:#ff1e1e;
-
+    border-radius: 12px;
 }
 
 
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 
-/* ================================
-   FORMULARIO NUEVO CLIENTE
-================================ */
+@media (max-width: 700px) {
 
+    .modal-historial {
 
-.nuevo-cliente {
+        padding: 10px;
+    }
 
-    background:white;
 
-    border-radius:20px;
+    .modal-historial-contenido {
 
-    padding:30px;
+        padding: 20px;
 
-    margin-bottom:30px;
+        max-height: 90vh;
+    }
 
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
 
-}
+    .historial-info {
 
+        grid-template-columns: 1fr;
+    }
 
 
-.nuevo-cliente h3 {
+    .historial-montos {
 
-    margin-bottom:20px;
+        grid-template-columns: 1fr;
+    }
 
-}
 
+    .historial-producto {
 
-
-.nuevo-cliente input {
-
-    height:50px;
-
-    border-radius:14px;
-
-    border:1px solid #c5e2ef;
-
-    padding:0 15px;
-
-}
-
-
-
-.btn-agregar {
-
-    background:#009fc3;
-
-    color:white;
-
-}
-
-
-.btn-cancelar {
-
-    background:#dceef5;
-
-    color:#35667c;
-
-}
-/* ================================
-   FORMULARIO NUEVO CLIENTE
-================================ */
-
-
-.nuevo-cliente {
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:30px;
-
-    margin-bottom:30px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-
-}
-
-
-
-.nuevo-cliente-header {
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:25px;
-
-}
-
-
-
-.nuevo-cliente-header h3 {
-
-    margin:0;
-
-    font-size:22px;
-
-}
-
-
-
-.nuevo-cliente-header button {
-
-    border:none;
-
-    background:none;
-
-    font-size:25px;
-
-    cursor:pointer;
-
-    color:#47738c;
-
-}
-
-
-
-.form-grid {
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:20px;
-
-}
-
-
-
-.form-grid label {
-
-    display:block;
-
-    margin-bottom:8px;
-
-    font-weight:600;
-
-}
-
-
-
-.form-grid input {
-
-    width:100%;
-
-    height:50px;
-
-    border-radius:14px;
-
-    border:1px solid #c5e2ef;
-
-    padding:0 15px;
-
-    font-size:16px;
-
-}
-
-
-
-.form-buttons {
-
-    margin-top:25px;
-
-    display:flex;
-
-    gap:15px;
-
-}
-
-
-
-.btn-agregar {
-
-    background:#009fc3;
-
-    color:white;
-
-    border:none;
-
-    padding:12px 25px;
-
-    border-radius:14px;
-
-    font-weight:600;
-
-}
-
-
-
-.btn-cancelar {
-
-    background:#dceef5;
-
-    color:#35667c;
-
-    border:none;
-
-    padding:12px 25px;
-
-    border-radius:14px;
-
-    font-weight:600;
+        grid-template-columns: 1fr 60px 90px;
+    }
 
 }
