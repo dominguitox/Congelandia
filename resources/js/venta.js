@@ -168,30 +168,41 @@ window.registrarVenta = function (e, metodoPagoSeleccionado) {
             productos: carrito
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        if (data.success || data.ok) {
-            alert("Venta registrada exitosamente.");
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success || data.ok) {
+                alert("Venta registrada exitosamente.");
 
-            // Limpiar carrito
-            carrito = [];
-            localStorage.removeItem('carrito');
+                carrito.forEach(item => {
+                    let badgeStock = document.getElementById('badge-stock-' + item.id);
+                    if (badgeStock) {
+                        let stockInicial = parseInt(badgeStock.getAttribute('data-stock-inicial'));
+                        // Restamos lo vendido al stock base del HTML
+                        let nuevoStockBase = stockInicial - item.cantidad;
+                        badgeStock.setAttribute('data-stock-inicial', nuevoStockBase);
+                    }
+                });
+                
+                // Limpiar carrito
+                carrito = [];
+                localStorage.removeItem('carrito');
 
-            if (typeof actualizarTicketVenta === 'function') {
-                actualizarTicketVenta();
+                if (typeof actualizarTicketVenta === 'function') {
+                    actualizarTicketVenta();
+                }
+
+                // Limpiar interfaz
+                if (selectCliente) selectCliente.value = "Ninguno";
+                let inputMonto = document.getElementById('monto_recibido');
+                if (inputMonto) inputMonto.value = "";
+
+            } else {
+                alert("Error al registrar: " + (data.message || "Datos inválidos."));
             }
-            // Limpiar interfaz
-            if (selectCliente) selectCliente.value = "Ninguno";
-            let inputMonto = document.getElementById('monto_recibido');
-            if (inputMonto) inputMonto.value = "";
-
-        } else {
-            alert("Error al registrar: " + (data.message || "Datos inválidos."));
-        }
-    })
-    .catch(error => {
-        console.error('Error en la petición AJAX:', error);
-        alert("Ocurrió un error de conexión al intentar guardar la venta en el sistema.");
-    });
+        })
+        .catch(error => {
+            console.error('Error en la petición AJAX:', error);
+            alert("Ocurrió un error de conexión al intentar guardar la venta en el sistema.");
+        });
 }

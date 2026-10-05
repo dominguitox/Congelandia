@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Salida;
+use App\Models\DetalleSalida;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -11,18 +13,26 @@ class historialController extends Controller
     public function index()
     {
         try {
-
             // Obtiene las ventas generales
-            $salidas = DB::select('CALL SP_listarSalidas()');
 
+            $salidas = DetalleSalida::select(
+                'Producto.nombre as producto',
+                'Detalle_Salida.cantidad',
+                'Detalle_Salida.precioCobrado as subtotal',
+                'Detalle_Salida.precioCobrado as precioUnitario',
+            )
+                ->leftJoin('Producto', 'Detalle_Salida.codigoProducto', '=', 'Producto.nombre')
+                ->addSelect([
+                    'precio' => DB::table('Lista_Precio')
+                        ->select('precioVenta')
+                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->whereNull('fechaFin')
+                        ->limit(1)
+                ])
+                ->get();
 
-            // Obtiene los productos de cada venta
-            foreach ($salidas as $salida) {
-                $salida->detalle = DB::select(
-                    'CALL SP_DetalleSalida(?)',
-                    [$salida->idSalida]
-                );
-            }
+               // dd($salidas);
+
 
             return view('historial.index', compact('salidas'));
 
@@ -34,7 +44,6 @@ class historialController extends Controller
                     'error',
                     'Error al cargar el historial: ' . $e->getMessage()
                 );
-
         }
     }
 }

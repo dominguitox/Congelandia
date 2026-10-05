@@ -61,45 +61,6 @@ BEGIN
     SET p_mensaje = 'Detalle registrado con éxito.';
 END //
 
-CREATE PROCEDURE SP_CrearProducto(
-    IN p_codigo VARCHAR(50),
-    IN p_nombre VARCHAR(150),
-    IN p_descripcion TEXT,
-    IN p_idCategoria INT,
-    IN p_precioVenta INT,
-    IN p_idProveedor INT,
-    IN p_idUsuario INT,
-    IN p_stockInicial INT,
-    IN p_precioCompra DECIMAL(10,2),
-    IN p_fechaVencimiento DATE
-)
-BEGIN
-    DECLARE v_idIngreso INT;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    START TRANSACTION;
-    
-    INSERT INTO Producto (codigo, nombre, descripcion, idCategoria)
-    VALUES (p_codigo, p_nombre, p_descripcion, p_idCategoria);
-    
-    INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin)
-    VALUES (p_codigo, p_precioVenta, NOW(), NULL);
-    
-    IF p_stockInicial > 0 THEN
-        INSERT INTO Ingreso (fecha, idProveedor, idUsuario, totalCompra)
-        VALUES (NOW(), p_idProveedor, p_idUsuario, (p_precioCompra * p_stockInicial));
-        
-        SET v_idIngreso = LAST_INSERT_ID();
-        
-        INSERT INTO Detalle_Ingreso (idIngreso, codigoProducto, cantidad, precioCompra, fechaVencimiento)
-        VALUES (v_idIngreso, p_codigo, p_stockInicial, p_precioCompra, p_fechaVencimiento);
-    END IF;
-    COMMIT;
-END //
-
 CREATE PROCEDURE SP_ListarProductos()
 BEGIN
     SELECT 
