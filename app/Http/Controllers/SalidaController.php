@@ -39,7 +39,7 @@ class VentaController extends Controller
 
             // 2. Crear el registro principal de la Venta
             // (Asumiendo que tienes un campo para el usuario autenticado o cajero)
-            $venta = Venta::create([
+            $venta = Salida::create([
                 'fechaHora' => now(),
                 'totalVenta' => $totalVenta,
                 'metodoPago' => $metodoPago,

@@ -44,7 +44,6 @@ class historialController extends Controller
                     'error',
                     'Error al cargar el historial: ' . $e->getMessage()
                 );
-
         }
     }
 }

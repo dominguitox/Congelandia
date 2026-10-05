@@ -113,7 +113,8 @@ class ProductoController extends Controller
                 ])
                 ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
                 ->get();
-
+            // Descomentar para debug
+            // dd($productos);
             $proveedores = Proveedor::whereNull('deleted_at')->get();
             $categorias = Categoria::whereNull('deleted_at')->get();
             return view('inventario.index', compact('productos', 'proveedores', 'categorias'));
@@ -128,7 +129,38 @@ class ProductoController extends Controller
     {
         try {
             // El signo de interrogación inyecta la variable de forma segura
-            $resultado = DB::select('CALL SP_ObtenerProductoPorId(?)', [$codigo]);
+            $resultado = Producto::select(
+                'Producto.codigo',
+                'Producto.nombre',
+                'Categoria.nombre as categoria'
+            )
+                ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
+                ->addSelect([
+                    'precio' => DB::table('Lista_Precio')
+                        ->select('precioVenta')
+                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->whereNull('fechaFin')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'costo' => DB::table('Detalle_Ingreso')
+                        ->select('Detalle_Ingreso.precioCompra')
+                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
+                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->orderByDesc('Ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'proveedor' => DB::table('Detalle_Ingreso')
+                        ->select('Proveedor.nombre')
+                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
+                        ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
+                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->orderByDesc('Ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
+                ->get();
 
             // Como DB::select devuelve un arreglo, extraemos el primer objeto (el producto)
             $producto = !empty($resultado) ? $resultado[0] : null;
