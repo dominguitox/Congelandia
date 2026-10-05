@@ -1,19 +1,19 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
 
-DROP PROCEDURE IF EXISTS SP_RegistrarSalida;
-DROP PROCEDURE IF EXISTS SP_RegistrarVenta;
-DROP PROCEDURE IF EXISTS SP_DetalleSalida;
-DROP PROCEDURE IF EXISTS SP_RegistrarDetalleVenta;
-DROP PROCEDURE IF EXISTS SP_DetalleVenta;
-DROP PROCEDURE IF EXISTS SP_CrearProducto;
-DROP PROCEDURE IF EXISTS SP_ListarProductos;
-DROP PROCEDURE IF EXISTS SP_ListarCategorias;
-DROP PROCEDURE IF EXISTS SP_ObtenerProductoPorId;
-DROP PROCEDURE IF EXISTS SP_ListarProveedores;
-DROP PROCEDURE IF EXISTS SP_listarSalidas;
-DROP PROCEDURE IF EXISTS SP_listarHistorial;
-DROP PROCEDURE IF EXISTS SP_DetalleSalida;
+	DROP PROCEDURE IF EXISTS SP_RegistrarSalida;
+	DROP PROCEDURE IF EXISTS SP_RegistrarVenta;
+	DROP PROCEDURE IF EXISTS SP_DetalleSalida;
+	DROP PROCEDURE IF EXISTS SP_RegistrarDetalleVenta;
+	DROP PROCEDURE IF EXISTS SP_DetalleVenta;
+	DROP PROCEDURE IF EXISTS SP_CrearProducto;
+	DROP PROCEDURE IF EXISTS SP_ListarProductos;
+	DROP PROCEDURE IF EXISTS SP_ListarCategorias;
+	DROP PROCEDURE IF EXISTS SP_ObtenerProductoPorId;
+	DROP PROCEDURE IF EXISTS SP_ListarProveedores;
+	DROP PROCEDURE IF EXISTS SP_listarSalidas;
+	DROP PROCEDURE IF EXISTS SP_listarHistorial;
+	DROP PROCEDURE IF EXISTS SP_DetalleSalida;
 
 DELIMITER //
 DELIMITER //
@@ -60,28 +60,7 @@ BEGIN
     SET p_resultado = 1;
     SET p_mensaje = 'Detalle registrado con éxito.';
 END //
-
-CREATE PROCEDURE SP_ListarProductos()
-BEGIN
-    SELECT 
-        p.codigo, 
-        p.nombre, 
-        c.nombre AS categoria,
-        (SELECT precioVenta FROM Lista_Precio WHERE codigoProducto = p.codigo AND fechaFin IS NULL LIMIT 1) AS precio,
-        (SELECT di.precioCompra FROM Detalle_Ingreso di 
-            JOIN Ingreso i ON di.idIngreso = i.idIngreso 
-         WHERE di.codigoProducto = p.codigo 
-         ORDER BY i.fecha DESC LIMIT 1) AS costo,
-        (SELECT prov.nombre FROM Detalle_Ingreso di 
-            JOIN Ingreso i ON di.idIngreso = i.idIngreso 
-            JOIN Proveedor prov ON i.idProveedor = prov.idProveedor
-         WHERE di.codigoProducto = p.codigo 
-         ORDER BY i.fecha DESC LIMIT 1) AS proveedor,
-        (IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = p.codigo), 0) 
-        - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = p.codigo), 0)) AS stock
-    FROM Producto p
-    LEFT JOIN Categoria c ON p.idCategoria = c.idCategoria;
-END //
+select * from detalle_ingreso;
 
 CREATE PROCEDURE SP_ObtenerProductoPorId(
     IN p_codigoBuscado VARCHAR(50)
@@ -141,7 +120,7 @@ CREATE PROCEDURE SP_DetalleSalida(
     IN p_idSalida INT
 )
 BEGIN
-    SELECT
+    SELECT	
         p.nombre AS producto,
         ds.cantidad,
         ds.precioCobrado AS subtotal,

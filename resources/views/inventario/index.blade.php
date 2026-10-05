@@ -6,17 +6,29 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Inventario</h2>
-            <!-- Botón que activa el Modal -->
-            <button type="button" class="btn btn-primary fw-bold" data-bs-toggle="modal"
-                data-bs-target="#modalCrearProducto">
-                + Añadir Producto
-            </button>
+            <div>
+
+                <!-- Botón que activa el Modal -->
+                <button type="button" class="btn btn-primary fw-bold" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearProducto">
+                    + Añadir Producto
+                </button>
+                <button type="button" class="btn btn-secondary fw-bold" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearProducto">
+                    + Registrar ingreso
+                </button>
+                <button type="button" class="btn btn-secondary fw-bold" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearProducto">
+                    + Registrar salida o merma
+                </button>
+            </div>
         </div>
 
         <!-- Tabla de inventario -->
         <table class="table">
             <thead>
                 <tr>
+                    <th scope="col">Alerta</th>
                     <th scope="col">Producto</th>
                     <th scope="col">Categoria</th>
                     <th scope="col">Proveedor</th>
@@ -29,6 +41,13 @@
             <tbody>
                 @foreach($productos as $producto)
                     <tr>
+                        <td>
+                            @if($producto->stock < 10)
+                                <span class="badge bg-warning">Bajo Stock</span>
+                                @else
+                                <span class="badge bg-success">Stock OK</span>
+                            @endif
+                        </td>
                         <td>{{ $producto->nombre }} <br>
                             <small class="text-muted">{{ $producto->codigo }}</small>
                         </td>
@@ -38,10 +57,15 @@
                         <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
                         <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td>
                         <td>
-                            <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal"
+                            <button class="btn btn-sm btn-success" type="button" data-bs-toggle="modal"
+                                data-bs-target="#modalRegistrarIngreso"
+                                onclick="registrarIngreso($producto->codigo)">Ingreso</button>
+                            <button class=" btn btn-sm btn-primary" type="button" data-bs-toggle="modal"
                                 data-bs-target="#modalEditarProducto"
                                 onclick="editarProducto($producto->codigo)">Editar</button>
+
                             <button class="btn btn-sm btn-danger">Borrar</button>
+
                         </td>
                     </tr>
                 @endforeach
@@ -160,7 +184,9 @@
                 </div>
                 @if($errors->any()) {{ dd($errors) }} @endif
                 <!--Cambiar a editarProducto-->
-                <form action="{{ route('productos.crearProducto') }}" method="POST">
+                <!--Cambiar a editarProducto-->
+                <!--Cambiar a editarProducto-->
+                <form action="{{ route('productos.crearProducto', ['codigo' => $producto->codigo]) }}" method="PUT">
                     @csrf <!-- Token de seguridad obligatorio en Laravel -->
                     <div class="modal-body">
                         <!-- Fila 1: Datos Básicos -->
@@ -203,42 +229,6 @@
                             </div>
 
                         </div>
-
-                        <hr>
-
-                        <!-- Fila 2: Precios y Abastecimiento Inicial -->
-                        <h6 class="text-primary mb-3">Precios y Abastecimiento Inicial</h6>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label for="precioVenta" class="form-label">Precio de Venta ($) *</label>
-                                <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta"
-                                    required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="idProveedor" class="form-label">Proveedor *</label>
-                                <select class="form-select" name="idProveedor" id="idProveedor" required>
-                                    <option value="">Seleccione proveedor...</option>
-                                    @foreach ($proveedores as $proveedor)
-                                        <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="stockInicial" class="form-label">Stock Inicial *</label>
-                                <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0"
-                                    min="0" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($) *</label>
-                                <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra"
-                                    required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento *</label>
-                                <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento"
-                                    required>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="modal-footer bg-light">
@@ -250,5 +240,10 @@
             </div>
         </div>
     </div>
+    <!-- MODAL REGISTRAR INGRESO -->
+
+    <!-- MODAL REGISTRAR MERMA -->
+
+
 
 @endsection

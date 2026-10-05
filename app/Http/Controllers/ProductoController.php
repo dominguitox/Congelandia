@@ -123,8 +123,54 @@ class ProductoController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+        public function editarProducto(Request $request, $codigo)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:150',
+            'descripcion' => 'nullable|string',
+            'idCategoria' => 'required|integer',
+        ]);
 
+        try {
+            DB::transaction(function () use ($request) {
 
+                $idUsuario = auth()->user()->idUsuario;
+                Producto::create([
+                    'codigo' => $request->codigo,
+                    'nombre' => $request->nombre,
+                    'descripcion' => $request->descripcion,
+                    'idCategoria' => $request->idCategoria,
+                ]);
+                ListaPrecio::create([
+                    'codigoProducto' => $request->codigo,
+                    'precioVenta' => $request->precioVenta,
+                    'fechaInicio' => now(),
+                ]);
+                if ($request->stockInicial > 0) {
+                    $totalCompra = $request->precioCompra * $request->stockInicial;
+                    $ingreso = Ingreso::create([
+                        'fecha' => now(),
+                        'idProveedor' => $request->idProveedor,
+                        'idUsuario' => $idUsuario,
+                        'totalCompra' => $totalCompra,
+                    ]);
+                    DetalleIngreso::create([
+                        'idIngreso' => $ingreso->idIngreso,
+                        'codigoProducto' => $request->codigo,
+                        'cantidad' => $request->stockInicial,
+                        'precioCompra' => $request->precioCompra,
+                        'fechaVencimiento' => $request->fechaVencimiento
+                    ]);
+                }
+
+            });
+            return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
+        }
+
+    }
     public function show(string $codigo)
     {
         try {
