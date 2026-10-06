@@ -67,6 +67,11 @@ Route::middleware('auth')->group(function () {
         [ProductoController::class, 'show']
     )->name('inventario.show');
 
+    Route::put(
+        '/productos/{codigo}',
+        [ProductoController::class, 'editarProducto']
+    )->name('inventario.editarProducto');
+
 
     // =====================================================
     // POS

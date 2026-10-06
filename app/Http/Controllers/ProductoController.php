@@ -27,15 +27,11 @@ class ProductoController extends Controller
     public function crearProducto(Request $request)
     {
         $request->validate([
-            'codigo' => 'required|string|max:50',
-            'nombre' => 'required|string|max:150',
-            'descripcion' => 'nullable|string',
-            'idCategoria' => 'required|integer',
-            'precioVenta' => 'required|numeric|min:0',
-            'idProveedor' => 'required|integer',
-            'stockInicial' => 'required|integer|min:0',
-            'precioCompra' => 'required|numeric|min:0',
-            'fechaVencimiento' => 'required|date'
+            'precioVenta' => 'nullable|numeric|min:0',
+            'idProveedor' => 'nullable|integer',
+            'stockInicial' => 'nullable|integer|min:0',
+            'precioCompra' => 'nullable|numeric|min:0',
+            'fechaVencimiento' => 'nullable|date'
         ]);
 
         try {
@@ -53,7 +49,8 @@ class ProductoController extends Controller
                     'precioVenta' => $request->precioVenta,
                     'fechaInicio' => now(),
                 ]);
-                if ($request->stockInicial > 0) {
+
+                if ($request->stockInicial > 0 && $request->filled('idProveedor') && $request->filled('precioCompra') && $request->filled('fechaVencimiento')) {
                     $totalCompra = $request->precioCompra * $request->stockInicial;
                     $ingreso = Ingreso::create([
                         'fecha' => now(),
@@ -69,7 +66,6 @@ class ProductoController extends Controller
                         'fechaVencimiento' => $request->fechaVencimiento
                     ]);
                 }
-
             });
             return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
 
@@ -123,53 +119,48 @@ class ProductoController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-        public function editarProducto(Request $request, $codigo)
+    public function editarProducto(Request $request, $codigo)
     {
         $request->validate([
             'nombre' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
             'idCategoria' => 'required|integer',
+            'precioVenta' => 'required|numeric|min:0'
         ]);
 
         try {
-            DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request, $codigo) {
 
-                $idUsuario = auth()->user()->idUsuario;
-                Producto::create([
-                    'codigo' => $request->codigo,
+                // 1. Buscar el producto específico
+                $producto = Producto::where('codigo', $codigo)->firstOrFail();
+
+                // 2. Actualizar solo los datos del catálogo
+                $producto->update([
                     'nombre' => $request->nombre,
                     'descripcion' => $request->descripcion,
                     'idCategoria' => $request->idCategoria,
                 ]);
-                ListaPrecio::create([
-                    'codigoProducto' => $request->codigo,
-                    'precioVenta' => $request->precioVenta,
-                    'fechaInicio' => now(),
-                ]);
-                if ($request->stockInicial > 0) {
-                    $totalCompra = $request->precioCompra * $request->stockInicial;
-                    $ingreso = Ingreso::create([
-                        'fecha' => now(),
-                        'idProveedor' => $request->idProveedor,
-                        'idUsuario' => $idUsuario,
-                        'totalCompra' => $totalCompra,
-                    ]);
-                    DetalleIngreso::create([
-                        'idIngreso' => $ingreso->idIngreso,
-                        'codigoProducto' => $request->codigo,
-                        'cantidad' => $request->stockInicial,
-                        'precioCompra' => $request->precioCompra,
-                        'fechaVencimiento' => $request->fechaVencimiento
+
+                // 3. Consultar el precio activo actual
+                $precioActual = ListaPrecio::where('codigoProducto', $codigo)
+                    ->orderBy('fechaInicio', 'desc')
+                    ->first();
+
+                // 4. Insertar en el historial solo si el precio cambió
+                if (!$precioActual || $precioActual->precioVenta != $request->precioVenta) {
+                    ListaPrecio::create([
+                        'codigoProducto' => $codigo,
+                        'precioVenta' => $request->precioVenta,
+                        'fechaInicio' => now(),
                     ]);
                 }
-
             });
-            return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
+
+            return redirect()->back()->with('success', 'Producto editado correctamente.');
 
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al editar el producto: ' . $e->getMessage());
         }
-
     }
     public function show(string $codigo)
     {

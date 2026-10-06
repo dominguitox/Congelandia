@@ -42,9 +42,11 @@
                 @foreach($productos as $producto)
                     <tr>
                         <td>
-                            @if($producto->stock < 10)
+                            @if($producto->stock == 0)
+                                <span class="badge bg-danger">Sin Stock</span>
+                            @elseif($producto->stock < 10)
                                 <span class="badge bg-warning">Bajo Stock</span>
-                                @else
+                            @else
                                 <span class="badge bg-success">Stock OK</span>
                             @endif
                         </td>
@@ -60,9 +62,13 @@
                             <button class="btn btn-sm btn-success" type="button" data-bs-toggle="modal"
                                 data-bs-target="#modalRegistrarIngreso"
                                 onclick="registrarIngreso($producto->codigo)">Ingreso</button>
-                            <button class=" btn btn-sm btn-primary" type="button" data-bs-toggle="modal"
-                                data-bs-target="#modalEditarProducto"
-                                onclick="editarProducto($producto->codigo)">Editar</button>
+                            <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal"
+                                data-bs-target="#modalEditarProducto" data-codigo="{{ $producto->codigo }}"
+                                data-nombre="{{ $producto->nombre }}" data-categoria="{{ $producto->idCategoria }}"
+                                data-precio="{{ $producto->precioVenta }}" data-descripcion="{{ $producto->descripcion }}"
+                                onclick="editarProducto(this)">
+                                Editar
+                            </button>
 
                             <button class="btn btn-sm btn-danger">Borrar</button>
 
@@ -75,7 +81,7 @@
     </div>
     <!-- MODAL DE CREACIÓN DE PRODUCTO -->
     <div class="modal fade" id="modalCrearProducto" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg"> <!-- modal-lg para que sea ancho y quepan 2 columnas -->
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
                     <h5 class="modal-title" id="modalLabel">Registrar Nuevo Producto</h5>
@@ -83,13 +89,13 @@
                         aria-label="Close"></button>
                 </div>
                 @if($errors->any()) {{ dd($errors) }} @endif
+
                 <form action="{{ route('productos.crearProducto') }}" method="POST">
-                    @csrf <!-- Token de seguridad obligatorio en Laravel -->
+                    @csrf
                     <div class="modal-body">
-                        <!-- Fila 1: Datos Básicos -->
+                        <!-- Fila 1: Datos Básicos y Precio (Obligatorios) -->
                         <h6 class="text-primary mb-3">Datos del Catálogo</h6>
                         <div class="row g-3 mb-3">
-                            <!-- Código de Barras con Botón Integrado -->
                             <div class="col-md-5">
                                 <label for="codigo" class="form-label">Código de Barras *</label>
                                 <div class="input-group">
@@ -101,15 +107,13 @@
                                 </div>
                             </div>
 
-                            <!-- Nombre del Producto -->
                             <div class="col-md-7">
                                 <label for="nombre" class="form-label">Nombre del Producto *</label>
                                 <input type="text" class="form-control" name="nombre" id="nombre"
                                     placeholder="Ej. Hamburguesa de Res" required>
                             </div>
 
-                            <!-- Categoría -->
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="idCategoria" class="form-label">Categoría *</label>
                                 <select class="form-select" name="idCategoria" id="idCategoria" required>
                                     <option value="">Seleccione una categoría...</option>
@@ -119,47 +123,59 @@
                                 </select>
                             </div>
 
-                            <!-- Descripción -->
-                            <div class="col-md-6">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <input type="text" class="form-control" name="descripcion" id="descripcion">
-                            </div>
-
-                        </div>
-
-                        <hr>
-
-                        <!-- Fila 2: Precios y Abastecimiento Inicial -->
-                        <h6 class="text-primary mb-3">Precios y Abastecimiento Inicial</h6>
-                        <div class="row g-3">
+                            <!-- PRECIO MOVIDO AQUÍ (OBLIGATORIO) -->
                             <div class="col-md-4">
                                 <label for="precioVenta" class="form-label">Precio de Venta ($) *</label>
                                 <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta"
                                     required>
                             </div>
+
                             <div class="col-md-4">
-                                <label for="idProveedor" class="form-label">Proveedor *</label>
-                                <select class="form-select" name="idProveedor" id="idProveedor" required>
-                                    <option value="">Seleccione proveedor...</option>
-                                    @foreach ($proveedores as $proveedor)
-                                        <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" name="descripcion" id="descripcion">
                             </div>
-                            <div class="col-md-4">
-                                <label for="stockInicial" class="form-label">Stock Inicial *</label>
-                                <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0"
-                                    min="0" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($) *</label>
-                                <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra"
-                                    required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento *</label>
-                                <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento"
-                                    required>
+                        </div>
+
+                        <hr>
+
+                        <!-- Fila 2: Abastecimiento Inicial (Desplegable y Opcional) -->
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn btn-outline-secondary text-start" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseAbastecimiento" aria-expanded="false"
+                                aria-controls="collapseAbastecimiento">
+                                <i class="bi bi-chevron-down"></i> + Añadir Abastecimiento Inicial (Opcional)
+                            </button>
+                        </div>
+
+                        <div class="collapse" id="collapseAbastecimiento">
+                            <div class="card card-body border-secondary mb-3">
+                                <h6 class="text-primary mb-3">Datos de Abastecimiento</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="idProveedor" class="form-label">Proveedor</label>
+                                        <select class="form-select" name="idProveedor" id="idProveedor">
+                                            <option value="">Seleccione proveedor...</option>
+                                            @foreach ($proveedores as $proveedor)
+                                                <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="stockInicial" class="form-label">Stock Inicial</label>
+                                        <input type="number" class="form-control" name="stockInicial" id="stockInicial"
+                                            value="0" min="0">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
+                                        <input type="number" step="0.01" class="form-control" name="precioCompra"
+                                            id="precioCompra">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                                        <input type="date" class="form-control" name="fechaVencimiento"
+                                            id="fechaVencimiento">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -169,74 +185,64 @@
                         <button type="submit" class="btn btn-success fw-bold">Guardar Producto</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
     <!-- MODAL EDITAR PRODUCTO -->
-    <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg"> <!-- modal-lg para que sea ancho y quepan 2 columnas -->
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalLabelEditar" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="modalLabel">Editar Producto: (id del producto)</h5>
+                    <h5 class="modal-title" id="modalLabelEditar">Editar Producto</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                @if($errors->any()) {{ dd($errors) }} @endif
-                <!--Cambiar a editarProducto-->
-                <!--Cambiar a editarProducto-->
-                <!--Cambiar a editarProducto-->
-                <form action="{{ route('productos.crearProducto', ['codigo' => $producto->codigo]) }}" method="PUT">
-                    @csrf <!-- Token de seguridad obligatorio en Laravel -->
+
+                <form action="" method="POST" id="formEditarProducto">
+                    @csrf
+                    @method('PUT')
                     <div class="modal-body">
-                        <!-- Fila 1: Datos Básicos -->
                         <h6 class="text-primary mb-3">Datos del Catálogo</h6>
                         <div class="row g-3 mb-3">
-                            <!-- Código de Barras con Botón Integrado -->
                             <div class="col-md-5">
-                                <label for="codigo" class="form-label">Código de Barras *</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="codigo" id="codigo"
-                                        placeholder="Haz clic aquí para escanear" required>
-                                    <button class="btn btn-primary fw-bold" type="button" id="btnEscanear">
-                                        Escanear
-                                    </button>
-                                </div>
+                                <label for="edit_codigo" class="form-label">Código de Barras *</label>
+                                <input type="text" class="form-control bg-light" name="codigo" id="edit_codigo" readonly
+                                    required>
                             </div>
 
-                            <!-- Nombre del Producto -->
                             <div class="col-md-7">
-                                <label for="nombre" class="form-label">Nombre del Producto *</label>
-                                <input type="text" class="form-control" name="nombre" id="nombre"
-                                    placeholder="Ej. Hamburguesa de Res" required>
+                                <label for="edit_nombre" class="form-label">Nombre del Producto *</label>
+                                <input type="text" class="form-control" name="nombre" id="edit_nombre" required>
                             </div>
 
-                            <!-- Categoría -->
-                            <div class="col-md-6">
-                                <label for="idCategoria" class="form-label">Categoría *</label>
-                                <select class="form-select" name="idCategoria" id="idCategoria" required>
-                                    <option value="">Seleccione una categoría...</option>
+                            <div class="col-md-4">
+                                <label for="edit_idCategoria" class="form-label">Categoría *</label>
+                                <select class="form-select" name="idCategoria" id="edit_idCategoria" required>
+                                    <option value="">Seleccione categoría...</option>
                                     @foreach ($categorias as $categoria)
                                         <option value="{{ $categoria->idCategoria }}">{{ $categoria->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <!-- Descripción -->
-                            <div class="col-md-6">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <input type="text" class="form-control" name="descripcion" id="descripcion">
+                            <div class="col-md-4">
+                                <label for="edit_precioVenta" class="form-label">Precio de Venta ($) *</label>
+                                <input type="number" step="0.01" class="form-control" name="precioVenta"
+                                    id="edit_precioVenta" required>
                             </div>
 
+                            <div class="col-md-4">
+                                <label for="edit_descripcion" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" name="descripcion" id="edit_descripcion">
+                            </div>
                         </div>
                     </div>
 
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success fw-bold">Guardar Producto</button>
+                        <button type="submit" class="btn btn-success fw-bold">Guardar Cambios</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
@@ -244,6 +250,7 @@
 
     <!-- MODAL REGISTRAR MERMA -->
 
+    @vite(['resources/js/producto.js'])
 
 
 @endsection
