@@ -14,7 +14,7 @@
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body text-center">
                         <h5 class="card-title text-muted">Ingresos de hoy</h5>
-                        <p class="card-text display-6 fw-bold text-success">$0</p>
+                        <p class="card-text display-6 fw-bold text-success">${{$totalVentasHoy }}</p>
                     </div>
                 </div>
             </div>
@@ -52,18 +52,112 @@
             <div class="col-md-6 col-sm-6 mb-3">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body text-center">
-                        <h5 class="card-title text-muted">Ingresos de hoy</h5>
-                        <p class="card-text display-6 fw-bold text-success">$0</p>
+                        <h5 class="card-title text-muted">Ventas</h5>
+                        <div class="historial-card">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Fecha y Hora</th>
+                                        <th scope="col">Artículos</th>
+                                        <th scope="col">Cajero</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($salidas as $salida)
+                                        <tr>
+                                            <td>{{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}</td>
+
+                                            {{-- Suma la cantidad total desde los detalles --}}
+                                            <td>{{ $salida->detalles->sum('cantidad') }}</td>
+
+                                            <td>{{ $salida->idUsuario ?? 'Sin usuario' }}</td>
+                                            <td class="total">${{ number_format($salida->totalSalida, 0, ',', '.') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="empty-message">No existen ventas registradas.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
             </div>
-            <!-- Alerta Inventario bajo -->
+            <!-- Alertas -->
             <div class="col-md-6 col-sm-6 mb-3">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body text-center">
-                        <h5 class="card-title text-muted">Ingresos de hoy</h5>
-                        <p class="card-text display-6 fw-bold text-success">$0</p>
+                        <h5 class="card-title text-muted">Alertas</h5>
+
+                        <table class="table">
+                            <thead>
+                                <h6> Productos bajo stock </h6>
+                                <tr>
+                                    <th scope="col">Producto</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Costo</th>
+                                    <th scope="col">Precio Venta</th>
+                                    <th scope="col">Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($productos as $producto)
+
+                                    @if($producto->stock == 0)
+                                        <tr class="table-danger">
+                                    @elseif($producto->stock < 10)
+                                            <tr class="table-warning">
+                                        @else
+                                            <tr class="table-default" style="display: none;">
+                                        @endif
+                                        <td>{{ $producto->nombre }} <br>
+                                        </td>
+                                        <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
+                                        <td>${{ number_format($producto->costo ?? 0, 0, ',', '.') }}</td>
+                                        <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
+                                        <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+
+                        </table>
+
+                        <table class="table">
+                            <thead>
+                                <h6> Productos prontos a expirar </h6>
+                                <tr>
+                                    <th scope="col">Producto</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Costo</th>
+                                    <th scope="col">Precio Venta</th>
+                                    <th scope="col">Fecha de vencimiento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($productos as $producto)
+
+                                    @if($producto->fechaVencimiento == 0)
+                                        <tr class="table-danger">
+                                    @elseif($producto->fechaVencimiento < 10)
+                                            <tr class="table-warning">
+                                        @else
+                                            <tr class="table-default" style="display: none;">
+                                        @endif
+                                        <td>{{ $producto->nombre }} <br>
+                                        </td>
+                                        <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
+                                        <td>${{ number_format($producto->costo ?? 0, 0, ',', '.') }}</td>
+                                        <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
+                                        <!--  <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td> -->
+                                        <td>{{ \Carbon\Carbon::parse($producto->fechaVencimiento)->format('d M') }}</td>
+                                    </tr>
+                                @endforeach
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
