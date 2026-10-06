@@ -118,7 +118,13 @@
                                         <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
                                         <td>${{ number_format($producto->costo ?? 0, 0, ',', '.') }}</td>
                                         <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
-                                        <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td>
+
+                                        @if($producto->stock == 0)
+                                        <td><b>Agotado</b></td>
+                                        @else
+                                            <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td>
+                                        @endif
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -137,24 +143,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($productos as $producto)
 
-                                    @if($producto->fechaVencimiento == 0)
+                                @foreach($productos as $producto)
+                                    @php
+                                        // 1. Parseamos la fecha de MySQL y calculamos los días restantes hasta hoy
+                                        $fechaVence = \Carbon\Carbon::parse($producto->fechaVencimiento)->startOfDay();
+                                        $hoy = \Carbon\Carbon::now()->startOfDay();
+                                        $diasRestantes = $hoy->diffInDays($fechaVence, false); 
+                                    @endphp
+
+                                    @if($diasRestantes <= 0)
                                         <tr class="table-danger">
-                                    @elseif($producto->fechaVencimiento < 10)
+                                    @elseif($diasRestantes < 10)
                                             <tr class="table-warning">
                                         @else
                                             <tr class="table-default" style="display: none;">
                                         @endif
-                                        <td>{{ $producto->nombre }} <br>
-                                        </td>
+                                        <td>{{ $producto->nombre }}</td>
                                         <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
                                         <td>${{ number_format($producto->costo ?? 0, 0, ',', '.') }}</td>
                                         <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
-                                        <!--  <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td> -->
-                                        <td>{{ \Carbon\Carbon::parse($producto->fechaVencimiento)->format('d M') }}</td>
+                                        <td>
+                                            {{ $fechaVence->format('d M') }}
+                                            <small class="text-muted">
+                                                ({{ $diasRestantes <= 0 ? 'Vencido' : "Faltan $diasRestantes días" }})
+                                            </small>
+                                        </td>
                                     </tr>
                                 @endforeach
+
 
                             </tbody>
                         </table>
