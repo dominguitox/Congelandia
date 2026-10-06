@@ -14,11 +14,11 @@
                     + Añadir Producto
                 </button>
                 <button type="button" class="btn btn-secondary fw-bold" data-bs-toggle="modal"
-                    data-bs-target="#modalCrearProducto">
+                    data-bs-target="#modalRegistrarIngreso">
                     + Registrar ingreso
                 </button>
                 <button type="button" class="btn btn-secondary fw-bold" data-bs-toggle="modal"
-                    data-bs-target="#modalCrearProducto">
+                    data-bs-target="#modalRegistrarSalida">
                     + Registrar salida o merma
                 </button>
             </div>
@@ -247,9 +247,107 @@
         </div>
     </div>
     <!-- MODAL REGISTRAR INGRESO -->
+    <div class="modal fade" id="modalRegistrarIngreso" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalLabel">Registrar Ingreso de Productos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                @if($errors->any()) {{ dd($errors) }} @endif
 
+                <form action="{{ route('productos.crearProducto') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Fila 1: Abastecimiento Inicial -->
+                        <h6 class="text-primary mb-3">Datos de Abastecimiento</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="idProveedor" class="form-label">Proveedor</label>
+                                <select class="form-select" name="idProveedor" id="idProveedor">
+                                    <option value="">Seleccione proveedor...</option>
+                                    @foreach ($proveedores as $proveedor)
+                                        <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="stockInicial" class="form-label">Stock Inicial</label>
+                                <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0"
+                                    min="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
+                                <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                                <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary fw-bold">Agregar Producto</button>
+                        <button type="submit" class="btn btn-success fw-bold">Registrar Ingreso</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- MODAL REGISTRAR MERMA -->
+    <div class="modal fade" id="modalRegistrarSalida" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalLabel">Registrar Salida de Productos por Merma u Otro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                @if($errors->any()) {{ dd($errors) }} @endif
 
+                <form action="{{ route('productos.crearProducto') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Fila 1: Abastecimiento Inicial (Desplegable y Opcional) -->
+
+                        <h6 class="text-primary mb-3">Datos de Abastecimiento</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="idProveedor" class="form-label">Proveedor</label>
+                                <select class="form-select" name="idProveedor" id="idProveedor">
+                                    <option value="">Seleccione proveedor...</option>
+                                    @foreach ($proveedores as $proveedor)
+                                        <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="stockInicial" class="form-label">Stock Inicial</label>
+                                <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0"
+                                    min="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
+                                <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                                <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success fw-bold">Guardar Producto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     @vite(['resources/js/producto.js'])
 
 

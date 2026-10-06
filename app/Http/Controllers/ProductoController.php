@@ -80,7 +80,9 @@ class ProductoController extends Controller
             $productos = Producto::select(
                 'Producto.codigo',
                 'Producto.nombre',
-                'Categoria.nombre as categoria'
+                'Producto.idCategoria',
+                'Producto.descripcion',
+                'Categoria.nombre as categoria' 
             )
                 ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
                 ->addSelect([
@@ -105,6 +107,12 @@ class ProductoController extends Controller
                         ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
                         ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
                         ->orderByDesc('Ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'precioVenta' => ListaPrecio::select('precioVenta')
+                        ->whereColumn('codigoProducto', 'producto.codigo')
+                        ->orderByDesc('fechaInicio')
                         ->limit(1)
                 ])
                 ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
