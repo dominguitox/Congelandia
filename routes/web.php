@@ -36,19 +36,9 @@ Route::middleware('auth')->group(function () {
     // DASHBOARD
     // =====================================================
 
-    Route::get('/', function () {
-        return view('dashboard.index');
-    });
+    Route::get('/', [DashboardController::class, 'index']);
 
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    });
-
-    Route::get(
-        '/dashboard',
-        [DashboardController::class, 'index']
-    )->name('dashboard.index');
-
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // =====================================================
     // REPORTES
