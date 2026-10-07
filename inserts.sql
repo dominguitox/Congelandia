@@ -9,7 +9,7 @@ INSERT INTO Usuario (nombre, contrasena, rol, email, activo) VALUES
 ('Supervisor', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Supervisor', 'supervisor@congelandia.cl', TRUE),
 ('Bodeguero', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Bodeguero', 'bodeguero@congelandia.cl', TRUE),
 -- Por si acaso el admin no funciona
-('dev', '12345', 'Desarrollador', 'dev@congelandia.cl', TRUE),
+('dev', '12345', 'Administrador', 'dev@congelandia.cl', TRUE),
 ('Admin', '12345', 'Administrador', 'admin@congelandia.cl', TRUE);
 
 -- 2. Clientes
