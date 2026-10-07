@@ -20,6 +20,12 @@ class Salida extends Model
     {
         return $this->hasMany(DetalleSalida::class, 'idSalida', 'idSalida');
     }
+    public function usuario()
+    {
+        // belongsTo asume que Salida "pertenece a" un Usuario.
+        // Parámetros: (ModeloRelacionado::class, 'llave_foranea_en_salida', 'llave_primaria_en_usuario')
+        return $this->belongsTo(User::class, 'idUsuario', 'idUsuario');
+    }
     public function tipo()
     {
         return $this->belongsTo(TipoSalida::class, 'idTipo', 'idTipo');

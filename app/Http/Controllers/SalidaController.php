@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Producto;
 use App\Models\Salida;
 
+
 class VentaController extends Controller
 {
     public function registrar(Request $request)
