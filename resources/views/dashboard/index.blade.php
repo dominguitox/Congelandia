@@ -28,19 +28,6 @@
                     </div>
                 </div>
             </div>
-<<<<<<< Updated upstream
-            <!-- Tarjeta Productos vendidos Hoy -->
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-muted">Productos vendidos</h5>
-                        <p class="card-text display-6 fw-bold">0</p>
-                    </div>
-                </div>
-            </div>
-=======
-
->>>>>>> Stashed changes
             <!-- Tarjeta Alertas -->
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="card shadow-sm border-0 h-100">
@@ -62,58 +49,68 @@
             </div>
 
         </div>
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
         <div class="row">
             <!-- Log Ventas recientes -->
             <div class="col-md-6 col-sm-6 mb-3">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body text-center">
-                        <h5 class="card-title text-muted">Ventas</h5>
-                        <div class="historial-card">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Fecha y Hora</th>
-                                        <th scope="col">Artículos</th>
-                                        <th scope="col">Cajero</th>
-                                        <th scope="col">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($salidas as $salida)
-                                        <tr>
-                                            <td>{{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}</td>
+                        <h3>Ventas Recientes</h3>
 
-                                            {{-- Suma la cantidad total desde los detalles --}}
-                                            <td>{{ $salida->detalles->sum('cantidad') }}</td>
+                        <!-- Se agregó text-align: left para contrarrestar el text-center superior -->
+                        <div class="historial-card" style="text-align: left;">
 
-                                            <td>{{ $salida->idUsuario ?? 'Sin usuario' }}</td>
-                                            <td class="total">${{ number_format($salida->totalSalida, 0, ',', '.') }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="empty-message">No existen ventas registradas.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                            <div>
+                                @forelse($salidas as $salida)
+                                    @php
+                                        // dd($salida);
+                                    @endphp
+
+                                    <!-- Tarjeta de Orden Individual (Flexbox mínimo para alineación) -->
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: start; border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                                        <div>
+                                            <div>Orden #s{{ $salida->id }}</div>
+                                            <div style="color: #666;">
+                                                <!-- Fecha y Hora -->
+                                                {{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}
+                                                <!-- Separador • -->
+                                                •
+                                                <!-- Cantidad de Artículos con Texto -->
+                                                {{ $salida->detalles->sum('cantidad') }} artículos
+                                            </div>
+                                        </div>
+
+                                        <!-- Lado Derecho: Total y Usuario -->
+                                        <div style="text-align: right;">
+                                            <!-- Total en Negrita -->
+                                            <div>
+                                                <strong>${{ number_format($salida->totalSalida, 0, ',', '.') }}</strong>
+                                            </div>
+                                            <!-- Usuario en Texto Suave -->
+                                            <div style="color: #666;">
+                                                {{ $salida->usuario->nombre ?? 'Sin usuario' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <!-- Mensaje de Lista Vacía -->
+                                    <div style="text-align: center;">No existen ventas registradas.</div>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
+
+
             <!-- Alertas -->
             <div class="col-md-6 col-sm-6 mb-3">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body text-center">
                         <h5 class="card-title text-muted">Alertas</h5>
 
-<<<<<<< Updated upstream
-                        <table class="table">
-=======
                         <!-- Tabla: Productos bajo stock -->
                         <table class="table mb-4">
                             <thead>
@@ -148,84 +145,9 @@
                         </table>
                         <!-- Tabla: Productos con ofertas activas -->
                         <table class="table align-middle">
->>>>>>> Stashed changes
                             <thead>
                                 <h6> Productos bajo stock </h6>
                                 <tr>
-<<<<<<< Updated upstream
-                                    <th scope="col">Producto</th>
-                                    <th scope="col">Categoria</th>
-                                    <th scope="col">Costo</th>
-                                    <th scope="col">Precio Venta</th>
-                                    <th scope="col">Stock</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($productos as $producto)
-
-                                    @if($producto->stock == 0)
-                                        <tr class="table-danger">
-                                    @elseif($producto->stock < 10)
-                                            <tr class="table-warning">
-                                        @else
-                                            <tr class="table-default" style="display: none;">
-                                        @endif
-                                        <td>{{ $producto->nombre }} <br>
-                                        </td>
-                                        <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
-                                        <td>${{ number_format($producto->costo ?? 0, 0, ',', '.') }}</td>
-                                        <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
-
-                                        @if($producto->stock == 0)
-                                        <td><b>Agotado</b></td>
-                                        @else
-                                            <td>{{ number_format($producto->stock ?? 0, 0, ',', '.') }}</td>
-                                        @endif
-
-                                    </tr>
-                                @endforeach
-                            </tbody>
-
-                        </table>
-
-                        <table class="table">
-                            <thead>
-                                <h6> Productos prontos a expirar </h6>
-                                <tr>
-                                    <th scope="col">Producto</th>
-                                    <th scope="col">Categoria</th>
-                                    <th scope="col">Costo</th>
-                                    <th scope="col">Precio Venta</th>
-                                    <th scope="col">Fecha de vencimiento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @foreach($productos as $producto)
-                                    @php
-                                        // 1. Parseamos la fecha de MySQL y calculamos los días restantes hasta hoy
-                                        $fechaVence = \Carbon\Carbon::parse($producto->fechaVencimiento)->startOfDay();
-                                        $hoy = \Carbon\Carbon::now()->startOfDay();
-                                        $diasRestantes = $hoy->diffInDays($fechaVence, false); 
-                                    @endphp
-
-                                    @if($diasRestantes <= 0)
-                                        <tr class="table-danger">
-                                    @elseif($diasRestantes < 10)
-                                            <tr class="table-warning">
-                                        @else
-                                            <tr class="table-default" style="display: none;">
-                                        @endif
-                                        <td>{{ $producto->nombre }}</td>
-                                        <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
-                                        <td>${{ number_format($producto->costo ?? 0, 0, ',', '.') }}</td>
-                                        <td>${{ number_format($producto->precio ?? 0, 0, ',', '.') }}</td>
-                                        <td>
-                                            {{ $fechaVence->format('d M') }}
-                                            <small class="text-muted">
-                                                ({{ $diasRestantes <= 0 ? 'Vencido' : "Faltan $diasRestantes días" }})
-                                            </small>
-=======
                                     <th colspan="3" class="text-center border-0 pb-3">
                                         <h6 class="text-primary fw-bold mb-0">Ofertas Activas
                                             ({{ $cantidadPromocionesActivas }})</h6>
@@ -245,7 +167,8 @@
                                     @endphp
                                     <tr>
                                         <td class="text-start fw-semibold">
-                                            {{ $promocion->producto->nombre ?? 'Producto no encontrado' }}</td>
+                                            {{ $promocion->producto->nombre ?? 'Producto no encontrado' }}
+                                        </td>
                                         <td class="text-center">
                                             <span
                                                 class="badge bg-primary-subtle text-primary-emphasis px-2 py-1 border border-primary-subtle">
@@ -254,7 +177,6 @@
                                         </td>
                                         <td class="text-end text-muted">
                                             {{ \Carbon\Carbon::parse($promocion->fechaFin)->format('d M') }}
->>>>>>> Stashed changes
                                         </td>
                                     </tr>
                                 @endforeach

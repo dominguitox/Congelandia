@@ -8,10 +8,10 @@ use App\Models\Proveedor;
 use App\Models\Categoria;
 use App\Models\Promocion;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Carbon\Carbon;
 
 use App\Models\Producto;
 
@@ -21,10 +21,6 @@ class DashboardController extends Controller
     {
         try {
             $salidas = Salida::with('detalles.producto')->get();
-<<<<<<< Updated upstream
-            $totalVentasHoy = $salidas->sum('totalSalida');
-            //  dd($salidas);
-=======
 
             // 1. Cálculos exclusivos para HOY
             $hoy = Carbon::now()->toDateString();
@@ -45,7 +41,6 @@ class DashboardController extends Controller
             $productosVendidosHoy = $salidasHoy->sum(function ($salida) {
                 return $salida->detalles->sum('cantidad');
             });
->>>>>>> Stashed changes
 
             $productos = Producto::select(
                 'Producto.codigo',
@@ -95,8 +90,6 @@ class DashboardController extends Controller
                 ])
                 ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
                 ->get();
-<<<<<<< Updated upstream
-=======
             $alertasActivas = 0;
             $fechaHoyCarbon = Carbon::now()->startOfDay();
             $listaAlertas = [];
@@ -117,15 +110,11 @@ class DashboardController extends Controller
             }
             //dd($listaAlertas);
 
->>>>>>> Stashed changes
             // Descomentar para debug
             // dd($productos);
             $proveedores = Proveedor::whereNull('deleted_at')->get();
             $categorias = Categoria::whereNull('deleted_at')->get();
 
-<<<<<<< Updated upstream
-            return view('dashboard.index', compact('salidas', 'totalVentasHoy', 'proveedores', 'categorias', 'productos'));
-=======
             return view('dashboard.index', compact(
                 'salidas',
                 'totalVentasHoy',
@@ -139,7 +128,6 @@ class DashboardController extends Controller
                 'promocionesActivas',
                 'cantidadPromocionesActivas',
             ));
->>>>>>> Stashed changes
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al cargar el historial: ' . $e->getMessage());
         }
