@@ -1,5 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
-
+*{
+        user-select: none;
+}
 html {
     width: 100vw;
 }

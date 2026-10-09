@@ -42,7 +42,8 @@
                             {{-- Suma la cantidad total desde los detalles --}}
                             <td>{{ $salida->detalles->sum('cantidad') }}</td>
 
-                            <td>{{ $salida->idUsuario ?? 'Sin usuario' }}</td>
+                            <td> {{ $salida->usuario->nombre ?? 'Sin usuario' }}
+                            </td>
                             <td class="total">${{ number_format($salida->totalSalida, 0, ',', '.') }}</td>
                             <td>
                                 <button class="btn-expand" type="button"
