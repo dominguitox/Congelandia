@@ -14,7 +14,10 @@ class Salida extends Model
         'rutCliente',
         'totalSalida'
     ];
-
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'idUsuario', 'idUsuario');
+    }
     // Relación correcta hacia los detalles
     public function detalles()
     {
