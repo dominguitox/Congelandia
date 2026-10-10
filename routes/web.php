@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ProveedorController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -17,6 +18,7 @@ use App\Http\Middleware\CheckRole;
 // RUTAS DE ACCESO
 // =========================================================
 
+// Login
 Route::view('/login', 'auth.login')
     ->middleware('guest')
     ->name('login');
@@ -30,6 +32,7 @@ Route::post('/login', Login::class)
 // =========================================================
 
 Route::middleware('auth')->group(function () {
+
 
     // =====================================================
     // DASHBOARD
@@ -137,6 +140,45 @@ Route::middleware('auth')->group(function () {
         '/clientes/{rutCliente}',
         [ClienteController::class, 'destroy']
     )->name('clientes.destroy');
+
+
+    // =====================================================
+    // PROVEEDORES
+    // =====================================================
+
+    // Página principal de proveedores
+    Route::get(
+        '/proveedores',
+        [ProveedorController::class, 'listarProveedores']
+    )->name('proveedores.index');
+
+
+    // Crear proveedor
+    Route::post(
+        '/proveedores',
+        [ProveedorController::class, 'store']
+    )->name('proveedores.store');
+
+
+    // Mostrar productos asociados a un proveedor
+    Route::get(
+        '/proveedores/{idProveedor}/productos',
+        [ProveedorController::class, 'productos']
+    )->name('proveedores.productos');
+
+
+    // Editar proveedor
+    Route::put(
+        '/proveedores/{idProveedor}',
+        [ProveedorController::class, 'update']
+    )->name('proveedores.update');
+
+
+    // Eliminar proveedor
+    Route::delete(
+        '/proveedores/{idProveedor}',
+        [ProveedorController::class, 'destroy']
+    )->name('proveedores.destroy');
 
 
     // =====================================================

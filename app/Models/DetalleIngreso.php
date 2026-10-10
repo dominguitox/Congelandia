@@ -17,6 +17,30 @@ class DetalleIngreso extends Model
         'codigoProducto',
         'cantidad',
         'precioCompra',
-        'fechaVencimiento'
+        'fechaVencimiento',
     ];
+
+    /**
+     * El detalle pertenece a un ingreso.
+     */
+    public function ingreso()
+    {
+        return $this->belongsTo(
+            Ingreso::class,
+            'idIngreso',
+            'idIngreso'
+        );
+    }
+
+    /**
+     * El detalle pertenece a un producto.
+     */
+    public function producto()
+    {
+        return $this->belongsTo(
+            Producto::class,
+            'codigoProducto',
+            'codigo'
+        );
+    }
 }
