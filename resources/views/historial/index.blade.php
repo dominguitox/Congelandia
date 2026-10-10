@@ -36,57 +36,50 @@
                 <tbody>
                     @forelse($salidas as $salida)
                         <tr>
-                            <td class="ticket">
-                                #{{ $salida->idSalida }}
+                            <td class="ticket">#{{ $salida->idSalida }}</td>
+                            <td>{{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}</td>
+
+                            {{-- Suma la cantidad total desde los detalles --}}
+                            <td>{{ $salida->detalles->sum('cantidad') }}</td>
+
+                            <td> {{ $salida->usuario->nombre ?? 'Sin usuario' }}
                             </td>
+                            <td class="total">${{ number_format($salida->totalSalida, 0, ',', '.') }}</td>
                             <td>
-                                {{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}
-                            </td>
-                            <td>
-                                {{ $salida->cantidad ?? 0 }}
-                            </td>
-                            <td>
-                                {{ $salida->usuario ?? 'Sin usuario' }}
-                            </td>
-                            <td class="total">
-                                ${{ number_format($salida->totalSalida, 0, ',', '.') }}
-                            </td>
-                            <td>
-                                <button class="btn-expand" type="button" onclick="toggleDetalle({{ $salida->idSalida }}, this)">
-                                    ▼
-                                </button>
+                                <button class="btn-expand" type="button"
+                                    onclick="toggleDetalle({{ $salida->idSalida }}, this)">▼</button>
                             </td>
                         </tr>
                         <tr id="detalle-{{ $salida->idSalida }}" class="detalle-row">
                             <td colspan="6">
                                 <div class="detalle-container">
-                                    <h4>
-                                        Detalle de la Venta
-                                    </h4>
-                                    @foreach($salida->detalle as $producto)
+                                    <h4>Detalle de la Venta</h4>
+
+                                    @forelse($salida->detalles ?? [] as $item)
                                         <div class="detalle-item">
-                                            <span class="cantidad">
-                                                {{ $producto->cantidad }}x
-                                            </span>
-                                            <span class="producto">
-                                                {{ $producto->producto }}
-                                            </span>
+                                            <span class="cantidad">{{ $item->cantidad }}x</span>
+
+                                            {{-- Accede al nombre del producto a través de la relación --}}
+                                            <span class="producto">{{ $item->producto->nombre ?? 'Desconocido' }}</span>
+
                                             <span class="precio-unitario">
-                                                ${{ number_format($producto->precioUnitario, 0, ',', '.') }} c/u
+                                                ${{ number_format($item->precioCobrado, 0, ',', '.') }} c/u
                                             </span>
+
                                             <span class="subtotal">
-                                                ${{ number_format($producto->subtotal, 0, ',', '.') }}
+                                                ${{ number_format($item->cantidad * $item->precioCobrado, 0, ',', '.') }}
                                             </span>
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <div class="detalle-item text-muted">No hay productos registrados.</div>
+                                    @endforelse
+
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="empty-message">
-                                No existen ventas registradas.
-                            </td>
+                            <td colspan="6" class="empty-message">No existen ventas registradas.</td>
                         </tr>
                     @endforelse
                 </tbody>

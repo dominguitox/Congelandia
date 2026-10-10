@@ -22,8 +22,9 @@ class Producto extends Model
         'idCategoria',
     ];
 
-<<<<<<< Updated upstream
-=======
+    /**
+     * Un producto pertenece a una categoría.
+     */
     public function categoria()
     {
         return $this->belongsTo(
@@ -32,7 +33,6 @@ class Producto extends Model
             'idCategoria'
         );
     }
->>>>>>> Stashed changes
 
     /**
      * Un producto puede aparecer en varios detalles de ingreso.

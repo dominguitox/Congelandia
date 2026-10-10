@@ -4,6 +4,7 @@ use App\Http\Controllers\historialController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProveedorController;
@@ -46,6 +47,11 @@ Route::middleware('auth')->group(function () {
         return view('dashboard.index');
     });
 
+    Route::get(
+        '/dashboard',
+        [DashboardController::class, 'index']
+    )->name('dashboard.index');
+
 
     // =====================================================
     // REPORTES
@@ -69,6 +75,11 @@ Route::middleware('auth')->group(function () {
         '/inventario/{codigo}',
         [ProductoController::class, 'show']
     )->name('inventario.show');
+
+    Route::put(
+        '/productos/{codigo}',
+        [ProductoController::class, 'editarProducto']
+    )->name('inventario.editarProducto');
 
 
     // =====================================================

@@ -1,5 +1,9 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
+select * from lista_precio;
+select * from ingreso;
+select * from detalle_ingreso;
+
 
 -- 1. Desactivar revisión de llaves foráneas para borrar sin errores de dependencia
 SET FOREIGN_KEY_CHECKS = 0;
@@ -126,7 +130,8 @@ CREATE TABLE Salida (
     totalSalida DECIMAL(12, 2) DEFAULT 0.00,
     CONSTRAINT fk_salida_tipo FOREIGN KEY (idTipo) REFERENCES Tipo_Salida(idTipo),
     CONSTRAINT fk_salida_usuario FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
-    CONSTRAINT fk_salida_cliente FOREIGN KEY (rutCliente) REFERENCES Cliente(rutCliente)
+    CONSTRAINT fk_salida_cliente FOREIGN KEY (rutCliente) REFERENCES Cliente(rutCliente),
+	deleted_at DATETIME NULL DEFAULT NULL
 );
 
 CREATE TABLE Detalle_Salida (

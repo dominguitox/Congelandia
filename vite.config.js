@@ -8,6 +8,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/js/venta.js',
+                'resources/js/producto.js',
                 'resources/css/app.css',
                 'resources/css/reportes.css',
                 'resources/js/app.js',

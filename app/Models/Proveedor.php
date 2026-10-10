@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Proveedor extends Model
 {
-<<<<<<< Updated upstream
-    //
-}
-=======
     use SoftDeletes;
 
     protected $table = 'proveedor';
@@ -36,4 +33,3 @@ class Proveedor extends Model
         );
     }
 }
->>>>>>> Stashed changes

@@ -1,12 +1,16 @@
+CREATE DATABASE IF NOT EXISTS congelandia_db;
+USE congelandia_db;
 -- 1. Usuarios 
 INSERT INTO Usuario (nombre, contrasena, rol, email, activo) VALUES 
-('Admin Principal', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador', 'admin@congelandia.cl', TRUE),
+-- Realmente estos funcionan con 1234 o 12345 encriptados, el sistema todavia no hace el hasheo asi q no los toma
+('Admin 2', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador', 'admin2@congelandia.cl', TRUE),
 ('Cajero 1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Cajero', 'cajero1@congelandia.cl', TRUE),
 ('Cajero 2', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Cajero', 'cajero2@congelandia.cl', TRUE),
 ('Supervisor', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Supervisor', 'supervisor@congelandia.cl', TRUE),
 ('Bodeguero', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Bodeguero', 'bodeguero@congelandia.cl', TRUE),
 -- Por si acaso el admin no funciona
-('dev', '12345', 'Administrador', 'dev@congelandia.cl', TRUE);
+('dev', '12345', 'Desarrollador', 'dev@congelandia.cl', TRUE),
+('Admin', '12345', 'Administrador', 'admin@congelandia.cl', TRUE);
 
 -- 2. Clientes
 INSERT INTO Cliente (rutCliente, nombre, telefono, saldoDeuda) VALUES 
@@ -42,11 +46,11 @@ INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin) VA
 
 -- 6. Promociones
 INSERT INTO Promocion (codigoProducto, porcentajeDescuento, fechaInicio, fechaFin) VALUES 
-('PROD-001', 10.00, '2026-09-01 00:00:00', '2026-09-30 23:59:59'),
-('PROD-002', 15.00, '2026-09-10 00:00:00', '2026-09-20 23:59:59'),
-('PROD-003', 5.00, '2026-09-01 00:00:00', '2026-09-15 23:59:59'),
-('PROD-004', 20.00, '2026-09-15 00:00:00', '2026-09-25 23:59:59'),
-('PROD-005', 10.00, '2026-09-18 00:00:00', '2026-09-28 23:59:59');
+('PROD-001', 10.00, '2026-09-01 00:00:00', '2026-10-30 23:59:59'),
+('PROD-002', 15.00, '2026-09-10 00:00:00', '2026-11-20 23:59:59'),
+('PROD-003', 5.00, '2026-09-01 00:00:00', '2026-10-15 23:59:59'),
+('PROD-004', 20.00, '2026-09-15 00:00:00', '2026-12-25 23:59:59'),
+('PROD-005', 10.00, '2026-09-18 00:00:00', '2026-10-28 23:59:59');
 
 -- 7. Proveedores
 INSERT INTO Proveedor (nombre, telefono, correo) VALUES 
