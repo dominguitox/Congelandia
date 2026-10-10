@@ -31,19 +31,21 @@ class ProductoController extends Controller
             'idProveedor' => 'nullable|integer',
             'stockInicial' => 'nullable|integer|min:0',
             'precioCompra' => 'nullable|numeric|min:0',
-            'fechaVencimiento' => 'nullable|date'
+            'fechaVencimiento' => 'nullable|date',
+            'imagen' => 'nullable|image|max:2048'
         ]);
 
         try {
             DB::transaction(function () use ($request) {
 
                 $idUsuario = auth()->user()->idUsuario;
-                Producto::create([
+                $producto = Producto::create([
                     'codigo' => $request->codigo,
                     'nombre' => $request->nombre,
                     'descripcion' => $request->descripcion,
                     'idCategoria' => $request->idCategoria,
                 ]);
+
                 ListaPrecio::create([
                     'codigoProducto' => $request->codigo,
                     'precioVenta' => $request->precioVenta,
@@ -58,6 +60,7 @@ class ProductoController extends Controller
                         'idUsuario' => $idUsuario,
                         'totalCompra' => $totalCompra,
                     ]);
+
                     DetalleIngreso::create([
                         'idIngreso' => $ingreso->idIngreso,
                         'codigoProducto' => $request->codigo,
@@ -66,13 +69,25 @@ class ProductoController extends Controller
                         'fechaVencimiento' => $request->fechaVencimiento
                     ]);
                 }
+                if ($request->hasFile('imagen')) {
+                    $archivo = $request->file('imagen');
+                    $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+
+                    $archivo->move(public_path('images/productos'), $nombreArchivo);
+                    \App\Models\ImagenProducto::create([
+                        'rutaImagen' => 'images/productos/' . $nombreArchivo,
+                        'codigoProducto' => $producto->codigo,
+                        'alt' => $request->nombre,
+                        'descripcion' => 'Imagen de ' . $request->nombre
+                    ]);
+                }
             });
+
             return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
         }
-
     }
     public function listarProductos(Request $request)
     {
@@ -82,7 +97,7 @@ class ProductoController extends Controller
                 'Producto.nombre',
                 'Producto.idCategoria',
                 'Producto.descripcion',
-                'Categoria.nombre as categoria' 
+                'Categoria.nombre as categoria'
             )
                 ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
                 ->addSelect([

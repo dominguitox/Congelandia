@@ -28,7 +28,14 @@ class Producto extends Model
     }
     public function imagenes()
     {
-        return $this->hasMany(ImagenProducto::class, 'codigoProducto', 'id');
+        return $this->hasMany(ImagenProducto::class, 'codigoProducto', 'codigo');
+    }
+    // Relación para obtener el precio actual del producto
+    public function precioActual()
+    {
+        return $this->hasOne(ListaPrecio::class, 'codigoProducto', 'codigo')
+            ->whereNull('fechaFin')
+            ->latest('fechaInicio');
     }
 
 }
