@@ -21,10 +21,14 @@ class Producto extends Model
         'descripcion',
         'idCategoria'
     ];
-    
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'idCategoria', 'idCategoria');
+    }
+    public function imagenes()
+    {
+        return $this->hasMany(ImagenProducto::class, 'codigoProducto', 'id');
     }
 
 }
