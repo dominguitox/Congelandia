@@ -45,8 +45,27 @@
     </style>
 </head>
 
-<body>
+{{-- Agregamos padding-top para que el contenido nunca quede oculto bajo la barra fija --}}
 
+<body class="bg-white text-dark d-flex flex-column min-vh-100" style="padding-top: 45px;">
+
+    {{-- Barra superior de sesión activa (SIEMPRE VISIBLE Y FIJA) --}}
+    @if(auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
+        <div class="bg-dark text-white py-2 shadow-sm"
+            style="font-size: 0.85rem; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050;">
+            <div class="container d-flex justify-content-between align-items-center">
+                <span>Sesión iniciada como
+                    <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
+                <span>
+                    {{-- Ruta corregida de tu panel interno --}}
+                    <a class="btn bg-orange text-white rounded-pill fw-bold px-3 py-1" href="{{ route('dashboard.index') }}"
+                        style="font-size: 0.85rem;">
+                        ⚙️ Ir al Panel
+                    </a>
+                </span>
+            </div>
+        </div>
+    @endif
     <!-- Top Bar[cite: 2] -->
     <div class="bg-teal-top text-white py-2" style="font-size: 0.85rem;">
         <div class="container d-flex justify-content-between align-items-center">
