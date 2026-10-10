@@ -192,7 +192,7 @@
             </div>
         </div>
     </div>
-    <!-- MODAL EDITAR PRODUCTO -->
+<!-- MODAL EDITAR PRODUCTO -->
     <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalLabelEditar" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -202,7 +202,8 @@
                         aria-label="Close"></button>
                 </div>
 
-                <form action="" method="POST" id="formEditarProducto">
+                <!-- IMPORTANTE: Se agregó enctype="multipart/form-data" -->
+                <form action="" method="POST" id="formEditarProducto" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -238,6 +239,12 @@
                             <div class="col-md-4">
                                 <label for="edit_descripcion" class="form-label">Descripción</label>
                                 <input type="text" class="form-control" name="descripcion" id="edit_descripcion">
+                            </div>
+
+                            <!-- IMPORTANTE: Nuevo input para subir y actualizar la imagen -->
+                            <div class="col-md-12">
+                                <label for="edit_imagen" class="form-label">Actualizar Imagen (Opcional)</label>
+                                <input type="file" class="form-control" name="imagen" id="edit_imagen" accept="image/*">
                             </div>
                         </div>
                     </div>

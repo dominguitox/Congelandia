@@ -60,6 +60,9 @@
                         ⚙️ Ir al Panel
                     </a>
                 </span>
+                <span>
+                    versión:
+                </span>
                 <span>Sesión iniciada como
                     <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
             </div>
