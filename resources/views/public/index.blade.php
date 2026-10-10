@@ -54,15 +54,14 @@
         <div class="bg-dark text-white py-2 shadow-sm"
             style="font-size: 0.85rem; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050;">
             <div class="container d-flex justify-content-between align-items-center">
-                <span>Sesión iniciada como
-                    <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
                 <span>
-                    {{-- Ruta corregida de tu panel interno --}}
                     <a class="btn bg-orange text-white rounded-pill fw-bold px-3 py-1" href="{{ route('dashboard.index') }}"
                         style="font-size: 0.85rem;">
                         ⚙️ Ir al Panel
                     </a>
                 </span>
+                <span>Sesión iniciada como
+                    <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
             </div>
         </div>
     @endif
