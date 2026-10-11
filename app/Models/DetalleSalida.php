@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetalleSalida extends Model
 {
-    protected $table = 'detalle_salida';
+    protected $table = 'Detalle_Salida';
     public $timestamps = false;
     protected $fillable = [
         'idSalida',

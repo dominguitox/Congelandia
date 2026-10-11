@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ImagenProducto extends Model
 {
-    protected $table = 'IMAGEN_PRODUCTO';
+    protected $table = 'Imagen_Producto';
     public $timestamps = false;
     
     protected $fillable = ['rutaImagen', 'codigoProducto', 'alt', 'descripcion'];

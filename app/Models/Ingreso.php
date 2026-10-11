@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ingreso extends Model
 {
-    protected $table = 'ingreso';
+    protected $table = 'Ingreso';
     protected $primaryKey = 'idIngreso';
     protected $keyType = 'integer';
     public $incrementing = true;

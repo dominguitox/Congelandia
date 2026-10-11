@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ListaPrecio extends Model
 {
-    protected $table = 'lista_precio';
+    protected $table = 'Lista_Precio';
     protected $primaryKey = 'idPrecio';
     protected $keyType = 'integer';
     public $incrementing = true;

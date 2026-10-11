@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PagoSalida extends Model
 {
 
-    protected $table = 'pago_salida';
+    protected $table = 'Pago_Salida';
 
     protected $primaryKey = 'idPago';
 

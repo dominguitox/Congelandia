@@ -6,21 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductoVenta extends Model
 {
-    protected $table = 'PRODUCTO_VENTA'; // Según el diagrama relacional
+    protected $table = 'Detalle_Salida'; // Según el diagrama relacional
     protected $primaryKey = 'ID';
     public $timestamps = false;
 
     protected $fillable = [
-        'CANTIDAD',
-        'PRECIO_COBRADO',
-        'PRODUCTO', // FK a tabla PRODUCTO
-        'PROMOCION', // FK a tabla PROMOCION
-        'VENTA' // FK a tabla VENTA
+        'cantidad',
+        'precioCobrado',
+        'codigoProducto', // FK a tabla PRODUCTO
+        'idSalida' // FK a tabla salida
     ];
 
     // Relación para traer el nombre del producto
     public function producto()
     {
-        return $this->belongsTo(Producto::class, 'PRODUCTO', 'ID');
+        return $this->belongsTo(Producto::class, 'Producto', 'codigo');
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Categoria extends Model
 {
     use SoftDeletes;
-    protected $table = 'categoria';
+    protected $table = 'Categoria';
     protected $primaryKey = 'idCategoria';
     protected $keyType = 'integer';
     public $incrementing = true;

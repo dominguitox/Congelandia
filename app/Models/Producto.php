@@ -9,7 +9,7 @@ class Producto extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'producto';
+    protected $table = 'Producto';
     protected $primaryKey = 'codigo';
     protected $keyType = 'string';
     public $incrementing = false;

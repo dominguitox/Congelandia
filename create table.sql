@@ -1,9 +1,5 @@
 CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
-select * from lista_precio;
-select * from ingreso;
-select * from detalle_ingreso;
-select * from imagen_producto;
 
 -- 1. Desactivar revisión de llaves foráneas para borrar sin errores de dependencia
 SET FOREIGN_KEY_CHECKS = 0;
@@ -25,7 +21,7 @@ DROP TABLE IF EXISTS tipo_salida;
 DROP TABLE IF EXISTS tipo_devolucion;  
 DROP TABLE IF EXISTS metodo_pago;    
 DROP TABLE IF EXISTS imagen_producto;    
-
+-- NO DEBERIA DROPEAR EL LOG XD DROP TABLE IF EXISTS log_errors;  
 
 -- 2. Reactivar revisión de llaves foráneas para proteger las nuevas tablas
 SET FOREIGN_KEY_CHECKS = 1;
@@ -182,10 +178,18 @@ CREATE TABLE Devolucion (
     CONSTRAINT fk_devolucion_producto FOREIGN KEY (codigoProducto) REFERENCES Producto(codigo)
 );
 
-CREATE TABLE IMAGEN_PRODUCTO(
+CREATE TABLE Imagen_Producto(
 	id INT AUTO_INCREMENT PRIMARY KEY,
     rutaImagen TEXT,
 	codigoProducto VARCHAR(50) NOT NULL,
 	alt TEXT,
     descripcion TEXT
-)
+);
+CREATE TABLE IF NOT EXISTS Logs_Errors (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  mensaje TEXT NULL,
+  archivo VARCHAR(500) NULL,
+  linea INT NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL
+) 
