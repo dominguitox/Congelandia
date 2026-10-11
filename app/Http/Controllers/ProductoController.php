@@ -31,19 +31,21 @@ class ProductoController extends Controller
             'idProveedor' => 'nullable|integer',
             'stockInicial' => 'nullable|integer|min:0',
             'precioCompra' => 'nullable|numeric|min:0',
-            'fechaVencimiento' => 'nullable|date'
+            'fechaVencimiento' => 'nullable|date',
+            'imagen' => 'nullable|image|max:2048'
         ]);
 
         try {
             DB::transaction(function () use ($request) {
 
                 $idUsuario = auth()->user()->idUsuario;
-                Producto::create([
+                $producto = Producto::create([
                     'codigo' => $request->codigo,
                     'nombre' => $request->nombre,
                     'descripcion' => $request->descripcion,
                     'idCategoria' => $request->idCategoria,
                 ]);
+
                 ListaPrecio::create([
                     'codigoProducto' => $request->codigo,
                     'precioVenta' => $request->precioVenta,
@@ -58,6 +60,7 @@ class ProductoController extends Controller
                         'idUsuario' => $idUsuario,
                         'totalCompra' => $totalCompra,
                     ]);
+
                     DetalleIngreso::create([
                         'idIngreso' => $ingreso->idIngreso,
                         'codigoProducto' => $request->codigo,
@@ -66,13 +69,25 @@ class ProductoController extends Controller
                         'fechaVencimiento' => $request->fechaVencimiento
                     ]);
                 }
+                if ($request->hasFile('imagen')) {
+                    $archivo = $request->file('imagen');
+                    $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+
+                    $archivo->move(public_path('images/productos'), $nombreArchivo);
+                    \App\Models\ImagenProducto::create([
+                        'rutaImagen' => 'images/productos/' . $nombreArchivo,
+                        'codigoProducto' => $producto->codigo,
+                        'alt' => $request->nombre,
+                        'descripcion' => 'Imagen de ' . $request->nombre
+                    ]);
+                }
             });
+
             return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
         }
-
     }
     public function listarProductos(Request $request)
     {
@@ -82,7 +97,7 @@ class ProductoController extends Controller
                 'Producto.nombre',
                 'Producto.idCategoria',
                 'Producto.descripcion',
-                'Categoria.nombre as categoria' 
+                'Categoria.nombre as categoria'
             )
                 ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
                 ->addSelect([
@@ -127,13 +142,14 @@ class ProductoController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-    public function editarProducto(Request $request, $codigo)
+public function editarProducto(Request $request, $codigo)
     {
         $request->validate([
             'nombre' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
             'idCategoria' => 'required|integer',
-            'precioVenta' => 'required|numeric|min:0'
+            'precioVenta' => 'required|numeric|min:0',
+            'imagen' => 'nullable|image|max:2048' // 1. Agregada la validación de la imagen
         ]);
 
         try {
@@ -161,6 +177,40 @@ class ProductoController extends Controller
                         'precioVenta' => $request->precioVenta,
                         'fechaInicio' => now(),
                     ]);
+                }
+
+                // 5. Lógica para actualizar la imagen si se subió una nueva
+                if ($request->hasFile('imagen')) {
+                    $archivo = $request->file('imagen');
+                    $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+                    $archivo->move(public_path('images/productos'), $nombreArchivo);
+                    
+                    $nuevaRutaImagen = 'images/productos/' . $nombreArchivo;
+
+                    // Buscar si el producto ya tiene una imagen registrada
+                    $imagenActual = \App\Models\ImagenProducto::where('codigoProducto', $codigo)->first();
+
+                    if ($imagenActual) {
+                        // Eliminar el archivo físico anterior si existe en el servidor
+                        if (file_exists(public_path($imagenActual->rutaImagen))) {
+                            unlink(public_path($imagenActual->rutaImagen));
+                        }
+                        
+                        // Actualizar el registro en la base de datos
+                        $imagenActual->update([
+                            'rutaImagen' => $nuevaRutaImagen,
+                            'alt' => $request->nombre,
+                            'descripcion' => 'Imagen de ' . $request->nombre
+                        ]);
+                    } else {
+                        // Si no tenía imagen previa, se crea un registro nuevo
+                        \App\Models\ImagenProducto::create([
+                            'rutaImagen' => $nuevaRutaImagen,
+                            'codigoProducto' => $codigo,
+                            'alt' => $request->nombre,
+                            'descripcion' => 'Imagen de ' . $request->nombre
+                        ]);
+                    }
                 }
             });
 

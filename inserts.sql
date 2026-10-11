@@ -9,7 +9,7 @@ INSERT INTO Usuario (nombre, contrasena, rol, email, activo) VALUES
 ('Supervisor', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Supervisor', 'supervisor@congelandia.cl', TRUE),
 ('Bodeguero', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Bodeguero', 'bodeguero@congelandia.cl', TRUE),
 -- Por si acaso el admin no funciona
-('dev', '12345', 'Desarrollador', 'dev@congelandia.cl', TRUE),
+('dev', '12345', 'Administrador', 'dev@congelandia.cl', TRUE),
 ('Admin', '12345', 'Administrador', 'admin@congelandia.cl', TRUE);
 
 -- 2. Clientes
@@ -26,7 +26,10 @@ INSERT INTO Categoria (nombre) VALUES
 ('Panadería'),
 ('Lácteos'),
 ('Despensa'),
-('Verduras');
+('Verduras'),
+('Congelados'),
+('Pescado');
+
 
 -- 4. Productos
 INSERT INTO Producto (codigo, nombre, descripcion, idCategoria) VALUES 
@@ -34,7 +37,12 @@ INSERT INTO Producto (codigo, nombre, descripcion, idCategoria) VALUES
 ('PROD-002', 'Pan de Molde', 'Pan de molde blanco 500g', 2),
 ('PROD-003', 'Leche Entera 1L', 'Leche entera 1 Litro caja', 3),
 ('PROD-004', 'Arroz 1kg', 'Arroz grado 2 bolsa 1kg', 4),
-('PROD-005', 'Tomate 1kg', 'Tomate fresco granel', 5);
+('PROD-005', 'Tomate 1kg', 'Tomate fresco granel', 5),
+('PROD-006', 'Reineta 1kg', 'Bebida desechable 2 Litros', 7),
+('PROD-007', 'Verduras', 'Pan de molde blanco 500g', 6),
+('PROD-008', 'Choclo', 'Leche entera 1 Litro caja', 6),
+('PROD-009', 'Pulpa', 'Arroz grado 2 bolsa 1kg', 6),
+('PROD-010', 'Empanadas', 'Cajas empanadas', 6);
 
 -- 5. Listas de Precio
 INSERT INTO Lista_Precio (codigoProducto, precioVenta, fechaInicio, fechaFin) VALUES 

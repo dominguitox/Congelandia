@@ -7,6 +7,8 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\PublicController;
+
 use App\Http\Controllers\ProveedorController;
 
 use App\Http\Controllers\Auth\Login;
@@ -14,6 +16,12 @@ use App\Http\Controllers\Auth\Logout;
 
 use App\Http\Middleware\CheckRole;
 
+// =========================================================
+// SITIO PÚBLICOD
+// =========================================================
+
+Route::get('/', [PublicController::class, 'index'])->name('public.index');
+Route::get('/catalogo', [PublicController::class, 'catalogo'])->name('public.catalogo');
 
 // =========================================================
 // RUTAS DE ACCESO
@@ -38,10 +46,6 @@ Route::middleware('auth')->group(function () {
     // =====================================================
     // DASHBOARD
     // =====================================================
-
-    Route::get('/', function () {
-        return view('dashboard.index');
-    });
 
     Route::get('/dashboard', function () {
         return view('dashboard.index');

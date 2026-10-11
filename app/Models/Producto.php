@@ -33,6 +33,17 @@ class Producto extends Model
             'idCategoria'
         );
     }
+    public function imagenes()
+    {
+        return $this->hasMany(ImagenProducto::class, 'codigoProducto', 'codigo');
+    }
+    // Relación para obtener el precio actual del producto
+    public function precioActual()
+    {
+        return $this->hasOne(ListaPrecio::class, 'codigoProducto', 'codigo')
+            ->whereNull('fechaFin')
+            ->latest('fechaInicio');
+    }
 
     /**
      * Un producto puede aparecer en varios detalles de ingreso.
