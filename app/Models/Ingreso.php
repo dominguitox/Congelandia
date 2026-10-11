@@ -16,6 +16,30 @@ class Ingreso extends Model
         'fecha',
         'idProveedor',
         'idUsuario',
-        'totalCompra'
+        'totalCompra',
     ];
+
+    /**
+     * Un ingreso pertenece a un proveedor.
+     */
+    public function proveedor()
+    {
+        return $this->belongsTo(
+            Proveedor::class,
+            'idProveedor',
+            'idProveedor'
+        );
+    }
+
+    /**
+     * Un ingreso puede tener muchos detalles.
+     */
+    public function detalles()
+    {
+        return $this->hasMany(
+            DetalleIngreso::class,
+            'idIngreso',
+            'idIngreso'
+        );
+    }
 }
