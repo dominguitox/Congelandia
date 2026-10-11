@@ -188,4 +188,12 @@ CREATE TABLE IMAGEN_PRODUCTO(
 	codigoProducto VARCHAR(50) NOT NULL,
 	alt TEXT,
     descripcion TEXT
-)
+);
+-- drop table versiones;
+CREATE TABLE versiones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero VARCHAR(20) NOT NULL,
+    comentarios TEXT,
+    activa BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
