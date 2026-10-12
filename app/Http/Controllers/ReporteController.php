@@ -12,14 +12,42 @@ class ReporteController extends Controller
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->toDateString());
         $fechaFin = $request->input('fecha_fin', now()->toDateString());
 
-        // Se puede recibir el tipo de reporte desde un select en la vista
         $tipoReporte = $request->input('tipo_reporte', 'crudo');
 
-        if ($tipoReporte === 'mas_vendidos') {
-            $datos = $this->productosMasVendidos($fechaInicio, $fechaFin);
-        } else {
-            // Reporte en crudo por defecto
-            $datos = $this->reporteCrudo($fechaInicio, $fechaFin);
+        switch ($tipoReporte) {
+            case 'mas_vendidos':
+                $datos = $this->productosMasVendidos($fechaInicio, $fechaFin);
+                break;
+            case 'ingresos':
+                $datos = $this->totalIngresosPorFecha($fechaInicio, $fechaFin);
+                break;
+            case 'cantidad_ventas':
+                $datos = $this->cantidadVentasEfectuadasPorFecha($fechaInicio, $fechaFin);
+                break;
+            case 'total_articulos':
+                $datos = $this->cantidadArticulosVendidosPorFecha($fechaInicio, $fechaFin);
+                break;
+            case 'ticket_promedio':
+                $datos = $this->ticketPromedio($fechaInicio, $fechaFin);
+                break;
+            case 'ventas_categoria':
+                $datos = $this->ventasPorCategoria($fechaInicio, $fechaFin);
+                break;
+            case 'ventas_dia':
+                $datos = $this->ventasPorDiaDeLaSemana($fechaInicio, $fechaFin);
+                break;
+            case 'hora_pico':
+                $datos = $this->horariosConMasTrafico($fechaInicio, $fechaFin);
+                break;
+            case 'bajo_stock':
+                $datos = $this->productosConBajoStock();
+                break;
+            case 'proximos_vencer':
+                $datos = $this->productosProximosAVencer();
+                break;
+            default:
+                $datos = $this->reporteCrudo($fechaInicio, $fechaFin);
+                break;
         }
 
         return view('reportes.index', compact('datos', 'fechaInicio', 'fechaFin', 'tipoReporte'));
@@ -42,30 +70,136 @@ class ReporteController extends Controller
             ->get();
     }
 
+    // 1. Productos más vendidos
     private function productosMasVendidos($fechaInicio, $fechaFin)
     {
-        return collect([]);
+        return DB::table('detalle_salida')
+            ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
+            ->select(
+                'producto.nombre',
+                DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precioCobrado) as dinero_generado')
+            )
+            ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
+            ->groupBy('producto.codigo', 'producto.nombre')
+            ->orderBy('total_unidades', 'DESC')
+            ->get();
     }
 
+    // 2. Total de ingresos recaudados
     private function totalIngresosPorFecha($fechaInicio, $fechaFin)
     {
-        return collect([]);
+        $polla= DB::table('detalle_salida')
+            ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
+            ->sum(DB::raw('detalle_salida.cantidad * detalle_salida.precio_venta'));
+            
+            dd($polla);
     }
-    private function cantidadVentasEfectuadasPorFecha ($fechaInicio, $fechaFin)
-    {
-        //devuelve todas las ventas durante el periodo
-        //devuelve cantidad int de ventas durante del periodo
 
-        return collect([]);
-    }
-    private function catidadArticulosVendidosPorFecha( $fechaInicio, $fechaFin)
+    // 3. Cantidad de ventas efectuadas
+    private function cantidadVentasEfectuadasPorFecha($fechaInicio, $fechaFin)
     {
-        return collect([]);
+        return DB::table('salida')
+            ->whereBetween(DB::raw('DATE(fecha)'), [$fechaInicio, $fechaFin])
+            ->count('idSalida');
     }
-    //7
-    private function productoMasVendidoPorDiaDeLaSemana($dia, $fechaInicio, $fechaFin)
+    // 4. Total de artículos comercializados
+    private function cantidadArticulosVendidosPorFecha($fechaInicio, $fechaFin)
     {
-        return collect([]);
+        return DB::table('detalle_salida')
+            ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
+            ->sum('detalle_salida.cantidad');
+    }
+
+    // 5. Ticket promedio
+    private function ticketPromedio($fechaInicio, $fechaFin)
+    {
+        $ingresos = $this->totalIngresosPorFecha($fechaInicio, $fechaFin);
+        $ventas = $this->cantidadVentasEfectuadasPorFecha($fechaInicio, $fechaFin);
+
+        return $ventas > 0 ? ($ingresos / $ventas) : 0;
+    }
+    // 6. Ventas por categoría
+    private function ventasPorCategoria($fechaInicio, $fechaFin)
+    {
+        return DB::table('detalle_salida')
+            ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
+            ->join('categoria', 'producto.idCategoria', '=', 'categoria.idCategoria')
+            ->select(
+                'categoria.nombre as categoria',
+                DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precio_venta) as ingresos')
+            )
+            ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
+            ->groupBy('categoria.idCategoria', 'categoria.nombre')
+            ->orderBy('ingresos', 'DESC')
+            ->get();
+    }
+
+    // 7. Ventas por día de la semana
+    private function ventasPorDiaDeLaSemana($fechaInicio, $fechaFin)
+    {
+        return DB::table('detalle_salida')
+            ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->select(
+                DB::raw('DAYNAME(salida.fecha) as dia'),
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precio_venta) as ingresos')
+            )
+            ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
+            ->groupBy(DB::raw('DAYNAME(salida.fecha)'), DB::raw('DAYOFWEEK(salida.fecha)'))
+            ->orderBy(DB::raw('DAYOFWEEK(salida.fecha)'))
+            ->get();
+    }
+
+    // 8. Horarios con más tráfico (Hora pico)
+    private function horariosConMasTrafico($fechaInicio, $fechaFin)
+    {
+        return DB::table('salida')
+            ->select(
+                DB::raw('HOUR(fecha) as hora'),
+                DB::raw('COUNT(idSalida) as cantidad_transacciones')
+            )
+            ->whereBetween(DB::raw('DATE(fecha)'), [$fechaInicio, $fechaFin])
+            ->groupBy(DB::raw('HOUR(fecha)'))
+            ->orderBy('cantidad_transacciones', 'DESC')
+            ->get();
+    }
+
+    // 9. Productos con bajo stock
+    private function productosConBajoStock()
+    {
+        // Se consulta sobre la tabla independiente de inventario, cumpliendo 
+        // estrictamente con la regla de no almacenar la cantidad de stock en la tabla producto.
+        return DB::table('inventario')
+            ->join('producto', 'inventario.codigoProducto', '=', 'producto.codigo')
+            ->select(
+                'producto.nombre',
+                'inventario.cantidad as stock_actual'
+            )
+            ->whereColumn('inventario.cantidad', '<=', 'inventario.stock_minimo')
+            ->orderBy('inventario.cantidad', 'ASC')
+            ->get();
+    }
+
+    // 10. Productos próximos a vencer
+    private function productosProximosAVencer()
+    {
+        // El control de caducidad se asume normalizado en una tabla de lotes o detalles de ingreso.
+        return DB::table('lote')
+            ->join('producto', 'lote.codigoProducto', '=', 'producto.codigo')
+            ->select(
+                'producto.nombre',
+                'lote.fecha_vencimiento',
+                'lote.cantidad_disponible'
+            )
+            ->whereBetween('lote.fecha_vencimiento', [now()->toDateString(), now()->addDays(30)->toDateString()])
+            ->where('lote.cantidad_disponible', '>', 0)
+            ->orderBy('lote.fecha_vencimiento', 'ASC')
+            ->get();
     }
 }
 
@@ -77,10 +211,14 @@ class ReporteController extends Controller
 5 Ticket promedio: Monto promedio de dinero gastado por transacción.   
 6 Ventas por categoría: Ingresos y unidades vendidas desglosadas por agrupaciones como Bebidas, Panadería, Lácteos, etc.   
 7 Ventas por día de la semana: Ingresos generados segmentados por cada día para detectar tendencias de consumo.   
-Horarios con más tráfico (Hora pico): Estadísticas de los tramos horarios donde se concentra la mayor cantidad de ventas.   
-Productos con bajo stock: Listado de artículos que alcanzaron el límite mínimo y requieren reposición.   
-Productos próximos a vencer: Alertas sobre los artículos que se acercan a su fecha de caducidad.   
-Cantidad de clientes con deuda: Número de clientes de confianza que tienen saldos pendientes por pagar.   
-Deuda total pendiente: Sumatoria del dinero adeudado por los clientes registrados.   
-Ganancia estimada: Cálculo del margen de ganancia obtenido al cruzar el precio de venta con el costo del producto.   
+8 Horarios con más tráfico (Hora pico): Estadísticas de los tramos horarios donde se concentra la mayor cantidad de ventas.   
+9 Productos con bajo stock: Listado de artículos que alcanzaron el límite mínimo y requieren reposición.   
+10 Productos próximos a vencer: Alertas sobre los artículos que se acercan a su fecha de caducidad.   
+-------
+11 Cantidad de clientes con deuda: Número de clientes de confianza que tienen saldos pendientes por pagar.   
+12 Deuda total pendiente: Sumatoria del dinero adeudado por los clientes registrados.   
+13 Ganancia estimada: Cálculo del margen de ganancia obtenido al cruzar el precio de venta con el costo del producto.   
+
+-------
+14 Mostrar productos mas vendidos por festividad predefinida (navidad, 18 de septiembre)
 */
