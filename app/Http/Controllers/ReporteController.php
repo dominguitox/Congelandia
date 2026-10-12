@@ -90,12 +90,12 @@ class ReporteController extends Controller
     // 2. Total de ingresos recaudados
     private function totalIngresosPorFecha($fechaInicio, $fechaFin)
     {
-        $polla= DB::table('detalle_salida')
+        return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
-            ->sum(DB::raw('detalle_salida.cantidad * detalle_salida.precio_venta'));
-            
-            dd($polla);
+            ->sum(DB::raw('detalle_salida.cantidad * detalle_salida.precioCobrado'));
+
+
     }
 
     // 3. Cantidad de ventas efectuadas
@@ -132,7 +132,7 @@ class ReporteController extends Controller
             ->select(
                 'categoria.nombre as categoria',
                 DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
-                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precio_venta) as ingresos')
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precioCobrado) as ingresos')
             )
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->groupBy('categoria.idCategoria', 'categoria.nombre')
@@ -147,7 +147,7 @@ class ReporteController extends Controller
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->select(
                 DB::raw('DAYNAME(salida.fecha) as dia'),
-                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precio_venta) as ingresos')
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precioCobrado) as ingresos')
             )
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->groupBy(DB::raw('DAYNAME(salida.fecha)'), DB::raw('DAYOFWEEK(salida.fecha)'))
@@ -170,12 +170,13 @@ class ReporteController extends Controller
     }
 
     // 9. Productos con bajo stock
+    // tira error, tabla inventario no existe y el stock no se guarda ahi
     private function productosConBajoStock()
     {
         // Se consulta sobre la tabla independiente de inventario, cumpliendo 
         // estrictamente con la regla de no almacenar la cantidad de stock en la tabla producto.
-        return DB::table('inventario')
-            ->join('producto', 'inventario.codigoProducto', '=', 'producto.codigo')
+        return DB::table('Producto')
+            ->join('producto', 'Producto.codigoProducto', '=', 'producto.codigo')
             ->select(
                 'producto.nombre',
                 'inventario.cantidad as stock_actual'
