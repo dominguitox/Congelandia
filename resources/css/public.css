@@ -1,0 +1,38 @@
+.bg-teal-top {
+    background-color: #008b9c;
+}
+
+.bg-teal-main {
+    background-color: #00a2b8;
+}
+
+.text-teal {
+    color: #00a2b8;
+}
+
+.bg-orange {
+    background-color: #fd7e14;
+}
+
+.text-orange {
+    color: #fd7e14;
+}
+
+.text-yellow {
+    color: #ffc107;
+}
+
+.bg-yellow {
+    background-color: #ffc107;
+}
+
+.search-bar {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+/*
+*/
+.btn:hover {
+    background-color: #333;
+}
