@@ -28,7 +28,8 @@ INSERT INTO Categoria (nombre) VALUES
 ('Despensa'),
 ('Verduras'),
 ('Congelados'),
-('Pescado');
+('Pescado'),
+('Sin Categoría');
 
 
 -- 4. Productos
