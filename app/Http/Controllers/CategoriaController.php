@@ -10,15 +10,14 @@ class CategoriaController extends Controller
 {
     public function index()
     {
-        $categorias = Categoria::withCount('productos')->get();
+        $categorias = Categoria::with('productos')->withCount('productos')->get();
+
         $estadisticas = [
             'total' => $categorias->count(),
             'categorias_uso' => $categorias->count() - $categorias->where('productos_count', '>', 0)->count(),
             'productos_categorizados' => Producto::whereNotNull('idCategoria')->count(),
             'productos_NoCategorizados' => Producto::whereNull('idCategoria')->count(),
-
         ];
-
         return view('categorias.index', compact('categorias', 'estadisticas'));
     }
     public function store(Request $request)

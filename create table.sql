@@ -24,7 +24,26 @@ DROP TABLE IF EXISTS proveedor;
 DROP TABLE IF EXISTS tipo_salida;
 DROP TABLE IF EXISTS tipo_devolucion;  
 DROP TABLE IF EXISTS metodo_pago;    
-DROP TABLE IF EXISTS imagen_producto;    
+DROP TABLE IF EXISTS imagen_producto;   
+ 
+-- TABLAS QUE NO SE DEBERIAN BORRAR
+-- drop table log_errors;
+CREATE TABLE IF NOT EXISTS Log_Errors (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  mensaje TEXT NULL,
+  archivo VARCHAR(500) NULL,
+  linea INT NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL
+);
+-- drop table versiones;
+CREATE TABLE IF NOT EXISTS Versiones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero VARCHAR(20) NOT NULL,
+    comentarios TEXT,
+    activa BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
 -- 2. Reactivar revisión de llaves foráneas para proteger las nuevas tablas
@@ -188,12 +207,4 @@ CREATE TABLE IMAGEN_PRODUCTO(
 	codigoProducto VARCHAR(50) NOT NULL,
 	alt TEXT,
     descripcion TEXT
-);
--- drop table versiones;
-CREATE TABLE versiones (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    numero VARCHAR(20) NOT NULL,
-    comentarios TEXT,
-    activa BOOLEAN DEFAULT FALSE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
