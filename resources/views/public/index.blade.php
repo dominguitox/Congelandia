@@ -60,9 +60,12 @@
                         ⚙️ Ir al Panel
                     </a>
                 </span>
-                <span>
-                    versión:
-                </span>
+                @if($version)
+                    <div>
+                        <span><strong>Versión: </strong> {{ $version->numero }}</span>
+                        <a href="{{ url('/version-info') }}" target="_blank" class="text-white ms-2">Ver detalles</a>
+                    </div>
+                @endif
                 <span>Sesión iniciada como
                     <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
             </div>

@@ -10,6 +10,8 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PublicController;
 
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\VersionController;
+
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -41,7 +43,8 @@ Route::post('/login', Login::class)
 // =========================================================
 
 Route::middleware('auth')->group(function () {
-
+    
+    Route::get('/version-info', [App\Http\Controllers\PublicController::class, 'versionInfo']);
 
     // =====================================================
     // DASHBOARD
