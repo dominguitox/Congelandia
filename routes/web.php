@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\UserController;
 
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\VersionController;
@@ -137,7 +138,7 @@ Route::middleware('auth')->group(function () {
         '/categorias/{id}',
         [CategoriaController::class, 'update']
     )->name('categorias.update');
-    
+
     Route::delete(
         '/categorias/{id}',
         [CategoriaController::class, 'destroy']
@@ -231,6 +232,19 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
+    // =====================================================
+    // USUARIOS
+    // =====================================================
+
+    Route::get(
+        '/usuarios',
+        [UserController::class, 'index']
+    )->name('usuarios.index');
+
+    Route::post(
+        '/usuarios',
+        [UserController::class, 'store']
+    )->name('usuarios.store');
     // =====================================================
     // CIERRE DE SESIÓN
     // =====================================================
