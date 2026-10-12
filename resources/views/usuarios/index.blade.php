@@ -4,56 +4,67 @@
 
 
 @section('content')
+    <!-- Encabezado -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold">Usuarios</h2>
+            <p class="text-muted">Ver y crear usuarios del sistema</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <!-- Botón que activa el Modal -->
+            <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal"
+                data-bs-target="#modalCrearUsuario">
+                + Nuevo Usuario
+            </button>
+        </div>
+    </div>
     <div class="container mt-5">
-        <!-- Alertas dinámicas -->
-        <div id="alert-container"></div>
-
         <div class="row">
             <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Gestión de Usuarios Internos</h4>
-                        <!-- Botón que activa el Modal -->
-                        <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#modalCrearUsuario">
-                            + Nuevo Usuario
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered align-middle" id="tabla-usuarios">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Email</th>
-                                        <th>Rol</th>
-                                        <th>Activo</th>
+                <div class="card shadow-sm"> </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered align-middle" id="tabla-usuarios">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($usuarios as $usuario)
+                                    <tr id="usuario-row-{{ $usuario->idUsuario }}">
+                                        <td>{{ $usuario->idUsuario }}</td>
+                                        <td>{{ $usuario->nombre }}</td>
+                                        <td>{{ $usuario->email }}</td>
+                                        <td>{{ $usuario->rol }}</td>
+                                        <td>
+                                            @if($usuario->activo)
+                                                <span class="badge bg-success">Activo</span>
+                                            @else
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning">
+                                                Desactivar usuario
+                                            </button>
+                                            <button class="btn btn-sm btn-primary">
+                                                Ver historial de acciones
+                                            </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($usuarios as $usuario)
-                                        <tr id="usuario-row-{{ $usuario->idUsuario }}">
-                                            <td>{{ $usuario->idUsuario }}</td>
-                                            <td>{{ $usuario->nombre }}</td>
-                                            <td>{{ $usuario->email }}</td>
-                                            <td>{{ $usuario->rol }}</td>
-                                            <td>
-                                                @if($usuario->activo)
-                                                    <span class="badge bg-success">Activo</span>
-                                                @else
-                                                    <span class="badge bg-danger">Inactivo</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr id="sin-usuarios">
-                                            <td colspan="5" class="text-center">No hay usuarios registrados en el sistema.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                                @empty
+                                    <tr id="sin-usuarios">
+                                        <td colspan="5" class="text-center">No hay usuarios registrados en el sistema.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
