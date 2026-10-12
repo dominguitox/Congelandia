@@ -11,7 +11,7 @@ use App\Http\Controllers\PublicController;
 
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\VersionController;
-
+use App\Http\Controllers\ReporteController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -43,7 +43,7 @@ Route::post('/login', Login::class)
 // =========================================================
 
 Route::middleware('auth')->group(function () {
-    
+
     Route::get('/version-info', [App\Http\Controllers\PublicController::class, 'versionInfo']);
 
     // =====================================================
@@ -197,7 +197,11 @@ Route::middleware('auth')->group(function () {
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'destroy']
     )->name('proveedores.destroy');
+    // =====================================================
+    // REPORTES
+    // =====================================================
 
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
     // =====================================================
     // CIERRE DE SESIÓN
