@@ -6,48 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Congelandia - El mundo de los congelados</title>
 
-    {{-- Estilos y scripts generales --}} @vite(['resources/css/app.css', 'resources/js/app.js'])
-    {{-- CSS específico de cada módulo --}} @stack('css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/public.css', 'resources/js/public.js'])
 
-    <style>
-        .bg-teal-top {
-            background-color: #008b9c;
-        }
 
-        .bg-teal-main {
-            background-color: #00a2b8;
-        }
-
-        .text-teal {
-            color: #00a2b8;
-        }
-
-        .bg-orange {
-            background-color: #fd7e14;
-        }
-
-        .text-orange {
-            color: #fd7e14;
-        }
-
-        .text-yellow {
-            color: #ffc107;
-        }
-
-        .bg-yellow {
-            background-color: #ffc107;
-        }
-
-        .search-bar {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-        }
-    </style>
 </head>
+{{-- Si está logeado: crea un div invisible que mueve el contenido para abajo --}}
+@if (auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
+    <div class="div" style="padding-top: 45px;"></div>
+@endif
 
-{{-- Agregamos padding-top para que el contenido nunca quede oculto bajo la barra fija --}}
-
-<body class="bg-white text-dark d-flex flex-column min-vh-100" style="padding-top: 45px;">
+<body class="bg-white text-dark d-flex flex-column min-vh-100">
 
     {{-- Barra superior de sesión activa (SIEMPRE VISIBLE Y FIJA) --}}
     @if(auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
@@ -74,8 +43,8 @@
     <!-- Top Bar[cite: 2] -->
     <div class="bg-teal-top text-white py-2" style="font-size: 0.85rem;">
         <div class="container d-flex justify-content-between align-items-center">
-            <span>🚚 Delivery gratis en compras sobre $25.000 — Santiago RM</span>
-            <span>🕒 Lun-Sáb 9–20h &nbsp;&nbsp; 📞 +56 9 1234 5678</span>
+            <span>🚚 Algún tipo de información importante y concisa — Delivery? Ubicación?</span>
+            <span>🕒 Horario de atención &nbsp;&nbsp; 📞 +numero de la clienta</span>
         </div>
     </div>
 
@@ -90,8 +59,8 @@
                 </div>
                 <div class="lh-1">
                     <span class="d-block fw-bold fs-5">CONGELANDIA</span>
-                    <span class="text-teal fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">MINI
-                        SUPERMERCADO</span>
+                    <span class="text-teal fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">
+                        EL MUNDO DE LOS CONGELADOS</span>
                 </div>
             </a>
 
@@ -102,7 +71,7 @@
             </form>
 
             <!-- Botón Carrito -->
-            <button class="btn bg-orange text-white rounded-pill fw-bold px-4 py-2 border-0">
+            <button class="btn-carrito btn bg-orange text-white rounded-pill fw-bold px-4 py-2 border-0">
                 🛒 Carrito
             </button>
         </div>
@@ -122,7 +91,7 @@
                 <div class="col-md-6 position-relative mt-5 mt-md-0">
                     <div class="rounded-4 overflow-hidden shadow-lg" style="height: 500px;">
                         <!-- Usa una imagen genérica atractiva de tu carpeta public/images para la portada -->
-                        <img src="{{ asset('images/portada-mariscos.jpg') }}" alt="Promoción"
+                        <img src="{{ asset('images/empanadas.jpg') }}" alt="Promoción"
                             style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </div>
