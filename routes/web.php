@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\CategoriaController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -19,7 +20,6 @@ use App\Http\Middleware\CheckRole;
 // RUTAS DE ACCESO
 // =========================================================
 
-// Login
 Route::view('/login', 'auth.login')
     ->middleware('guest')
     ->name('login');
@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
 
 
     // =====================================================
-    // HISTORIAL GENERAL
+    // HISTORIAL
     // =====================================================
 
     Route::get(
@@ -111,42 +111,31 @@ Route::middleware('auth')->group(function () {
     // CLIENTES
     // =====================================================
 
-    // Página principal
     Route::get(
         '/clientes',
         [ClienteController::class, 'index']
     )->name('clientes.index');
 
-
-    // Crear cliente
     Route::post(
         '/clientes',
         [ClienteController::class, 'store']
     )->name('clientes.store');
 
-
-    // Historial de un cliente
     Route::get(
         '/clientes/{rutCliente}/historial',
         [ClienteController::class, 'historial']
     )->name('clientes.historial');
 
-
-    // Registrar pago de una venta
     Route::post(
         '/clientes/venta/{idSalida}/pago',
         [ClienteController::class, 'registrarPago']
     )->name('clientes.registrarPago');
 
-
-    // Editar cliente
     Route::put(
         '/clientes/{rutCliente}',
         [ClienteController::class, 'update']
     )->name('clientes.update');
 
-
-    // Eliminar cliente
     Route::delete(
         '/clientes/{rutCliente}',
         [ClienteController::class, 'destroy']
@@ -157,35 +146,26 @@ Route::middleware('auth')->group(function () {
     // PROVEEDORES
     // =====================================================
 
-    // Página principal de proveedores
     Route::get(
         '/proveedores',
         [ProveedorController::class, 'listarProveedores']
     )->name('proveedores.index');
 
-
-    // Crear proveedor
     Route::post(
         '/proveedores',
         [ProveedorController::class, 'store']
     )->name('proveedores.store');
 
-
-    // Mostrar productos asociados a un proveedor
     Route::get(
         '/proveedores/{idProveedor}/productos',
         [ProveedorController::class, 'productos']
     )->name('proveedores.productos');
 
-
-    // Editar proveedor
     Route::put(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'update']
     )->name('proveedores.update');
 
-
-    // Eliminar proveedor
     Route::delete(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'destroy']
@@ -193,13 +173,39 @@ Route::middleware('auth')->group(function () {
 
 
     // =====================================================
-    // CIERRE DE SESIÓN
+    // CATEGORÍAS
+    // =====================================================
+
+    Route::get(
+        '/categorias',
+        [CategoriaController::class, 'index']
+    )->name('categorias.index');
+
+    Route::post(
+        '/categorias',
+        [CategoriaController::class, 'store']
+    )->name('categorias.store');
+
+    Route::put(
+        '/categorias/{idCategoria}',
+        [CategoriaController::class, 'update']
+    )->name('categorias.update');
+
+    Route::delete(
+        '/categorias/{idCategoria}',
+        [CategoriaController::class, 'destroy']
+    )->name('categorias.destroy');
+
+
+    // =====================================================
+    // LOGOUT
     // =====================================================
 
     Route::post(
         '/logout',
         Logout::class
     )->name('logout');
+
 });
 
 
