@@ -7,8 +7,12 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\VersionController;
+use App\Http\Controllers\ReporteController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -17,14 +21,35 @@ use App\Http\Middleware\CheckRole;
 
 
 // =========================================================
+// SITIO PÚBLICO
+// =========================================================
+
+Route::get(
+    '/',
+    [PublicController::class, 'index']
+)->name('public.index');
+
+Route::get(
+    '/catalogo',
+    [PublicController::class, 'catalogo']
+)->name('public.catalogo');
+
+
+// =========================================================
 // RUTAS DE ACCESO
 // =========================================================
 
-Route::view('/login', 'auth.login')
+Route::view(
+    '/login',
+    'auth.login'
+)
     ->middleware('guest')
     ->name('login');
 
-Route::post('/login', Login::class)
+Route::post(
+    '/login',
+    Login::class
+)
     ->middleware('guest');
 
 
@@ -36,16 +61,18 @@ Route::middleware('auth')->group(function () {
 
 
     // =====================================================
-    // DASHBOARD
+    // INFORMACIÓN DE VERSIÓN
     // =====================================================
 
-    Route::get('/', function () {
-        return view('dashboard.index');
-    });
+    Route::get(
+        '/version-info',
+        [PublicController::class, 'versionInfo']
+    );
 
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    });
+
+    // =====================================================
+    // DASHBOARD
+    // =====================================================
 
     Route::get(
         '/dashboard',
@@ -57,9 +84,10 @@ Route::middleware('auth')->group(function () {
     // REPORTES
     // =====================================================
 
-    Route::get('/reportes', function () {
-        return view('reportes.index');
-    });
+    Route::get(
+        '/reportes',
+        [ReporteController::class, 'index']
+    )->name('reportes.index');
 
 
     // =====================================================
@@ -105,6 +133,31 @@ Route::middleware('auth')->group(function () {
         '/historial',
         [historialController::class, 'index']
     )->name('historial.index');
+
+
+    // =====================================================
+    // CATEGORÍAS
+    // =====================================================
+
+    Route::get(
+        '/categorias',
+        [CategoriaController::class, 'index']
+    )->name('categorias.index');
+
+    Route::post(
+        '/categorias',
+        [CategoriaController::class, 'store']
+    )->name('categorias.store');
+
+    Route::put(
+        '/categorias/{idCategoria}',
+        [CategoriaController::class, 'update']
+    )->name('categorias.update');
+
+    Route::delete(
+        '/categorias/{idCategoria}',
+        [CategoriaController::class, 'destroy']
+    )->name('categorias.destroy');
 
 
     // =====================================================
@@ -173,32 +226,22 @@ Route::middleware('auth')->group(function () {
 
 
     // =====================================================
-    // CATEGORÍAS
+    // USUARIOS
     // =====================================================
 
     Route::get(
-        '/categorias',
-        [CategoriaController::class, 'index']
-    )->name('categorias.index');
+        '/usuarios',
+        [UserController::class, 'index']
+    )->name('usuarios.index');
 
     Route::post(
-        '/categorias',
-        [CategoriaController::class, 'store']
-    )->name('categorias.store');
-
-    Route::put(
-        '/categorias/{idCategoria}',
-        [CategoriaController::class, 'update']
-    )->name('categorias.update');
-
-    Route::delete(
-        '/categorias/{idCategoria}',
-        [CategoriaController::class, 'destroy']
-    )->name('categorias.destroy');
+        '/usuarios',
+        [UserController::class, 'store']
+    )->name('usuarios.store');
 
 
     // =====================================================
-    // LOGOUT
+    // CIERRE DE SESIÓN
     // =====================================================
 
     Route::post(

@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /*
     =========================================================
-    MODALES DIALOG
+    MODALES
     =========================================================
     */
 
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /*
     =========================================================
-    OTROS
+    OTROS ELEMENTOS
     =========================================================
     */
 
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /*
     =========================================================
-    FUNCIONES MODAL
+    ABRIR DIALOG
     =========================================================
     */
 
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         /*
-         * Por seguridad, cerramos cualquier otro dialog abierto.
+         * Cerramos cualquier otro diálogo abierto.
          */
         document
             .querySelectorAll('dialog[open]')
@@ -116,23 +116,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         /*
-         * showModal() coloca el dialog en el TOP LAYER
-         * del navegador.
+         * showModal() coloca el diálogo en el
+         * top layer del navegador.
          */
         if (!dialog.open) {
             dialog.showModal();
         }
 
 
-        /*
-         * Bloqueamos el scroll de la página.
-         */
         document.body.classList.add(
             'dialog-open'
         );
-
     }
 
+
+    /*
+    =========================================================
+    CERRAR DIALOG
+    =========================================================
+    */
 
     function cerrarDialog(dialog) {
 
@@ -145,10 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 
-        /*
-         * Si no queda ningún modal abierto,
-         * devolvemos el scroll.
-         */
         const quedaAbierto =
             document.querySelector(
                 'dialog[open]'
@@ -161,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
         }
-
     }
 
 
@@ -190,16 +187,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                 }, 50);
-
             }
         );
-
     }
 
 
     /*
     =========================================================
-    EDITAR
+    EDITAR CATEGORÍA
     =========================================================
     */
 
@@ -238,13 +233,12 @@ document.addEventListener('DOMContentLoaded', () => {
             nombreEditar.select();
 
         }, 50);
-
     }
 
 
     /*
     =========================================================
-    ELIMINAR
+    ELIMINAR CATEGORÍA
     =========================================================
     */
 
@@ -267,7 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         /*
-         * SI TIENE PRODUCTOS
+         * SI TIENE PRODUCTOS:
+         * no permitimos eliminar.
          */
 
         if (cantidad > 0) {
@@ -286,7 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         /*
-         * SI NO TIENE PRODUCTOS
+         * SI NO TIENE PRODUCTOS:
+         * mostramos confirmación.
          */
 
         if (!id || !formEliminar) {
@@ -307,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         abrirDialog(modalEliminar);
-
     }
 
 
@@ -408,7 +403,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'aria-hidden',
             'false'
         );
-
     }
 
 
@@ -449,7 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
             });
-
     }
 
 
@@ -495,7 +488,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     abrirDetalle(button);
 
                     return;
-
                 }
 
 
@@ -504,7 +496,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     editarCategoria(button);
 
                     return;
-
                 }
 
 
@@ -513,18 +504,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     eliminarCategoria(button);
 
                     return;
-
                 }
-
             }
         );
-
     }
 
 
     /*
     =========================================================
-    CERRAR CON X / CANCELAR / ENTENDIDO
+    CERRAR MODALES
     =========================================================
     */
 
@@ -554,14 +542,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             cerrarDialog(dialog);
-
         }
     );
 
 
     /*
     =========================================================
-    CLICK EN BACKDROP
+    CERRAR AL HACER CLICK EN EL BACKDROP
     =========================================================
     */
 
@@ -573,12 +560,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 'click',
                 (event) => {
 
-                    /*
-                     * En <dialog>, si el click ocurre
-                     * directamente sobre el elemento,
-                     * estamos en el backdrop.
-                     */
-
                     if (
                         event.target === dialog
                     ) {
@@ -586,10 +567,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         cerrarDialog(dialog);
 
                     }
-
                 }
             );
-
         });
 
 
@@ -619,10 +598,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         );
 
                     }
-
                 }
             );
-
         });
 
 
@@ -652,7 +629,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 cerrarDialog(dialog);
 
                 return;
-
             }
 
 
@@ -666,7 +642,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 cerrarDetalle();
 
             }
-
         }
     );
 
@@ -721,9 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         row.classList.add(
                             'search-hidden'
                         );
-
                     }
-
                 });
 
 
@@ -736,10 +709,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
 
                 }
-
             }
         );
-
     }
 
 

@@ -29,6 +29,10 @@ class CategoriaController extends Controller
         $totalCategorias = Categoria::whereNull('deleted_at')
             ->count();
 
+        /*
+         * Cantidad de productos activos que tienen
+         * una categoría asignada.
+         */
         $productosConCategoria = DB::table('producto')
             ->join(
                 'categoria',
@@ -42,6 +46,10 @@ class CategoriaController extends Controller
             ->distinct()
             ->count('producto.codigo');
 
+        /*
+         * Cantidad de categorías que actualmente
+         * tienen al menos un producto.
+         */
         $categoriasEnUso = DB::table('producto')
             ->join(
                 'categoria',
@@ -79,8 +87,11 @@ class CategoriaController extends Controller
                 'max:100'
             ],
         ], [
-            'nombre.required' => 'El nombre de la categoría es obligatorio.',
-            'nombre.max' => 'El nombre no puede superar los 100 caracteres.',
+            'nombre.required' =>
+                'El nombre de la categoría es obligatorio.',
+
+            'nombre.max' =>
+                'El nombre no puede superar los 100 caracteres.',
         ]);
 
         Categoria::create([
@@ -113,8 +124,11 @@ class CategoriaController extends Controller
                 'max:100'
             ],
         ], [
-            'nombre.required' => 'El nombre de la categoría es obligatorio.',
-            'nombre.max' => 'El nombre no puede superar los 100 caracteres.',
+            'nombre.required' =>
+                'El nombre de la categoría es obligatorio.',
+
+            'nombre.max' =>
+                'El nombre no puede superar los 100 caracteres.',
         ]);
 
         $categoria->update([
@@ -141,6 +155,10 @@ class CategoriaController extends Controller
         $categoria = Categoria::whereNull('deleted_at')
             ->findOrFail($idCategoria);
 
+        /*
+         * Comprobar si existen productos activos
+         * asociados a esta categoría.
+         */
         $tieneProductos = DB::table('producto')
             ->where('idCategoria', $idCategoria)
             ->whereNull('deleted_at')
@@ -155,6 +173,9 @@ class CategoriaController extends Controller
                 );
         }
 
+        /*
+         * Soft delete.
+         */
         $categoria->delete();
 
         return redirect()

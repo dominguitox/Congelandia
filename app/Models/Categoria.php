@@ -23,6 +23,7 @@ class Categoria extends Model
         'nombre',
     ];
 
+
     /**
      * Una categoría puede tener muchos productos.
      */

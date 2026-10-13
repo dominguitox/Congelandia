@@ -13,11 +13,13 @@
     <div class="categorias-header">
 
         <div class="categorias-title">
+
             <h1>Categorías</h1>
 
             <p>
                 Gestiona las categorías de tus productos
             </p>
+
         </div>
 
 
@@ -130,7 +132,7 @@
 
 
         {{-- =================================================
-             LISTA
+             LISTA DE CATEGORÍAS
              ================================================= --}}
 
         <section class="categorias-table-card">
@@ -249,7 +251,9 @@
 
                         {{-- Productos para el panel lateral --}}
 
-                        <template id="productos-{{ $categoria->idCategoria }}">
+                        <template
+                            id="productos-{{ $categoria->idCategoria }}"
+                        >
 
                             @forelse($categoria->productos as $producto)
 
@@ -377,7 +381,6 @@
 
 {{-- =========================================================
      MODAL NUEVA CATEGORÍA
-     AHORA ES <dialog>
      ========================================================= --}}
 
 <dialog
@@ -532,7 +535,7 @@
 
 
 {{-- =========================================================
-     MODAL CONFIRMAR ELIMINACIÓN
+     MODAL ELIMINAR
      ========================================================= --}}
 
 <dialog
@@ -669,8 +672,7 @@
 
 
 {{-- =========================================================
-     CARGA DIRECTA DEL MÓDULO
-     NO DEPENDE DE @stack('scripts')
+     ASSETS DEL MÓDULO
      ========================================================= --}}
 
 @vite([

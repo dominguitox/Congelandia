@@ -90,7 +90,7 @@
                 </div>
                 @if($errors->any()) {{ dd($errors) }} @endif
 
-                <form action="{{ route('productos.crearProducto') }}" method="POST">
+                <form action="{{ route('productos.crearProducto') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <!-- Fila 1: Datos Básicos y Precio (Obligatorios) -->
@@ -123,7 +123,7 @@
                                 </select>
                             </div>
 
-                            <!-- PRECIO MOVIDO AQUÍ (OBLIGATORIO) -->
+                            <!-- PRECIO -->
                             <div class="col-md-4">
                                 <label for="precioVenta" class="form-label">Precio de Venta ($) *</label>
                                 <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta"
@@ -133,6 +133,10 @@
                             <div class="col-md-4">
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <input type="text" class="form-control" name="descripcion" id="descripcion">
+                            </div>
+                            <div class="mb-3">
+                                <label for="imagen" class="form-label">Imagen del Producto</label>
+                                <input class="form-control" type="file" id="imagen" name="imagen" accept="image/*">
                             </div>
                         </div>
 
@@ -188,7 +192,7 @@
             </div>
         </div>
     </div>
-    <!-- MODAL EDITAR PRODUCTO -->
+<!-- MODAL EDITAR PRODUCTO -->
     <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalLabelEditar" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -198,7 +202,8 @@
                         aria-label="Close"></button>
                 </div>
 
-                <form action="" method="POST" id="formEditarProducto">
+                <!-- IMPORTANTE: Se agregó enctype="multipart/form-data" -->
+                <form action="" method="POST" id="formEditarProducto" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -234,6 +239,12 @@
                             <div class="col-md-4">
                                 <label for="edit_descripcion" class="form-label">Descripción</label>
                                 <input type="text" class="form-control" name="descripcion" id="edit_descripcion">
+                            </div>
+
+                            <!-- IMPORTANTE: Nuevo input para subir y actualizar la imagen -->
+                            <div class="col-md-12">
+                                <label for="edit_imagen" class="form-label">Actualizar Imagen (Opcional)</label>
+                                <input type="file" class="form-control" name="imagen" id="edit_imagen" accept="image/*">
                             </div>
                         </div>
                     </div>
