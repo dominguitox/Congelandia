@@ -3,61 +3,186 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
-use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoriaController extends Controller
 {
+    /**
+     * Mostrar el módulo de categorías.
+     */
     public function index()
     {
-        $categorias = Categoria::with('productos')->withCount('productos')->get();
+        $categorias = Categoria::with([
+            'productos' => function ($query) {
+                $query->whereNull('deleted_at')
+                    ->orderBy('nombre');
+            }
+        ])
+            ->whereNull('deleted_at')
+            ->orderBy('nombre')
+            ->get();
 
-        $estadisticas = [
-            'total' => $categorias->count(),
-            'categorias_uso' => $categorias->count() - $categorias->where('productos_count', '>', 0)->count(),
-            'productos_categorizados' => Producto::whereNotNull('idCategoria')->count(),
-            'productos_NoCategorizados' => Producto::whereNull('idCategoria')->count(),
-        ];
-        return view('categorias.index', compact('categorias', 'estadisticas'));
+        /*
+         * Estadísticas.
+         */
+        $totalCategorias = Categoria::whereNull('deleted_at')
+            ->count();
+
+        /*
+         * Cantidad de productos activos que tienen
+         * una categoría asignada.
+         */
+        $productosConCategoria = DB::table('producto')
+            ->join(
+                'categoria',
+                'producto.idCategoria',
+                '=',
+                'categoria.idCategoria'
+            )
+            ->whereNull('producto.deleted_at')
+            ->whereNull('categoria.deleted_at')
+            ->whereNotNull('producto.idCategoria')
+            ->distinct()
+            ->count('producto.codigo');
+
+        /*
+         * Cantidad de categorías que actualmente
+         * tienen al menos un producto.
+         */
+        $categoriasEnUso = DB::table('producto')
+            ->join(
+                'categoria',
+                'producto.idCategoria',
+                '=',
+                'categoria.idCategoria'
+            )
+            ->whereNull('producto.deleted_at')
+            ->whereNull('categoria.deleted_at')
+            ->whereNotNull('producto.idCategoria')
+            ->distinct()
+            ->count('producto.idCategoria');
+
+        return view(
+            'categorias.index',
+            compact(
+                'categorias',
+                'totalCategorias',
+                'productosConCategoria',
+                'categoriasEnUso'
+            )
+        );
     }
+
+
+    /**
+     * Crear categoría.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255'
+            'nombre' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+        ], [
+            'nombre.required' =>
+                'El nombre de la categoría es obligatorio.',
+
+            'nombre.max' =>
+                'El nombre no puede superar los 100 caracteres.',
         ]);
 
         Categoria::create([
-            'nombre' => $request->nombre
+            'nombre' => trim($request->nombre),
         ]);
 
-        return redirect()->route('categorias.index')->with('success', 'Categoría creada correctamente.');
+        return redirect()
+            ->route('categorias.index')
+            ->with(
+                'success',
+                'Categoría creada correctamente.'
+            );
     }
 
-    public function update(Request $request, $id)
-    {
+
+    /**
+     * Editar categoría.
+     */
+    public function update(
+        Request $request,
+        $idCategoria
+    ) {
+        $categoria = Categoria::whereNull('deleted_at')
+            ->findOrFail($idCategoria);
+
         $request->validate([
-            'nombre' => 'required|string|max:255'
+            'nombre' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+        ], [
+            'nombre.required' =>
+                'El nombre de la categoría es obligatorio.',
+
+            'nombre.max' =>
+                'El nombre no puede superar los 100 caracteres.',
         ]);
 
-        $categoria = Categoria::findOrFail($id);
         $categoria->update([
-            'nombre' => $request->nombre
+            'nombre' => trim($request->nombre),
         ]);
 
-        return redirect()->route('categorias.index')->with('success', 'Categoría actualizada correctamente.');
+        return redirect()
+            ->route('categorias.index')
+            ->with(
+                'success',
+                'Categoría actualizada correctamente.'
+            );
     }
 
-    public function destroy($id)
-    {
-        $categoria = Categoria::findOrFail($id);
 
-        // Validación antes de borrar: No borrar si tiene productos asociados (Por Integridad)
-        if ($categoria->productos()->count() > 0) {
-            return redirect()->route('categorias.index')->with('error', 'No se puede eliminar la categoría porque tiene productos asociados.');
+    /**
+     * Eliminar categoría.
+     *
+     * No se permite eliminar una categoría que tenga
+     * productos activos asociados.
+     */
+    public function destroy($idCategoria)
+    {
+        $categoria = Categoria::whereNull('deleted_at')
+            ->findOrFail($idCategoria);
+
+        /*
+         * Comprobar si existen productos activos
+         * asociados a esta categoría.
+         */
+        $tieneProductos = DB::table('producto')
+            ->where('idCategoria', $idCategoria)
+            ->whereNull('deleted_at')
+            ->exists();
+
+        if ($tieneProductos) {
+            return redirect()
+                ->route('categorias.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar la categoría porque tiene productos asociados.'
+                );
         }
 
+        /*
+         * Soft delete.
+         */
         $categoria->delete();
 
-        return redirect()->route('categorias.index')->with('success', 'Categoría eliminada correctamente.');
+        return redirect()
+            ->route('categorias.index')
+            ->with(
+                'success',
+                'Categoría eliminada correctamente.'
+            );
     }
 }
