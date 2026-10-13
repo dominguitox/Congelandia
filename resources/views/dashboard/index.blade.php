@@ -39,12 +39,14 @@
             </div>
 
             <!-- Tarjeta botón mostrar ofertas -->
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-muted">Ofertas</h5>
-                        <p class="card-text display-6 fw-bold">{{ $cantidadPromocionesActivas }}</p>
-                    </div>
+            <div class="col-md-3 col-sm-6 mb-3 ">
+                <div class="card shadow-sm border-0 h-100 bg-info">
+                    <a href="{{ url('/inventario/#ofertas') }}" style="text-decoration: none;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-muted">Ofertas</h5>
+                            <p class="card-text display-6 fw-bold">{{ $cantidadPromocionesActivas }}</p>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -146,7 +148,6 @@
                         <!-- Tabla: Productos con ofertas activas -->
                         <table class="table align-middle">
                             <thead>
-                                <h6> Productos bajo stock </h6>
                                 <tr>
                                     <th colspan="3" class="text-center border-0 pb-3">
                                         <h6 class="text-primary fw-bold mb-0">Ofertas Activas

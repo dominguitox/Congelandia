@@ -13,6 +13,7 @@ class User extends Authenticatable
     protected $primaryKey = 'idUsuario';
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
     protected $fillable = [
         'nombre',
         'email',
