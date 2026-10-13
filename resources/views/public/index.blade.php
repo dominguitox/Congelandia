@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <!-- Navegación Principal[cite: 2] -->
+    <!-- Navegación Principal -->
     <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
         <div class="container d-flex justify-content-between align-items-center">
             <!-- Logo -->
@@ -85,6 +85,7 @@
                 <!-- Columna Izquierda (Textos) -->
                 <div class="col-md-6 text-white pe-5">
                     <!-- ... tus textos promocionales ... -->
+                     <h1>Hola!</h1>
                 </div>
 
                 <!-- Columna Derecha (Imagen Promocional Fija) -->
@@ -101,7 +102,7 @@
     </div>
 
 
-    <!-- === NUEVA SECCIÓN: GRILLA DE PRODUCTOS DINÁMICOS === -->
+    <!-- === GRILLA DE PRODUCTOS DINÁMICOS === -->
     <div class="container my-5">
         <h2 class="fw-bold mb-4">Productos Destacados</h2>
 
