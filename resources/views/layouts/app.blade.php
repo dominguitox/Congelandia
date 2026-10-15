@@ -33,7 +33,7 @@
             padding:1rem;
             border-radius:5px;
             margin-bottom:1rem;
-            position:absolute;
+            position:fixed;
             left:40px;
             bottom:20px;
             z-index:9999;
