@@ -1,336 +1,673 @@
-/* ============================
-   CONTENEDOR PRINCIPAL
-============================ */
+/* =========================================================
+   CONTENEDOR
+========================================================= */
 
 .historial-container {
-
     width: 100%;
-
 }
 
 
-
-/* ============================
+/* =========================================================
    CABECERA
-============================ */
+========================================================= */
 
 .historial-header {
-
     display: flex;
-
     justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 35px;
-
+    align-items: flex-end;
+    gap: 25px;
+    margin-bottom: 28px;
 }
-
-
 
 .historial-header h2 {
-
     margin: 0;
-
     color: #123447;
-
     font-size: 32px;
-
     font-weight: 700;
-
 }
-
-
 
 .historial-header p {
-
-    margin-top: 6px;
-
+    margin: 6px 0 0;
     color: #52788a;
-
-    font-size: 16px;
-
+    font-size: 15px;
 }
 
 
+/* =========================================================
+   FILTROS
+========================================================= */
 
-/* ============================
-   BUSCADOR
-============================ */
+.historial-filtros {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.historial-search {
+    position: relative;
+}
 
 .historial-search input {
-
-    width: 290px;
-
+    width: 260px;
     height: 42px;
 
     border-radius: 20px;
 
     border: 1px solid #b9ddeb;
 
-    padding: 0 20px;
+    background: #ffffff;
+
+    padding: 0 18px 0 40px;
 
     font-size: 14px;
 
     color: #52788a;
 
     outline: none;
-
 }
-
-
 
 .historial-search input:focus {
-
-    border-color: #3d8ca8;
-
+    border-color: #159cba;
 }
 
+.historial-search input::placeholder {
+    color: #7898a6;
+}
 
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
 
-/* ============================
-   TARJETA TABLA
-============================ */
+    transform: translateY(-50%);
 
-.historial-card {
+    color: #52788a;
 
-    background: white;
+    font-size: 20px;
+
+    pointer-events: none;
+}
+
+.historial-select {
+    height: 42px;
+
+    min-width: 150px;
 
     border-radius: 20px;
 
-    overflow: hidden;
+    border: 1px solid #b9ddeb;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    background: #ffffff;
 
+    padding: 0 16px;
+
+    color: #52788a;
+
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+.historial-select:focus {
+    border-color: #159cba;
 }
 
 
+/* =========================================================
+   ESTADÍSTICAS
+========================================================= */
 
-/* ============================
+.historial-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: #ffffff;
+
+    border: 1px solid #d6eaf1;
+
+    border-radius: 18px;
+
+    min-height: 90px;
+
+    padding: 18px 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+
+    font-weight: 700;
+}
+
+.stat-icon-total {
+    background: #e2f4f9;
+    color: #009bc0;
+}
+
+.stat-icon-ingreso {
+    background: #e2f6ed;
+    color: #19945d;
+}
+
+.stat-icon-salida {
+    background: #fff0df;
+    color: #ef8d00;
+}
+
+.stat-card span {
+    display: block;
+
+    color: #52788a;
+
+    font-size: 13px;
+
+    margin-bottom: 4px;
+}
+
+.stat-card strong {
+    display: block;
+
+    color: #123447;
+
+    font-size: 24px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   TARJETA DE TABLA
+========================================================= */
+
+.historial-card {
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================================================
    TABLA
-============================ */
+========================================================= */
 
 .historial-table {
-
     width: 100%;
 
     border-collapse: collapse;
 
+    table-layout: fixed;
 }
-
-
 
 .historial-table thead {
-
     background: #d8f0f8;
-
 }
 
-
-
 .historial-table th {
-
     text-align: left;
 
-    padding: 18px 20px;
+    padding: 17px 16px;
 
     color: #27627c;
 
-    font-size: 15px;
+    font-size: 13px;
 
     font-weight: 700;
-
 }
 
-
-
 .historial-table td {
-
-    padding: 16px 20px;
+    padding: 15px 16px;
 
     color: #52788a;
 
-    font-size: 15px;
+    font-size: 13px;
 
-    border-bottom: 1px solid #d8eaf1;
+    border-bottom: 1px solid #dcecf2;
 
+    vertical-align: middle;
+}
+
+.historial-table tbody tr.movimiento-row {
+    transition: background 0.15s ease;
+}
+
+.historial-table tbody tr.movimiento-row:hover {
+    background: #f7fcfe;
 }
 
 
+/* =========================================================
+   ANCHOS DE COLUMNAS
+========================================================= */
 
-.historial-table tbody tr:last-child td {
+.historial-table th:nth-child(1),
+.historial-table td:nth-child(1) {
+    width: 18%;
+}
 
-    border-bottom: none;
+.historial-table th:nth-child(2),
+.historial-table td:nth-child(2) {
+    width: 17%;
+}
 
+.historial-table th:nth-child(3),
+.historial-table td:nth-child(3) {
+    width: 17%;
+}
+
+.historial-table th:nth-child(4),
+.historial-table td:nth-child(4) {
+    width: 14%;
+}
+
+.historial-table th:nth-child(5),
+.historial-table td:nth-child(5) {
+    width: 17%;
+}
+
+.historial-table th:nth-child(6),
+.historial-table td:nth-child(6) {
+    width: 12%;
+}
+
+.historial-table th:nth-child(7),
+.historial-table td:nth-child(7) {
+    width: 5%;
+    text-align: center;
 }
 
 
+/* =========================================================
+   ID MOVIMIENTO
+========================================================= */
 
-/* ============================
-   ELEMENTOS ESPECIALES
-============================ */
-
-.ticket {
-
-    color: #0089c7;
-
-    font-weight: 700;
-
-}
-
-
-
-.total {
-
-    font-weight: 700;
-
+.movimiento-id strong {
     color: #123447;
 
+    font-weight: 700;
 }
 
 
+/* =========================================================
+   BADGES
+========================================================= */
+
+.tipo-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 6px 11px;
+
+    border-radius: 15px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+.tipo-ingreso {
+    background: #e2f6ed;
+    color: #168655;
+}
+
+.tipo-salida {
+    background: #fff0df;
+    color: #d87900;
+}
+
+.cantidad-badge {
+    display: inline-block;
+
+    background: #e5f5f9;
+
+    color: #1685a2;
+
+    padding: 6px 10px;
+
+    border-radius: 14px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.total {
+    color: #123447 !important;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   BOTÓN EXPANDIR
+========================================================= */
+
+.acciones {
+    text-align: center;
+}
 
 .btn-expand {
+    width: 34px;
+    height: 34px;
 
     border: none;
 
-    background: transparent;
+    border-radius: 10px;
 
-    cursor: pointer;
-
-    font-size: 18px;
+    background: #e7f5f9;
 
     color: #347d98;
 
-    transition: transform .2s;
-
-}
-
-
-
-.btn-expand:hover {
-
-    transform: scale(1.15);
-
-}
-
-
-
-/* ============================
-   DETALLE DE VENTA
-============================ */
-
-
-.detalle-row {
-
-    display: none;
-
-    border-top: 1px solid #d8eaf1;
-
-}
-
-
-
-.detalle-container {
-
-    background: #f7fcfe;
-
-    padding: 14px 25px;
-
-}
-
-
-
-.detalle-container h4 {
-
-    margin: 0 0 8px 0;
-
-    color: #173746;
+    cursor: pointer;
 
     font-size: 15px;
 
-    font-weight: 700;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
 
+.btn-expand:hover {
+    background: #d7eef5;
+}
+
+.btn-expand.abierto {
+    transform: rotate(180deg);
 }
 
 
+/* =========================================================
+   DETALLE
+========================================================= */
+
+.detalle-row {
+    display: none;
+}
+
+.detalle-row.detalle-visible {
+    display: table-row;
+}
+
+.detalle-row td {
+    padding: 0;
+
+    background: #f7fcfe;
+}
+
+.detalle-container {
+    padding: 18px 25px 20px;
+
+    border-top: 1px solid #d8eaf1;
+}
+
+.detalle-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-bottom: 13px;
+
+    margin-bottom: 5px;
+}
+
+.detalle-header h4 {
+    margin: 0;
+
+    color: #173746;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+.detalle-header span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #7898a6;
+
+    font-size: 12px;
+}
+
+.detalle-extra {
+    color: #52788a;
+
+    font-size: 12px;
+}
+
+.detalle-extra strong {
+    color: #173746;
+}
+
+
+/* =========================================================
+   ITEM DEL DETALLE
+========================================================= */
 
 .detalle-item {
+    display: flex;
 
-    display:flex;
+    align-items: center;
 
-    align-items:center;
+    gap: 15px;
 
-    padding:7px 0;
+    padding: 11px 10px;
 
-    font-size:14px;
+    border-bottom: 1px solid #e1eef3;
 
-    color:#52788a;
-
-    border-bottom:1px solid #e1eef3;
-
+    color: #52788a;
 }
 
 .detalle-item:last-child {
-
-    border-bottom:none;
-
+    border-bottom: none;
 }
 
-.detalle-item .cantidad {
+.detalle-cantidad {
+    width: 45px;
 
-    width:55px;
+    color: #1685a2;
 
-    font-weight:700;
+    font-weight: 700;
+}
 
+.detalle-producto {
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.detalle-producto strong {
+    color: #173746;
+
+    font-size: 13px;
+}
+
+.detalle-producto small {
+    color: #7898a6;
+
+    font-size: 11px;
+}
+
+.detalle-precio {
+    width: 140px;
+
+    text-align: right;
+
+    color: #52788a;
+
+    font-size: 12px;
+}
+
+.detalle-subtotal {
+    width: 110px;
+
+    text-align: right;
+
+    color: #173746;
+
+    font-size: 13px;
+
+    font-weight: 700;
 }
 
 
-.detalle-item .producto {
+/* =========================================================
+   VENCIMIENTOS
+========================================================= */
 
-    flex:1;
+.vencimientos {
+    display: flex;
 
-    padding-left:20px;
+    flex-wrap: wrap;
 
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 13px;
+
+    padding-top: 13px;
+
+    border-top: 1px solid #dcecf2;
+
+    font-size: 12px;
+
+    color: #52788a;
+}
+
+.vencimientos strong {
+    color: #173746;
+}
+
+.vencimientos span {
+    background: #edf7fa;
+
+    padding: 5px 9px;
+
+    border-radius: 10px;
 }
 
 
-.detalle-item .precio-unitario {
+/* =========================================================
+   MENSAJES
+========================================================= */
 
-    width:180px;
-
-    text-align:right;
-
-    padding-right:45px;
-
-    color:#52788a;
-
-}
-
-
-.detalle-item .subtotal {
-
-    width:110px;
-
-    text-align:right;
-
-    font-weight:700;
-
-    color:#52788a;
-
-}
-
-
-/* ============================
-   MENSAJE VACIO
-============================ */
-
-.empty-message {
-
+.empty-message,
+.sin-resultados td {
     text-align: center;
 
-    padding: 30px;
+    padding: 35px !important;
 
-    color: #789;
+    color: #7898a6;
+
+    font-size: 14px;
+}
+
+.sin-resultados {
+    display: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .historial-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .historial-filtros {
+        width: 100%;
+    }
+
+    .historial-search {
+        flex: 1;
+    }
+
+    .historial-search input {
+        width: 100%;
+    }
+
+    .historial-select {
+        min-width: 140px;
+    }
+
+    .historial-table {
+        min-width: 850px;
+    }
+
+    .historial-card {
+        overflow-x: auto;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .historial-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .historial-filtros {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .historial-select {
+        width: 100%;
+    }
 
 }
