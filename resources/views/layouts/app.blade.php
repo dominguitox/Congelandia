@@ -27,18 +27,7 @@
     {{-- Mensajes de error --}}
     @if(session('error'))
 
-        <div style="
-            background-color:#f8d7da;
-            color:#842029;
-            padding:1rem;
-            border-radius:5px;
-            margin-bottom:1rem;
-            position:fixed;
-            left:40px;
-            bottom:20px;
-            z-index:9999;
-            max-width:60%;
-        ">
+        <div class="flash-error">
 
             <strong>Error:</strong>
 
@@ -57,12 +46,7 @@
 
     {{-- Contenido principal --}}
 
-    <main style="
-        margin-top:60px;
-        margin-left:250px;
-        padding:25px;
-        min-height:calc(100vh - 60px);
-    ">
+    <main class="app-main">
 
         @yield('content')
 

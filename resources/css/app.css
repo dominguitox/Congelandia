@@ -1,53 +1,29 @@
+/* =========================================================
+   CONGELANDIA - ESTILOS GLOBALES
+   =========================================================
+   Punto de entrada de los estilos base de la aplicacion.
+   Importa, en orden:
+     1. Bootstrap
+     2. Tokens del tema  (resources/css/theme/tokens.css)
+     3. Base global      (resources/css/theme/base.css)
+     4. Componentes      (resources/css/components/*.css)
+
+   Para cambiar de tema: reemplazar el archivo de tokens
+   importado por otro (ver theme/tokens.css).
+   ========================================================= */
+
 @import 'bootstrap/dist/css/bootstrap.min.css';
-*{
-        user-select: none;
-}
-html {
-    width: 100vw;
-}
 
-/* --- Sidebar Permanente --- */
-.sidebar {
-    position: fixed;
-    top: 60px;
-    /* Justo debajo de tu header de 60px */
-    left: 0;
-    width: 250px;
-    /* Ancho fijo */
-    height: calc(100vh - 60px);
-    /* Altura restante de la pantalla */
-    background-color: var(--color-navy-mid, #112240);
-    z-index: 1000;
-    overflow-y: auto;
-    /* Permite scroll vertical en el menú si hay muchas opciones */
-}
+@import './theme/tokens.css';
+@import './theme/base.css';
 
-/* Lista del menú */
-.sidebar ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 15px 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar ul li a {
-    display: block;
-    padding: 10px 20px;
-    font-weight: bold;
-    color: var(--color-text-light, #ffffff);
-    text-decoration: none;
-    border-left: 3px solid transparent;
-    transition: background-color 0.2s, border-left-color 0.2s;
-}
-
-.sidebar ul li a:hover {
-    background-color: var(--color-navy-dark, #0a192f);
-    color: var(--color-ice-hover, #64ffda);
-    border-left-color: var(--color-ice-hover, #64ffda);
-}
-
-.link-sidebar-seleccionado {
-    background-color: var(--color-navy-mid, #0a192f);
-    border-left-color: var(--color-ice-hover, #64ffda) !important;
-}
+@import './components/layout.css';
+@import './components/cards.css';
+@import './components/tables.css';
+@import './components/buttons.css';
+@import './components/forms.css';
+@import './components/badges.css';
+@import './components/modals.css';
+@import './components/search.css';
+@import './components/states.css';
+@import './components/bootstrap-theme.css';

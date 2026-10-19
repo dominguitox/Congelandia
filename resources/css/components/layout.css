@@ -1,0 +1,143 @@
+/* =========================================================
+   COMPONENTE - LAYOUT / MARCO
+   =========================================================
+   Header fijo, sidebar, contenedores de modulo, cabeceras de
+   modulo y titulos de seccion. Todos los modulos comparten
+   estas reglas para tener la misma estructura.
+   ========================================================= */
+
+/* =========================================================
+   HEADER SUPERIOR
+   ========================================================= */
+
+.app-header {
+    background-color: var(--color-navy-dark);
+    height: var(--header-height);
+    z-index: 1010;
+    padding: 0 var(--space-lg);
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    background-color: var(--color-navy-mid);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar ul li a {
+    display: block;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: var(--color-text-light, #ffffff);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background-color 0.2s, border-left-color 0.2s;
+}
+
+.sidebar ul li a:hover {
+    background-color: var(--color-navy-dark);
+    color: var(--color-ice-hover);
+    border-left-color: var(--color-ice-hover);
+}
+
+.link-sidebar-seleccionado {
+    background-color: var(--color-navy-dark);
+    border-left-color: var(--color-ice-hover) !important;
+}
+
+/* =========================================================
+   CONTENEDOR DE MODULO
+   ========================================================= */
+
+.clientes-container,
+.proveedores-container,
+.historial-container {
+    width: 100%;
+    padding: var(--module-padding);
+    background: var(--color-page-bg);
+    min-height: calc(100vh - var(--header-height));
+    color: var(--color-text);
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   CABECERA DE MODULO (titulo + acciones)
+   ========================================================= */
+
+.proveedores-header,
+.historial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-2xl);
+}
+
+.clientes-header {
+    margin-bottom: var(--space-3xl);
+}
+
+.clientes-header h2,
+.proveedores-title h2,
+.historial-header h2 {
+    margin: 0 0 6px;
+    font-size: var(--fs-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.5px;
+}
+
+.clientes-header p,
+.proveedores-title p,
+.historial-header p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--fs-md);
+}
+
+/* =========================================================
+   TITULOS DE SECCION
+   ========================================================= */
+
+.clientes-container > h3 {
+    font-size: var(--fs-2xl);
+    margin: 0 0 var(--space-lg) 0;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.proveedores-section {
+    width: 100%;
+}
+
+.section-title {
+    margin-bottom: var(--space-sm);
+}
+
+.section-title h3 {
+    margin: 0 0 4px;
+    font-size: var(--fs-xl);
+    color: var(--color-text);
+}
+
+.section-title p {
+    margin: 0;
+    color: var(--color-text-soft);
+    font-size: var(--fs-sm);
+}

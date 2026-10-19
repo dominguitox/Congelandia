@@ -1,0 +1,73 @@
+/* =========================================================
+   COMPONENTE - FORMULARIOS
+   =========================================================
+   Labels, inputs y selects compartidos por los modulos.
+   ========================================================= */
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+.form-grid label,
+.pago-form-group label,
+.editar-form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--fs-md);
+}
+
+/* =========================================================
+   CAMPOS (input / select)
+   ========================================================= */
+
+.form-grid input,
+.pago-form-group select,
+.pago-form-group input,
+.editar-form-group input,
+.campo-proveedor input {
+    width: 100%;
+    height: var(--control-height);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0 14px;
+    font-size: var(--fs-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    box-sizing: border-box;
+    outline: none;
+}
+
+.campo-proveedor input {
+    background: var(--color-surface-input);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-base);
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* =========================================================
+   ESTADO FOCUS
+   ========================================================= */
+
+.form-grid input:focus,
+.pago-form-group select:focus,
+.pago-form-group input:focus,
+.editar-form-group input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 159, 195, 0.10);
+}
+
+.campo-proveedor input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 161, 197, 0.12);
+}
+
+/* =========================================================
+   MARCADOR DE CAMPO OBLIGATORIO
+   ========================================================= */
+
+.campo-proveedor label span,
+.obligatorio {
+    color: var(--color-danger);
+}

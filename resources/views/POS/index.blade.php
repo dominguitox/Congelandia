@@ -56,7 +56,7 @@
                     </div>
 
                     <!-- Área con scroll para los items del carrito -->
-                    <div id="ticket-items" class="card-body overflow-auto" style="min-height: 400px; max-height: 60vh;">
+                    <div id="ticket-items" class="card-body overflow-auto ticket-items">
                         <p class="text-center text-muted mt-5">No hay productos en la boleta.</p>
                     </div>
 

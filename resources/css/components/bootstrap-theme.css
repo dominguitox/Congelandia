@@ -1,0 +1,145 @@
+/* =========================================================
+   COMPONENTE - TEMA BOOTSTRAP
+   =========================================================
+   Alinea los modulos que usan clases de Bootstrap (dashboard,
+   POS, inventario, categorias, usuarios, reportes) con los
+   tokens del tema, sin tocar su HTML.
+   ========================================================= */
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.btn {
+    --bs-btn-border-radius: var(--radius-sm);
+    --bs-btn-font-weight: 600;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-primary-hover);
+    --bs-btn-hover-border-color: var(--color-primary-hover);
+    --bs-btn-active-bg: var(--color-primary-active);
+    --bs-btn-active-border-color: var(--color-primary-active);
+    --bs-btn-disabled-bg: var(--color-primary);
+    --bs-btn-disabled-border-color: var(--color-primary);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-primary);
+    --bs-btn-hover-border-color: var(--color-primary);
+    --bs-btn-active-bg: var(--color-primary-active);
+    --bs-btn-active-border-color: var(--color-primary-active);
+}
+
+.btn-success {
+    --bs-btn-bg: var(--color-success);
+    --bs-btn-border-color: var(--color-success);
+    --bs-btn-hover-bg: #009350;
+    --bs-btn-hover-border-color: #009350;
+    --bs-btn-active-bg: #008247;
+    --bs-btn-active-border-color: #008247;
+}
+
+.btn-danger {
+    --bs-btn-bg: var(--color-danger-strong);
+    --bs-btn-border-color: var(--color-danger-strong);
+    --bs-btn-hover-bg: var(--color-danger);
+    --bs-btn-hover-border-color: var(--color-danger);
+    --bs-btn-active-bg: var(--color-danger);
+    --bs-btn-active-border-color: var(--color-danger);
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--color-danger);
+    --bs-btn-border-color: var(--color-danger);
+    --bs-btn-hover-bg: var(--color-danger);
+    --bs-btn-hover-border-color: var(--color-danger);
+    --bs-btn-active-bg: var(--color-danger);
+    --bs-btn-active-border-color: var(--color-danger);
+}
+
+.btn-outline-info {
+    --bs-btn-color: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-primary);
+    --bs-btn-hover-border-color: var(--color-primary);
+    --bs-btn-active-bg: var(--color-primary-active);
+    --bs-btn-active-border-color: var(--color-primary-active);
+}
+
+.btn-warning {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: var(--color-warning);
+    --bs-btn-border-color: var(--color-warning);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #c07600;
+    --bs-btn-hover-border-color: #c07600;
+}
+
+.btn-secondary {
+    --bs-btn-bg: var(--color-btn-neutral-text);
+    --bs-btn-border-color: var(--color-btn-neutral-text);
+    --bs-btn-hover-bg: var(--color-text-heading);
+    --bs-btn-hover-border-color: var(--color-text-heading);
+}
+
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+
+.card {
+    --bs-card-border-color: var(--color-border-soft);
+    --bs-card-border-radius: var(--radius-lg);
+    --bs-body-bg: var(--color-surface);
+}
+
+/* =========================================================
+   TABLAS
+   ========================================================= */
+
+.table {
+    --bs-table-color: var(--color-text-muted);
+    --bs-table-border-color: var(--color-border-soft);
+    --bs-table-hover-bg: var(--color-surface-alt);
+}
+
+/* =========================================================
+   FORMULARIOS
+   ========================================================= */
+
+.form-control,
+.form-select {
+    border-color: var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 159, 195, 0.15);
+}
+
+/* =========================================================
+   MODALES
+   ========================================================= */
+
+.modal-content {
+    border: none;
+    border-radius: var(--radius-2xl);
+}
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.badge {
+    font-weight: 600;
+}
+
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}

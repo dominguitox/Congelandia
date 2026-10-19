@@ -15,6 +15,8 @@ export default defineConfig({
 
                 'resources/js/app.js',
 
+                'resources/css/dashboard.css',
+
                 'resources/css/historial.css',
                 'resources/js/historial.js',
 

@@ -2,6 +2,10 @@
 
 @section('title', 'Panel General')
 
+@push('css')
+    @vite(['resources/css/dashboard.css'])
+@endpush
+
 @section('content')
     <div class="container-fluid">
         <h2 class="mb-4">Resumen de actividad de hoy</h2>
@@ -41,7 +45,7 @@
             <!-- Tarjeta botón mostrar ofertas -->
             <div class="col-md-3 col-sm-6 mb-3 ">
                 <div class="card shadow-sm border-0 h-100 bg-info">
-                    <a href="{{ url('/inventario/#ofertas') }}" style="text-decoration: none;">
+                    <a href="{{ url('/inventario/#ofertas') }}" class="ventas-ofertas-link">
                         <div class="card-body text-center">
                             <h5 class="card-title text-muted">Ofertas</h5>
                             <p class="card-text display-6 fw-bold">{{ $cantidadPromocionesActivas }}</p>
@@ -59,7 +63,7 @@
                         <h3>Ventas Recientes</h3>
 
                         <!-- Se agregó text-align: left para contrarrestar el text-center superior -->
-                        <div class="historial-card" style="text-align: left;">
+                        <div class="dashboard-ventas-list">
 
                             <div>
                                 @forelse($salidas as $salida)
@@ -68,11 +72,10 @@
                                     @endphp
 
                                     <!-- Tarjeta de Orden Individual (Flexbox mínimo para alineación) -->
-                                    <div
-                                        style="display: flex; justify-content: space-between; align-items: start; border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                                    <div class="venta-item">
                                         <div>
                                             <div>Orden #s{{ $salida->id }}</div>
-                                            <div style="color: #666;">
+                                            <div class="venta-item-meta">
                                                 <!-- Fecha y Hora -->
                                                 {{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}
                                                 <!-- Separador • -->
@@ -83,20 +86,20 @@
                                         </div>
 
                                         <!-- Lado Derecho: Total y Usuario -->
-                                        <div style="text-align: right;">
+                                        <div class="venta-item-lado">
                                             <!-- Total en Negrita -->
                                             <div>
                                                 <strong>${{ number_format($salida->totalSalida, 0, ',', '.') }}</strong>
                                             </div>
                                             <!-- Usuario en Texto Suave -->
-                                            <div style="color: #666;">
+                                            <div class="venta-item-meta">
                                                 {{ $salida->usuario->nombre ?? 'Sin usuario' }}
                                             </div>
                                         </div>
                                     </div>
                                 @empty
                                     <!-- Mensaje de Lista Vacía -->
-                                    <div style="text-align: center;">No existen ventas registradas.</div>
+                                    <div class="venta-vacia">No existen ventas registradas.</div>
                                 @endforelse
                             </div>
                         </div>

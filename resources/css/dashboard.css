@@ -1,9 +1,33 @@
-.historial-card {
-    align-content: center;
-    display: flex;
-    justify-content: center;
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.ventas-ofertas-link {
+    text-decoration: none;
 }
 
-table {
-    width: 100%;
+.dashboard-ventas-list {
+    text-align: left;
+}
+
+.venta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-2xs);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.venta-item-meta {
+    color: var(--color-text-soft);
+}
+
+.venta-item-lado {
+    text-align: right;
+}
+
+.venta-vacia {
+    text-align: center;
 }

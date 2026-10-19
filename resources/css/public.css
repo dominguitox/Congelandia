@@ -1,34 +1,46 @@
+/* =========================================================
+   SITIO PUBLICO (tienda)
+   ========================================================= */
+
+.bg-celeste {
+    background-color: var(--color-public-celeste);
+}
+
+.text-celeste {
+    color: var(--color-public-celeste);
+}
+
 .bg-teal-top {
-    background-color: #008b9c;
+    background-color: var(--color-public-teal-top);
 }
 
 .bg-teal-main {
-    background-color: #00a2b8;
+    background-color: var(--color-public-teal);
 }
 
 .text-teal {
-    color: #00a2b8;
+    color: var(--color-public-teal);
 }
 
 .bg-orange {
-    background-color: #fd7e14;
+    background-color: var(--color-public-orange);
 }
 
 .text-orange {
-    color: #fd7e14;
+    color: var(--color-public-orange);
 }
 
 .text-yellow {
-    color: #ffc107;
+    color: var(--color-public-yellow);
 }
 
 .bg-yellow {
-    background-color: #ffc107;
+    background-color: var(--color-public-yellow);
 }
 
 .search-bar {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background-color: var(--color-public-search-bg);
+    border: 1px solid var(--color-public-search-border);
 }
 
 /*

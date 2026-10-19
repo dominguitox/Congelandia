@@ -1,0 +1,174 @@
+/* =========================================================
+   COMPONENTE - BOTONES
+   =========================================================
+   Colores y estados compartidos. El tamano/padding especifico
+   de cada boton puede quedar en el CSS del modulo.
+   ========================================================= */
+
+/* =========================================================
+   BOTONES PRINCIPALES (accion solida)
+   ========================================================= */
+
+.clientes-actions button,
+.btn-agregar,
+.btn-nuevo-proveedor,
+.btn-pago-confirmar,
+.btn-editar-guardar,
+.btn-modal.guardar {
+    background: var(--color-primary);
+    color: var(--color-text-light);
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.clientes-actions button:hover,
+.btn-agregar:hover,
+.btn-pago-confirmar:hover,
+.btn-editar-guardar:hover,
+.btn-modal.guardar:hover {
+    background: var(--color-primary-hover);
+}
+
+.clientes-actions button:active {
+    transform: scale(0.98);
+}
+
+.btn-nuevo-proveedor:hover {
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   BOTONES SUAVES / CANCELAR
+   ========================================================= */
+
+.btn-cancelar,
+.btn-pago-cancelar,
+.btn-editar-cancelar,
+.btn-modal.cancelar {
+    background: var(--color-btn-muted-bg);
+    color: var(--color-btn-muted-text);
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancelar:hover {
+    background: var(--color-btn-muted-bg-hover);
+}
+
+/* =========================================================
+   BOTON DE PELIGRO
+   ========================================================= */
+
+.btn-modal.eliminar-confirmar {
+    background: var(--color-danger-strong);
+    color: var(--color-text-light);
+}
+
+/* =========================================================
+   BASE DE BOTONES ICONO
+   ========================================================= */
+
+.btn-accion,
+.btn-accion-proveedor,
+.btn-expand,
+.btn-expandir,
+.btn-cerrar-modal,
+.cerrar-historial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, filter 0.15s ease;
+}
+
+.btn-accion:hover,
+.btn-accion-proveedor:hover {
+    transform: translateY(-1px);
+}
+
+.btn-accion:hover {
+    filter: brightness(0.96);
+}
+
+/* =========================================================
+   VARIANTES DE ACCION - CLIENTES
+   ========================================================= */
+
+.btn-accion.historial {
+    background: var(--color-purple-bg);
+    color: var(--color-purple);
+}
+
+.btn-accion.pago {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.btn-accion.editar {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+.btn-accion.eliminar {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+/* =========================================================
+   VARIANTES DE ACCION - PROVEEDORES
+   ========================================================= */
+
+.btn-accion-proveedor.btn-expandir {
+    background: var(--color-btn-expand-bg);
+    color: var(--color-btn-expand-text);
+}
+
+.btn-accion-proveedor.btn-expandir.abierto {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.btn-accion-proveedor.btn-editar {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+.btn-accion-proveedor.btn-eliminar {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+/* =========================================================
+   VARIANTES DE ACCION - HISTORIAL
+   ========================================================= */
+
+.btn-expand {
+    background: var(--color-btn-expand-bg);
+    color: var(--color-btn-expand-text);
+}
+
+.btn-expand:hover {
+    background: var(--color-btn-expand-bg-hover);
+}
+
+/* =========================================================
+   CERRAR MODALES
+   ========================================================= */
+
+.btn-cerrar-modal {
+    background: var(--color-btn-neutral-bg);
+    color: var(--color-btn-neutral-text);
+}
+
+.cerrar-historial {
+    background: var(--color-btn-neutral-bg);
+    color: var(--color-btn-muted-text);
+}
+
+.cerrar-historial:hover {
+    background: var(--color-btn-muted-bg);
+}

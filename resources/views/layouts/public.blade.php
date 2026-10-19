@@ -5,14 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Congelandia - @yield('title', 'Inicio')</title>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/public.css', 'resources/js/app.js'])
     @stack('css')
-
-    <style>
-        /* Celeste corporativo basado en el logo[cite: 2] */
-        .bg-celeste { background-color: #00AEEF; } /* Ajusta el HEX al tono exacto de tu logo */
-        .text-celeste { color: #00AEEF; }
-    </style>
 </head>
 
 <body class="bg-white text-dark d-flex flex-column min-vh-100">
