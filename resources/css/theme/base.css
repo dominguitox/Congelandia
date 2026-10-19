@@ -1,0 +1,50 @@
+/* =========================================================
+   CONGELANDIA - BASE GLOBAL
+   =========================================================
+   Reset suave, tipografia del documento y el marco de la
+   aplicacion (main y mensajes flash). El shell (header /
+   sidebar) vive en components/layout.css.
+   ========================================================= */
+
+* {
+    user-select: none;
+}
+
+html {
+    width: 100vw;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--color-text);
+    min-height: 100vh;
+}
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+
+.app-main {
+    margin-top: var(--header-height);
+    margin-left: var(--sidebar-width);
+    min-height: calc(100vh - var(--header-height));
+    background-color: var(--color-page-bg);
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   MENSAJES FLASH
+   ========================================================= */
+
+.flash-error {
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger);
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    position: fixed;
+    left: 40px;
+    bottom: 20px;
+    z-index: 9999;
+    max-width: 60%;
+}

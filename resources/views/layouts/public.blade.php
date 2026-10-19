@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Congelandia - @yield('title', 'Inicio')</title>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @stack('css')
+    @vite(['resources/css/app.css', 'resources/css/public.css', 'resources/js/app.js'])
 
-    <style>
-        /* Celeste corporativo basado en el logo[cite: 2] */
-        .bg-celeste { background-color: #00AEEF; } /* Ajusta el HEX al tono exacto de tu logo */
-        .text-celeste { color: #00AEEF; }
-    </style>
+    {{-- Tema visual opcional (APP_TEMA en .env; "base" = por defecto) --}}
+    @php($temaActivo = config('app.tema'))
+    @if($temaActivo && $temaActivo !== 'base' && file_exists(resource_path("css/theme/themes/{$temaActivo}.css")))
+        @vite(["resources/css/theme/themes/{$temaActivo}.css"])
+    @endif
+
+    @stack('css')
 </head>
 
 <body class="bg-white text-dark d-flex flex-column min-vh-100">

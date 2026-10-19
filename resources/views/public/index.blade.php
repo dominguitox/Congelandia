@@ -7,7 +7,7 @@
     <title>Congelandia - El mundo de los congelados</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @vite(['resources/css/public.css', 'resources/js/public.js'])
+    @vite(['resources/css/public.css'])
 
 
 </head>
@@ -84,7 +84,15 @@
 
                 <!-- Columna Izquierda (Textos) -->
                 <div class="col-md-6 text-white pe-5">
-                    <!-- ... tus textos promocionales ... -->
+                    <span class="hero-precio">Hasta 30% de descuento</span>
+                    <h1 class="hero-titulo">Congelados de calidad, listos para tu mesa</h1>
+                    <p class="hero-subtitulo">
+                        Descubre nuestra selección de empanadas, carnes, verduras y más.
+                        Pide hoy y recibe en la comodidad de tu hogar.
+                    </p>
+                    <a href="{{ route('public.catalogo') }}" class="btn bg-orange text-white rounded-pill fw-bold px-4 py-2 border-0">
+                        Ver catálogo
+                    </a>
                 </div>
 
                 <!-- Columna Derecha (Imagen Promocional Fija) -->
@@ -110,7 +118,7 @@
             @foreach($productos as $producto)
 
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden producto-publico">
 
                         <!-- Lógica de las imágenes -->
                         @if($producto->imagenes->count() > 0)

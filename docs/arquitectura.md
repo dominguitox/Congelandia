@@ -37,7 +37,7 @@ database/
 docs/                     # Esta documentación
 public/                   # Punto de entrada, assets compilados, imágenes subidas (images/productos/)
 resources/
-  css/                    # app.css + un CSS por módulo (historial, clientes, proveedores...) — algunos vacíos
+  css/                    # app.css (entrada) + theme/ (tokens y temas) + components/ (compartidos) + un CSS por módulo — ver estilos.md
   js/                     # app.js + venta.js, categorias.js, proveedores.js, producto.js... — algunos vacíos
   views/                  # Vistas Blade por módulo + layouts/ + partials/
 routes/

@@ -1,38 +1,84 @@
+/* =========================================================
+   SITIO PUBLICO (tienda)
+   ========================================================= */
+
+.bg-celeste {
+    background-color: var(--color-public-celeste);
+}
+
+.text-celeste {
+    color: var(--color-public-celeste);
+}
+
 .bg-teal-top {
-    background-color: #008b9c;
+    background-color: var(--color-public-teal-top);
 }
 
 .bg-teal-main {
-    background-color: #00a2b8;
+    background-color: var(--color-public-teal);
 }
 
 .text-teal {
-    color: #00a2b8;
+    color: var(--color-public-teal);
 }
 
 .bg-orange {
-    background-color: #fd7e14;
+    background-color: var(--color-public-orange);
 }
 
 .text-orange {
-    color: #fd7e14;
+    color: var(--color-public-orange);
 }
 
 .text-yellow {
-    color: #ffc107;
+    color: var(--color-public-yellow);
 }
 
 .bg-yellow {
-    background-color: #ffc107;
+    background-color: var(--color-public-yellow);
 }
 
 .search-bar {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background-color: var(--color-public-search-bg);
+    border: 1px solid var(--color-public-search-border);
 }
 
-/*
-*/
-.btn:hover {
-    background-color: #333;
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero-titulo {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitulo {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+.hero-precio {
+    display: inline-block;
+    background: var(--color-public-yellow);
+    color: #3a2a00;
+    font-weight: 800;
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-pill);
+    margin-bottom: 1.5rem;
+}
+
+/* =========================================================
+   TARJETA DE PRODUCTO PUBLICO
+   ========================================================= */
+
+.producto-publico {
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.producto-publico:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-md) !important;
 }

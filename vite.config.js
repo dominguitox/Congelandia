@@ -13,7 +13,15 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/reportes.css',
 
+                'resources/css/theme/themes/aurora.css',
+                'resources/css/theme/themes/esmeralda.css',
+                'resources/css/theme/themes/coral.css',
+
                 'resources/js/app.js',
+
+                'resources/css/dashboard.css',
+
+                'resources/css/inventario.css',
 
                 'resources/css/historial.css',
                 'resources/js/historial.js',
@@ -27,6 +35,10 @@ export default defineConfig({
 
                 'resources/css/categorias.css',
                 'resources/js/categorias.js',
+
+                'resources/css/auth.css',
+
+                'resources/css/public.css',
             ],
 
             refresh: true,

@@ -10,7 +10,9 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 | [arquitectura.md](arquitectura.md) | Stack tecnológico, estructura de carpetas, flujo de una petición y manejo de errores |
 | [rutas.md](rutas.md) | Referencia completa de todas las rutas del sistema (método, URL, nombre, controlador, roles) |
 | [modelos-datos.md](modelos-datos.md) | Esquema de base de datos, modelos Eloquent, relaciones y procedimientos almacenados |
+| [migraciones.md](migraciones.md) | Migraciones Laravel del esquema completo (rama `migracion-sql-a-laravel`, pendiente de merge) |
 | [modulos.md](modulos.md) | Funcionalidad de cada módulo del sistema, vista por vista |
+| [estilos.md](estilos.md) | Arquitectura CSS, componentes compartidos y sistema de temas (APP_TEMA) |
 | [convenciones.md](convenciones.md) | Convenciones de código vigentes y recomendadas para el equipo |
 | [pendientes.md](pendientes.md) | Backlog de bugs y deuda técnica identificados en la auditoría, por prioridad |
 
@@ -20,8 +22,9 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 2. **arquitectura.md** para entender cómo está construido todo.
 3. **rutas.md** y **modulos.md** como referencia al desarrollar una funcionalidad.
 4. **modelos-datos.md** al tocar base de datos, modelos o consultas.
-5. **convenciones.md** antes de abrir un pull request.
-6. **pendientes.md** para saber qué está roto o pendiente antes de trabajar en un módulo.
+5. **estilos.md** al crear o modificar vistas, componentes o temas.
+6. **convenciones.md** antes de abrir un pull request.
+7. **pendientes.md** para saber qué está roto o pendiente antes de trabajar en un módulo.
 
 ## Estado del proyecto
 

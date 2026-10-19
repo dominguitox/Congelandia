@@ -43,6 +43,8 @@ mysql -u root -p < "inserts.sql"           # datos semilla
 mysql -u root -p < "procedimientos.sql"    # stored procedures (opcional)
 ```
 
+> **En la rama `migracion-sql-a-laravel` este paso ya no es necesario:** el esquema completo vive en migraciones Laravel y `composer run setup` lo crea todo. Ver [docs/migraciones.md](docs/migraciones.md) (rama pendiente de merge).
+
 Guía completa y solución de problemas: [docs/instalacion.md](docs/instalacion.md)
 
 ## Desarrollo
@@ -90,6 +92,7 @@ La documentación detallada vive en [`docs/`](docs/) (leer primero [docs/index.m
 | [docs/arquitectura.md](docs/arquitectura.md) | Stack, estructura, flujo de petición, errores |
 | [docs/rutas.md](docs/rutas.md) | Tabla de las 30+ rutas con controlador y roles |
 | [docs/modelos-datos.md](docs/modelos-datos.md) | Esquema, modelos, relaciones y SPs |
+| [docs/migraciones.md](docs/migraciones.md) | Migraciones del esquema completo (rama `migracion-sql-a-laravel`) |
 | [docs/modulos.md](docs/modulos.md) | Funcionalidad por módulo y estado actual |
 | [docs/convenciones.md](docs/convenciones.md) | Convenciones del código y del equipo |
 | [docs/pendientes.md](docs/pendientes.md) | Backlog de bugs y refactor (60+ ítems priorizados) |
