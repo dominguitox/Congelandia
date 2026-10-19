@@ -6,6 +6,13 @@
     <title>Congelandia - @yield('title', 'Inicio')</title>
     
     @vite(['resources/css/app.css', 'resources/css/public.css', 'resources/js/app.js'])
+
+    {{-- Tema visual opcional (APP_TEMA en .env; "base" = por defecto) --}}
+    @php($temaActivo = config('app.tema'))
+    @if($temaActivo && $temaActivo !== 'base' && file_exists(resource_path("css/theme/themes/{$temaActivo}.css")))
+        @vite(["resources/css/theme/themes/{$temaActivo}.css"])
+    @endif
+
     @stack('css')
 </head>
 

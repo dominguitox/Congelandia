@@ -13,6 +13,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/reportes.css',
 
+                'resources/css/theme/themes/aurora.css',
+
                 'resources/js/app.js',
 
                 'resources/css/dashboard.css',
