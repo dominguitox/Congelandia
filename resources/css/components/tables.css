@@ -77,3 +77,19 @@
 .historial-table tbody tr.movimiento-row:hover {
     background: var(--color-surface-alt);
 }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .clientes-table th,
+    .proveedores-table th,
+    .historial-table th,
+    .clientes-table td,
+    .proveedor-row td,
+    .historial-table td {
+        padding: 12px 14px;
+    }
+}

@@ -342,3 +342,53 @@
     max-width: none;
     padding: 0;
 }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .form-control,
+    .form-select {
+        font-size: 16px;
+    }
+
+    .input-group > .form-control {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .modal-dialog {
+        margin: var(--space-xs);
+    }
+
+    .modal-content {
+        border-radius: var(--radius-lg);
+    }
+
+    .modal-header,
+    .modal-body {
+        padding: var(--space-md);
+    }
+
+    .modal-footer {
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+        padding: var(--space-md);
+    }
+
+    .modal-footer > .btn,
+    .modal-footer > .btn-soft,
+    .modal-footer > .btn-solid {
+        flex: 1 1 auto;
+    }
+
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: var(--space-lg) var(--space-md);
+    }
+}

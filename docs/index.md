@@ -13,6 +13,7 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 | [migraciones.md](migraciones.md) | Migraciones Laravel del esquema completo (rama `migracion-sql-a-laravel`, pendiente de merge) |
 | [modulos.md](modulos.md) | Funcionalidad de cada módulo del sistema, vista por vista |
 | [estilos.md](estilos.md) | Arquitectura CSS, componentes compartidos y sistema de temas (APP_TEMA) |
+| [responsividad.md](responsividad.md) | Alcance, breakpoints y cambios para que la app interna se vea bien en celular (rama `responsividad-movil`) |
 | [convenciones.md](convenciones.md) | Convenciones de código vigentes y recomendadas para el equipo |
 | [pendientes.md](pendientes.md) | Backlog de bugs y deuda técnica identificados en la auditoría, por prioridad |
 

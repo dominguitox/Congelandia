@@ -262,6 +262,7 @@
 
     .proveedores-table-container {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .proveedores-table {
@@ -272,7 +273,7 @@
 @media (max-width: 650px) {
 
     .proveedores-container {
-        padding: var(--space-lg);
+        padding: var(--space-md);
     }
 
     .proveedores-actions {
@@ -289,15 +290,21 @@
     }
 
     .productos-detalle {
-        padding-left: var(--space-lg);
+        padding: var(--space-md) var(--space-lg) var(--space-lg);
     }
 
     .form-proveedor {
         grid-template-columns: 1fr;
+        padding: var(--space-lg);
     }
 
     .campo-completo {
         grid-column: auto;
+    }
+
+    .modal-proveedor {
+        max-height: calc(100dvh - var(--space-lg));
+        overflow-y: auto;
     }
 
     .modal-buttons {

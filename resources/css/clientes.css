@@ -682,12 +682,29 @@
         align-items: stretch;
     }
 
+    .clientes-actions input {
+        min-width: 0;
+    }
+
     .clientes-actions button {
         width: 100%;
     }
 
+    .nuevo-cliente {
+        padding: var(--space-lg);
+    }
+
+    .form-buttons {
+        flex-wrap: wrap;
+    }
+
+    .form-buttons button {
+        flex: 1 1 auto;
+    }
+
     .clientes-table {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .clientes-table table {
@@ -732,5 +749,43 @@
     .modal-pago-contenido,
     .modal-editar-contenido {
         padding: 22px;
+        max-height: calc(100dvh - 40px);
+        overflow-y: auto;
+    }
+
+    .pago-buttons,
+    .editar-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .pago-buttons button,
+    .editar-buttons button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .modal-historial-contenido {
+        padding: 16px;
+    }
+
+    .modal-historial-header h3 {
+        font-size: 20px;
+    }
+
+    .historial-venta-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-xs);
+    }
+
+    .historial-producto {
+        grid-template-columns: 1fr 50px 80px;
+    }
+
+    .clientes-actions input {
+        padding-left: 38px;
+        background-position: 12px center;
     }
 }

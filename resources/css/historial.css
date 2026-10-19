@@ -320,6 +320,24 @@
 
     .historial-card {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .historial-search input,
+    .historial-select {
+        font-size: 16px;
+    }
+
+    .detalle-header {
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+    }
+
+    .detalle-container {
+        padding: var(--space-md) var(--space-lg);
     }
 }
 
@@ -332,5 +350,24 @@
 
     .historial-select {
         width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .detalle-item {
+        flex-wrap: wrap;
+        gap: var(--space-xs) var(--space-sm);
+    }
+
+    .detalle-producto {
+        flex: 1 1 calc(100% - 60px);
+    }
+
+    .detalle-precio,
+    .detalle-subtotal {
+        width: auto;
+        margin-left: auto;
+        text-align: right;
     }
 }

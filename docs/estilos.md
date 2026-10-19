@@ -201,3 +201,16 @@ La clave `app.tema` se define en `config/app.php` (`'tema' => env('APP_TEMA', 'b
 | POS | `pos.css` | `.page` + `.pos-grid` |
 | login | `auth.css` | `.auth-card` |
 | público (tienda) | `public.css` | clases propias del sitio público |
+
+## Responsividad
+
+La app interna es responsiva desde la rama `responsividad-movil`. El detalle completo (alcance, breakpoints, archivos y verificación) está en [responsividad.md](responsividad.md).
+
+Resumen:
+
+- Bajo `992px` el sidebar se convierte en un panel deslizante, el contenido ocupa todo el ancho y aparece el botón `#btnSidebar` en el header. El overlay de cierre es `#sidebarOverlay` y la lógica vive en `resources/js/app.js`.
+- Bajo `768px` se reduce `--module-padding`, se compactan paneles, formularios y tablas, y los controles usan `16px` para evitar el zoom de iOS.
+- Bajo `640px` las tarjetas de resumen pasan a una columna y los botones de `.page-actions` ocupan todo el ancho.
+- Las tablas anchas hacen scroll dentro de su contenedor (`.data-table-wrap`, `.clientes-table`, `.proveedores-table-container`, `.historial-card`), nunca en el `body`.
+- Los modales propios y los de Bootstrap limitan su alto, reducen padding y permiten scroll interno.
+- El sitio público (`resources/css/public.css` y `resources/views/public/`) no forma parte de este trabajo.
