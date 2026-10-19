@@ -1,12 +1,17 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 class DetalleSalida extends Model
 {
     protected $table = 'detalle_salida';
+
+    protected $primaryKey = 'idDetalle';
+
     public $timestamps = false;
+
     protected $fillable = [
         'idSalida',
         'codigoProducto',
