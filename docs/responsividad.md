@@ -143,6 +143,16 @@ Las capturas y scripts de verificación se generaron en la carpeta temporal del 
 - Las tablas anchas siguen requiriendo scroll horizontal en celular; es una decisión deliberada para no perder columnas ni reescribir el HTML de cada módulo.
 - El nombre del usuario en el header puede truncarse en pantallas de `320px`; el rol se mantiene visible.
 
+## Ajuste posterior: manifiesto de Vite de Usuarios
+
+La vista `resources/views/usuarios/index.blade.php` carga `@vite(['resources/js/usuarios.js'])`, pero ese archivo no estaba registrado como input en `vite.config.js`. Al compilar, Vite no lo incluía en el manifiesto y la vista fallaba con:
+
+```
+Unable to locate file in Vite manifest: resources/js/usuarios.js.
+```
+
+Se agregó `resources/js/usuarios.js` a los inputs de `vite.config.js`. El archivo existe (está vacío) y ahora se genera su entrada en el manifiesto, por lo que `/usuarios` carga sin ese error.
+
 ## Cómo revertir o ajustar
 
 - Todos los cambios de layout están en los bloques `RESPONSIVE` al final de cada archivo CSS.
