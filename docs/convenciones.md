@@ -31,8 +31,10 @@ Reglas que el equipo debe seguir en el código nuevo y en los ajustes a código 
 
 ## Vistas Blade
 
-1. **Assets solo por `@push`**: `@push('css')` y `@push('scripts')` — el layout `app.blade.php` ya define los stacks. Prohibido meter `@vite` dentro de `@section('content')` (ocurre hoy en POS, inventario, categorías, usuarios).
-2. **Prohibido CSS/JS inline masivo** (el caso límite es `clientes/index.blade.php` con ~1.500 líneas). Extraer a `resources/css/<modulo>.css` y `resources/js/<modulo>.js`, registrarlos en `vite.config.js` y empujarlos con `@push`.
+> Para la organización de CSS, componentes reutilizables y temas (tokens, `APP_TEMA`), ver [estilos.md](estilos.md).
+
+1. **Assets solo por `@push`**: `@push('css')` y `@push('scripts')` — el layout `app.blade.php` ya define los stacks. Prohibido meter `@vite` dentro de `@section('content')` (normalizado en POS, inventario, categorías y usuarios).
+2. **Prohibido CSS/JS inline masivo**. El caso histórico de `clientes/index.blade.php` ya fue extraído a `resources/css/clientes.css`; el bloque `<script>` de esa vista sigue inline (pendiente, ver [pendientes.md](pendientes.md)). Todo CSS nuevo va en `resources/css/<modulo>.css` y se carga con `@push`.
 3. **Sin estilo duplicado**: si un módulo tiene CSS propio (ej. `resources/css/clientes.css`), no re-declarar los mismos estilos dentro de la blade. Clases o mejor: componentes compartidos para modales/tablas si el patrón se repite en 3+ módulos.
 4. **IDs de DOM únicos** y data-attributes en vez de `onclick` con lógica:
 ```blade

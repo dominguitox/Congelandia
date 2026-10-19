@@ -1,6 +1,6 @@
 # Pendientes y deuda técnica
 
-Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente.
+Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)).
 
 ## P0 — Rompe la app hoy (críticos)
 
@@ -12,10 +12,10 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 | 4 | `ProveedorController::productos` no existe → `GET /proveedores/{id}/productos` (ruta viva) rompe | `routes/web.php:214`; implementar el método o quitar la ruta |
 | 5 | Login compara contraseñas en **texto plano**, pero `usuarios.store` guarda con `bcrypt` → un usuario creado desde el sistema nunca puede iniciar sesión | `Auth\Login.php:24` vs `UserController.php:29`. Decidir esquema (recomendado: hash en todos lados y usar `Hash::check` en Login) |
 | 6 | Reportes rompen: queries sobre tablas inexistentes (`inventario`, `lote`) para "bajo stock" y "próximos a vencer" (el comentario del código lo admite) | `ReporteController.php:172-204` |
-| 7 | `onclick="registrarIngreso($producto->codigo)"` imprime PHP crudo dentro del atributo HTML → `ReferenceError` al clickear; además la función JS no existe (solo `registrarIngresoSingle`, también muerta: apunta a `/ingresos/...` que no existe) | `inventario/index.blade.php:64`; `resources/js/producto.js:11-19` |
+| 7 | `onclick="registrarIngreso('...')"` en inventario: se **corrigió** el PHP crudo dentro del atributo (ahora string JS válido), pero la función `registrarIngreso` **no existe** (solo `registrarIngresoSingle`, que apunta a `/ingresos/...` inexistente) → sigue el `ReferenceError` | `inventario/index.blade.php`; `resources/js/producto.js:11-19` |
 | 8 | Form de registro de pago sin `action` y su ruta `clientes.registrarPago` es huérfana → al pagar se hace POST a la página actual (rutas equivocadas) | `clientes/index.blade.php:1013`; `routes/web.php:182-185` |
 | 9 | En POS, el botón llama `registrarVenta()` sin argumento y la función espera `metodoPagoSeleccionado` → el método de pago viaja `undefined` en el payload | `POS/index.blade.php:81`; `resources/js/venta.js:123,167` |
-| 10 | Dashboard muestra "0" hardcodeado en Órdenes/Alertas aunque el controlador calcula `ordenesHoy`/`alertasActivas` y las pasa a la vista | `dashboard/index.blade.php:27,36` |
+| 10 | ~~Dashboard muestra "0" hardcodeado en Órdenes/Alertas~~ ✓ **resuelto** (usa `$ordenesHoy`/`$alertasActivas`) | `dashboard/index.blade.php` (rama `implementacion-estilos-css`) |
 
 ## P1 — Seguridad
 
@@ -36,7 +36,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 16 | `historialController.php` + `class historialController` en minúsculas | `app/Http/Controllers/historialController.php`, `routes/web.php:3` |
 | 17 | Carpeta de vistas `POS/` (mayúsculas) vs `view('pos.index')` buscada en minúsculas | `resources/views/POS/`, `posController.php:61` |
 | 18 | `usuarioos.js` (typo, vacío 0 bytes) referenciado por `@vite` en usuarios pero NO está como input de vite → error de manifiesto en build de producción | `resources/js/usuarioos.js`, `usuarios/index.blade.php:122`, `vite.config.js:9-30` |
-| 19 | `public.css` se referencia vía `@vite` y no es input de vite; `public.js` se referencia desde `public/index.blade.php` y **no existe** | `public/index.blade.php:10`, `vite.config.js` |
+| 19 | ~~`public.css` se referencia vía `@vite` y no es input de vite; `public.js` no existe~~ ✓ **resuelto** (`public.css` registrado como input; se quitó la referencia a `public.js`) | `public/index.blade.php`, `vite.config.js` (rama `implementacion-estilos-css`) |
 
 > Estrategia sugerida: uno solo PR "normalización de nombres" que renombre archivo/clase/carpeta y actualice imports + vistas. Bajo en riesgo si se agrupa.
 
@@ -47,16 +47,16 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 20 | Imagen 404 `images/empanadas.jpg` (existe en `images/productos/`) y `images/default.png` que no existe en ningún lado | `public/index.blade.php:94,121` |
 | 21 | Menú "Roles" apunta a `/Roles` → 404 (no existe la ruta). Decidir: eliminar el link o crear el módulo | `partials/sidebar.blade.php:14` |
 | 22 | Enlaces muertos `href="#"`: "Contacto" (layout público) | `layouts/public.blade.php:38` |
-| 23 | Typo `Orden #s{{...}}` renderiza "Orden #s5" | `dashboard/index.blade.php:74` |
-| 24 | Dos `</div>` duplicados generan DOM malformado en el dashboard | `dashboard/index.blade.php:193-194` |
-| 25 | Card de usuarios malformada: `card-body` fuera del `card`; tabla vacía con `colspan="5"` para 6 columnas | `usuarios/index.blade.php:24-25,63` |
-| 26 | `@if($errors->any()) {{ dd($errors) }} @endif` triplicado → volcado de debug en vez de mensajes de validación | `inventario/index.blade.php:91,269,320` |
-| 27 | Login con clases DaisyUI que no está instalado (solo Bootstrap+Tailwind) → página sin estilos correctos; textbox placeholder con markdown malformado | `auth/login.blade.php:15,22`; `package.json` |
+| 23 | ~~Typo `Orden #s{{...}}` renderiza "Orden #s5"~~ ✓ **resuelto** | `dashboard/index.blade.php` |
+| 24 | ~~Dos `</div>` duplicados generan DOM malformado en el dashboard~~ ✓ **resuelto** (vista reescrita) | `dashboard/index.blade.php` |
+| 25 | ~~Card de usuarios malformada (`card-body` fuera del `card`); tabla vacía con `colspan="5"` para 6 columnas~~ ✓ **resuelto** | `usuarios/index.blade.php` |
+| 26 | `dd($errors)` en modales de inventario: se **eliminó** el volcado de debug; falta mostrar los mensajes de validación con `@error` | `inventario/index.blade.php` |
+| 27 | ~~Login con clases DaisyUI que no está instalado~~ ✓ **resuelto** (reescrito con Bootstrap + `auth.css`) | `auth/login.blade.php` |
 | 28 | Div con clases inválidas y `style="padding-top:45px"` impreso antes de `<body>` (HTML inválido) y `session('usuario')` puede lanzar si la sesión trae escalar | `public/index.blade.php:15-17,39` || 29 | `SP_RegistrarDetalleVenta` inserta en columna `idVenta` que no existe (la tabla usa `idSalida`) — ningún SP se llama desde la app hoy | `procedimientos.sql:57` |
 | 30 | Incoherencia PHP: `composer.json` declara `^8.3`, el proyecto corre con 8.4 — alinear declaración | `composer.json:12` |
 | 31 | Dependencia `laravel/pao` (typo de `laravel/pail`? ya está `pail`) — revisar para qué está o quitarla | `composer.json:20` |
 | 32 | `spatie/laravel-permission` instalada y sin uso (los roles son columna de texto + CheckRole casero). Decidir: adoptar o eliminar la dependencia | `composer.json:15` |
-| 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarioos.js` (vacío), CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`) — cargar o eliminar | `resources/js`, `resources/css` |
+| 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarioos.js` (vacío). ~~CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`)~~ ✓ estos ya tienen contenido | `resources/js` |
 | 34 | Timezone UTC y locale `en`: cambiar a `America/Santiago` y `es` (efectos en fechas mostradas y validaciones) | `config/app.php:58-68`, `.env` (`APP_LOCALE`, `APP_TIMEZONE` no existe → agregar) |
 | 35 | `* { user-select: none; }` global evita que el usuario pueda copiar texto (también afecta inputs de búsqueda) | `resources/css/app.css:2-4` |
 
@@ -66,7 +66,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | --- | --- | --- |
 | 36 | Consulta de producto con precio/costo/proveedor/stock **copiada 4 veces** → consolidar en scope `Producto::scopeConDetalle()` | `posController.php:22-53`, `ProductoController.php:95-134,227-258`, `DashboardController.php:45-92` |
 | 37 | `listarProductos` selecciona `precio` Y `precioVenta` (dos subconsultas a la misma tabla) — redundante | `ProductoController.php:103-109,127-132` |
-| 38 | CSS/JS inline masivo en clientes (~1.500 líneas) → extraer a assets Vite; también duplica la función de toggle de formulario | `clientes/index.blade.php:8-313,1303-2518`; `resources/js/app.js:28-46` |
+| 38 | ~~CSS inline masivo en clientes~~ ✓ **CSS extraído** a `resources/css/clientes.css`; falta extraer el bloque `<script>` inline (`clientes/index.blade.php`) a `resources/js/clientes.js` (duplica el toggle de `resources/js/app.js:28-46`) | `clientes/index.blade.php` |
 | 39 | Los 3 modales de inventario (ingreso/salida/abastecimiento) tienen cuerpo idéntico con **IDs de DOM duplicados** y los 3 apuntan a `productos.crearProducto` (ingreso/merma no hacen lo que dicen) | `inventario/index.blade.php:83-351` |
 | 40 | Soft delete manual con `whereNull('deleted_at')` duplicado en ~10 lugares, pese a que varios modelos ya usan `SoftDeletes` (usar el trait de forma consistente; `Cliente` aún sin trait) | `posController.php:58`, `ProductoController.php:24,137`, `DashboardController.php:115`, `ClienteController.php:22,146,191,363`, `ProveedorController.php` (varios) |
 | 41 | Dos sistemas de modales convivendo (Bootstrap en inventario/categorías/usuarios vs overlays hechos a mano en clientes/proveedores) → estandarizar componentes | vistas de ambos módulos |
