@@ -11,7 +11,9 @@
 .historial-filtros {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: var(--space-sm);
+    min-width: 0;
 }
 
 /* =========================================================
@@ -20,6 +22,7 @@
 
 .buscador-proveedor {
     width: 285px;
+    max-width: 100%;
     height: var(--control-height);
     display: flex;
     align-items: center;
@@ -34,6 +37,7 @@
 
 .buscador-proveedor input {
     width: 100%;
+    min-width: 0;
     border: none;
     outline: none;
     background: transparent;
@@ -43,4 +47,11 @@
 
 .buscador-proveedor input::placeholder {
     color: var(--color-text-soft);
+}
+
+@media (max-width: 767.98px) {
+
+    .buscador-proveedor input {
+        font-size: 16px;
+    }
 }

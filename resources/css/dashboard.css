@@ -97,3 +97,26 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 767.98px) {
+
+    .dashboard-ventas-list {
+        padding: var(--space-md) var(--space-lg);
+    }
+
+    .dashboard-alerta-titulo {
+        padding: var(--space-md) var(--space-lg);
+    }
+}
+
+@media (max-width: 480px) {
+
+    .venta-item {
+        flex-direction: column;
+    }
+
+    .venta-item-lado {
+        text-align: left;
+        white-space: normal;
+    }
+}

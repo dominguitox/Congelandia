@@ -11,7 +11,7 @@
 }
 
 html {
-    width: 100vw;
+    width: 100%;
 }
 
 body {
@@ -47,4 +47,31 @@ body {
     bottom: 20px;
     z-index: 9999;
     max-width: 60%;
+}
+
+/* =========================================================
+   RESPONSIVE DEL MARCO
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .app-main {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .app-main {
+        --module-padding: var(--space-md);
+    }
+
+    .flash-error {
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: var(--space-md);
+        max-width: none;
+        font-size: var(--fs-sm);
+    }
 }

@@ -75,3 +75,16 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 767.98px) {
+
+    .categoria-detalle-head,
+    .categoria-producto {
+        padding-left: var(--space-lg);
+        padding-right: var(--space-lg);
+    }
+
+    .categoria-producto {
+        flex-wrap: wrap;
+    }
+}

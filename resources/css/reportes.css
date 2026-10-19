@@ -54,3 +54,14 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 480px) {
+
+    .reporte-valor {
+        padding: var(--space-2xl) var(--space-md);
+    }
+
+    .reporte-valor-numero {
+        font-size: 36px;
+    }
+}

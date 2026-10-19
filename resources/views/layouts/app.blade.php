@@ -49,6 +49,9 @@
     @include('partials.header')
     @include('partials.sidebar')
 
+    {{-- Fondo para cerrar el menú lateral en móvil --}}
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
 
     {{-- Contenido principal --}}
 

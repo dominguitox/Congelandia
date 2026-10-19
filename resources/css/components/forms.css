@@ -71,3 +71,18 @@
 .obligatorio {
     color: var(--color-danger);
 }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .form-grid input,
+    .pago-form-group select,
+    .pago-form-group input,
+    .editar-form-group input,
+    .campo-proveedor input {
+        font-size: 16px;
+    }
+}
