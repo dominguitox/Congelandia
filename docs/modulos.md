@@ -1,0 +1,157 @@
+# Módulos del sistema
+
+Descripción funcional de cada módulo: qué hace, dónde vive (rutas/vistas/controladores) y estado actual.
+
+## 1. Sitio público
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /` (`public.index`), `GET /catalogo` (`public.catalogo`) |
+| **Controlador** | `PublicController` |
+| **Vistas** | `resources/views/public/index.blade.php` (standalone, no usa layout) |
+| **Estado** | ⚠️ Parcial: catálogo roto (vista `public.catalogo` inexistente), carrito sin lógica, buscador sin acción, imagen 404, textos placeholder. Ver [pendientes.md](pendientes.md) |
+
+Muestra el catálogo de productos con imagen, precio vigente (`Producto::precioActual`) y promociones para usuarios no autenticados.
+
+## 2. Acceso (login/logout)
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /login` (view), `POST /login`, `POST /logout` |
+| **Controladores** | `Auth\Login`, `Auth\Logout` (invocables) |
+| **Vista** | `resources/views/auth/login.blade.php` |
+| **Estado** | ⚠️ Bug crítico: compara contraseñas en texto plano pero los usuarios creados vía `usuarios.store` se guardan hasheados con `bcrypt` — un usuario creado desde el sistema no puede entrar. Además la vista usa clases DaisyUI que no están instaladas (diseño quebrado). Ver pendientes |
+
+Tabla de usuarios: `Usuario` (idUsuario, nombre, email, contrasena, rol, activo).
+
+## 3. Dashboard
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /dashboard` (`dashboard.index`) |
+| **Controlador** | `DashboardController` |
+| **Vista** | `dashboard/index.blade.php` |
+| **Estado** | ⚠️ Funciona pero muestra datos incorrectos: las tarjetas de Órdenes/Alertas muestran "0" hardcodeado en lugar de las variables que el controlador sí calcula; typo "Orden #s"; symlink muerto a `#ofertas`; errores duplicados de `</div>` |
+
+Métricas del día: órdenes de hoy, alertas activas (bajo stock), últimas ventas (reutiliza la vista-card de historial). Requiere normalizar la doble fuente de verdad con reportes.
+
+## 4. POS (punto de venta)
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /pos` (`pos.index`), `POST /venta/registrar` (`venta.registrar`) |
+| **Controlador** | `PosController` (archivo `posController.php`, minúsculas — cuidado en Linux) |
+| **Vistas** | `POS/index.blade.php` (carpeta en mayúsculas); JS: `resources/js/venta.js` |
+| **Estado** | ⚠️ Funciona pero inconsistente en producción Linux (case), y el método de pago llega `undefined` (el botón llama `registrarVenta()` sin argumento aunque la func espera `metodoPago`) |
+
+Flujo: buscar producto por código → agregar al carrito → seleccionar cliente → `venta.registrar` crea `salida` (tipo venta, totalSalida) + `detalle_salida` y registra pagos cuando es crédito. El stock se descuenta implícitamente (se calcula ingresos − salidas, nunca en la tabla).
+
+## 5. Inventario
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /inventario` (`inventario.index`), `GET /inventario/{codigo}` (`inventario.show`), `PUT /productos/{codigo}` (`inventario.editarProducto`), `POST /productos/guardar` (`productos.crearProducto` — **admin**) |
+| **Controlador** | `ProductoController`, JS: `resources/js/producto.js` |
+| **Vista** | `inventario/index.blade.php` |
+| **Estado** | ⚠️ Detalle roto (vista show inexistente, `show()` sin filtro), 3 modales duplicados que apuntan todos a crear productos, botón Borrar sin handler, onclick con `$producto->codigo` sin imprimir (`ReferenceError`), `dd($errors)` for cada error, carga el archivo CSS vacío. Ver pendientes |
+
+Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock calculado), modales de registrar ingreso/salida/merma (aún con lógica de creación de producto) y edición/creación de productos con imagen (`images/productos/`).
+
+## 6. Clientes
+
+| | |
+| --- | --- |
+| **Rutas** | `GET/POST /clientes`, `GET /clientes/{rut}/historial`, `POST /clientes/venta/{idSalida}/pago`, `PUT/DELETE /clientes/{rut}` |
+| **Controlador** | `ClienteController` |
+| **Vista** | `clientes/index.blade.php` (con ~1.500 líneas inline de CSS/JS), JS: `resources/js/app.js` (función duplicada) |
+| **Estado** | ⚠️ Funcional en general (gestión de deudas/créditos) pero con deuda técnica grave (CSS/JS inline, 2 tablas con lógica duplicada, form de pago sin `action`) |
+
+Gestión de clientes con compras referenciadas. Dos pestañas: deudas abiertas y pagados. Los pagos se registran sobre `pago_salida` y descienden el saldo total de la venta a crédito.
+
+## 7. Proveedores
+
+| | |
+| --- | --- |
+| **Rutas** | `GET/POST /proveedores`, `GET /proveedores/{id}/productos` (`proveedores.productos`), `PUT/DELETE /proveedores/{id}` |
+| **Controlador** | `ProveedorController`, JS: `resources/js/proveedores.js` |
+| **Vista** | `proveedores/index.blade.php` |
+| **Estado** | ⚠️ `productos()` no existe → la ruta `proveedores.productos` rompe si se visita. Soft delete hecho a mano en vez del trait (funciona pero inconsistente). Es el módulo más reciente y usa un sistema de modales hecho a mano, distinto al resto de la app. |
+
+CRUD estándar con soft delete y consulta de productos ofertados por proveedor (via `ingreso`/`detalle_ingreso`).
+
+## 8. Categorías
+
+| | |
+| --- | --- |
+| **Rutas** | `GET/POST /categorias`, `PUT/DELETE /categorias/{idCategoria}` |
+| **Controlador** | `CategoriaController`, JS: `resources/js/categorias.js` |
+| **Vista** | `categorias/index.blade.php` |
+| **Estado** | ⚠️ Sin restricción admin en backend (solo crear-producto la tiene). El JS (`resources/js/categorias.js`) hardcodea URLs `/categorias/{id}` en vez de usar rutas nombradas. |
+
+CRUD completo con soft delete (`Categoria` usa SoftDeletes).
+
+## 9. Historial de ventas
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /historial` (`historial.index`) |
+| **Controlador** | `historialController` ⚠️ nombre en minúsculas (rompe PSR-4 en Linux) |
+| **Vista** | `historial/index.blade.php` |
+| **Estado** | ✅ El módulo más consistente: es el único que usa `@push` correctamente para CSS/JS y tiene patrones de accesibilidad (`aria-expanded`) que el resto de la app debería copiar |
+
+Listado de ventas (salidas + detalles + cliente + método de pago) con filtros por fecha/tipo.
+
+## 10. Reportes
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /reportes` (`reportes.index`) |
+| **Controlador** | `ReporteController` |
+| **Vista** | `reportes/index.blade.php` |
+| **Estado** | ⚠️ Parcialmente roto: consultas a tablas que no existen (`inventario`, `lote`) — bajo stock y próximos a vencer fallan. Faltan por agregar: clientes con deuda, deuda total, ganancia estimada, ventas por festividad (TODO en el código) |
+
+Reportes implementados (numeración del código):
+1. Ventas por tipo en un rango — ✅
+2. Productos más vendidos — ✅
+3. Clientes frecuentes — ✅
+4. Inventario total — ✅
+5. Historial de ingresos — ✅
+6. Historial de ventas por rango — ✅
+7. Ventas anuales — ✅
+8. Ventas mensuales — ✅
+9. Productos con bajo stock — ❌ rompe
+10. Productos próximos a vencer — ❌ rompe
+11. Clientes con deuda — 🔜 pendiente
+12. Deuda total — 🔜 pendiente
+13. Ganancia estimada — 🔜 pendiente
+14. Ventas por festividad — 🔜 pendiente
+
+## 11. Usuarios
+
+| | |
+| --- | --- |
+| **Rutas** | `GET/POST /usuarios` |
+| **Controlador** | `UserController`, JS: `resources/js/usuarioos.js` (vacío y con typo en el nombre) |
+| **Vista** | `usuarios/index.blade.php` |
+| **Estado** | ⚠️ Solo creación + listado. Sin admin-check server-side (cualquiera puede crear un Administrador). Botones "Desactivar/Ver historial" sin handler. Markup de card roto. Contraseña con bcrypt incompatible con el login (bug crítico). Ver pendientes |
+
+Gestión de usuarios del sistema sin update ni delete (mejoras pendientes).
+
+## 12. Sistema y configuración
+
+| | |
+| --- | --- |
+| **Rutas** | `GET /version-info` |
+| **Controlador** | `PublicController::versionInfo` (modelo `Version` → tabla `versiones`) |
+| **Estado** | ⚠️ Ligero pero funcional. `VersionController` es código huérfano (no se usa en las rutas y su `index()` apunta a una vista que no existe). |
+
+Permite mostrar la versión de la app en el sistema (sidebar).
+
+## Módulos huérfanos (código sin ruta ni vista)
+
+- `PromocionController` (CRUD completo) — vistas `promociones.*` inexistentes y sin rutas.
+- `IngresoController`, `DetalleIngresoController`, `ListaPrecioController` — en blanco.
+- `SalidaController` — contiene una clase mal nombrada (`VentaController`), SQL incompatible y ninguna ruta lo referencia.
+- Modelo `Reporte` — sin referencias.
+
+Ver propuesta de limpieza y decisiones en [pendientes.md](pendientes.md).
