@@ -14,6 +14,8 @@ export default defineConfig({
                 'resources/css/reportes.css',
 
                 'resources/css/theme/themes/aurora.css',
+                'resources/css/theme/themes/esmeralda.css',
+                'resources/css/theme/themes/coral.css',
 
                 'resources/js/app.js',
 
