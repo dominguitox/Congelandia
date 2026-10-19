@@ -17,6 +17,7 @@
 @import './theme/tokens.css';
 @import './theme/base.css';
 
+@import './components/pages.css';
 @import './components/layout.css';
 @import './components/cards.css';
 @import './components/tables.css';

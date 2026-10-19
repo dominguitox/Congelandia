@@ -21,6 +21,8 @@ export default defineConfig({
 
                 'resources/css/dashboard.css',
 
+                'resources/css/inventario.css',
+
                 'resources/css/historial.css',
                 'resources/js/historial.js',
 
@@ -33,6 +35,10 @@ export default defineConfig({
 
                 'resources/css/categorias.css',
                 'resources/js/categorias.js',
+
+                'resources/css/auth.css',
+
+                'resources/css/public.css',
             ],
 
             refresh: true,

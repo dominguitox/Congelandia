@@ -6,6 +6,147 @@
    ========================================================= */
 
 /* =========================================================
+   BOTONES GENERICOS (reutilizables por cualquier modulo)
+   ========================================================= */
+
+.btn-solid,
+.btn-soft,
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: var(--control-height);
+    padding: 0 20px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-md);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-solid {
+    background: var(--color-primary);
+    color: var(--color-text-light);
+    border: 1px solid transparent;
+}
+
+.btn-solid:hover {
+    background: var(--color-primary-hover);
+}
+
+.btn-solid:active {
+    transform: scale(0.98);
+}
+
+.btn-solid--danger {
+    background: var(--color-danger-strong);
+}
+
+.btn-solid--danger:hover {
+    background: var(--color-danger);
+}
+
+.btn-solid--success {
+    background: var(--color-success);
+}
+
+.btn-solid--success:hover {
+    background: var(--color-success);
+    filter: brightness(0.95);
+}
+
+.btn-soft {
+    background: var(--color-btn-muted-bg);
+    color: var(--color-btn-muted-text);
+    border: 1px solid transparent;
+}
+
+.btn-soft:hover {
+    background: var(--color-btn-muted-bg-hover);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--color-btn-expand-text);
+    border: 1px solid var(--color-border);
+}
+
+.btn-outline:hover {
+    background: var(--color-primary-softer);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* Tamano compacto */
+.btn-compact {
+    height: var(--control-height-sm);
+    padding: 0 16px;
+    font-size: var(--fs-base);
+}
+
+/* Icono dentro de un boton solido/soft/outline */
+.btn-solid svg,
+.btn-soft svg,
+.btn-outline svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* =========================================================
+   BOTONES DE ICONO (genericos)
+   ========================================================= */
+
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+}
+
+.icon-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.97);
+}
+
+.icon-btn--info {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+.icon-btn--danger {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+.icon-btn--success {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.icon-btn--warn {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
+
+.icon-btn--purple {
+    background: var(--color-purple-bg);
+    color: var(--color-purple);
+}
+
+.icon-btn--expand {
+    background: var(--color-btn-expand-bg);
+    color: var(--color-btn-expand-text);
+}
+
+/* =========================================================
    BOTONES PRINCIPALES (accion solida)
    ========================================================= */
 
