@@ -34,11 +34,12 @@ El script `setup` (definido en `composer.json`) ejecuta en orden:
 1. `composer install`
 2. Copia `.env.example` a `.env` (si no existe)
 3. `php artisan key:generate`
-4. `php artisan migrate --force`
-5. `npm install --ignore-scripts`
-6. `npm run build`
+4. `php artisan migrate:fresh --force`
+5. `php artisan db:seed --force`
+6. `npm install --ignore-scripts`
+7. `npm run build`
 
-> **Ojo:** `migrate` solo crea las tablas de framework + `usuarios` y `log_errors`. **Las tablas del negocio NO se crean con migraciones**: deben cargarse con los archivos SQL (paso siguiente).
+> **Ojo (rama `migracion-sql-a-laravel`):** `migrate:fresh --seed` crea ahora **todo el esquema** (framework + negocio + usuario admin inicial). Ya no es necesario importar `create table.sql`. Ver [migraciones.md](migraciones.md). En `main` sigue siendo obligatorio el paso 3 con los SQL.
 
 > ⚠️ **Incoherencia conocida:** `composer.json` declara `"php": "^8.3"`, pero el proyecto corre con PHP 8.4 (y Laravel 13 que exige PHP 8.4+). Ver [pendientes.md](pendientes.md).
 
@@ -58,6 +59,8 @@ DB_PASSWORD=tu_clave
 La base de datos `congelandia_db` se crea sola al importar `create table.sql` (incluye `CREATE DATABASE`). Si la creas a mano, usa el mismo nombre.
 
 ### 3. Cargar las tablas del negocio y los datos
+
+> **Rama `migracion-sql-a-laravel`:** este paso ya **no es necesario** — `composer run setup` lo cubre con migraciones + seeder. Lo dejo documentado porque en `main` sigue vigente y los SQL quedan como legado/referencia.
 
 Los archivos SQL están en la raíz del repositorio. Importar **en este orden** (desde MySQL CLI o Workbench):
 
@@ -92,7 +95,7 @@ Ejecuta 3 procesos en paralelo (con `concurrently`):
 
 ### 5. Usuarios semilla para login
 
-Tras importar `inserts.sql` hay usuarios disponibles (ver el propio archivo para credenciales). El usuario administrador semilla tiene rol `Administrador`, necesario para acceder a las secciones restringidas (ver [rutas.md](rutas.md)).
+Con secciones (`db:seed`) hay un usuario administrador disponible: `admin@congelandia.cl` / `1234` (cambiar en producción). Alternativamente, importando `inserts.sql` hay 7 usuarios disponibles (ver el propio archivo para credenciales). El rol `Administrador` es necesario para acceder a las secciones restringidas (ver [rutas.md](rutas.md)).
 
 ## Assets de producción (deploy)
 

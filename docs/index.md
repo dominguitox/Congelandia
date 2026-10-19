@@ -10,6 +10,7 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 | [arquitectura.md](arquitectura.md) | Stack tecnológico, estructura de carpetas, flujo de una petición y manejo de errores |
 | [rutas.md](rutas.md) | Referencia completa de todas las rutas del sistema (método, URL, nombre, controlador, roles) |
 | [modelos-datos.md](modelos-datos.md) | Esquema de base de datos, modelos Eloquent, relaciones y procedimientos almacenados |
+| [migraciones.md](migraciones.md) | Migraciones Laravel del esquema completo (rama `migracion-sql-a-laravel`, pendiente de merge) |
 | [modulos.md](modulos.md) | Funcionalidad de cada módulo del sistema, vista por vista |
 | [convenciones.md](convenciones.md) | Convenciones de código vigentes y recomendadas para el equipo |
 | [pendientes.md](pendientes.md) | Backlog de bugs y deuda técnica identificados en la auditoría, por prioridad |

@@ -4,9 +4,9 @@
 
 1. **`create table.sql`** (raíz) — esquema real de las tablas de negocio. Lo que usan los modelos.
 2. **`MWB.mwb`** — diagrama ER de MySQL Workbench.
-3. **`database/migrations/`** — solo migraciones de framework + `usuarios` (incompatible con el modelo real) + `log_errors`.
+3. **`database/migrations/`** — ver [migraciones.md](migraciones.md): en la rama `migracion-sql-a-laravel` (pendiente #61, aun sin merge) el esquema completo vive en migraciones; en `main` solo cubren framework + `log_errors`.
 
-> ⚠️ **Las tablas de negocio no tienen migraciones Laravel.** `php artisan migrate:fresh` deja una base de datos que la app no puede usar. La BD se monta con `create table.sql` + `inserts.sql` manualmente. Ver [pendientes.md](pendientes.md).
+> ⚠️ **En `main`, las tablas de negocio no tienen migraciones Laravel**: la BD se monta con `create table.sql` + `inserts.sql` manualmente. En la rama `migracion-sql-a-laravel` `migrate:fresh --seed` produce la BD completa.
 
 ## Diagrama lógico (resumen)
 
@@ -59,7 +59,7 @@ Versiones, Log_Errors (sistema)
 | `Ingreso` | `ingreso` | `idIngreso` | No | `proveedor()`, `detalles()` |
 | `DetalleIngreso` | `detalle_ingreso` | `idDetalle` | No | `ingreso()`, `producto()` |
 | `Salida` | `salida` | `idSalida` | No | No usa timestamps. `usuario()`, `detalles()`, `tipo()`, `pagos()` |
-| `DetalleSalida` | `detalle_salida` | *(no declarada — Laravel usará `id`)* | No | `producto()`. ⚠️ declarar la PK real (ver pendientes) |
+| `DetalleSalida` | `detalle_salida` | `idDetalle` (✓ declarado en rama `migracion-sql-a-laravel`) | No | `producto()` |
 | `TipoSalida` | `tipo_salida` | `idTipo` | No | `salidas()` |
 | `PagoSalida` | `pago_salida` | `idPago` | No | `salida()` |
 | `ListaPrecio` | `lista_precio` | `idPrecio` | No | Histórico de precios (vigente = `fechaFin` null, última `fechaInicio`) |

@@ -101,9 +101,9 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 
 | # | Decisión | Contexto |
 | --- | --- | --- |
-| 61 | **Migrar tablas de negocio a migraciones Laravel** (o formalizar que `create table.sql` es la única fuente) | 14+ tablas de negocio están fuera del sistema de migraciones; `migrate:fresh` y `setup` no producen una BD usable; la migración `usuarios` difiere del modelo real (crea `users`-style con `id`/`password` mientras el modelo usa `Usuario` con `idUsuario`/`contrasena`) |
+| 61 | ~~**Migrar tablas de negocio a migraciones Laravel**~~ ✓ **resuelto en rama `migracion-sql-a-laravel`** (pendiente de merge a main) | Todas las tablas de negocio + secciones/`Versiones`/`IMAGEN_PRODUCTO` tienen migración; `migrate:fresh` + `db:seed` producen una BD usable (`composer run setup` ahora corre ambos). La migración `usuarios` incoherente fue reemplazada. Detalle y deltas: [migraciones.md](migraciones.md) |
 | 62 | ¿Se mantienen los stored procedures? Hoy la app no los llama | `procedimientos.sql` — si se conservan, corregir #29 y quitar los `select *` debug y los `DELIMITER //` sueltos |
-| 63 | Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas) | Solo existen 2 stubs; `composer run test` corre Pest |
+| 63 | Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas) | ~~Solo 2 stubs~~ se agrego `tests/Feature/MigrationsTest.php` (esquema + FK) en la rama `migracion-sql-a-laravel`; falta la regresión del cálculo de stock |
 | 64 | Definir roles canónicos y documentar en el seed | `Administrador`, `Cajero` aparecen en datos; `UserController` acepta cualquier string (ver #12) |
 | 65 | Welcome/branding: imágenes faltantes (#20), texto placeholder "Delivery? Ubicación?" sin definir | `public/index.blade.php:46-47,86-88` |
 
@@ -113,4 +113,4 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 2. **P2 (portabilidad)** en un PR único de renombrado, idealmente antes de cualquier deploy real.
 3. **P1 (roles)** completo en un PR, con pruebas de que Cajero queda bloqueado.
 4. **P4/P5** con acuerdos del equipo; P5 en un solo PR de limpieza con `git rm`.
-5. **P6** discutirlo en reunión: impacta cómo se trabaja hacia adelante más que un fix puntual.
+5. **P6** discutirlo en reunión: impacta cómo se trabaja hacia adelante más que un fix puntual. #61 ya está resuelto como rama `migracion-sql-a-laravel` — solo falta aprobar el merge a `main`.
