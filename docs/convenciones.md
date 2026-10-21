@@ -6,15 +6,15 @@ Reglas que el equipo debe seguir en el código nuevo y en los ajustes a código 
 
 | Elemento | Regla | Ejemplos correctos | Violaciones actuales |
 | --- | --- | --- | --- |
-| Controlador (archivo y clase) | PascalCase, mismo nombre para archivo y clase | `ProductoController.php` → `class ProductoController` | `historialController.php`, `posController.php` (minúsculas); `SalidaController.php` contiene `class VentaController` |
+| Controlador (archivo y clase) | PascalCase, mismo nombre para archivo y clase | `ProductoController.php` → `class ProductoController` | — |
 | Metodos de controlador | camelCase, verbos claros | `listarProductos`, `registrarVenta`, `store`, `update` | Mezcla `index`/`listarProductos` como listados equivalentes |
 | Métodos invocables de Auth | `__invoke()` | `Login`, `Logout` | — |
-| Vistas | minúsculas y con la ruta del controller | `pos/index.blade.php` para `view('pos.index')` | Carpeta `POS/` en mayúsculas (rompe en Linux) |
+| Vistas | minúsculas y con la ruta del controller | `pos/index.blade.php` para `view('pos.index')` | — |
 | Rutas (nombre) | dominio consistente por recurso | `productos.index`, `productos.store` | `inventario.index` junto con `productos.crearProducto`; `venta.registrar` escribe en `salida` |
 | Variables / props | camelCase | `$resultado` | — |
-| Tablas BD | ver [modelos-datos.md](modelos-datos.md) — *respetar el esquema vigente hasta migrar* | `producto`, `salida` | Consultas crudas que mezclan `Categoria`/`Producto`/`detalle_ventas`(?) con minúsculas |
+| Tablas BD | mismo casing exacto en migraciones, modelos y queries crudas | `Cliente`, `Producto`, `Salida` (creadas por migraciones) | Queries crudas en minúsculas (`ingreso`, `salida`, `producto`) que fallan en MySQL Linux — ver pendientes #66 |
 
-**Por qué importa el PascalCase:** el autoloader de Composer y el server de producción (Linux) son case-sensitive. En Windows funciona por casualidad; en deploy Linux `PosController` no se resuelve a `posController.php` y la aplicación rompe. Regla: **archivo == clase y ambos PascalCase**.
+**Por qué importa el PascalCase:** el autoloader de Composer y el server de producción (Linux) son case-sensitive. En Windows funciona por casualidad; en deploy Linux `PosController` solo se resuelve si el archivo se llama exactamente `PosController.php`. Regla: **archivo == clase y ambos PascalCase**.
 
 ## Controladores
 

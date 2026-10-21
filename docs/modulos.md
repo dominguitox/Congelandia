@@ -40,9 +40,9 @@ Métricas del día: órdenes de hoy, alertas activas (bajo stock), últimas vent
 | | |
 | --- | --- |
 | **Rutas** | `GET /pos` (`pos.index`), `POST /venta/registrar` (`venta.registrar`) |
-| **Controlador** | `PosController` (archivo `posController.php`, minúsculas — cuidado en Linux) |
-| **Vistas** | `POS/index.blade.php` (carpeta en mayúsculas); JS: `resources/js/venta.js` |
-| **Estado** | ⚠️ Funciona pero inconsistente en producción Linux (case), y el método de pago llega `undefined` (el botón llama `registrarVenta()` sin argumento aunque la func espera `metodoPago`) |
+| **Controlador** | `PosController` (archivo `PosController.php`) |
+| **Vistas** | `pos/index.blade.php`; JS: `resources/js/venta.js` |
+| **Estado** | ⚠️ Funciona; el método de pago llega `undefined` (el botón llama `registrarVenta()` sin argumento aunque la func espera `metodoPago`) |
 
 Flujo: buscar producto por código → agregar al carrito → seleccionar cliente → `venta.registrar` crea `salida` (tipo venta, totalSalida) + `detalle_salida` y registra pagos cuando es crédito. El stock se descuenta implícitamente (se calcula ingresos − salidas, nunca en la tabla).
 
@@ -75,7 +75,7 @@ Gestión de clientes con compras referenciadas. Dos pestañas: deudas abiertas y
 | **Rutas** | `GET/POST /proveedores`, `GET /proveedores/{id}/productos` (`proveedores.productos`), `PUT/DELETE /proveedores/{id}` |
 | **Controlador** | `ProveedorController`, JS: `resources/js/proveedores.js` |
 | **Vista** | `proveedores/index.blade.php` |
-| **Estado** | ⚠️ `productos()` no existe → la ruta `proveedores.productos` rompe si se visita. Soft delete hecho a mano en vez del trait (funciona pero inconsistente). Es el módulo más reciente y usa un sistema de modales hecho a mano, distinto al resto de la app. |
+| **Estado** | ⚠️ `productos()` no existe → la ruta `proveedores.productos` rompe si se visita. Usa `SoftDeletes` del modelo (consistente con el resto). Es el módulo más reciente y usa un sistema de modales hecho a mano, distinto al resto de la app. |
 
 CRUD estándar con soft delete y consulta de productos ofertados por proveedor (via `ingreso`/`detalle_ingreso`).
 
@@ -95,7 +95,7 @@ CRUD completo con soft delete (`Categoria` usa SoftDeletes).
 | | |
 | --- | --- |
 | **Rutas** | `GET /historial` (`historial.index`) |
-| **Controlador** | `historialController` ⚠️ nombre en minúsculas (rompe PSR-4 en Linux) |
+| **Controlador** | `HistorialController` (archivo y clase normalizados para Linux) |
 | **Vista** | `historial/index.blade.php` |
 | **Estado** | ✅ El módulo más consistente: es el único que usa `@push` correctamente para CSS/JS y tiene patrones de accesibilidad (`aria-expanded`) que el resto de la app debería copiar |
 
@@ -131,7 +131,7 @@ Reportes implementados (numeración del código):
 | | |
 | --- | --- |
 | **Rutas** | `GET/POST /usuarios` |
-| **Controlador** | `UserController`, JS: `resources/js/usuarioos.js` (vacío y con typo en el nombre) |
+| **Controlador** | `UserController`, JS: `resources/js/usuarios.js` (vacío) |
 | **Vista** | `usuarios/index.blade.php` |
 | **Estado** | ⚠️ Solo creación + listado. Sin admin-check server-side (cualquiera puede crear un Administrador). Botones "Desactivar/Ver historial" sin handler. Markup de card roto. Contraseña con bcrypt incompatible con el login (bug crítico). Ver pendientes |
 
@@ -151,7 +151,7 @@ Permite mostrar la versión de la app en el sistema (sidebar).
 
 - `PromocionController` (CRUD completo) — vistas `promociones.*` inexistentes y sin rutas.
 - `IngresoController`, `DetalleIngresoController`, `ListaPrecioController` — en blanco.
-- `SalidaController` — contiene una clase mal nombrada (`VentaController`), SQL incompatible y ninguna ruta lo referencia.
+- `VentaController` (archivo `VentaController.php`, antes `SalidaController.php`) — SQL incompatible y ninguna ruta lo referencia.
 - Modelo `Reporte` — sin referencias.
 
 Ver propuesta de limpieza y decisiones en [pendientes.md](pendientes.md).

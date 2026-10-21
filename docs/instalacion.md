@@ -110,8 +110,8 @@ El manifiesto está configurado en `vite.config.js`. Los bundles se generan en `
 | Síntoma | Causa probable | Solución |
 | --- | --- | --- |
 | Error SQL "table not found" al abrir un módulo | Faltan importar `create table.sql`/`inserts.sql` | Importa los SQL en el orden indicado |
-| Clase no encontrada (`PosController`, `historialController`) en Linux/Mac | Nombres de archivo con minúsculas que solo funcionan en Windows (case-insensitive) | Ver [pendientes.md](pendientes.md) — renombrar archivos al estándar PSR-4 |
-| `@vite` no encuentra entrada en producción | Entradas faltantes en `vite.config.js` (`usuarioos.js`, `public.css`) | Ver [pendientes.md](pendientes.md) |
+| Error SQL "table not found" solo en Linux con BD creada por migraciones | MySQL Linux es case-sensitive en tablas: las migraciones crean `Ingreso`/`Salida`/`Producto`, pero modelos y queries crudas usan minúsculas | Ver [pendientes.md](pendientes.md) #66 (normalización de casing a futuro) |
+| `@vite` no encuentra entrada en producción | Entradas faltantes en `vite.config.js` | Ya resueltos `public.css` y `usuarios.js`; revisa entradas nuevas |
 | Login rechaza credenciales creadas desde la app | `Auth\Login` compara texto plano pero `UserController::store` guarda con `bcrypt` | Ver [pendientes.md](pendientes.md) (bug crítico) |
 | Página de error genérica tras una excepción | El handler global lo redirige atrás con mensaje "Ocurrió un error en el sistema" y registra en `log_errors` | Revisa la tabla `log_errors` para el detalle real |
 | `user-select` bloqueado (no puedes copiar texto) | Regla global `* { user-select: none; }` en `resources/css/app.css` | Remover la regla (ver [pendientes.md](pendientes.md)) |

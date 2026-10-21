@@ -20,7 +20,7 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | GET | `/version-info` | — | `PublicController@versionInfo` | Información de la versión del sistema |
 | GET | `/dashboard` | `dashboard.index` | `DashboardController@index` | Panel principal (órdenes de hoy, alertas) |
 | GET | `/reportes` | `reportes.index` | `ReporteController@index` | Reportes ⚠️ parcialmente roto: consultas a tablas inexistentes (`inventario`, `lote`) — ver pendientes |
-| GET | `/historial` | `historial.index` | `historialController@index` | Historial de ventas |
+| GET | `/historial` | `historial.index` | `HistorialController@index` | Historial de ventas |
 
 ### Inventario
 
