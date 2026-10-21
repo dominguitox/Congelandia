@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\historialController;
+use App\Http\Controllers\HistorialController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
@@ -131,7 +131,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get(
         '/historial',
-        [historialController::class, 'index']
+        [HistorialController::class, 'index']
     )->name('historial.index');
 
 
