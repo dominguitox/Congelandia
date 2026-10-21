@@ -58,6 +58,8 @@ class ReporteController extends Controller
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 DB::raw('DATE(salida.fecha) as fecha'),
                 'producto.nombre',
@@ -76,6 +78,8 @@ class ReporteController extends Controller
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 'producto.nombre',
                 DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
@@ -92,6 +96,8 @@ class ReporteController extends Controller
     {
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->sum(DB::raw('detalle_salida.cantidad * detalle_salida.precioCobrado'));
 
@@ -102,6 +108,7 @@ class ReporteController extends Controller
     private function cantidadVentasEfectuadasPorFecha($fechaInicio, $fechaFin)
     {
         return DB::table('salida')
+            ->whereNull('deleted_at')
             ->whereBetween(DB::raw('DATE(fecha)'), [$fechaInicio, $fechaFin])
             ->count('idSalida');
     }
@@ -110,6 +117,8 @@ class ReporteController extends Controller
     {
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->sum('detalle_salida.cantidad');
     }
@@ -129,6 +138,8 @@ class ReporteController extends Controller
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
             ->join('categoria', 'producto.idCategoria', '=', 'categoria.idCategoria')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 'categoria.nombre as categoria',
                 DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
@@ -145,6 +156,8 @@ class ReporteController extends Controller
     {
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 DB::raw('DAYNAME(salida.fecha) as dia'),
                 DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precioCobrado) as ingresos')
@@ -159,6 +172,7 @@ class ReporteController extends Controller
     private function horariosConMasTrafico($fechaInicio, $fechaFin)
     {
         return DB::table('salida')
+            ->whereNull('deleted_at')
             ->select(
                 DB::raw('HOUR(fecha) as hora'),
                 DB::raw('COUNT(idSalida) as cantidad_transacciones')
