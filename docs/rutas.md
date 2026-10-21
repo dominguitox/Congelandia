@@ -27,7 +27,7 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | Método | URL | Nombre | Controller@method | Descripción |
 | --- | --- | --- | --- | --- |
 | GET | `/inventario` | `inventario.index` | `ProductoController@listarProductos` | Listado de productos con stock/precio/costo |
-| GET | `/inventario/{codigo}` | `inventario.show` | `ProductoController@show` | Detalle de producto ⚠️ **rota**: vista `inventario.show` no existe y `show()` no filtra por código — ver pendientes |
+| ~~GET~~ | ~~`/inventario/{codigo}`~~ | ~~`inventario.show`~~ | ~~`ProductoController@show`~~ | Desactivada: ruta comentada en `web.php`; no se implementará por ahora |
 | PUT | `/productos/{codigo}` | `inventario.editarProducto` | `ProductoController@editarProducto` | Editar producto |
 | POST | `/productos/guardar` | `productos.crearProducto` | `ProductoController@crearProducto` | Crear producto (con ingreso inicial) — **única ruta admin** |
 

@@ -50,10 +50,10 @@ Flujo: buscar producto por código → agregar al carrito → seleccionar client
 
 | | |
 | --- | --- |
-| **Rutas** | `GET /inventario` (`inventario.index`), `GET /inventario/{codigo}` (`inventario.show`), `PUT /productos/{codigo}` (`inventario.editarProducto`), `POST /productos/guardar` (`productos.crearProducto` — **admin**) |
+| **Rutas** | `GET /inventario` (`inventario.index`), `PUT /productos/{codigo}` (`inventario.editarProducto`), `POST /productos/guardar` (`productos.crearProducto` — **admin**). `GET /inventario/{codigo}` quedó desactivada |
 | **Controlador** | `ProductoController`, JS: `resources/js/producto.js` |
 | **Vista** | `inventario/index.blade.php` |
-| **Estado** | ⚠️ Detalle roto (vista show inexistente, `show()` sin filtro), 3 modales duplicados que apuntan todos a crear productos, botón Borrar sin handler, onclick con `$producto->codigo` sin imprimir (`ReferenceError`), `dd($errors)` for cada error, carga el archivo CSS vacío. Ver pendientes |
+| **Estado** | ⚠️ Detalle desactivado (ruta `/inventario/{codigo}` comentada; `show()` sigue sin filtro). 3 modales duplicados que apuntan todos a crear productos, botón Borrar sin handler, onclick con `$producto->codigo` sin imprimir (`ReferenceError`), `dd($errors)` for cada error, carga el archivo CSS vacío. Ver pendientes |
 
 Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock calculado), modales de registrar ingreso/salida/merma (aún con lógica de creación de producto) y edición/creación de productos con imagen (`images/productos/`).
 

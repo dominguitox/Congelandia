@@ -6,9 +6,9 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
-| 1 | Vista `public.catalogo` no existe → `GET /catalogo` (ruta viva, enlazada desde el navbar) lanza error | `PublicController.php:37`; crear `resources/views/public/catalogo.blade.php` o quitar la ruta |
-| 2 | Vista `inventario.show` no existe → `GET /inventario/{codigo}` (ruta viva) lanza error | `ProductoController.php:263`; crear `resources/views/inventario/show.blade.php` o quitar la ruta |
-| 3 | `show()` no filtra por código: devuelve TODOS los productos y muestra el primero, ignorando el parámetro de ruta | `ProductoController.php:227-261` (falta `where('producto.codigo', $codigo)`) |
+| 1 | ~~Vista `public.catalogo` no existe~~ ⚠️ **parcial**: se creó `resources/views/public/catalogo.blade.php`, pero está vacía; `GET /catalogo` ya no lanza error, falta implementar el contenido | `PublicController.php:37`; `resources/views/public/catalogo.blade.php` |
+| 2 | ~~Vista `inventario.show` no existe → `GET /inventario/{codigo}` (ruta viva) lanza error~~ ✓ **resuelto**: ruta desactivada (comentada) en `routes/web.php`; no se implementará por ahora | `routes/web.php:101-108` |
+| 3 | `show()` no filtra por código: devuelve TODOS los productos y muestra el primero, ignorando el parámetro de ruta. La ruta quedó desactivada (#2), pero el método sigue así | `ProductoController.php:227-261` (falta `where('producto.codigo', $codigo)`) |
 | 4 | `ProveedorController::productos` no existe → `GET /proveedores/{id}/productos` (ruta viva) rompe | `routes/web.php:214`; implementar el método o quitar la ruta |
 | 5 | Login compara contraseñas en **texto plano**, pero `usuarios.store` guarda con `bcrypt` → un usuario creado desde el sistema nunca puede iniciar sesión | `Auth\Login.php:24` vs `UserController.php:29`. Decidir esquema (recomendado: hash en todos lados y usar `Hash::check` en Login) |
 | 6 | Reportes rompen: queries sobre tablas inexistentes (`inventario`, `lote`) para "bajo stock" y "próximos a vencer" (el comentario del código lo admite) | `ReporteController.php:172-204` |

@@ -98,12 +98,13 @@ Route::middleware('auth')->group(function () {
         '/inventario',
         [ProductoController::class, 'listarProductos']
     )->name('inventario.index');
-
-    Route::get(
-        '/inventario/{codigo}',
-        [ProductoController::class, 'show']
-    )->name('inventario.show');
-
+    /*
+    No se implementó, guardar por si acaso
+        Route::get(
+            '/inventario/{codigo}',
+            [ProductoController::class, 'show']
+        )->name('inventario.show');
+    */
     Route::put(
         '/productos/{codigo}',
         [ProductoController::class, 'editarProducto']
