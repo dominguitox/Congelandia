@@ -7,7 +7,8 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | Método | URL | Nombre | Controller@method | Descripción |
 | --- | --- | --- | --- | --- |
 | GET | `/` | `public.index` | `PublicController@index` | Home del sitio público |
-| GET | `/catalogo` | `public.catalogo` | `PublicController@catalogo` | Catálogo público ⚠️ **rota**: la vista `public.catalogo` no existe (ver pendientes) |
+| GET | `/catalogo` | `public.catalogo` | `PublicController@catalogo` | Catálogo público con búsqueda (`q`) y filtro por `categoria` |
+| GET | `/contacto` | `public.contacto` | `PublicController@contacto` | Página de contacto y datos de atención |
 | GET | `/login` | `login` | — (Route::view) | Formulario de acceso; solo con sesión cerrada |
 | POST | `/login` | — | `Auth\Login` | Autentica contra tabla `Usuario` (comparación texto plano — ver pendientes) |
 

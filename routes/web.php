@@ -34,6 +34,11 @@ Route::get(
     [PublicController::class, 'catalogo']
 )->name('public.catalogo');
 
+Route::get(
+    '/contacto',
+    [PublicController::class, 'contacto']
+)->name('public.contacto');
+
 
 // =========================================================
 // RUTAS DE ACCESO

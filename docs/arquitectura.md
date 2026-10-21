@@ -84,8 +84,9 @@ Navegador
 | `partials/header` | Navbar superior fijo |
 | `partials/sidebar` | Menú lateral; muestra enlaces de admin solo si `rol === 'Administrador'` (cuidado: es solo ocultamiento visual, el backend no restringe salvo crear producto — ver [pendientes.md](pendientes.md)) |
 | `partials/footer` | Vacío (shell) |
-| `layouts/public.blade.php`, `partials/navbar.blade.php`, `welcome.blade.php` | **Sin uso** (candidatos a eliminación) |
-| `public/index.blade.php` | Sitio público, documento HTML standalone (no extiende layout) |
+| `layouts/public.blade.php` | **Layout del sitio público**: navbar con buscador, footer, barra de sesión y datos de contacto (`config/public.php`) |
+| `public/index.blade.php`, `public/catalogo.blade.php`, `public/contacto.blade.php` | Páginas públicas; extienden `layouts/public.blade.php` |
+| `partials/navbar.blade.php`, `welcome.blade.php` | **Sin uso** (candidatos a eliminación) |
 
 ## Manejo de errores
 
