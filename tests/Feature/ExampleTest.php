@@ -9,3 +9,10 @@ test('the application returns a successful response', function () {
 
     $response->assertStatus(200);
 });
+
+test('las paginas publicas de catalogo y contacto responden', function () {
+    Artisan::call('migrate:fresh');
+
+    $this->get('/catalogo')->assertOk()->assertSee('Catálogo');
+    $this->get('/contacto')->assertOk()->assertSee('Contacto');
+});

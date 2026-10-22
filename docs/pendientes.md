@@ -6,7 +6,7 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
-| 1 | ~~Vista `public.catalogo` no existe~~ ⚠️ **parcial**: se creó `resources/views/public/catalogo.blade.php`, pero está vacía; `GET /catalogo` ya no lanza error, falta implementar el contenido | `PublicController.php:37`; `resources/views/public/catalogo.blade.php` |
+| 1 | ~~Vista `public.catalogo` no existe~~ ✓ **resuelto**: catálogo implementado con búsqueda, filtro por categoría y tarjetas sin carrito ni stock | `PublicController.php`; `resources/views/public/catalogo.blade.php` |
 | 2 | ~~Vista `inventario.show` no existe → `GET /inventario/{codigo}` (ruta viva) lanza error~~ ✓ **resuelto**: ruta desactivada (comentada) en `routes/web.php`; no se implementará por ahora | `routes/web.php:101-108` |
 | 3 | `show()` no filtra por código: devuelve TODOS los productos y muestra el primero, ignorando el parámetro de ruta. La ruta quedó desactivada (#2), pero el método sigue así | `ProductoController.php:227-261` (falta `where('producto.codigo', $codigo)`) |
 | 4 | ~~`ProveedorController::productos` no existe → `GET /proveedores/{id}/productos` (ruta viva) rompe~~ ✓ **resuelto**: ruta huérfana eliminada; los productos se listan server-side en `proveedores.index` | `routes/web.php`; `ProveedorController.php:42-97` |
@@ -45,15 +45,16 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
-| 20 | Imagen 404 `images/empanadas.jpg` (existe en `images/productos/`) y `images/default.png` que no existe en ningún lado | `public/index.blade.php:94,121` |
+| 20 | ~~Imagen 404 `images/empanadas.jpg` (existe en `images/productos/`) y `images/default.png` que no existe en ningún lado~~ ✓ **resuelto**: hero usa la imagen existente y las tarjetas sin foto muestran un placeholder SVG inline | `public/index.blade.php`; `public/partials/producto-card.blade.php` |
 | 21 | Menú "Roles" apunta a `/Roles` → 404 (no existe la ruta). Decidir: eliminar el link o crear el módulo | `partials/sidebar.blade.php:14` |
-| 22 | Enlaces muertos `href="#"`: "Contacto" (layout público) | `layouts/public.blade.php:38` |
+| 22 | ~~Enlaces muertos `href="#"`: "Contacto" (layout público)~~ ✓ **resuelto**: página y ruta `public.contacto` | `layouts/public.blade.php` |
 | 23 | ~~Typo `Orden #s{{...}}` renderiza "Orden #s5"~~ ✓ **resuelto** | `dashboard/index.blade.php` |
 | 24 | ~~Dos `</div>` duplicados generan DOM malformado en el dashboard~~ ✓ **resuelto** (vista reescrita) | `dashboard/index.blade.php` |
 | 25 | ~~Card de usuarios malformada (`card-body` fuera del `card`); tabla vacía con `colspan="5"` para 6 columnas~~ ✓ **resuelto** | `usuarios/index.blade.php` |
 | 26 | `dd($errors)` en modales de inventario: se **eliminó** el volcado de debug; falta mostrar los mensajes de validación con `@error` | `inventario/index.blade.php` |
 | 27 | ~~Login con clases DaisyUI que no está instalado~~ ✓ **resuelto** (reescrito con Bootstrap + `auth.css`) | `auth/login.blade.php` |
-| 28 | Div con clases inválidas y `style="padding-top:45px"` impreso antes de `<body>` (HTML inválido) y `session('usuario')` puede lanzar si la sesión trae escalar | `public/index.blade.php:15-17,39` || 29 | `SP_RegistrarDetalleVenta` inserta en columna `idVenta` que no existe (la tabla usa `idSalida`) — ningún SP se llama desde la app hoy | `procedimientos.sql:57` |
+| 28 | ~~Div con clases inválidas y `style="padding-top:45px"` impreso antes de `<body>` (HTML inválido) y `session('usuario')` puede lanzar si la sesión trae escalar~~ ✓ **resuelto**: home reescrita sobre `layouts.public` y nombre de sesión normalizado | `layouts/public.blade.php`; `public/index.blade.php` |
+| 29 | `SP_RegistrarDetalleVenta` inserta en columna `idVenta` que no existe (la tabla usa `idSalida`) — ningún SP se llama desde la app hoy | `procedimientos.sql:57` |
 | 30 | Incoherencia PHP: `composer.json` declara `^8.3`, el proyecto corre con 8.4 — alinear declaración | `composer.json:12` |
 | 31 | Dependencia `laravel/pao` (typo de `laravel/pail`? ya está `pail`) — revisar para qué está o quitarla | `composer.json:20` |
 | 32 | `spatie/laravel-permission` instalada y sin uso (los roles son columna de texto + CheckRole casero). Decidir: adoptar o eliminar la dependencia | `composer.json:15` |
@@ -82,7 +83,7 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | # | Ítem | Nota |
 | --- | --- | --- |
 | 45 | `resources/views/welcome.blade.php` | Starter de Laravel, `welcome.blade.php` sin uso |
-| 46 | `resources/views/layouts/public.blade.php` | Sin `@extends`; el sitio público es standalone |
+| 46 | ~~`resources/views/layouts/public.blade.php`~~ ✓ **resuelto**: layout compartido por home, catálogo y contacto | `layouts/public.blade.php` |
 | 47 | `resources/views/partials/navbar.blade.php` | Sin uso; competía con `partials/header` ; logout con `action=""` |
 | 48 | `partials/footer.blade.php` | Vacío — decidir si se llena o se elimina |
 | 49 | `DetalleIngresoController`, `IngresoController`, `ListaPrecioController` | Archivos vacíos |
@@ -106,7 +107,7 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | 62 | ¿Se mantienen los stored procedures? Hoy la app no los llama | `procedimientos.sql` — si se conservan, corregir #29 y quitar los `select *` debug y los `DELIMITER //` sueltos |
 | 63 | Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas) | ~~Solo 2 stubs~~ se agrego `tests/Feature/MigrationsTest.php` (esquema + FK) en la rama `migracion-sql-a-laravel`; falta la regresión del cálculo de stock |
 | 64 | Definir roles canónicos y documentar en el seed | `Administrador`, `Cajero` aparecen en datos; `UserController` acepta cualquier string (ver #12) |
-| 65 | Welcome/branding: imágenes faltantes (#20), texto placeholder "Delivery? Ubicación?" sin definir | `public/index.blade.php:46-47,86-88` |
+| 65 | ~~Welcome/branding: imágenes faltantes (#20), texto placeholder "Delivery? Ubicación?" sin definir~~ ✓ **resuelto**: hero con imagen existente, placeholder SVG y contacto centralizado en `config/public.php` | `public/index.blade.php` |
 
 ## Cambios resueltos en `main` (octubre 2026)
 

@@ -1,152 +1,106 @@
-<!DOCTYPE html>
-<html lang="es">
+@extends('layouts.public')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Congelandia - El mundo de los congelados</title>
+@section('title', 'Inicio')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @vite(['resources/css/public.css'])
-
-
-</head>
-{{-- Si está logeado: crea un div invisible que mueve el contenido para abajo --}}
-@if (auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
-    <div class="div" style="padding-top: 45px;"></div>
-@endif
-
-<body class="bg-white text-dark d-flex flex-column min-vh-100">
-
-    {{-- Barra superior de sesión activa (SIEMPRE VISIBLE Y FIJA) --}}
-    @if(auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
-        <div class="bg-dark text-white py-2 shadow-sm"
-            style="font-size: 0.85rem; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050;">
-            <div class="container d-flex justify-content-between align-items-center">
-                <span>
-                    <a class="btn bg-orange text-white rounded-pill fw-bold px-3 py-1" href="{{ route('dashboard.index') }}"
-                        style="font-size: 0.85rem;">
-                        ⚙️ Ir al Panel
-                    </a>
-                </span>
-                @if($version)
-                    <div>
-                        <span><strong>Versión: </strong> {{ $version->numero }}</span>
-                        <a href="{{ url('/version-info') }}" target="_blank" class="text-white ms-2">Ver detalles</a>
-                    </div>
-                @endif
-                <span>Sesión iniciada como
-                    <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
-            </div>
-        </div>
-    @endif
-    <!-- Top Bar[cite: 2] -->
-    <div class="bg-teal-top text-white py-2" style="font-size: 0.85rem;">
-        <div class="container d-flex justify-content-between align-items-center">
-            <span>🚚 Algún tipo de información importante y concisa — Delivery? Ubicación?</span>
-            <span>🕒 Horario de atención &nbsp;&nbsp; 📞 +numero de la clienta</span>
-        </div>
-    </div>
-
-    <!-- Navegación Principal[cite: 2] -->
-    <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center">
-            <!-- Logo -->
-            <a class="navbar-brand text-dark d-flex align-items-center" href="/">
-                <div class="bg-orange text-white rounded-circle d-flex justify-content-center align-items-center me-2"
-                    style="width: 40px; height: 40px;">
-                    ❄️
-                </div>
-                <div class="lh-1">
-                    <span class="d-block fw-bold fs-5">CONGELANDIA</span>
-                    <span class="text-teal fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">
-                        EL MUNDO DE LOS CONGELADOS</span>
-                </div>
-            </a>
-
-            <!-- Buscador -->
-            <form class="d-flex w-50 px-4">
-                <input class="form-control rounded-pill search-bar px-4 py-2" type="search"
-                    placeholder="🔍 ¿Qué estás buscando?">
-            </form>
-
-            <!-- Botón Carrito -->
-            <button class="btn-carrito btn bg-orange text-white rounded-pill fw-bold px-4 py-2 border-0">
-                🛒 Carrito
-            </button>
-        </div>
-    </nav>
-
-    <!-- === SECCIÓN HERO (Mantén la imagen publicitaria estática aquí) === -->
-    <div class="container-fluid bg-teal-main py-5 d-flex align-items-center">
-        <div class="container">
-            <div class="row align-items-center">
-
-                <!-- Columna Izquierda (Textos) -->
-                <div class="col-md-6 text-white pe-5">
-                    <span class="hero-precio">Hasta 30% de descuento</span>
-                    <h1 class="hero-titulo">Congelados de calidad, listos para tu mesa</h1>
+@section('content')
+    <section class="bg-teal-main text-white py-5">
+        <div class="container py-lg-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <span class="hero-precio">Congelados de calidad</span>
+                    <h1 class="hero-titulo">Listos para tu mesa, sin complicaciones</h1>
                     <p class="hero-subtitulo">
                         Descubre nuestra selección de empanadas, carnes, verduras y más.
-                        Pide hoy y recibe en la comodidad de tu hogar.
+                        Revisa el catálogo y contáctanos para coordinar tu pedido.
                     </p>
-                    <a href="{{ route('public.catalogo') }}" class="btn bg-orange text-white rounded-pill fw-bold px-4 py-2 border-0">
-                        Ver catálogo
-                    </a>
-                </div>
 
-                <!-- Columna Derecha (Imagen Promocional Fija) -->
-                <div class="col-md-6 position-relative mt-5 mt-md-0">
-                    <div class="rounded-4 overflow-hidden shadow-lg" style="height: 500px;">
-                        <!-- Usa una imagen genérica atractiva de tu carpeta public/images para la portada -->
-                        <img src="{{ asset('images/empanadas.jpg') }}" alt="Promoción"
-                            style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ route('public.catalogo') }}"
+                            class="btn bg-orange text-white rounded-pill fw-bold px-4 py-2">
+                            Ver catálogo
+                        </a>
+                        <a href="{{ route('public.contacto') }}"
+                            class="btn btn-outline-light rounded-pill fw-bold px-4 py-2">
+                            Contacto
+                        </a>
                     </div>
                 </div>
 
+                <div class="col-lg-6">
+                    <div class="rounded-4 overflow-hidden shadow-lg public-hero-img">
+                        <img src="{{ asset('images/productos/1791667600_empanadas.jpg') }}"
+                            alt="Empanadas congeladas Congelandia" class="w-100 h-100 object-fit-cover">
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
+    <section class="container py-5">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                    <h2 class="h5 fw-bold mb-2">Calidad garantizada</h2>
+                    <p class="text-muted mb-0">Productos seleccionados y conservados en cadena de frío.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                    <h2 class="h5 fw-bold mb-2">Precios accesibles</h2>
+                    <p class="text-muted mb-0">Opciones para compartir en casa o en tu negocio.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                    <h2 class="h5 fw-bold mb-2">Atención directa</h2>
+                    <p class="text-muted mb-0">Escríbenos o llámanos para resolver tus dudas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- === NUEVA SECCIÓN: GRILLA DE PRODUCTOS DINÁMICOS === -->
-    <div class="container my-5">
-        <h2 class="fw-bold mb-4">Productos Destacados</h2>
+    <section class="container pb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Productos destacados</h2>
+                <p class="text-muted mb-0">Una pequeña muestra de nuestro catálogo.</p>
+            </div>
+            <a href="{{ route('public.catalogo') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                Ver todo
+            </a>
+        </div>
 
-        <!-- row crea la fila, y col-md-4 hace que quepan 3 tarjetas por fila en pantallas medianas/grandes -->
-        <div class="row">
-            @foreach($productos as $producto)
-
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden producto-publico">
-
-                        <!-- Lógica de las imágenes -->
-                        @if($producto->imagenes->count() > 0)
-                            <img src="{{ asset($producto->imagenes->first()->rutaImagen) }}"
-                                alt="{{ $producto->imagenes->first()->alt }}" class="card-img-top"
-                                style="height: 250px; object-fit: cover;">
-                        @else
-                            <img src="{{ asset('images/default.png') }}" alt="Sin imagen" class="card-img-top"
-                                style="height: 250px; object-fit: cover;">
-                        @endif
-
-                        <!-- Datos del producto -->
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold text-dark">{{ $producto->nombre }}</h5>
-                            <p class="text-teal fw-bold fs-4 mb-0">${{ $producto->precioActual->precioVenta ?? 0 }}</p>
-                            <p class="text-muted small">Stock: {{ $producto->stock }}</p>
-
-                            <button class="btn bg-orange text-white rounded-pill fw-bold w-100 mt-2">
-                                Añadir al carrito
-                            </button>
-                        </div>
-
+        <div class="row g-4">
+            @forelse($productos as $producto)
+                <div class="col-sm-6 col-lg-4">
+                    @include('public.partials.producto-card', ['producto' => $producto])
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-light border text-center mb-0">
+                        Todavía no hay productos publicados. Vuelve pronto.
                     </div>
                 </div>
-            @endforeach
+            @endforelse
         </div>
-    </div>
+    </section>
 
-</body>
-
-</html>
+    <section class="bg-teal-main text-white py-5">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-4">
+            <div>
+                <h2 class="fw-bold mb-2">¿Buscas algo en particular?</h2>
+                <p class="mb-0 opacity-75">Revisa el catálogo completo o contáctanos y te ayudamos.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="{{ route('public.catalogo') }}"
+                    class="btn bg-orange text-white rounded-pill fw-bold px-4 py-2">
+                    Ir al catálogo
+                </a>
+                <a href="{{ route('public.contacto') }}"
+                    class="btn btn-outline-light rounded-pill fw-bold px-4 py-2">
+                    Hablar con nosotros
+                </a>
+            </div>
+        </div>
+    </section>
+@endsection
