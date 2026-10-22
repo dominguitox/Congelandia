@@ -9,9 +9,9 @@ Descripción funcional de cada módulo: qué hace, dónde vive (rutas/vistas/con
 | **Rutas** | `GET /` (`public.index`), `GET /catalogo` (`public.catalogo`), `GET /contacto` (`public.contacto`) |
 | **Controlador** | `PublicController` |
 | **Vistas** | `layouts/public.blade.php` (layout compartido), `public/index.blade.php`, `public/catalogo.blade.php`, `public/contacto.blade.php`, `public/partials/producto-card.blade.php` |
-| **Estado** | ✅ Funcional: home, catálogo con búsqueda y filtro por categoría, contacto con datos configurables, stock calculado por ingresos − salidas, sin carrito |
+| **Estado** | ✅ Funcional: home, catálogo con búsqueda y filtro por categoría, contacto con datos configurables, sin carrito ni stock visible |
 
-Muestra el catálogo de productos con imagen, precio vigente (`Producto::precioActual`), stock calculado y categoría para usuarios no autenticados. Los datos de contacto se configuran con variables `PUBLIC_*` en `.env` (ver `config/public.php`).
+Muestra el catálogo de productos con imagen, precio vigente (`Producto::precioActual`) y categoría para usuarios no autenticados. El stock no se expone en el sitio público. Los datos de contacto se configuran con variables `PUBLIC_*` en `.env` (ver `config/public.php`).
 
 ## 2. Acceso (login/logout)
 

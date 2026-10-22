@@ -78,15 +78,6 @@
    TARJETA DE PRODUCTO PUBLICO
    ========================================================= */
 
-.producto-publico {
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.producto-publico:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-card-md) !important;
-}
-
 /* =========================================================
    SHELL DEL SITIO PUBLICO
    ========================================================= */
@@ -107,7 +98,53 @@
 }
 
 .public-session-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    min-height: 42px;
     font-size: 0.85rem;
+}
+
+.public-session-spacer {
+    height: 42px;
+}
+
+.public-con-sesion .public-navbar {
+    top: 42px;
+}
+
+.public-main .btn-outline-light,
+.public-main .btn-outline-secondary {
+    background-color: #fff;
+    opacity: 1;
+}
+
+.public-main .btn-outline-light {
+    color: var(--color-public-teal);
+    border-color: #fff;
+}
+
+.public-main .btn-outline-light:hover,
+.public-main .btn-outline-light:focus {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-active);
+    border-color: var(--color-primary-soft);
+}
+
+.public-main .btn-outline-secondary {
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.public-main .btn-outline-secondary:hover,
+.public-main .btn-outline-secondary:focus {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-active);
+    border-color: var(--color-border);
 }
 
 .public-navbar {

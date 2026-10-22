@@ -6,7 +6,7 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
-| 1 | ~~Vista `public.catalogo` no existe~~ ✓ **resuelto**: catálogo implementado con búsqueda, filtro por categoría, stock calculado y tarjetas sin carrito | `PublicController.php`; `resources/views/public/catalogo.blade.php` |
+| 1 | ~~Vista `public.catalogo` no existe~~ ✓ **resuelto**: catálogo implementado con búsqueda, filtro por categoría y tarjetas sin carrito ni stock | `PublicController.php`; `resources/views/public/catalogo.blade.php` |
 | 2 | ~~Vista `inventario.show` no existe → `GET /inventario/{codigo}` (ruta viva) lanza error~~ ✓ **resuelto**: ruta desactivada (comentada) en `routes/web.php`; no se implementará por ahora | `routes/web.php:101-108` |
 | 3 | `show()` no filtra por código: devuelve TODOS los productos y muestra el primero, ignorando el parámetro de ruta. La ruta quedó desactivada (#2), pero el método sigue así | `ProductoController.php:227-261` (falta `where('producto.codigo', $codigo)`) |
 | 4 | `ProveedorController::productos` no existe → `GET /proveedores/{id}/productos` (ruta viva) rompe | `routes/web.php:214`; implementar el método o quitar la ruta |

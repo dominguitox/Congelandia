@@ -14,32 +14,38 @@
     @endif
 
     @stack('css')
+
+    @php($conSesion = auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
 </head>
 
-<body class="bg-white text-dark d-flex flex-column min-vh-100">
+<body class="bg-white text-dark d-flex flex-column min-vh-100 {{ $conSesion ? 'public-con-sesion' : '' }}">
     @php($contacto = config('public.contacto'))
     @php($usuarioSesion = session('usuario'))
     @php($nombreSesion = auth()->user()->nombre ?? (is_object($usuarioSesion) ? ($usuarioSesion->nombre ?? 'Usuario') : 'Usuario'))
 
-    @if(auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
-        <div class="public-session-bar bg-dark text-white py-2">
-            <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <a class="btn btn-sm bg-orange text-white rounded-pill fw-bold px-3" href="{{ route('dashboard.index') }}">
+    @if($conSesion)
+        <div class="public-session-bar bg-dark text-white shadow-sm">
+            <div class="container d-flex justify-content-between align-items-center gap-2">
+                <a class="btn btn-sm bg-orange text-white rounded-pill fw-bold px-3 flex-shrink-0"
+                    href="{{ route('dashboard.index') }}">
                     Ir al panel
                 </a>
 
-                <div class="d-flex align-items-center gap-3 small">
-                    @if(isset($version) && $version)
+                @if(isset($version) && $version)
+                    <div class="d-none d-md-flex align-items-center gap-2 small text-truncate">
                         <span><strong>Versión:</strong> {{ $version->numero }}</span>
                         <a href="{{ url('/version-info') }}" target="_blank" class="text-white">Ver detalles</a>
-                    @endif
-                    <span>
-                        Sesión iniciada como
-                        <strong>{{ $nombreSesion }}</strong>
-                    </span>
-                </div>
+                    </div>
+                @endif
+
+                <span class="small text-truncate">
+                    <span class="d-none d-sm-inline">Sesión iniciada como </span>
+                    <strong>{{ $nombreSesion }}</strong>
+                </span>
             </div>
         </div>
+
+        <div class="public-session-spacer" aria-hidden="true"></div>
     @endif
 
     <div class="bg-teal-top text-white py-2 public-topbar">
@@ -98,7 +104,7 @@
         </div>
     </nav>
 
-    <main class="flex-grow-1">
+    <main class="public-main flex-grow-1">
         @yield('content')
     </main>
 

@@ -15,8 +15,6 @@ class PublicController extends Controller
         $version = Version::where('activa', 1)->latest('id')->first();
 
         $productos = Producto::with(['imagenes', 'precioActual', 'categoria'])
-            ->withSum('detallesIngreso as total_ingresos', 'cantidad')
-            ->withSum('detallesSalida as total_salidas', 'cantidad')
             ->orderBy('nombre')
             ->limit(6)
             ->get();
@@ -33,8 +31,6 @@ class PublicController extends Controller
         $categoriaId = $request->query('categoria');
 
         $productos = Producto::with(['imagenes', 'precioActual', 'categoria'])
-            ->withSum('detallesIngreso as total_ingresos', 'cantidad')
-            ->withSum('detallesSalida as total_salidas', 'cantidad')
             ->when($busqueda !== '', function ($query) use ($busqueda) {
                 $query->where(function ($query) use ($busqueda) {
                     $query->where('nombre', 'like', '%' . $busqueda . '%')

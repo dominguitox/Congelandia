@@ -56,13 +56,4 @@ class Producto extends Model
             'codigo'
         );
     }
-
-    public function detallesSalida()
-    {
-        return $this->hasMany(
-            DetalleSalida::class,
-            'codigoProducto',
-            'codigo'
-        );
-    }
 }
