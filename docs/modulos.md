@@ -42,9 +42,9 @@ Métricas del día: órdenes de hoy, alertas activas (bajo stock), últimas vent
 | **Rutas** | `GET /pos` (`pos.index`), `POST /venta/registrar` (`venta.registrar`) |
 | **Controlador** | `PosController` (archivo `PosController.php`) |
 | **Vistas** | `pos/index.blade.php`; JS: `resources/js/venta.js` |
-| **Estado** | ⚠️ Funciona; el método de pago llega `undefined` (el botón llama `registrarVenta()` sin argumento aunque la func espera `metodoPago`) |
+| **Estado** | ✓ Funciona; incluye selector de método de pago y registra el pago en `pago_salida` (fiado queda con monto 0) |
 
-Flujo: buscar producto por código → agregar al carrito → seleccionar cliente → `venta.registrar` crea `salida` (tipo venta, totalSalida) + `detalle_salida` y registra pagos cuando es crédito. El stock se descuenta implícitamente (se calcula ingresos − salidas, nunca en la tabla).
+Flujo: buscar producto por código → agregar al carrito → seleccionar cliente y método de pago → `venta.registrar` crea `salida` (tipo venta, totalSalida) + `detalle_salida` + `pago_salida` (monto 0 si el método es fiado/pendiente). El stock se descuenta implícitamente (se calcula ingresos − salidas, nunca en la tabla).
 
 ## 5. Inventario
 

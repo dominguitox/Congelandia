@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Salida;
+use App\Models\PagoSalida;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -63,8 +64,12 @@ class PosController extends Controller
 
             $categorias = Categoria::whereNull('deleted_at')->get();
             $clientes = Cliente::whereNull('deleted_at')->get();
+            $metodosPago = DB::table('Metodo_Pago')
+                ->whereNull('deleted_at')
+                ->orderBy('idMetodo')
+                ->get();
 
-            return view('pos.index', compact('productos', 'categorias', 'clientes'));
+            return view('pos.index', compact('productos', 'categorias', 'clientes', 'metodosPago'));
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al cargar el POS: ' . $e->getMessage());
@@ -78,6 +83,7 @@ class PosController extends Controller
             'idTipo' => 'required|integer',
             'rutCliente' => 'nullable|string',
             'totalVenta' => 'required|numeric',
+            'metodoPago' => 'required|integer|exists:Metodo_Pago,idMetodo',
             'productos' => 'required|array',
         ]);
 
@@ -103,6 +109,21 @@ class PosController extends Controller
                     'precioCobrado' => $producto['precio']
                 ]);
             }
+
+            $metodoPago = DB::table('Metodo_Pago')
+                ->where('idMetodo', $request->metodoPago)
+                ->whereNull('deleted_at')
+                ->first();
+
+            $esFiado = $metodoPago
+                && str_contains(mb_strtolower($metodoPago->nombre), 'fiado');
+
+            PagoSalida::create([
+                'idSalida' => $salida->idSalida,
+                'idMetodo' => $request->metodoPago,
+                'montoPagado' => $esFiado ? 0 : $request->totalVenta,
+                'fechaPago' => now()->toDateString()
+            ]);
 
             DB::commit();
 

@@ -14,7 +14,7 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 | 6 | ~~Reportes rompen: queries sobre tablas inexistentes (`inventario`, `lote`) para "bajo stock" y "próximos a vencer"~~ ✓ **resuelto**: stock calculado como ingresos - salidas (umbral < 10) y vencimientos desde `detalle_ingreso.fechaVencimiento` (próximos 30 días) | `ReporteController.php:186-233` |
 | 7 | `onclick="registrarIngreso('...')"` en inventario: se **corrigió** el PHP crudo dentro del atributo (ahora string JS válido), pero la función `registrarIngreso` **no existe** (solo `registrarIngresoSingle`, que apunta a `/ingresos/...` inexistente) → sigue el `ReferenceError` | `inventario/index.blade.php`; `resources/js/producto.js:11-19` |
 | 8 | Form de registro de pago sin `action` y su ruta `clientes.registrarPago` es huérfana → al pagar se hace POST a la página actual (rutas equivocadas) | `clientes/index.blade.php:1013`; `routes/web.php:182-185` |
-| 9 | En POS, el botón llama `registrarVenta()` sin argumento y la función espera `metodoPagoSeleccionado` → el método de pago viaja `undefined` en el payload | `pos/index.blade.php:81`; `resources/js/venta.js:123,167` |
+| 9 | ~~En POS, el botón llama `registrarVenta()` sin argumento y la función espera `metodoPagoSeleccionado` → el método de pago viaja `undefined` en el payload~~ ✓ **resuelto**: selector de método de pago (`Metodo_Pago`), JS envía `idMetodo` y el backend registra en `Pago_Salida` (fiado con monto 0) | `pos/index.blade.php:125-133`; `venta.js:123-167`; `PosController.php` |
 | 10 | ~~Dashboard muestra "0" hardcodeado en Órdenes/Alertas~~ ✓ **resuelto** (usa `$ordenesHoy`/`$alertasActivas`) | `dashboard/index.blade.php` (rama `implementacion-estilos-css`) |
 
 ## P1 — Seguridad
