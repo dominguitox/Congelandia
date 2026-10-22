@@ -210,11 +210,6 @@ Route::middleware('auth')->group(function () {
         [ProveedorController::class, 'store']
     )->name('proveedores.store');
 
-    Route::get(
-        '/proveedores/{idProveedor}/productos',
-        [ProveedorController::class, 'productos']
-    )->name('proveedores.productos');
-
     Route::put(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'update']
