@@ -120,7 +120,7 @@ window.restarAlCarrito = function (indice) {
         eliminarDelCarrito(indice);
     }
 }
-window.registrarVenta = function (e, metodoPagoSeleccionado) {
+window.registrarVenta = function (e) {
     // 1. Prevenir la recarga de la página si el botón está en un formulario
     if (e) e.preventDefault();
 
@@ -147,12 +147,21 @@ window.registrarVenta = function (e, metodoPagoSeleccionado) {
         rutClienteSeleccionado = null;
     }
 
-    // 5. Calcular el total
+    // 5. Capturar el método de pago seleccionado
+    let selectMetodo = document.getElementById('metodo_pago_select');
+    let metodoPagoSeleccionado = selectMetodo ? selectMetodo.value : null;
+
+    if (!metodoPagoSeleccionado) {
+        alert("Selecciona un método de pago.");
+        return;
+    }
+
+    // 6. Calcular el total
     let totalCalculado = carrito.reduce((acumulador, item) => {
         return acumulador + (item.cantidad * item.precio);
     }, 0);
 
-    // 6. Enviar la petición al backend en Laravel
+    // 7. Enviar la petición al backend en Laravel
     fetch('/venta/registrar', {
         method: 'POST',
         headers: {

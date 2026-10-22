@@ -122,6 +122,15 @@
                     </select>
                 </div>
 
+                <div class="ticket-cliente">
+                    <label for="metodo_pago_select">Método de pago</label>
+                    <select id="metodo_pago_select" class="form-control">
+                        @foreach($metodosPago as $metodo)
+                            <option value="{{ $metodo->idMetodo }}">{{ $metodo->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <button class="btn-solid btn-solid--success ticket-cobrar" onclick="registrarVenta()">Cobrar</button>
 
             </div>

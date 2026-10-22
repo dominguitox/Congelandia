@@ -8,6 +8,10 @@
 
 @section('content')
 
+@php
+    $reporteSinFecha = in_array($tipoReporte, ['bajo_stock', 'proximos_vencer']);
+@endphp
+
 <div class="page">
 
     {{-- =====================================================
@@ -40,13 +44,17 @@
                 <div class="campo">
                     <label for="fecha_inicio" class="form-label">Fecha Desde</label>
                     <input type="date" name="fecha_inicio" id="fecha_inicio"
-                        class="form-control" value="{{ $fechaInicio }}" required>
+                        class="form-control" value="{{ $fechaInicio }}"
+                        title="{{ $reporteSinFecha ? 'No aplica para este reporte' : '' }}"
+                        @disabled($reporteSinFecha) required>
                 </div>
 
                 <div class="campo">
                     <label for="fecha_fin" class="form-label">Fecha Hasta</label>
                     <input type="date" name="fecha_fin" id="fecha_fin"
-                        class="form-control" value="{{ $fechaFin }}" required>
+                        class="form-control" value="{{ $fechaFin }}"
+                        title="{{ $reporteSinFecha ? 'No aplica para este reporte' : '' }}"
+                        @disabled($reporteSinFecha) required>
                 </div>
 
                 <div class="campo campo--amplio">
@@ -213,5 +221,28 @@
     </div>
 
 </div>
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tipoReporte = document.getElementById('tipo_reporte');
+            const camposFecha = ['fecha_inicio', 'fecha_fin']
+                .map(id => document.getElementById(id));
+            const reportesSinFecha = ['bajo_stock', 'proximos_vencer'];
+
+            const actualizarFechas = () => {
+                const sinFecha = reportesSinFecha.includes(tipoReporte.value);
+
+                camposFecha.forEach(campo => {
+                    campo.disabled = sinFecha;
+                    campo.title = sinFecha ? 'No aplica para este reporte' : '';
+                });
+            };
+
+            tipoReporte.addEventListener('change', actualizarFechas);
+            actualizarFechas();
+        });
+    </script>
+@endpush
 
 @endsection
