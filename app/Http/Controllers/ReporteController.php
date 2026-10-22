@@ -184,37 +184,64 @@ class ReporteController extends Controller
     }
 
     // 9. Productos con bajo stock
-    // tira error, tabla inventario no existe y el stock no se guarda ahi
     private function productosConBajoStock()
     {
-        // Se consulta sobre la tabla independiente de inventario, cumpliendo 
-        // estrictamente con la regla de no almacenar la cantidad de stock en la tabla producto.
-        return DB::table('Producto')
-            ->join('producto', 'Producto.codigoProducto', '=', 'producto.codigo')
+        $stock = $this->stockProductoSubquery();
+
+        return DB::table('producto')
+            ->whereNull('producto.deleted_at')
             ->select(
                 'producto.nombre',
-                'inventario.cantidad as stock_actual'
+                DB::raw($stock . ' as stock_actual')
             )
-            ->whereColumn('inventario.cantidad', '<=', 'inventario.stock_minimo')
-            ->orderBy('inventario.cantidad', 'ASC')
+            ->whereRaw($stock . ' < ?', [10])
+            ->orderBy('stock_actual', 'ASC')
             ->get();
     }
 
     // 10. Productos próximos a vencer
     private function productosProximosAVencer()
     {
-        // El control de caducidad se asume normalizado en una tabla de lotes o detalles de ingreso.
-        return DB::table('lote')
-            ->join('producto', 'lote.codigoProducto', '=', 'producto.codigo')
+        $stock = $this->stockProductoSubquery();
+
+        return DB::table('detalle_ingreso')
+            ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+            ->join('producto', 'detalle_ingreso.codigoProducto', '=', 'producto.codigo')
+            ->whereNull('detalle_ingreso.deleted_at')
+            ->whereNull('ingreso.deleted_at')
+            ->whereNull('producto.deleted_at')
+            ->whereBetween('detalle_ingreso.fechaVencimiento', [
+                now()->toDateString(),
+                now()->addDays(30)->toDateString()
+            ])
             ->select(
                 'producto.nombre',
-                'lote.fecha_vencimiento',
-                'lote.cantidad_disponible'
+                'detalle_ingreso.fechaVencimiento as fecha_vencimiento',
+                DB::raw($stock . ' as cantidad_disponible')
             )
-            ->whereBetween('lote.fecha_vencimiento', [now()->toDateString(), now()->addDays(30)->toDateString()])
-            ->where('lote.cantidad_disponible', '>', 0)
-            ->orderBy('lote.fecha_vencimiento', 'ASC')
+            ->groupBy('producto.codigo', 'producto.nombre', 'detalle_ingreso.fechaVencimiento')
+            ->havingRaw($stock . ' > 0')
+            ->orderBy('detalle_ingreso.fechaVencimiento', 'ASC')
             ->get();
+    }
+
+    private function stockProductoSubquery(): string
+    {
+        return '(IFNULL((
+                    SELECT SUM(di.cantidad)
+                    FROM detalle_ingreso di
+                    INNER JOIN ingreso i ON di.idIngreso = i.idIngreso
+                    WHERE di.codigoProducto = producto.codigo
+                        AND di.deleted_at IS NULL
+                        AND i.deleted_at IS NULL
+                ), 0) - IFNULL((
+                    SELECT SUM(ds.cantidad)
+                    FROM detalle_salida ds
+                    INNER JOIN salida s ON ds.idSalida = s.idSalida
+                    WHERE ds.codigoProducto = producto.codigo
+                        AND ds.deleted_at IS NULL
+                        AND s.deleted_at IS NULL
+                ), 0))';
     }
 }
 
