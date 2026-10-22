@@ -7,7 +7,8 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | Método | URL | Nombre | Controller@method | Descripción |
 | --- | --- | --- | --- | --- |
 | GET | `/` | `public.index` | `PublicController@index` | Home del sitio público |
-| GET | `/catalogo` | `public.catalogo` | `PublicController@catalogo` | Catálogo público ⚠️ **rota**: la vista `public.catalogo` no existe (ver pendientes) |
+| GET | `/catalogo` | `public.catalogo` | `PublicController@catalogo` | Catálogo público con búsqueda (`q`) y filtro por `categoria` |
+| GET | `/contacto` | `public.contacto` | `PublicController@contacto` | Página de contacto y datos de atención |
 | GET | `/login` | `login` | — (Route::view) | Formulario de acceso; solo con sesión cerrada |
 | POST | `/login` | — | `Auth\Login` | Autentica contra tabla `Usuario` (comparación texto plano — ver pendientes) |
 
@@ -20,14 +21,14 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | GET | `/version-info` | — | `PublicController@versionInfo` | Información de la versión del sistema |
 | GET | `/dashboard` | `dashboard.index` | `DashboardController@index` | Panel principal (órdenes de hoy, alertas) |
 | GET | `/reportes` | `reportes.index` | `ReporteController@index` | Reportes ⚠️ parcialmente roto: consultas a tablas inexistentes (`inventario`, `lote`) — ver pendientes |
-| GET | `/historial` | `historial.index` | `historialController@index` | Historial de ventas |
+| GET | `/historial` | `historial.index` | `HistorialController@index` | Historial de ventas |
 
 ### Inventario
 
 | Método | URL | Nombre | Controller@method | Descripción |
 | --- | --- | --- | --- | --- |
 | GET | `/inventario` | `inventario.index` | `ProductoController@listarProductos` | Listado de productos con stock/precio/costo |
-| GET | `/inventario/{codigo}` | `inventario.show` | `ProductoController@show` | Detalle de producto ⚠️ **rota**: vista `inventario.show` no existe y `show()` no filtra por código — ver pendientes |
+| ~~GET~~ | ~~`/inventario/{codigo}`~~ | ~~`inventario.show`~~ | ~~`ProductoController@show`~~ | Desactivada: ruta comentada en `web.php`; no se implementará por ahora |
 | PUT | `/productos/{codigo}` | `inventario.editarProducto` | `ProductoController@editarProducto` | Editar producto |
 | POST | `/productos/guardar` | `productos.crearProducto` | `ProductoController@crearProducto` | Crear producto (con ingreso inicial) — **única ruta admin** |
 

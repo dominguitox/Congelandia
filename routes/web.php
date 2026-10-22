@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\historialController;
+use App\Http\Controllers\HistorialController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
@@ -33,6 +33,11 @@ Route::get(
     '/catalogo',
     [PublicController::class, 'catalogo']
 )->name('public.catalogo');
+
+Route::get(
+    '/contacto',
+    [PublicController::class, 'contacto']
+)->name('public.contacto');
 
 
 // =========================================================
@@ -98,12 +103,13 @@ Route::middleware('auth')->group(function () {
         '/inventario',
         [ProductoController::class, 'listarProductos']
     )->name('inventario.index');
-
-    Route::get(
-        '/inventario/{codigo}',
-        [ProductoController::class, 'show']
-    )->name('inventario.show');
-
+    /*
+    No se implementó, guardar por si acaso
+        Route::get(
+            '/inventario/{codigo}',
+            [ProductoController::class, 'show']
+        )->name('inventario.show');
+    */
     Route::put(
         '/productos/{codigo}',
         [ProductoController::class, 'editarProducto']
@@ -131,7 +137,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get(
         '/historial',
-        [historialController::class, 'index']
+        [HistorialController::class, 'index']
     )->name('historial.index');
 
 

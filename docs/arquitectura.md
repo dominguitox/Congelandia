@@ -84,8 +84,9 @@ Navegador
 | `partials/header` | Navbar superior fijo |
 | `partials/sidebar` | Menú lateral; muestra enlaces de admin solo si `rol === 'Administrador'` (cuidado: es solo ocultamiento visual, el backend no restringe salvo crear producto — ver [pendientes.md](pendientes.md)) |
 | `partials/footer` | Vacío (shell) |
-| `layouts/public.blade.php`, `partials/navbar.blade.php`, `welcome.blade.php` | **Sin uso** (candidatos a eliminación) |
-| `public/index.blade.php` | Sitio público, documento HTML standalone (no extiende layout) |
+| `layouts/public.blade.php` | **Layout del sitio público**: navbar con buscador, footer, barra de sesión y datos de contacto (`config/public.php`) |
+| `public/index.blade.php`, `public/catalogo.blade.php`, `public/contacto.blade.php` | Páginas públicas; extienden `layouts/public.blade.php` |
+| `partials/navbar.blade.php`, `welcome.blade.php` | **Sin uso** (candidatos a eliminación) |
 
 ## Manejo de errores
 
@@ -109,11 +110,12 @@ Para depurar en desarrollo, revisa la tabla `log_errors` o `storage/logs/laravel
 
 ## Consideraciones Windows vs Linux
 
-Todos los archivos del proyecto se desarrollaron en Windows. Varios nombres dependen del case-insensitive del filesystem de Windows/NTFS y **romperán en un deploy Linux**:
+Ya se normalizaron los nombres de archivo que dependían del filesystem case-insensitive de Windows:
 
-- `app/Http/Controllers/posController.php` (minúscula) contiene `class PosController`
-- `app/Http/Controllers/historialController.php` → `class historialController`
-- `resources/views/POS/` vs `view('pos.index')` (buscada en minúscula)
-- `resources/js/usuarioos.js` (typo en el nombre)
+- `app/Http/Controllers/PosController.php` (archivo == clase)
+- `app/Http/Controllers/HistorialController.php` (archivo == clase)
+- `app/Http/Controllers/VentaController.php` (antes `SalidaController.php`; clase ya era `VentaController`)
+- `resources/views/pos/` (antes `POS/`)
+- `resources/js/usuarios.js` registrado en Vite (antes `usuarioos.js`)
 
-Detalle completo en [pendientes.md](pendientes.md).
+Queda un riesgo de **casing de tablas en MySQL**: las migraciones crean `Cliente`, `Categoria`, `Producto`, `Lista_Precio`, `Ingreso`, `Salida`, etc., mientras casi todos los modelos declaran `$table` en minúsculas (`categoria`, `producto`, `ingreso`, `salida`, `detalle_salida`, `tipo_salida`) y varias queries crudas usan minúsculas. En Linux con `lower_case_table_names=0` fallan tanto Eloquent como `DB::table()`/subqueries. Si la BD se importa desde los `.sql` (todo minúsculas), en cambio fallan los modelos con PascalCase (`Cliente`, `Usuario`, `IMAGEN_PRODUCTO`). Detalle y plan en [pendientes.md](pendientes.md) #66.

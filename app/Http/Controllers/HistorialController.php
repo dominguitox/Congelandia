@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class historialController extends Controller
+class HistorialController extends Controller
 {
     /**
      * =========================================================

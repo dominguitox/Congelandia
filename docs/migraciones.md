@@ -31,6 +31,7 @@ Orden real de ejecución (los FK exigen este orden):
 | `_create_devolucion_table` | `Devolucion` | `Salida`, `Tipo_Devolucion`, `Producto` |
 | `_create_imagen_producto_table` | `IMAGEN_PRODUCTO` | `Producto` (CASCADE) |
 | `_create_versiones_table` | `Versiones` | — |
+| `2026_10_21_*_add_soft_deletes_to_business_tables` | agrega `deleted_at` a 11 tablas de negocio | — |
 
 Columnas y longitudes replicadas del `create table.sql` original (nombres y PK exactamente iguales: `rutCliente`, `codigo`, `idUsuario`, `totalSalida`, etc.).
 
@@ -55,11 +56,12 @@ El `DatabaseSeeder` crea solo al usuario administrador (`UsuarioSeeder`, credenc
 | Migración de usuarios reemplazada | la anterior creaba una tabla `usuarios` estilo Laravel (`id`/`password`) que ningún modelo usaba; la nueva replica `Usuario` (`idUsuario`/`contrasena`) usada por `App\Models\User` |
 | `DetalleSalida.$primaryKey = 'idDetalle'` declarado en el modelo | el esquema real define esa PK; Laravel asumía `id` |
 | Seeder corregido | `UsuarioSeeder` usaba `App\Models\Usuario` (clase inexistente) y el campo no-fillable `password`; ahora usa `App\Models\User` con `contrasena` hasheada |
+| Soft delete en tablas de negocio | migración nueva agrega `deleted_at` a `Ingreso`, `Detalle_Ingreso`, `Detalle_Salida`, `Lista_Precio`, `Promocion`, `IMAGEN_PRODUCTO`, `Pago_Salida`, `Tipo_Salida`, `Metodo_Pago`, `Tipo_Devolucion` y `Devolucion`; `Log_Errors` y `Versiones` quedan sin soft delete |
 
 ## Precauciones
 
 1. **`migrate:fresh` borra todos los datos.** Las BD de desarrollo con datos de prueba deben regenerarse con `db:seed` o importando `inserts.sql` después. No ejecutar nunca en producción.
-2. **Casing de tablas** (`Usuario`, `Cliente`, `Lista_Precio`, `IMAGEN_PRODUCTO`, ...): conservado igual al `create table.sql`. Funciona en Windows (MySQL case-insensitive) y en el servidor actual; si se desplegara en un MySQL Linux con `lower_case_table_names=0`, hay que normalizar casing en migraciones + modelos + queries crudas a la vez (ver [pendientes.md](pendientes.md) P2).
+2. **Casing de tablas** (`Usuario`, `Cliente`, `Lista_Precio`, `IMAGEN_PRODUCTO`, ...): conservado igual al `create table.sql`. Funciona en Windows (MySQL case-insensitive) y en el servidor actual; si se despliega en un MySQL Linux con `lower_case_table_names=0`, hay que normalizar casing en migraciones + modelos + queries crudas a la vez (ver [pendientes.md](pendientes.md) #66).
 3. El framework sigue creando `users`/`sessions`/`cache`: `sessions` es necesaria porque `SESSION_DRIVER=database`. La tabla `users` de stock no la usa la app; se mantiene por la `$table migrations` del framework.
 4. `create table.sql`, `inserts.sql` y `procedimientos.sql` quedan como **legado/referencia**; los cambios de esquema a futuro se hacen con migraciones nuevas (nunca editando las ya corridas).
 
