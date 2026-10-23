@@ -55,7 +55,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 27 | ~~Login con clases DaisyUI que no está instalado~~ ✓ **resuelto** (reescrito con Bootstrap + `auth.css`) | `auth/login.blade.php` |
 | 28 | ~~Div con clases inválidas y `style="padding-top:45px"` impreso antes de `<body>` (HTML inválido) y `session('usuario')` puede lanzar si la sesión trae escalar~~ ✓ **resuelto**: home reescrita sobre `layouts.public` y nombre de sesión normalizado | `layouts/public.blade.php`; `public/index.blade.php` |
 | 29 | `SP_RegistrarDetalleVenta` inserta en columna `idVenta` que no existe (la tabla usa `idSalida`) — ningún SP se llama desde la app hoy | `procedimientos.sql:57` |
-| 30 | Incoherencia PHP: `composer.json` declara `^8.3`, el proyecto corre con 8.4 — alinear declaración | `composer.json:12` |
+| 30 | ~~Incoherencia PHP: `composer.json` declara `^8.3`, el proyecto corre con 8.4 — alinear declaración~~ ✓ **resuelto**, es obligatorio el 8.4, no vale la pena intentar hacerlo funcionar en 8.3| `composer.json:12` |
 | 31 | Dependencia `laravel/pao` (typo de `laravel/pail`? ya está `pail`) — revisar para qué está o quitarla | `composer.json:20` |
 | 32 | `spatie/laravel-permission` instalada y sin uso (los roles son columna de texto + CheckRole casero). Decidir: adoptar o eliminar la dependencia | `composer.json:15` |
 | 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarios.js` (vacío). ~~CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`)~~ ✓ estos ya tienen contenido | `resources/js` |
