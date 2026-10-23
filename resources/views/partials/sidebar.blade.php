@@ -11,7 +11,7 @@
                 ['label' => 'Proveedores', 'url' => url('/proveedores'), 'pattern' => 'proveedores*'],
                 ['label' => 'Categorías', 'url' => url('/categorias'), 'pattern' => 'categorias*'],
                 ['label' => 'Usuarios', 'url' => url('/usuarios'), 'pattern' => 'usuarios*'],
-                ['label' => 'Roles', 'url' => url('/Roles'), 'pattern' => 'Roles*'],
+              //      ['label' => 'Roles', 'url' => url('/Roles'), 'pattern' => 'Roles*'],
             ];
 
             // Agregamos reportes solo si es Administrador

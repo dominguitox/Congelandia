@@ -46,7 +46,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | # | Problema | Ubicación |
 | --- | --- | --- |
 | 20 | ~~Imagen 404 `images/empanadas.jpg` (existe en `images/productos/`) y `images/default.png` que no existe en ningún lado~~ ✓ **resuelto**: hero usa la imagen existente y las tarjetas sin foto muestran un placeholder SVG inline | `public/index.blade.php`; `public/partials/producto-card.blade.php` |
-| 21 | Menú "Roles" apunta a `/Roles` → 404 (no existe la ruta). Decidir: eliminar el link o crear el módulo | `partials/sidebar.blade.php:14` |
+| 21 | ~~Menú "Roles" apunta a `/Roles` → 404 (no existe la ruta). Decidir: eliminar el link o crear el módulo~~ ✓ **resuelto**: se comentó la ruta, se podria revisar a futuro  | `partials/sidebar.blade.php:14` |
 | 22 | ~~Enlaces muertos `href="#"`: "Contacto" (layout público)~~ ✓ **resuelto**: página y ruta `public.contacto` | `layouts/public.blade.php` |
 | 23 | ~~Typo `Orden #s{{...}}` renderiza "Orden #s5"~~ ✓ **resuelto** | `dashboard/index.blade.php` |
 | 24 | ~~Dos `</div>` duplicados generan DOM malformado en el dashboard~~ ✓ **resuelto** (vista reescrita) | `dashboard/index.blade.php` |
