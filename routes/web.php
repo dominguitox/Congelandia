@@ -80,6 +80,11 @@ Route::middleware('auth')->group(function () {
     // =====================================================
 
     Route::get(
+        '/admin',
+        [DashboardController::class, 'index']
+    )->name('dashboard.index');
+
+    Route::get(
         '/dashboard',
         [DashboardController::class, 'index']
     )->name('dashboard.index');
