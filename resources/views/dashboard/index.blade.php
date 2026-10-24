@@ -130,12 +130,15 @@
             <div class="panel-body panel-body--flush">
 
                 <div class="dashboard-ventas-list">
-
-                    @forelse($salidas as $salida)
-                        <div class="venta-item">
+                     {{-- salidas => ordena salidas desde la mas antigua 
+                          salidasRecientes => ordena salidas desde la mas nueva (usar esta!!) 
+                          salidasHoy => salidas solo hoy (desde la mas vieja)
+                     --}}
+                    @forelse($salidasRecientes as $salida)
+                    <div class="venta-item">
 
                             <div>
-                                <div class="venta-item-titulo">Orden #{{ $salida->id }}</div>
+                                <div class="venta-item-titulo">Orden #{{ $salida->idSalida }}</div>
                                 <div class="venta-item-meta">
                                     {{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}
                                     •

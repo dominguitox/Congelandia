@@ -21,6 +21,10 @@ class DashboardController extends Controller
     {
         try {
             $salidas = Salida::with('detalles.producto')->get();
+            $salidasRecientes = Salida::with('detalles.producto')
+                ->orderBy('fecha', 'desc')
+                ->get();
+
 
             // 1. Cálculos exclusivos para HOY
             $hoy = Carbon::now()->toDateString();
@@ -120,11 +124,15 @@ class DashboardController extends Controller
 
             // Descomentar para debug
             // dd($productos);
+            // dd($salidasHoy);
+
             $proveedores = Proveedor::whereNull('deleted_at')->get();
             $categorias = Categoria::whereNull('deleted_at')->get();
 
             return view('dashboard.index', compact(
                 'salidas',
+                'salidasHoy',
+                'salidasRecientes',
                 'totalVentasHoy',
                 'proveedores',
                 'categorias',
