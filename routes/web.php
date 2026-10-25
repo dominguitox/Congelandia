@@ -120,6 +120,16 @@ Route::middleware('auth')->group(function () {
         [ProductoController::class, 'editarProducto']
     )->name('inventario.editarProducto');
 
+    Route::post(
+        '/inventario/ingresos',
+        [ProductoController::class, 'registrarIngreso']
+    )->name('inventario.ingresos.store');
+
+    Route::post(
+        '/inventario/salidas',
+        [ProductoController::class, 'registrarSalida']
+    )->name('inventario.salidas.store');
+
 
     // =====================================================
     // POS

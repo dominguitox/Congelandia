@@ -30,6 +30,8 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | GET | `/inventario` | `inventario.index` | `ProductoController@listarProductos` | Listado de productos con stock/precio/costo |
 | ~~GET~~ | ~~`/inventario/{codigo}`~~ | ~~`inventario.show`~~ | ~~`ProductoController@show`~~ | Desactivada: ruta comentada en `web.php`; no se implementará por ahora |
 | PUT | `/productos/{codigo}` | `inventario.editarProducto` | `ProductoController@editarProducto` | Editar producto |
+| POST | `/inventario/ingresos` | `inventario.ingresos.store` | `ProductoController@registrarIngreso` | Registrar ingreso con proveedor, cantidad, costo y vencimiento |
+| POST | `/inventario/salidas` | `inventario.salidas.store` | `ProductoController@registrarSalida` | Registrar merma por vencimiento o daño; valida stock disponible |
 | POST | `/productos/guardar` | `productos.crearProducto` | `ProductoController@crearProducto` | Crear producto (con ingreso inicial) — **única ruta admin** |
 
 ### POS / Ventas

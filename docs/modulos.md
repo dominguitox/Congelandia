@@ -50,12 +50,12 @@ Flujo: buscar producto por código → agregar al carrito → seleccionar client
 
 | | |
 | --- | --- |
-| **Rutas** | `GET /inventario` (`inventario.index`), `PUT /productos/{codigo}` (`inventario.editarProducto`), `POST /productos/guardar` (`productos.crearProducto` — **admin**). `GET /inventario/{codigo}` quedó desactivada |
+| **Rutas** | `GET /inventario` (`inventario.index`), `PUT /productos/{codigo}` (`inventario.editarProducto`), `POST /inventario/ingresos` (`inventario.ingresos.store`), `POST /inventario/salidas` (`inventario.salidas.store`), `POST /productos/guardar` (`productos.crearProducto` — **admin**). `GET /inventario/{codigo}` quedó desactivada |
 | **Controlador** | `ProductoController`, JS: `resources/js/producto.js` |
 | **Vista** | `inventario/index.blade.php` |
-| **Estado** | ⚠️ Detalle desactivado (ruta `/inventario/{codigo}` comentada; `show()` sigue sin filtro). 3 modales duplicados que apuntan todos a crear productos, botón Borrar sin handler, onclick con `$producto->codigo` sin imprimir (`ReferenceError`), `dd($errors)` for cada error, carga el archivo CSS vacío. Ver pendientes |
+| **Estado** | Los modales de ingreso y salida ya registran movimientos separados; el ingreso precarga el producto desde la fila y la salida impide superar el stock disponible. Pendientes: `show()` sigue sin filtro aunque su ruta está desactivada, y el botón Borrar no tiene handler. Ver pendientes |
 
-Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock calculado), modales de registrar ingreso/salida/merma (aún con lógica de creación de producto) y edición/creación de productos con imagen (`images/productos/`).
+Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock calculado), modales separados para registrar ingreso y salida por merma, además de edición/creación de productos con imagen (`images/productos/`).
 
 ## 6. Clientes
 

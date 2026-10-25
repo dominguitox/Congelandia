@@ -16,7 +16,7 @@
     $valorInventario = $listaProductos->sum(fn ($p) => ($p->stock ?? 0) * ($p->precio ?? 0));
 @endphp
 
-<div class="page">
+<div class="page" data-modal-error="{{ old('_modal') }}">
 
     {{-- =====================================================
          ENCABEZADO
@@ -181,7 +181,7 @@
 
                                         <button type="button" class="icon-btn icon-btn--success" title="Registrar ingreso"
                                             data-bs-toggle="modal" data-bs-target="#modalRegistrarIngreso"
-                                            onclick="registrarIngreso('{{ $producto->codigo }}')">
+                                            data-codigo="{{ $producto->codigo }}">
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M12 5v14"/>
                                                 <path d="M5 12h14"/>
@@ -422,38 +422,53 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="{{ route('productos.crearProducto') }}" method="POST">
+            <form action="{{ route('inventario.ingresos.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="_modal" value="modalRegistrarIngreso">
                 <div class="modal-body">
-                    <h6 class="text-primary fw-bold mb-3">Datos de Abastecimiento</h6>
+                    <h6 class="text-primary fw-bold mb-3">Datos de abastecimiento</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="idProveedor" class="form-label">Proveedor</label>
-                            <select class="form-select" name="idProveedor" id="idProveedor">
-                                <option value="">Seleccione proveedor...</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                            <label for="ingreso_codigoProducto" class="form-label">Producto *</label>
+                            <select class="form-select @error('codigoProducto') is-invalid @enderror" name="codigoProducto" id="ingreso_codigoProducto" required>
+                                <option value="">Seleccione producto...</option>
+                                @foreach ($productos as $producto)
+                                    <option value="{{ $producto->codigo }}" @selected(old('codigoProducto') === $producto->codigo)>{{ $producto->nombre }} ({{ $producto->codigo }})</option>
                                 @endforeach
                             </select>
+                            @error('codigoProducto') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="stockInicial" class="form-label">Stock Inicial</label>
-                            <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0" min="0">
+                            <label for="ingreso_idProveedor" class="form-label">Proveedor *</label>
+                            <select class="form-select @error('idProveedor') is-invalid @enderror" name="idProveedor" id="ingreso_idProveedor" required>
+                                <option value="">Seleccione proveedor...</option>
+                                @foreach ($proveedores as $proveedor)
+                                    <option value="{{ $proveedor->idProveedor }}" @selected((string) old('idProveedor') === (string) $proveedor->idProveedor)>{{ $proveedor->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('idProveedor') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
-                            <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra">
+                            <label for="ingreso_cantidad" class="form-label">Cantidad *</label>
+                            <input type="number" class="form-control @error('cantidad') is-invalid @enderror" name="cantidad" id="ingreso_cantidad" value="{{ old('cantidad') }}" min="1" step="1" required>
+                            @error('cantidad') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
-                            <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento">
+                            <label for="ingreso_precioCompra" class="form-label">Costo unitario ($) *</label>
+                            <input type="number" step="0.01" min="0" class="form-control @error('precioCompra') is-invalid @enderror" name="precioCompra" id="ingreso_precioCompra" value="{{ old('precioCompra') }}" required>
+                            @error('precioCompra') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ingreso_fechaVencimiento" class="form-label">Fecha de vencimiento *</label>
+                            <input type="date" class="form-control @error('fechaVencimiento') is-invalid @enderror" name="fechaVencimiento" id="ingreso_fechaVencimiento" value="{{ old('fechaVencimiento') }}" min="{{ now()->toDateString() }}" required>
+                            @error('fechaVencimiento') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn-solid">Registrar Ingreso</button>
+                    <button type="submit" class="btn-solid">Registrar ingreso</button>
                 </div>
             </form>
         </div>
@@ -469,42 +484,46 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="modalLabelSalida">Registrar Salida de Productos por Merma u Otro</h5>
+                <h5 class="modal-title" id="modalLabelSalida">Registrar salida por merma</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="{{ route('productos.crearProducto') }}" method="POST">
+            <form action="{{ route('inventario.salidas.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="_modal" value="modalRegistrarSalida">
                 <div class="modal-body">
-                    <h6 class="text-primary fw-bold mb-3">Datos de Abastecimiento</h6>
+                    <h6 class="text-primary fw-bold mb-3">Datos de la salida por merma</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="idProveedor" class="form-label">Proveedor</label>
-                            <select class="form-select" name="idProveedor" id="idProveedor">
-                                <option value="">Seleccione proveedor...</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                            <label for="salida_codigoProducto" class="form-label">Producto *</label>
+                            <select class="form-select @error('codigoProducto') is-invalid @enderror" name="codigoProducto" id="salida_codigoProducto" required>
+                                <option value="">Seleccione producto...</option>
+                                @foreach ($productos as $producto)
+                                    <option value="{{ $producto->codigo }}" data-stock="{{ $producto->stock }}" @selected(old('codigoProducto') === $producto->codigo)>{{ $producto->nombre }} ({{ $producto->codigo }}) — stock {{ $producto->stock }}</option>
                                 @endforeach
                             </select>
+                            @error('codigoProducto') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="stockInicial" class="form-label">Stock Inicial</label>
-                            <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0" min="0">
+                            <label for="salida_motivo" class="form-label">Motivo *</label>
+                            <select class="form-select @error('motivo') is-invalid @enderror" name="motivo" id="salida_motivo" required>
+                                <option value="">Seleccione motivo...</option>
+                                <option value="Merma por Vencimiento" @selected(old('motivo') === 'Merma por Vencimiento')>Merma por vencimiento</option>
+                                <option value="Merma por Daño" @selected(old('motivo') === 'Merma por Daño')>Merma por daño</option>
+                            </select>
+                            @error('motivo') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
-                            <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
-                            <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento">
+                            <label for="salida_cantidad" class="form-label">Cantidad *</label>
+                            <input type="number" class="form-control @error('cantidad') is-invalid @enderror" name="cantidad" id="salida_cantidad" value="{{ old('cantidad') }}" min="1" step="1" required>
+                            @error('cantidad') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn-solid">Guardar Producto</button>
+                    <button type="submit" class="btn-solid">Registrar salida</button>
                 </div>
             </form>
         </div>
