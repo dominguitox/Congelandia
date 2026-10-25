@@ -129,7 +129,8 @@ class DashboardController extends Controller
                 'cantidadPromocionesActivas',
             ));
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error al cargar el historial: ' . $e->getMessage());
+            report($e);
+            abort(500, 'Error al cargar el dashboard.');
         }
 
 

@@ -230,6 +230,7 @@ public function editarProducto(Request $request, $codigo)
                 'Categoria.nombre as categoria'
             )
                 ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
+                ->where('Producto.codigo', $codigo)
                 ->addSelect([
                     'precio' => DB::table('Lista_Precio')
                         ->select('precioVenta')
