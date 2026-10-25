@@ -35,8 +35,8 @@ class DashboardController extends Controller
             $totalVentasHoy = $salidasHoy->sum('totalSalida');
             $ordenesHoy = $salidasHoy->count();
 
-            $promocionesActivas = Promocion::whereDate('fechaInicio', '<=', $hoy)
-                ->whereDate('fechaFin', '>=', $hoy)
+            $promocionesActivas = Promocion::vigentes()
+                ->with('producto')
                 ->orderBy('porcentajeDescuento', 'desc')
                 ->get();
             $cantidadPromocionesActivas = $promocionesActivas->count();

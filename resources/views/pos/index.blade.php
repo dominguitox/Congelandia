@@ -56,20 +56,40 @@
                 <div class="pos-productos" id="grillaProductos">
 
                     @forelse ($productos as $producto)
+                        @php
+                            $precioNormal = (float) ($producto->precio ?? 0);
+                            $descuentoOferta = (float) ($producto->descuentoOferta ?? 0);
+                            $precioOferta = $descuentoOferta > 0
+                                ? (float) round($precioNormal * (1 - $descuentoOferta / 100))
+                                : $precioNormal;
+                        @endphp
                         <div class="producto-card" data-id="{{ $producto->codigo }}"
-                            data-nombre="{{ strtolower($producto->nombre) }}"
-                            onclick="agregarAlCarrito('{{ $producto->codigo }}', '{{ $producto->nombre }}', {{ $producto->precio }}, {{ $producto->stock }})">
+                            data-nombre="{{ $producto->nombre }}"
+                            data-precio-normal="{{ $precioNormal }}"
+                            data-precio-oferta="{{ $precioOferta }}"
+                            data-descuento="{{ $descuentoOferta }}"
+                            data-stock="{{ $producto->stock }}" role="button" tabindex="0">
 
                             <div class="producto-card-top">
-                                <span class="badge bg-info" id="badge-carrito-{{ $producto->codigo }}">En carrito: 0</span>
+                                <span class="badge bg-info" id="badge-carrito-{{ $producto->codigo }}" hidden>En carrito: 0</span>
+                                @if ($descuentoOferta > 0)
+                                    <span class="badge badge-oferta">-{{ number_format($descuentoOferta, 0, ',', '.') }}%</span>
+                                @endif
                             </div>
 
                             <h5 class="producto-card-nombre">{{ $producto->nombre }}</h5>
                             <p class="producto-card-categoria">{{ $producto->categoria }}</p>
 
                             <div class="producto-card-pie">
-                                <span class="producto-card-precio">${{ number_format($producto->precio, 0, ',', '.') }}</span>
-                                <span class="badge bg-info" id="badge-stock-{{ $producto->codigo }}"
+                                <span class="producto-card-precio-wrap">
+                                    @if ($descuentoOferta > 0)
+                                        <small class="producto-card-precio-normal">Normal: ${{ number_format($precioNormal, 0, ',', '.') }}</small>
+                                        <span class="producto-card-precio producto-card-precio--oferta">${{ number_format($precioOferta, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="producto-card-precio">${{ number_format($precioNormal, 0, ',', '.') }}</span>
+                                    @endif
+                                </span>
+                                <span class="badge badge-stock" id="badge-stock-{{ $producto->codigo }}"
                                     data-stock-inicial="{{ $producto->stock }}">Stock: {{ $producto->stock }}</span>
                             </div>
 
@@ -108,8 +128,14 @@
             <div class="ticket-pie">
 
                 <div class="ticket-total">
-                    <span>Total</span>
-                    <strong id="ticket-total">$0</strong>
+                    <div class="ticket-total-normal" id="ticket-total-normal-wrap" hidden>
+                        <span>Total sin ofertas</span>
+                        <del id="ticket-total-normal">$0</del>
+                    </div>
+                    <div class="ticket-total-actual">
+                        <span id="ticket-total-label">Total</span>
+                        <strong id="ticket-total">$0</strong>
+                    </div>
                 </div>
 
                 <div class="ticket-cliente">

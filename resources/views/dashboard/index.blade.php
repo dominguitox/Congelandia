@@ -92,7 +92,7 @@
         </div>
 
 
-        <a href="{{ url('/inventario/#ofertas') }}" class="stat-tile stat-tile--link">
+        <a href="{{ route('inventario.index') }}#ofertas" class="stat-tile stat-tile--link">
 
             <div class="stat-tile-info">
                 <span>Ofertas activas</span>

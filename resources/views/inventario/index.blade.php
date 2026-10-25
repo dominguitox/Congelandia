@@ -38,6 +38,23 @@
                 <span>+</span> Añadir Producto
             </button>
 
+            <button type="button" id="ofertas"
+                class="btn-outline inventario-ofertas-trigger {{ $ofertasActivas->isNotEmpty() ? 'inventario-ofertas-trigger--active' : '' }}"
+                data-bs-toggle="modal" data-bs-target="#modalOfertas" aria-controls="modalOfertas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/>
+                    <path d="M7 7h.01"/>
+                </svg>
+                Ofertas vigentes
+                <span class="inventario-ofertas-contador">{{ $ofertasActivas->count() }}</span>
+            </button>
+
+            @if (auth()->user()->rol === 'Administrador')
+                <button type="button" id="gestionar-ofertas" class="btn-outline" data-bs-toggle="modal" data-bs-target="#modalGestionOfertas">
+                    Gestionar ofertas
+                </button>
+            @endif
+
             <button type="button" class="btn-outline" data-bs-toggle="modal" data-bs-target="#modalRegistrarIngreso">
                 Registrar ingreso
             </button>
@@ -237,6 +254,171 @@
 
     </div>
 
+</div>
+
+{{-- Gestión de ofertas: solo Administrador puede cambiar precios/promociones. --}}
+@if (auth()->user()->rol === 'Administrador')
+    <div class="modal fade" id="modalGestionOfertas" tabindex="-1" aria-labelledby="modalGestionOfertasTitulo" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <div>
+                        <h5 class="modal-title" id="modalGestionOfertasTitulo">Gestionar ofertas</h5>
+                        <small>Programa descuentos y pausa ofertas sin borrar su historial.</small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center gap-2 mb-3 flex-wrap">
+                        <p class="inventario-ofertas-intro mb-0">No se permiten dos ofertas activas del mismo producto en períodos que se crucen.</p>
+                        <button type="button" class="btn-solid" data-bs-toggle="modal" data-bs-target="#modalCrearOferta">Crear oferta</button>
+                    </div>
+
+                    @if (session('success'))
+                        <div class="alert alert-success" role="status">{{ session('success') }}</div>
+                    @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">Revisa los campos marcados antes de guardar.</div>
+                    @endif
+
+                    @if ($ofertas->isNotEmpty())
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead><tr><th>Producto</th><th>Descuento</th><th>Vigencia</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead>
+                                <tbody>
+                                    @foreach ($ofertas as $oferta)
+                                        @php
+                                            $inicioOferta = \Carbon\Carbon::parse($oferta->fechaInicio);
+                                            $finOferta = \Carbon\Carbon::parse($oferta->fechaFin);
+                                            $estadoOferta = ! $oferta->activa ? 'Pausada' : ($inicioOferta->isFuture() ? 'Programada' : ($finOferta->isPast() ? 'Vencida' : 'Vigente'));
+                                        @endphp
+                                        <tr>
+                                            <td><strong>{{ $oferta->producto?->nombre ?? 'Producto eliminado' }}</strong><small class="d-block text-muted">{{ $oferta->codigoProducto }}</small></td>
+                                            <td>-{{ number_format($oferta->porcentajeDescuento, 2, ',', '.') }}%</td>
+                                            <td>{{ $inicioOferta->format('d/m/Y H:i') }} – {{ $finOferta->format('d/m/Y H:i') }}</td>
+                                            <td><span class="badge {{ $estadoOferta === 'Vigente' ? 'text-bg-success' : ($estadoOferta === 'Pausada' ? 'text-bg-secondary' : 'text-bg-warning') }}">{{ $estadoOferta }}</span></td>
+                                            <td class="text-end text-nowrap">
+                                                <button type="button" class="btn btn-sm btn-outline-primary js-editar-oferta"
+                                                    data-bs-toggle="modal" data-bs-target="#modalEditarOferta"
+                                                    data-id="{{ $oferta->idPromocion }}" data-codigo="{{ $oferta->codigoProducto }}"
+                                                    data-descuento="{{ $oferta->porcentajeDescuento }}"
+                                                    data-inicio="{{ $inicioOferta->format('Y-m-d\\TH:i') }}"
+                                                    data-fin="{{ $finOferta->format('Y-m-d\\TH:i') }}">Editar</button>
+                                                <form class="d-inline" method="POST" action="{{ route('ofertas.toggle', $oferta->idPromocion) }}">
+                                                    @csrf @method('PATCH')
+                                                    <button class="btn btn-sm btn-outline-secondary" type="submit">{{ $oferta->activa ? 'Pausar' : 'Reactivar' }}</button>
+                                                </form>
+                                                <form class="d-inline js-eliminar-oferta" method="POST" action="{{ route('ofertas.destroy', $oferta->idPromocion) }}">
+                                                    @csrf @method('DELETE')
+                                                    <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="empty-state"><strong>Aún no hay ofertas</strong><p>Crea una para programar el primer descuento.</p></div>
+                    @endif
+                </div>
+                <div class="modal-footer"><button type="button" class="btn-soft" data-bs-dismiss="modal">Cerrar</button></div>
+            </div>
+        </div>
+    </div>
+
+    @foreach (['Crear' => 'store', 'Editar' => 'update'] as $tituloOferta => $accionOferta)
+        <div class="modal fade" id="modal{{ $tituloOferta }}Oferta" tabindex="-1" aria-labelledby="modal{{ $tituloOferta }}OfertaTitulo" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="modal{{ $tituloOferta }}OfertaTitulo">{{ $tituloOferta }} oferta</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form method="POST" action="{{ $accionOferta === 'store' ? route('ofertas.store') : (old('ofertaId') ? route('ofertas.update', old('ofertaId')) : '#') }}" id="form{{ $tituloOferta }}Oferta">
+                        @csrf
+                        @if ($accionOferta === 'update') @method('PUT') @endif
+                        <input type="hidden" name="_modal" value="modal{{ $tituloOferta }}Oferta">
+                        @if ($accionOferta === 'update') <input type="hidden" name="ofertaId" id="editarOfertaId" value="{{ old('ofertaId') }}"> @endif
+                        <div class="modal-body row g-3 mx-0">
+                            <div class="col-12">
+                                <label class="form-label" for="{{ strtolower($tituloOferta) }}OfertaProducto">Producto *</label>
+                                <select class="form-select @error('codigoProducto') is-invalid @enderror" name="codigoProducto" id="{{ strtolower($tituloOferta) }}OfertaProducto" required>
+                                    <option value="">Selecciona un producto</option>
+                                    @foreach ($productos as $producto)
+                                        <option value="{{ $producto->codigo }}" @selected(old('codigoProducto') === $producto->codigo)>{{ $producto->nombre }} ({{ $producto->codigo }})</option>
+                                    @endforeach
+                                </select>
+                                @error('codigoProducto') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="{{ strtolower($tituloOferta) }}OfertaDescuento">Descuento (%) *</label>
+                                <input class="form-control @error('porcentajeDescuento') is-invalid @enderror" type="number" min="0.01" max="100" step="0.01" name="porcentajeDescuento" id="{{ strtolower($tituloOferta) }}OfertaDescuento" value="{{ old('porcentajeDescuento') }}" required>
+                                @error('porcentajeDescuento') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="{{ strtolower($tituloOferta) }}OfertaInicio">Inicio *</label>
+                                <input class="form-control @error('fechaInicio') is-invalid @enderror" type="datetime-local" name="fechaInicio" id="{{ strtolower($tituloOferta) }}OfertaInicio" value="{{ old('fechaInicio') }}" required>
+                                @error('fechaInicio') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="{{ strtolower($tituloOferta) }}OfertaFin">Término *</label>
+                                <input class="form-control @error('fechaFin') is-invalid @enderror" type="datetime-local" name="fechaFin" id="{{ strtolower($tituloOferta) }}OfertaFin" value="{{ old('fechaFin') }}" required>
+                                @error('fechaFin') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn-solid">Guardar oferta</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+@endif
+
+{{-- Ofertas vigentes: destino del enlace #ofertas del dashboard --}}
+<div class="modal fade" id="modalOfertas" tabindex="-1" aria-labelledby="modalOfertasTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="modalOfertasTitulo">Ofertas vigentes ({{ $ofertasActivas->count() }})</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                @if ($ofertasActivas->isNotEmpty())
+                    <p class="inventario-ofertas-intro">Estas ofertas están activas en este momento. Revisa su descuento y fecha de término.</p>
+                    <div class="inventario-ofertas-lista">
+                        @foreach ($ofertasActivas as $oferta)
+                            <div class="inventario-oferta">
+                                <div>
+                                    <strong>{{ $oferta->producto->nombre }}</strong>
+                                    <span class="inventario-oferta-codigo">{{ $oferta->codigoProducto }}</span>
+                                    @php($fechaFinOferta = \Carbon\Carbon::parse($oferta->fechaFin))
+                                    <span class="inventario-oferta-vigencia">Vigente hasta {{ $fechaFinOferta->format('d/m/Y') }}@if($fechaFinOferta->format('H:i') !== '23:59') a las {{ $fechaFinOferta->format('H:i') }}@endif</span>
+                                </div>
+                                <span class="inventario-oferta-descuento">-{{ number_format($oferta->porcentajeDescuento, 2, ',', '.') }}%</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="empty-state">
+                        <strong>No hay ofertas vigentes</strong>
+                        <p>Cuando una promoción esté activa, aparecerá aquí.</p>
+                    </div>
+                @endif
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-soft" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 

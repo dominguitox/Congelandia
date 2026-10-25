@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Promocion extends Model
@@ -20,11 +21,33 @@ class Promocion extends Model
         'porcentajeDescuento',
         'fechaInicio',
         'fechaFin',
+        'activa',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'activa' => 'boolean',
+            'fechaInicio' => 'datetime',
+            'fechaFin' => 'datetime',
+        ];
+    }
+
+    public function scopeVigentes(Builder $query): Builder
+    {
+        $ahora = now();
+
+        return $query
+            ->where('fechaInicio', '<=', $ahora)
+            ->where('fechaFin', '>=', $ahora)
+            ->where('activa', true)
+            ->where('porcentajeDescuento', '>', 0)
+            ->whereHas('producto');
+    }
 
     public function producto()
     {
-        // Vincula 'codigoProducto' de Promocion con el 'id' de Producto
+        // Vincula codigoProducto con la clave codigo de Producto.
         return $this->belongsTo(Producto::class, 'codigoProducto', 'codigo');
     }
 }

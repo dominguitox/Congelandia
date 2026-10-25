@@ -3,7 +3,18 @@ let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
 // Al cargar la página, dibujamos inmediatamente los productos si existen en caché
 document.addEventListener("DOMContentLoaded", () => {
+    sincronizarPreciosDelCatalogo();
     actualizarTicketVenta();
+
+    document.querySelectorAll('.producto-card').forEach((card) => {
+        card.addEventListener('click', () => agregarAlCarrito(card));
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                agregarAlCarrito(card);
+            }
+        });
+    });
 });
 
 // Función auxiliar para guardar el estado actual en localStorage y actualizar la vista
@@ -12,10 +23,50 @@ function guardarYActualizar() {
     actualizarTicketVenta();
 }
 
-window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDisponible) {
+function formatoCLP(valor) {
+    return new Intl.NumberFormat('es-CL', { maximumFractionDigits: 0 }).format(Number(valor) || 0);
+}
+
+function escaparHTML(valor) {
+    return String(valor).replace(/[&<>"']/g, (caracter) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[caracter]);
+}
+
+function sincronizarPreciosDelCatalogo() {
+    document.querySelectorAll('.producto-card').forEach((card) => {
+        const item = carrito.find((producto) => producto.id === card.dataset.id);
+        if (!item) return;
+
+        item.nombre = card.dataset.nombre;
+        item.precioNormal = Number(card.dataset.precioNormal) || 0;
+        item.descuento = Number(card.dataset.descuento) || 0;
+        item.precio = Number(card.dataset.precioOferta) || 0;
+        item.stock = Number(card.dataset.stock) || 0;
+    });
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+}
+
+window.agregarAlCarrito = function (card) {
+    const idProducto = card.dataset.id;
+    const nombre = card.dataset.nombre;
+    const precioNormal = Number(card.dataset.precioNormal) || 0;
+    const precioOferta = Number(card.dataset.precioOferta) || 0;
+    const descuento = Number(card.dataset.descuento) || 0;
+    const stockDisponible = Number(card.dataset.stock) || 0;
+
+    if (stockDisponible < 1) {
+        alert(`${nombre} no tiene stock disponible.`);
+        return;
+    }
+
     let indice = carrito.findIndex(item => item.id === idProducto);
 
     if (indice !== -1) {
+        carrito[indice].precioNormal = precioNormal;
+        carrito[indice].precio = precioOferta;
+        carrito[indice].descuento = descuento;
+        carrito[indice].stock = stockDisponible;
         if (carrito[indice].cantidad < stockDisponible) {
             carrito[indice].cantidad++;
         } else {
@@ -26,13 +77,14 @@ window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDispon
         carrito.push({
             id: idProducto,
             nombre: nombre,
-            precio: precioVenta,
+            precioNormal: precioNormal,
+            precio: precioOferta,
+            descuento: descuento,
             stock: stockDisponible,
             cantidad: 1
         });
     }
 
-    console.log(carrito);
     guardarYActualizar(); // Guarda en caché y actualiza la interfaz
 }
 
@@ -40,11 +92,16 @@ window.agregarAlCarrito = function (idProducto, nombre, precioVenta, stockDispon
 function actualizarTicketVenta() {
     let contenedorTicket = document.getElementById('ticket-items');
     let spanTotal = document.getElementById('ticket-total');
+    let spanTotalNormal = document.getElementById('ticket-total-normal');
+    let totalNormalWrap = document.getElementById('ticket-total-normal-wrap');
+    let totalLabel = document.getElementById('ticket-total-label');
 
     if (!contenedorTicket) return;
 
     contenedorTicket.innerHTML = '';
     let totalFinal = 0;
+    let totalSinOfertas = 0;
+    let hayOfertas = false;
 
     if (carrito.length === 0) {
         contenedorTicket.innerHTML = `<p class="text-center text-muted mt-5">El carrito está vacío</p>`;
@@ -52,18 +109,25 @@ function actualizarTicketVenta() {
         carrito.forEach((item, indice) => {
             let subtotal = item.precio * item.cantidad;
             totalFinal += subtotal;
+            totalSinOfertas += (Number(item.precioNormal) || item.precio) * item.cantidad;
+            hayOfertas = hayOfertas || Number(item.descuento) > 0;
+
+            const precioHTML = Number(item.descuento) > 0
+                ? `<small class="ticket-precio-normal">Sin oferta: $${formatoCLP(item.precioNormal)} c/u</small>
+                   <small class="ticket-precio-oferta">Con oferta: $${formatoCLP(item.precio)} c/u</small>`
+                : `<small class="text-muted">$${formatoCLP(item.precio)} c/u</small>`;
 
             let fila = `
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-                    <div>
-                        <h6 class="mb-0">${item.nombre}</h6>
-                        <small class="text-muted">$${item.precio} c/u</small>
+                <div class="ticket-linea">
+                    <div class="ticket-linea-producto">
+                        <h6 class="mb-1">${escaparHTML(item.nombre)}</h6>
+                        ${precioHTML}
                     </div>
                     <div class="d-flex align-items-center">
                         <button class="btn btn-sm btn-outline-secondary px-2 me-1" onclick="restarAlCarrito(${indice})">-</button>
                         <span class="badge bg-secondary me-1">Cant. ${item.cantidad}</span>
                         <button class="btn btn-sm btn-outline-secondary px-2 me-2" onclick="sumarAlCarrito(${indice})">+</button>
-                        <strong class="me-2">$${subtotal}</strong>
+                        <strong class="me-2">$${formatoCLP(subtotal)}</strong>
                         <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${indice})">&times;</button>
                     </div>
                 </div>
@@ -73,7 +137,16 @@ function actualizarTicketVenta() {
     }
 
     if (spanTotal) {
-        spanTotal.innerText = `$${totalFinal}`;
+        spanTotal.innerText = `$${formatoCLP(totalFinal)}`;
+    }
+    if (spanTotalNormal) {
+        spanTotalNormal.innerText = `$${formatoCLP(totalSinOfertas)}`;
+    }
+    if (totalNormalWrap) {
+        totalNormalWrap.hidden = !hayOfertas || carrito.length === 0;
+    }
+    if (totalLabel) {
+        totalLabel.innerText = hayOfertas && carrito.length > 0 ? 'Total con ofertas' : 'Total';
     }
 
     document.querySelectorAll('.producto-card').forEach(card => {
@@ -92,6 +165,7 @@ function actualizarTicketVenta() {
 
             // Actualizamos los textos visuales
             badgeCarrito.innerText = "En carrito: " + cantidadSeleccionada;
+            badgeCarrito.hidden = cantidadSeleccionada === 0;
             badgeStock.innerText = "Stock: " + (stockInicial - cantidadSeleccionada);
         }
     });
@@ -207,7 +281,7 @@ window.registrarVenta = function (e) {
                 if (inputMonto) inputMonto.value = "";
 
             } else {
-                alert("Error al registrar: " + (data.message || "Datos inválidos."));
+                alert("Error al registrar: " + (data.error || data.message || "Datos inválidos."));
             }
         })
         .catch(error => {

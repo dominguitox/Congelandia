@@ -11,6 +11,7 @@ use Exception;
 
 use App\Models\Cliente;
 use App\Models\Producto;
+use App\Models\Promocion;
 
 
 
@@ -30,8 +31,22 @@ class PosController extends Controller
                     'precio' => DB::table('Lista_Precio')
                         ->select('precioVenta')
                         ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->where('fechaInicio', '<=', now())
                         ->whereNull('fechaFin')
                         ->whereNull('deleted_at')
+                        ->orderByDesc('fechaInicio')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'descuentoOferta' => DB::table('Promocion')
+                        ->select('porcentajeDescuento')
+                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->where('activa', true)
+                        ->where('porcentajeDescuento', '>', 0)
+                        ->where('fechaInicio', '<=', now())
+                        ->where('fechaFin', '>=', now())
+                        ->whereNull('deleted_at')
+                        ->orderByDesc('fechaInicio')
                         ->limit(1)
                 ])
                 ->addSelect([
@@ -79,12 +94,14 @@ class PosController extends Controller
 
     public function registrarVenta(Request $request)
     {
-        $request->validate([
+        $datos = $request->validate([
             'idTipo' => 'required|integer',
             'rutCliente' => 'nullable|string',
-            'totalVenta' => 'required|numeric',
             'metodoPago' => 'required|integer|exists:Metodo_Pago,idMetodo',
-            'productos' => 'required|array',
+            'productos' => 'required|array|min:1',
+            'productos.*.id' => 'required|string',
+            'productos.*.cantidad' => 'required|integer|min:1',
+            'productos.*.precio' => 'required|numeric|min:0',
         ]);
 
         if (!auth()->check()) {
@@ -94,19 +111,65 @@ class PosController extends Controller
         try {
             DB::beginTransaction();
 
+            $lineasVenta = [];
+            $totalVenta = 0;
+
+            foreach ($datos['productos'] as $linea) {
+                $producto = Producto::query()->where('codigo', $linea['id'])->first();
+                if (! $producto) {
+                    DB::rollBack();
+                    return response()->json(['success' => false, 'error' => 'Uno de los productos ya no está disponible. Recarga el POS.'], 422);
+                }
+
+                $precioNormal = DB::table('Lista_Precio')
+                    ->where('codigoProducto', $producto->codigo)
+                    ->where('fechaInicio', '<=', now())
+                    ->whereNull('fechaFin')
+                    ->whereNull('deleted_at')
+                    ->orderByDesc('fechaInicio')
+                    ->value('precioVenta');
+
+                if ($precioNormal === null) {
+                    DB::rollBack();
+                    return response()->json(['success' => false, 'error' => "El producto {$producto->nombre} no tiene un precio vigente."], 422);
+                }
+
+                $oferta = Promocion::vigentes()
+                    ->where('codigoProducto', $producto->codigo)
+                    ->orderByDesc('fechaInicio')
+                    ->first();
+                $descuento = (float) ($oferta?->porcentajeDescuento ?? 0);
+                $precioCobrado = (float) round((float) $precioNormal * (1 - $descuento / 100));
+
+                if (round((float) $linea['precio'], 2) !== round($precioCobrado, 2)) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'error' => "El precio de {$producto->nombre} cambió. Actualiza el POS y revisa el carrito antes de cobrar.",
+                    ], 409);
+                }
+
+                $lineasVenta[] = [
+                    'codigoProducto' => $producto->codigo,
+                    'cantidad' => (int) $linea['cantidad'],
+                    'precioCobrado' => $precioCobrado,
+                ];
+                $totalVenta += $precioCobrado * (int) $linea['cantidad'];
+            }
+
             $salida = Salida::create([
                 'fecha' => now(),
                 'idTipo' => $request->idTipo,
                 'idUsuario' => auth()->id(),
                 'rutCliente' => $request->rutCliente,
-                'totalSalida' => $request->totalVenta
+                'totalSalida' => $totalVenta
             ]);
 
-            foreach ($request->productos as $producto) {
+            foreach ($lineasVenta as $producto) {
                 $salida->detalles()->create([
-                    'codigoProducto' => $producto['id'],
+                    'codigoProducto' => $producto['codigoProducto'],
                     'cantidad' => $producto['cantidad'],
-                    'precioCobrado' => $producto['precio']
+                    'precioCobrado' => $producto['precioCobrado']
                 ]);
             }
 
@@ -121,7 +184,7 @@ class PosController extends Controller
             PagoSalida::create([
                 'idSalida' => $salida->idSalida,
                 'idMetodo' => $request->metodoPago,
-                'montoPagado' => $esFiado ? 0 : $request->totalVenta,
+                'montoPagado' => $esFiado ? 0 : $totalVenta,
                 'fechaPago' => now()->toDateString()
             ]);
 

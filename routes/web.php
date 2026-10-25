@@ -13,6 +13,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\VersionController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\PromocionController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -276,6 +277,26 @@ Route::middleware([
     'auth',
     CheckRole::class . ':Administrador'
 ])->group(function () {
+
+    Route::post(
+        '/ofertas',
+        [PromocionController::class, 'store']
+    )->name('ofertas.store');
+
+    Route::put(
+        '/ofertas/{idPromocion}',
+        [PromocionController::class, 'update']
+    )->name('ofertas.update');
+
+    Route::patch(
+        '/ofertas/{idPromocion}/estado',
+        [PromocionController::class, 'toggle']
+    )->name('ofertas.toggle');
+
+    Route::delete(
+        '/ofertas/{idPromocion}',
+        [PromocionController::class, 'destroy']
+    )->name('ofertas.destroy');
 
     Route::post(
         '/productos/guardar',

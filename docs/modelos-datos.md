@@ -63,7 +63,7 @@ Versiones, Log_Errors (sistema, sin soft delete)
 | `TipoSalida` | `tipo_salida` | `idTipo` | Sí | `salidas()` |
 | `PagoSalida` | `pago_salida` | `idPago` | Sí | `salida()` |
 | `ListaPrecio` | `lista_precio` | `idPrecio` | Sí | Histórico de precios (vigente = `fechaFin` null, última `fechaInicio`) |
-| `Promocion` | `promocion` | `idPromocion` | Sí | `producto()` mapea `codigoProducto`→`codigo`. **Sin uso en la app** (controlador huérfano — ver pendientes) |
+| `Promocion` | `promocion` | `idPromocion` | Sí | `producto()` mapea `codigoProducto`→`codigo`; `vigentes()` alimenta dashboard, inventario y POS. El gestor de ofertas vive en Inventario; las acciones se limitan a Administrador. |
 | `ImagenProducto` | `IMAGEN_PRODUCTO` | *(no declarada)* | Sí | ⚠️ Su relación `producto()` mapea a `Producto.id` que **no existe** (la PK real es `codigo`) — relación rota, nunca la usa el código; los controladores usan `Producto::imagenes()` |
 | `ProductoVenta` | `PRODUCTO_VENTA` | *default* | No | **Sin ningún uso** en la app; sin tabla/migración activa |
 

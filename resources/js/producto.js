@@ -41,4 +41,61 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) {
         Modal.getOrCreateInstance(modal).show();
     }
+
+    const modalOfertas = document.getElementById('modalOfertas');
+    if (modalOfertas && !modalConErrores && window.location.hash === '#ofertas') {
+        Modal.getOrCreateInstance(modalOfertas).show();
+    }
+
+    modalOfertas?.addEventListener('hidden.bs.modal', () => {
+        if (window.location.hash === '#ofertas') {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+    });
+
+    const modalGestionOfertas = document.getElementById('modalGestionOfertas');
+    const modalCrearOferta = document.getElementById('modalCrearOferta');
+    const modalEditarOferta = document.getElementById('modalEditarOferta');
+    const gestionarOfertas = document.getElementById('gestionar-ofertas');
+
+    if (window.location.hash === '#gestionar-ofertas' && modalGestionOfertas) {
+        Modal.getOrCreateInstance(modalGestionOfertas).show();
+    }
+
+    document.querySelectorAll('.js-editar-oferta').forEach((boton) => {
+        boton.removeAttribute('data-bs-toggle');
+        boton.removeAttribute('data-bs-target');
+        boton.addEventListener('click', () => {
+            const form = document.getElementById('formEditarOferta');
+            form.action = `/ofertas/${boton.dataset.id}`;
+            document.getElementById('editarOfertaId').value = boton.dataset.id;
+            document.getElementById('editarOfertaProducto').value = boton.dataset.codigo;
+            document.getElementById('editarOfertaDescuento').value = boton.dataset.descuento;
+            document.getElementById('editarOfertaInicio').value = boton.dataset.inicio;
+            document.getElementById('editarOfertaFin').value = boton.dataset.fin;
+
+            modalGestionOfertas.addEventListener('hidden.bs.modal', () => {
+                Modal.getOrCreateInstance(modalEditarOferta).show();
+            }, { once: true });
+            Modal.getOrCreateInstance(modalGestionOfertas).hide();
+        });
+    });
+
+    document.querySelectorAll('.js-eliminar-oferta').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (!window.confirm('¿Eliminar esta oferta? No se podrá reactivar.')) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    gestionarOfertas?.addEventListener('click', () => {
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#gestionar-ofertas`);
+    });
+
+    modalGestionOfertas?.addEventListener('hidden.bs.modal', () => {
+        if (window.location.hash === '#gestionar-ofertas') {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+    });
 });

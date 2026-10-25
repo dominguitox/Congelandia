@@ -13,7 +13,7 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 | 5 | ~~Login compara contraseñas en **texto plano**, pero `usuarios.store` guarda con `bcrypt` → un usuario creado desde el sistema nunca puede iniciar sesión~~ ✓ **resuelto**: `Login` valida con `Hash::check` y todos los usuarios de la BD quedaron hasheados | `Auth\Login.php:25` vs `UserController.php:29` |
 | 6 | ~~Reportes rompen: queries sobre tablas inexistentes (`inventario`, `lote`) para "bajo stock" y "próximos a vencer"~~ ✓ **resuelto**: stock calculado como ingresos - salidas (umbral < 10) y vencimientos desde `detalle_ingreso.fechaVencimiento` (próximos 30 días) | `ReporteController.php:186-233` |
 | 7 | ~~Botón de ingreso de inventario llamaba una función inexistente y no tenía endpoint funcional~~ ✓ **resuelto**: los botones precargan el producto y el modal registra ingreso con proveedor, cantidad, costo unitario y vencimiento | `inventario/index.blade.php`; `resources/js/producto.js`; `ProductoController::registrarIngreso` |
-| 8 | Form de registro de pago sin `action` y su ruta `clientes.registrarPago` es huérfana → al pagar se hace POST a la página actual (rutas equivocadas) | `clientes/index.blade.php:1013`; `routes/web.php:182-185` |
+| 8 | ~~Form de registro de pago sin `action` y ruta huérfana~~ ✓ **resuelto**: el modal toma la URL de la ruta `clientes.registrarPago` y completa el ID de la venta seleccionada antes de enviar | `clientes/index.blade.php`; `routes/web.php:203-206` |
 | 9 | ~~En POS, el botón llama `registrarVenta()` sin argumento y la función espera `metodoPagoSeleccionado` → el método de pago viaja `undefined` en el payload~~ ✓ **resuelto**: selector de método de pago (`Metodo_Pago`), JS envía `idMetodo` y el backend registra en `Pago_Salida` (fiado con monto 0) | `pos/index.blade.php:125-133`; `venta.js:123-167`; `PosController.php` |
 | 10 | ~~Dashboard muestra "0" hardcodeado en Órdenes/Alertas~~ ✓ **resuelto** (usa `$ordenesHoy`/`$alertasActivas`) | `dashboard/index.blade.php` (rama `implementacion-estilos-css`) |
 
@@ -61,6 +61,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarios.js` (vacío). ~~CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`)~~ ✓ estos ya tienen contenido | `resources/js` |
 | 34 | Timezone UTC y locale `en`: cambiar a `America/Santiago` y `es` (efectos en fechas mostradas y validaciones) | `config/app.php:58-68`, `.env` (`APP_LOCALE`, `APP_TIMEZONE` no existe → agregar) |
 | 35 | `* { user-select: none; }` global evita que el usuario pueda copiar texto (también afecta inputs de búsqueda) | `resources/css/app.css:2-4` |
+| 67 | ~~POS no aplicaba las ofertas~~ ✓ **resuelto**: muestra precio normal y precio final en catálogo/carrito, aplica el descuento vigente sobre la lista de precios activa, recalcula el total en servidor y rechaza carritos con precio obsoleto; las promociones activas solapadas del mismo producto no se permiten | `PosController.php`; `pos/index.blade.php`; `resources/js/venta.js`; `PromocionController.php` |
 
 ## P4 — Deuda técnica / refactor
 
@@ -88,7 +89,7 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | 48 | `partials/footer.blade.php` | Vacío — decidir si se llena o se elimina |
 | 49 | `DetalleIngresoController`, `IngresoController`, `ListaPrecioController` | Archivos vacíos |
 | 50 | `VentaController` (archivo `VentaController.php`, antes `SalidaController.php`) | **PSR-4 ✓ resuelto**, pero sigue huérfano: SQL incompatible con el esquema y sin rutas |
-| 51 | `PromocionController` + modelo `Promocion` | CRUD completo huérfano: sin rutas ni vistas `promociones.*` (decidir si la feature de promociones entra o se elimina) |
+| 51 | ~~Gestión de ofertas inexistente~~ ✓ **resuelto**: gestor en Inventario con alta, edición, pausa/reactivación, eliminación lógica, control de vigencia/solapamientos, rutas restringidas a Administrador e integración de precio promocional en POS (#67) | `PromocionController.php`; `inventario/index.blade.php`; `routes/web.php`; `Promocion.php`; `PosController.php` |
 | 52 | `VersionController` | Importado en `routes/web.php:14` y no usado; su `index()` apunta a `view('dashboard')` inexistente |
 | 53 | `ProductoController::index()` (método vacío) | Sin ruta |
 | 54 | Modelo `Reporte` | Sin referencias (el controlador usa queries crudas) |

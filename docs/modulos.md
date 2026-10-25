@@ -31,7 +31,7 @@ Tabla de usuarios: `Usuario` (idUsuario, nombre, email, contrasena, rol, activo)
 | **Rutas** | `GET /dashboard` (`dashboard.index`) |
 | **Controlador** | `DashboardController` |
 | **Vista** | `dashboard/index.blade.php` |
-| **Estado** | ⚠️ Funciona pero muestra datos incorrectos: las tarjetas de Órdenes/Alertas muestran "0" hardcodeado en lugar de las variables que el controlador sí calcula; typo "Orden #s"; symlink muerto a `#ofertas`; errores duplicados de `</div>` |
+| **Estado** | Muestra órdenes, alertas y ofertas vigentes. La tarjeta de ofertas enlaza al modal de ofertas del inventario mediante `#ofertas`. |
 
 Métricas del día: órdenes de hoy, alertas activas (bajo stock), últimas ventas (reutiliza la vista-card de historial). Requiere normalizar la doble fuente de verdad con reportes.
 
@@ -42,7 +42,7 @@ Métricas del día: órdenes de hoy, alertas activas (bajo stock), últimas vent
 | **Rutas** | `GET /pos` (`pos.index`), `POST /venta/registrar` (`venta.registrar`) |
 | **Controlador** | `PosController` (archivo `PosController.php`) |
 | **Vistas** | `pos/index.blade.php`; JS: `resources/js/venta.js` |
-| **Estado** | ✓ Funciona; incluye selector de método de pago y registra el pago en `pago_salida` (fiado queda con monto 0) |
+| **Estado** | ✓ Incluye selector de método de pago, registra `pago_salida` (fiado queda con monto 0) y aplica las ofertas vigentes. El POS muestra comparación de totales sin/con ofertas y el servidor recalcula el monto antes de registrar. |
 
 Flujo: buscar producto por código → agregar al carrito → seleccionar cliente y método de pago → `venta.registrar` crea `salida` (tipo venta, totalSalida) + `detalle_salida` + `pago_salida` (monto 0 si el método es fiado/pendiente). El stock se descuenta implícitamente (se calcula ingresos − salidas, nunca en la tabla).
 
@@ -53,9 +53,9 @@ Flujo: buscar producto por código → agregar al carrito → seleccionar client
 | **Rutas** | `GET /inventario` (`inventario.index`), `PUT /productos/{codigo}` (`inventario.editarProducto`), `POST /inventario/ingresos` (`inventario.ingresos.store`), `POST /inventario/salidas` (`inventario.salidas.store`), `POST /productos/guardar` (`productos.crearProducto` — **admin**). `GET /inventario/{codigo}` quedó desactivada |
 | **Controlador** | `ProductoController`, JS: `resources/js/producto.js` |
 | **Vista** | `inventario/index.blade.php` |
-| **Estado** | Los modales de ingreso y salida ya registran movimientos separados; el ingreso precarga el producto desde la fila y la salida impide superar el stock disponible. Pendientes: `show()` sigue sin filtro aunque su ruta está desactivada, y el botón Borrar no tiene handler. Ver pendientes |
+| **Estado** | Los modales de ingreso y salida registran movimientos separados; el ingreso precarga el producto desde la fila y la salida impide superar el stock disponible. El botón de ofertas muestra cuántas promociones siguen vigentes y abre su detalle. Pendientes: `show()` sigue sin filtro aunque su ruta está desactivada, y el botón Borrar no tiene handler. Ver pendientes |
 
-Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock calculado), modales separados para registrar ingreso y salida por merma, además de edición/creación de productos con imagen (`images/productos/`).
+Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock calculado), detalle y gestor de ofertas (alta, edición, pausa/reactivación y eliminación lógica, solo Administrador), modales separados para registrar ingreso y salida por merma, además de edición/creación de productos con imagen (`images/productos/`).
 
 ## 6. Clientes
 
@@ -64,7 +64,7 @@ Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock 
 | **Rutas** | `GET/POST /clientes`, `GET /clientes/{rut}/historial`, `POST /clientes/venta/{idSalida}/pago`, `PUT/DELETE /clientes/{rut}` |
 | **Controlador** | `ClienteController` |
 | **Vista** | `clientes/index.blade.php` (con ~1.500 líneas inline de CSS/JS), JS: `resources/js/app.js` (función duplicada) |
-| **Estado** | ⚠️ Funcional en general (gestión de deudas/créditos) pero con deuda técnica grave (CSS/JS inline, 2 tablas con lógica duplicada, form de pago sin `action`) |
+| **Estado** | ⚠️ Funcional en general (gestión de deudas/créditos); el formulario de abono usa la ruta `clientes.registrarPago`. Sigue la deuda técnica de CSS/JS inline y dos tablas con lógica duplicada. |
 
 Gestión de clientes con compras referenciadas. Dos pestañas: deudas abiertas y pagados. Los pagos se registran sobre `pago_salida` y descienden el saldo total de la venta a crédito.
 

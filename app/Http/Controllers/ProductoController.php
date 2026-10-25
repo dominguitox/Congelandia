@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\ListaPrecio;
+use App\Models\Promocion;
 use App\Models\Ingreso;
 use App\Models\DetalleIngreso;
 
@@ -144,7 +145,15 @@ class ProductoController extends Controller
             // dd($productos);
             $proveedores = Proveedor::whereNull('deleted_at')->get();
             $categorias = Categoria::whereNull('deleted_at')->get();
-            return view('inventario.index', compact('productos', 'proveedores', 'categorias'));
+            $ofertasActivas = Promocion::vigentes()
+                ->with('producto')
+                ->orderBy('fechaFin')
+                ->get();
+            $ofertas = Promocion::with('producto')
+                ->orderByDesc('fechaInicio')
+                ->get();
+
+            return view('inventario.index', compact('productos', 'proveedores', 'categorias', 'ofertasActivas', 'ofertas'));
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());

@@ -80,7 +80,25 @@
 }
 
 .producto-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
     margin-bottom: var(--space-xs);
+}
+
+.badge-oferta {
+    background: var(--color-success-bg, #d8ffe7);
+    color: var(--color-success, #008f4c);
+    border: 1px solid var(--color-success, #008f4c);
+}
+
+.badge-stock {
+    background: transparent;
+    color: var(--color-primary-hover);
+    border: 1px solid var(--color-primary-soft);
+    font-weight: 500;
 }
 
 .producto-card-nombre {
@@ -109,6 +127,22 @@
     color: var(--color-text);
 }
 
+.producto-card-precio-wrap {
+    display: grid;
+    gap: 2px;
+}
+
+.producto-card-precio-normal {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}
+
+.producto-card-precio--oferta,
+.ticket-precio-oferta {
+    color: var(--color-success, #008f4c);
+    font-weight: 400;
+}
+
 .pos-vacio {
     grid-column: 1 / -1;
 }
@@ -132,6 +166,39 @@
     padding: var(--space-lg) var(--space-xl);
 }
 
+.ticket-linea {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border-soft);
+}
+
+.ticket-linea-producto {
+    flex: 1;
+    min-width: 0;
+}
+
+.ticket-linea-producto h6 {
+    overflow-wrap: anywhere;
+}
+
+.ticket-linea-producto small {
+    display: block;
+}
+
+.ticket-precio-normal {
+    color: var(--color-text-muted);
+}
+
+.ticket-linea > .d-flex {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 3px;
+}
+
 .ticket-pie {
     border-top: 1px solid var(--color-border-soft);
     padding: var(--space-lg) var(--space-xl);
@@ -139,10 +206,26 @@
 }
 
 .ticket-total {
+    display: grid;
+    gap: 4px;
+    margin-bottom: var(--space-md);
+}
+
+.ticket-total-normal,
+.ticket-total-actual {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-md);
+    gap: 12px;
+}
+
+.ticket-total-normal {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}
+
+.ticket-total-normal del {
+    color: var(--color-text-muted);
 }
 
 .ticket-total span {
