@@ -12,6 +12,7 @@ return new class extends Migration
      * creado por migraciones y el creado desde los dumps SQL.
      */
     private array $tables = [
+        ['salida', 'Salida'],
         ['ingreso', 'Ingreso'],
         ['detalle_ingreso', 'Detalle_Ingreso'],
         ['detalle_salida', 'Detalle_Salida'],
@@ -45,7 +46,7 @@ return new class extends Migration
         foreach ($this->tables as $candidates) {
             $resolved = $this->resolveTable($candidates);
 
-            if ($resolved === null || ! Schema::hasColumn($resolved, 'deleted_at')) {
+            if ($resolved === null || !Schema::hasColumn($resolved, 'deleted_at')) {
                 continue;
             }
 
