@@ -1,51 +1,33 @@
 @extends('layouts.app')
 
-@section('title', 'Categorías')
+@section('title', 'Categorias')
+
+@push('css')
+    @vite(['resources/css/categorias.css'])
+@endpush
 
 @section('content')
 
-<div class="categorias-page">
+<div class="page">
 
     {{-- =====================================================
          ENCABEZADO
-         ===================================================== --}}
+    ====================================================== --}}
 
-    <div class="categorias-header">
+    <div class="page-header">
 
-        <div class="categorias-title">
+        <div class="page-title">
 
             <h1>Categorías</h1>
 
-            <p>
-                Gestiona las categorías de tus productos
-            </p>
+            <p>Gestiona las categorías de productos y su catálogo</p>
 
         </div>
 
+        <div class="page-actions">
 
-        <div class="categorias-header-actions">
-
-            <div class="categoria-search">
-
-                <span class="search-icon">⌕</span>
-
-                <input
-                    type="text"
-                    id="buscarCategoria"
-                    placeholder="Buscar categoría..."
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-            <button
-                type="button"
-                id="btnNuevaCategoria"
-                class="btn-primary"
-            >
-                <span class="btn-plus">+</span>
-                Nueva Categoría
+            <button type="button" class="btn-solid" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                <span>+</span> Nueva Categoría
             </button>
 
         </div>
@@ -54,630 +36,301 @@
 
 
     {{-- =====================================================
-         ESTADÍSTICAS
-         ===================================================== --}}
+         TARJETAS DE RESUMEN
+    ====================================================== --}}
 
-    <div class="categoria-stats">
+    <div class="stats-grid">
 
-        <div class="stat-card">
-
-            <div class="stat-icon blue">
-                ◇
+        <div class="stat-tile">
+            <div class="stat-tile-info">
+                <span>Total Categorías</span>
+                <strong>{{ $estadisticas['total'] }}</strong>
             </div>
-
-            <div class="stat-content">
-
-                <span>
-                    Total Categorías
-                </span>
-
-                <strong>
-                    {{ $totalCategorias }}
-                </strong>
-
+            <div class="card-icon proveedores-icon">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 7h18"/>
+                    <path d="M3 12h18"/>
+                    <path d="M3 17h18"/>
+                </svg>
             </div>
-
         </div>
 
-
-        <div class="stat-card">
-
-            <div class="stat-icon blue">
-                □
+        <div class="stat-tile">
+            <div class="stat-tile-info">
+                <span>Productos con categoría</span>
+                <strong>{{ $estadisticas['productos_categorizados'] }}</strong>
             </div>
-
-            <div class="stat-content">
-
-                <span>
-                    Productos con categoría
-                </span>
-
-                <strong>
-                    {{ $productosConCategoria }}
-                </strong>
-
+            <div class="card-icon stat-icon-ingreso">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m21 8-9-5-9 5 9 5 9-5Z"/>
+                    <path d="M3 8v8l9 5 9-5V8"/>
+                    <path d="M12 13v8"/>
+                </svg>
             </div>
-
         </div>
 
-
-        <div class="stat-card">
-
-            <div class="stat-icon orange">
-                ◇
+        <div class="stat-tile">
+            <div class="stat-tile-info">
+                <span>Productos sin categoría</span>
+                <strong>{{ $estadisticas['productos_NoCategorizados'] }}</strong>
             </div>
-
-            <div class="stat-content">
-
-                <span>
-                    Categorías en uso
-                </span>
-
-                <strong>
-                    {{ $categoriasEnUso }}
-                </strong>
-
+            <div class="card-icon alerta-icon">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3 2.5 20h19L12 3Z"/>
+                    <path d="M12 9v5"/>
+                    <path d="M12 17h.01"/>
+                </svg>
             </div>
+        </div>
 
+        <div class="stat-tile">
+            <div class="stat-tile-info">
+                <span>Categorías sin productos</span>
+                <strong>{{ $estadisticas['categorias_uso'] }}</strong>
+            </div>
+            <div class="card-icon productos-icon">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 8v5"/>
+                    <path d="M12 16h.01"/>
+                </svg>
+            </div>
         </div>
 
     </div>
 
 
     {{-- =====================================================
-         CONTENIDO
-         ===================================================== --}}
+         CONTENIDO PRINCIPAL
+    ====================================================== --}}
 
-    <div class="categorias-layout">
+    <div class="categorias-grid">
 
+        {{-- Tabla de categorías --}}
+        <div class="panel">
 
-        {{-- =================================================
-             LISTA DE CATEGORÍAS
-             ================================================= --}}
-
-        <section class="categorias-table-card">
-
-            <div class="table-header">
-
+            <div class="panel-head">
                 <div>
-                    Categoría
+                    <h3>Categorías registradas</h3>
+                    <p>Listado de categorías del catálogo</p>
                 </div>
-
-                <div>
-                    Productos
-                </div>
-
-                <div>
-                    Acciones
-                </div>
-
             </div>
 
+            <div class="panel-body panel-body--flush">
 
-            <div
-                class="categorias-list"
-                id="categoriasList"
-            >
+                <div class="data-table-wrap">
 
-                @forelse($categorias as $categoria)
+                    <table class="data-table">
 
-                    <div
-                        class="categoria-row"
-                        data-id="{{ $categoria->idCategoria }}"
-                        data-nombre="{{ $categoria->nombre }}"
-                        data-productos="{{ $categoria->productos->count() }}"
-                    >
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th class="text-center">Productos</th>
+                                <th class="col-acciones">Acciones</th>
+                            </tr>
+                        </thead>
 
-                        {{-- Categoría --}}
+                        <tbody>
+                            @forelse($categorias as $categoria)
+                                <tr>
+                                    <td><span class="celda-principal">{{ $categoria->nombre }}</span></td>
 
-                        <div class="categoria-info">
+                                    <td class="text-center">
+                                        <span class="pill pill--primary">{{ $categoria->productos_count }}</span>
+                                    </td>
 
-                            <div class="categoria-icon">
-                                ◇
-                            </div>
+                                    <td class="col-acciones">
+                                        <div class="acciones">
 
-                            <div class="categoria-name">
+                                            <button type="button" class="btn-outline btn-compact btn-ver-productos"
+                                                data-target="#panel-cat-{{ $categoria->idCategoria }}">
+                                                Ver Productos
+                                            </button>
 
-                                <strong>
-                                    {{ $categoria->nombre }}
-                                </strong>
+                                            <button type="button" class="icon-btn icon-btn--info btn-editar" title="Editar categoría"
+                                                data-id="{{ $categoria->idCategoria }}"
+                                                data-nombre="{{ $categoria->nombre }}"
+                                                data-bs-toggle="modal" data-bs-target="#modalEditar">
+                                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M12 20h9"/>
+                                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                                                </svg>
+                                            </button>
 
-                            </div>
+                                            <button type="button" class="icon-btn icon-btn--danger btn-eliminar" title="Eliminar categoría"
+                                                data-id="{{ $categoria->idCategoria }}"
+                                                data-nombre="{{ $categoria->nombre }}"
+                                                data-count="{{ $categoria->productos_count }}"
+                                                data-bs-toggle="modal" data-bs-target="#modalEliminar">
+                                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M3 6h18"/>
+                                                    <path d="M8 6V4h8v2"/>
+                                                    <path d="M19 6l-1 14H6L5 6"/>
+                                                    <path d="M10 11v6"/>
+                                                    <path d="M14 11v6"/>
+                                                </svg>
+                                            </button>
 
-                        </div>
-
-
-                        {{-- Productos --}}
-
-                        <div class="categoria-productos">
-
-                            <span class="productos-badge">
-
-                                {{ $categoria->productos->count() }}
-
-                                @if($categoria->productos->count() === 1)
-                                    producto
-                                @else
-                                    productos
-                                @endif
-
-                            </span>
-
-                        </div>
-
-
-                        {{-- Acciones --}}
-
-                        <div class="categoria-actions">
-
-                            <button
-                                type="button"
-                                class="action-btn action-expand"
-                                data-action="expand"
-                                data-id="{{ $categoria->idCategoria }}"
-                                data-nombre="{{ $categoria->nombre }}"
-                                title="Ver productos"
-                            >
-                                <span class="arrow-icon">›</span>
-                            </button>
-
-
-                            <button
-                                type="button"
-                                class="action-btn action-edit"
-                                data-action="edit"
-                                data-id="{{ $categoria->idCategoria }}"
-                                data-nombre="{{ $categoria->nombre }}"
-                                title="Editar categoría"
-                            >
-                                ✎
-                            </button>
-
-
-                            <button
-                                type="button"
-                                class="action-btn action-delete"
-                                data-action="delete"
-                                data-id="{{ $categoria->idCategoria }}"
-                                data-nombre="{{ $categoria->nombre }}"
-                                data-productos="{{ $categoria->productos->count() }}"
-                                title="Eliminar categoría"
-                            >
-                                🗑
-                            </button>
-
-                        </div>
-
-
-                        {{-- Productos para el panel lateral --}}
-
-                        <template
-                            id="productos-{{ $categoria->idCategoria }}"
-                        >
-
-                            @forelse($categoria->productos as $producto)
-
-                                <div class="producto-detail-card">
-
-                                    <div class="producto-detail-info">
-
-                                        <strong>
-                                            {{ $producto->nombre }}
-                                        </strong>
-
-                                        <span>
-                                            Código:
-                                            {{ $producto->codigo }}
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
+                                        </div>
+                                    </td>
+                                </tr>
                             @empty
-
-                                <div class="productos-empty">
-                                    Esta categoría no tiene productos asociados.
-                                </div>
-
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">🏷️</div>
+                                            <strong>No hay categorías registradas</strong>
+                                            <p>Crea la primera categoría para organizar tus productos.</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             @endforelse
+                        </tbody>
 
-                        </template>
-
-                    </div>
-
-                @empty
-
-                    <div class="categorias-empty">
-
-                        <div class="empty-icon">
-                            ◇
-                        </div>
-
-                        <strong>
-                            No hay categorías registradas
-                        </strong>
-
-                        <span>
-                            Agrega una categoría para comenzar.
-                        </span>
-
-                    </div>
-
-                @endforelse
-
-            </div>
-
-
-            <div
-                class="search-empty"
-                id="searchEmpty"
-            >
-
-                <strong>
-                    No se encontraron categorías
-                </strong>
-
-                <span>
-                    Prueba con otro nombre.
-                </span>
-
-            </div>
-
-        </section>
-
-
-        {{-- =================================================
-             PANEL DERECHO
-             ================================================= --}}
-
-        <aside
-            id="categoriaDetailPanel"
-            class="categoria-detail-panel is-hidden"
-            aria-hidden="true"
-        >
-
-            <div class="detail-panel-header">
-
-                <div class="detail-title-wrapper">
-
-                    <div class="detail-category-icon">
-                        ◇
-                    </div>
-
-                    <h2 id="detailCategoriaNombre">
-                        Categoría
-                    </h2>
+                    </table>
 
                 </div>
 
+            </div>
 
-                <button
-                    type="button"
-                    id="btnCerrarDetalle"
-                    class="detail-close"
-                >
-                    ×
-                </button>
+        </div>
+
+
+        {{-- Panel derecho dinámico --}}
+        <div class="panel">
+
+            <div class="panel-head">
+                <div>
+                    <h3>Productos Asociados</h3>
+                </div>
+            </div>
+
+            <div class="panel-body panel-body--flush" id="contenedor-paneles">
+
+                {{-- Panel por defecto --}}
+                <div class="panel-detalle categorias-vacio" id="panel-default">
+                    <p class="mb-0">Selecciona "Ver Productos" en la tabla para ver el detalle.</p>
+                </div>
+
+                {{-- Paneles generados dinámicamente --}}
+                @foreach($categorias as $categoria)
+                    <div class="panel-detalle d-none" id="panel-cat-{{ $categoria->idCategoria }}">
+
+                        <div class="categoria-detalle-head">
+                            <h5 class="mb-0">{{ $categoria->nombre }}</h5>
+                        </div>
+
+                        <ul class="categoria-productos">
+                            @forelse($categoria->productos as $producto)
+                                <li class="categoria-producto">
+                                    <div>
+                                        <div class="celda-principal">{{ $producto->nombre }}</div>
+                                        <small class="celda-sub">Precio: ${{ number_format($producto->precio, 0, ',', '.') }}</small>
+                                    </div>
+                                    <span class="pill {{ $producto->stock > 0 ? 'pill--success' : 'pill--danger' }}">
+                                        Stock: {{ $producto->stock }}
+                                    </span>
+                                </li>
+                            @empty
+                                <li class="categoria-producto categoria-producto--vacio">
+                                    No hay productos registrados en esta categoría.
+                                </li>
+                            @endforelse
+                        </ul>
+
+                    </div>
+                @endforeach
 
             </div>
 
-
-            <div class="detail-panel-content">
-
-                <div
-                    id="detailProductos"
-                    class="detail-products"
-                ></div>
-
-            </div>
-
-        </aside>
+        </div>
 
     </div>
 
 </div>
 
 
-{{-- =========================================================
-     MODAL NUEVA CATEGORÍA
-     ========================================================= --}}
+{{-- =====================================================
+     MODALES
+====================================================== --}}
 
-<dialog
-    id="modalNuevaCategoria"
-    class="categoria-dialog"
->
-
-    <div class="dialog-header">
-
-        <h2>
-            Nueva Categoría
-        </h2>
-
-        <button
-            type="button"
-            class="dialog-close"
-            data-close-dialog="modalNuevaCategoria"
-            aria-label="Cerrar"
-        >
-            ×
-        </button>
-
-    </div>
-
-
-    <form
-        method="POST"
-        action="{{ route('categorias.store') }}"
-    >
-
-        @csrf
-
-        <div class="dialog-body">
-
-            <label for="nombreNuevaCategoria">
-                Nombre de la categoría
-            </label>
-
-            <input
-                type="text"
-                id="nombreNuevaCategoria"
-                name="nombre"
-                maxlength="100"
-                placeholder="Ej: Bebidas"
-                required
-                autocomplete="off"
-            >
-
+{{-- Modal Crear Categoría --}}
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('categorias.store') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-0">
+                        <label class="form-label">Nombre de la Categoría</label>
+                        <input type="text" name="nombre" class="form-control" required autocomplete="off">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-solid">Guardar</button>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
 
-
-        <div class="dialog-footer">
-
-            <button
-                type="button"
-                class="btn-dialog-secondary"
-                data-close-dialog="modalNuevaCategoria"
-            >
-                Cancelar
-            </button>
-
-            <button
-                type="submit"
-                class="btn-dialog-primary"
-            >
-                Guardar
-            </button>
-
+{{-- Modal Editar Categoría --}}
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditar" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-0">
+                        <label class="form-label">Nombre de la Categoría</label>
+                        <input type="text" name="nombre" id="inputEditarNombre" class="form-control" required autocomplete="off">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-solid">Actualizar</button>
+                </div>
+            </form>
         </div>
-
-    </form>
-
-</dialog>
-
-
-{{-- =========================================================
-     MODAL EDITAR
-     ========================================================= --}}
-
-<dialog
-    id="modalEditarCategoria"
-    class="categoria-dialog"
->
-
-    <div class="dialog-header">
-
-        <h2>
-            Editar Categoría
-        </h2>
-
-        <button
-            type="button"
-            class="dialog-close"
-            data-close-dialog="modalEditarCategoria"
-            aria-label="Cerrar"
-        >
-            ×
-        </button>
-
     </div>
+</div>
 
+{{-- Modal Eliminar Categoría --}}
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Eliminar Categoría</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEliminar" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body text-center py-4">
+                    <p class="mb-1">¿Estás seguro que deseas eliminar la categoría?</p>
+                    <h4 class="fw-bold text-danger mb-3" id="textoEliminarNombre"></h4>
 
-    <form
-        method="POST"
-        id="formEditarCategoria"
-    >
-
-        @csrf
-
-        @method('PUT')
-
-        <div class="dialog-body">
-
-            <label for="nombreEditarCategoria">
-                Nombre de la categoría
-            </label>
-
-            <input
-                type="text"
-                id="nombreEditarCategoria"
-                name="nombre"
-                maxlength="100"
-                required
-                autocomplete="off"
-            >
-
+                    <div id="alertaEliminar" class="alert alert-warning d-none text-start mb-0"></div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="btnSubmitEliminar" class="btn-solid btn-solid--danger">Sí, Eliminar</button>
+                </div>
+            </form>
         </div>
-
-
-        <div class="dialog-footer">
-
-            <button
-                type="button"
-                class="btn-dialog-secondary"
-                data-close-dialog="modalEditarCategoria"
-            >
-                Cancelar
-            </button>
-
-            <button
-                type="submit"
-                class="btn-dialog-primary"
-            >
-                Guardar
-            </button>
-
-        </div>
-
-    </form>
-
-</dialog>
-
-
-{{-- =========================================================
-     MODAL ELIMINAR
-     ========================================================= --}}
-
-<dialog
-    id="modalEliminarCategoria"
-    class="categoria-dialog categoria-dialog-confirm"
->
-
-    <div class="confirm-icon">
-        !
     </div>
-
-
-    <div class="confirm-content">
-
-        <h2>
-            Eliminar categoría
-        </h2>
-
-        <p id="eliminarMensaje">
-            ¿Estás seguro de eliminar esta categoría?
-        </p>
-
-    </div>
-
-
-    <form
-        method="POST"
-        id="formEliminarCategoria"
-    >
-
-        @csrf
-
-        @method('DELETE')
-
-        <div class="dialog-footer">
-
-            <button
-                type="button"
-                class="btn-dialog-secondary"
-                data-close-dialog="modalEliminarCategoria"
-            >
-                Cancelar
-            </button>
-
-            <button
-                type="submit"
-                class="btn-danger"
-            >
-                Eliminar
-            </button>
-
-        </div>
-
-    </form>
-
-</dialog>
-
-
-{{-- =========================================================
-     MODAL ERROR: TIENE PRODUCTOS
-     ========================================================= --}}
-
-<dialog
-    id="modalErrorCategoria"
-    class="categoria-dialog categoria-dialog-confirm"
->
-
-    <div class="confirm-icon error">
-        !
-    </div>
-
-
-    <div class="confirm-content">
-
-        <h2>
-            No se puede eliminar
-        </h2>
-
-        <p>
-            La categoría
-            <strong id="errorCategoriaNombre"></strong>
-            tiene productos asociados.
-        </p>
-
-        <p class="confirm-help">
-            Debes quitar los productos de esta categoría
-            antes de eliminarla.
-        </p>
-
-    </div>
-
-
-    <div class="dialog-footer single-button">
-
-        <button
-            type="button"
-            class="btn-dialog-primary"
-            data-close-dialog="modalErrorCategoria"
-        >
-            Entendido
-        </button>
-
-    </div>
-
-</dialog>
-
-
-{{-- =========================================================
-     MENSAJES
-     ========================================================= --}}
-
-@if(session('success'))
-
-    <div
-        id="serverToast"
-        class="toast-message toast-success"
-    >
-        {{ session('success') }}
-    </div>
-
-@endif
-
-
-@if(session('error'))
-
-    <div
-        id="serverToast"
-        class="toast-message toast-error"
-    >
-        {{ session('error') }}
-    </div>
-
-@endif
-
-
-{{-- =========================================================
-     ASSETS DEL MÓDULO
-     ========================================================= --}}
-
-@vite([
-    'resources/css/categorias.css',
-    'resources/js/categorias.js'
-])
+</div>
 
 @endsection
+
+@vite(['resources/js/categorias.js'])

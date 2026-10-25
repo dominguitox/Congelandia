@@ -2,24 +2,23 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioSeeder extends Seeder
 {
-
     /**
-     * Run the database seeds.
+     * Crea el usuario administrador inicial del sistema.
      */
     public function run(): void
     {
-        Usuario::create([
+        User::create([
             'nombre' => 'Admin principal',
             'email' => 'admin@congelandia.cl',
             'rol' => 'Administrador',
-            'password' => Hash::make('1234'),
+            'contrasena' => Hash::make('1234'),
+            'activo' => true,
         ]);
     }
 }

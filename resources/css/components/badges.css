@@ -1,0 +1,91 @@
+/* =========================================================
+   COMPONENTE - BADGES / ETIQUETAS
+   =========================================================
+   ========================================================= */
+
+.tipo-badge,
+.cantidad-badge,
+.productos-badge,
+.productos-detalle-header span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+}
+
+.tipo-ingreso {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.tipo-salida {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
+
+.cantidad-badge,
+.productos-badge {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.productos-detalle-header span {
+    padding: 4px 8px;
+    font-size: 11px;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+/* =========================================================
+   PILL GENERICA (reutilizable)
+   ========================================================= */
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.pill--primary {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.pill--success {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.pill--warning {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
+
+.pill--danger {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+.pill--info {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+.pill--purple {
+    background: var(--color-purple-bg);
+    color: var(--color-purple);
+}
+
+.pill--muted {
+    background: var(--color-btn-neutral-bg);
+    color: var(--color-btn-neutral-text);
+}

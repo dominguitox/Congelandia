@@ -21,6 +21,10 @@ class DashboardController extends Controller
     {
         try {
             $salidas = Salida::with('detalles.producto')->get();
+            $salidasRecientes = Salida::with('detalles.producto')
+                ->orderBy('fecha', 'desc')
+                ->get();
+
 
             // 1. Cálculos exclusivos para HOY
             $hoy = Carbon::now()->toDateString();
@@ -31,8 +35,8 @@ class DashboardController extends Controller
             $totalVentasHoy = $salidasHoy->sum('totalSalida');
             $ordenesHoy = $salidasHoy->count();
 
-            $promocionesActivas = Promocion::whereDate('fechaInicio', '<=', $hoy)
-                ->whereDate('fechaFin', '>=', $hoy)
+            $promocionesActivas = Promocion::vigentes()
+                ->with('producto')
                 ->orderBy('porcentajeDescuento', 'desc')
                 ->get();
             $cantidadPromocionesActivas = $promocionesActivas->count();
@@ -55,6 +59,7 @@ class DashboardController extends Controller
                         ->select('precioVenta')
                         ->whereColumn('codigoProducto', 'Producto.codigo')
                         ->whereNull('fechaFin')
+                        ->whereNull('deleted_at')
                         ->limit(1)
                 ])
                 ->addSelect([
@@ -62,6 +67,8 @@ class DashboardController extends Controller
                         ->select('Detalle_Ingreso.precioCompra')
                         ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
                         ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->whereNull('Detalle_Ingreso.deleted_at')
+                        ->whereNull('Ingreso.deleted_at')
                         ->orderByDesc('Ingreso.fecha')
                         ->limit(1)
                 ])
@@ -71,6 +78,9 @@ class DashboardController extends Controller
                         ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
                         ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
                         ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->whereNull('Detalle_Ingreso.deleted_at')
+                        ->whereNull('Ingreso.deleted_at')
+                        ->whereNull('Proveedor.deleted_at')
                         ->orderByDesc('Ingreso.fecha')
                         ->limit(1)
                 ])
@@ -85,10 +95,12 @@ class DashboardController extends Controller
                         ->select('Detalle_Ingreso.fechaVencimiento')
                         ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
                         ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
+                        ->whereNull('Detalle_Ingreso.deleted_at')
+                        ->whereNull('Ingreso.deleted_at')
                         ->orderByDesc('Ingreso.fecha')
                         ->limit(1)
                 ])
-                ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
+                ->selectRaw('(IFNULL((SELECT SUM(di.cantidad) FROM Detalle_Ingreso di INNER JOIN Ingreso i ON di.idIngreso = i.idIngreso WHERE di.codigoProducto = Producto.codigo AND di.deleted_at IS NULL AND i.deleted_at IS NULL), 0) - IFNULL((SELECT SUM(ds.cantidad) FROM Detalle_Salida ds INNER JOIN Salida s ON ds.idSalida = s.idSalida WHERE ds.codigoProducto = Producto.codigo AND ds.deleted_at IS NULL AND s.deleted_at IS NULL), 0)) AS stock')
                 ->get();
             $alertasActivas = 0;
             $fechaHoyCarbon = Carbon::now()->startOfDay();
@@ -112,11 +124,15 @@ class DashboardController extends Controller
 
             // Descomentar para debug
             // dd($productos);
+            // dd($salidasHoy);
+
             $proveedores = Proveedor::whereNull('deleted_at')->get();
             $categorias = Categoria::whereNull('deleted_at')->get();
 
             return view('dashboard.index', compact(
                 'salidas',
+                'salidasHoy',
+                'salidasRecientes',
                 'totalVentasHoy',
                 'proveedores',
                 'categorias',

@@ -129,6 +129,8 @@ class ProveedorController extends Controller
             )
             ->whereNull('proveedor.deleted_at')
             ->whereNull('producto.deleted_at')
+            ->whereNull('detalle_ingreso.deleted_at')
+            ->whereNull('ingreso.deleted_at')
             ->distinct()
             ->pluck('detalle_ingreso.codigoProducto');
 
@@ -244,6 +246,8 @@ class ProveedorController extends Controller
                 $proveedor->idProveedor
             )
             ->whereNull('producto.deleted_at')
+            ->whereNull('detalle_ingreso.deleted_at')
+            ->whereNull('ingreso.deleted_at')
             ->exists();
 
         if ($tieneProductos) {

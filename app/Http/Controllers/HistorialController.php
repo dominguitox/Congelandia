@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class historialController extends Controller
+class HistorialController extends Controller
 {
     /**
      * =========================================================
@@ -52,6 +52,7 @@ class historialController extends Controller
                     'proveedor.nombre as proveedor',
                     'usuario.nombre as usuario'
                 )
+                ->whereNull('ingreso.deleted_at')
                 ->orderBy('ingreso.fecha', 'desc')
                 ->get();
 
@@ -73,6 +74,7 @@ class historialController extends Controller
                     'detalle_ingreso.fechaVencimiento',
                     'producto.nombre as producto'
                 )
+                ->whereNull('detalle_ingreso.deleted_at')
                 ->get()
                 ->groupBy('idIngreso');
 
@@ -112,6 +114,7 @@ class historialController extends Controller
                     'tipo_salida.nombre as tipoSalida',
                     'usuario.nombre as usuario'
                 )
+                ->whereNull('salida.deleted_at')
                 ->orderBy('salida.fecha', 'desc')
                 ->get();
 
@@ -132,6 +135,7 @@ class historialController extends Controller
                     'detalle_salida.precioCobrado',
                     'producto.nombre as producto'
                 )
+                ->whereNull('detalle_salida.deleted_at')
                 ->get()
                 ->groupBy('idSalida');
 
@@ -227,6 +231,7 @@ class historialController extends Controller
              * automáticamente en el filtro.
              */
             $tiposSalida = DB::table('tipo_salida')
+                ->whereNull('deleted_at')
                 ->orderBy('nombre')
                 ->pluck('nombre');
 

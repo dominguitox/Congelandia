@@ -1,38 +1,206 @@
+/* =========================================================
+   SITIO PUBLICO (tienda)
+   ========================================================= */
+
+.bg-celeste {
+    background-color: var(--color-public-celeste);
+}
+
+.text-celeste {
+    color: var(--color-public-celeste);
+}
+
 .bg-teal-top {
-    background-color: #008b9c;
+    background-color: var(--color-public-teal-top);
 }
 
 .bg-teal-main {
-    background-color: #00a2b8;
+    background-color: var(--color-public-teal);
+}
+
+.bg-teal {
+    background-color: var(--color-public-teal);
 }
 
 .text-teal {
-    color: #00a2b8;
+    color: var(--color-public-teal);
 }
 
 .bg-orange {
-    background-color: #fd7e14;
+    background-color: var(--color-public-orange);
 }
 
 .text-orange {
-    color: #fd7e14;
+    color: var(--color-public-orange);
 }
 
 .text-yellow {
-    color: #ffc107;
+    color: var(--color-public-yellow);
 }
 
 .bg-yellow {
-    background-color: #ffc107;
+    background-color: var(--color-public-yellow);
 }
 
 .search-bar {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background-color: var(--color-public-search-bg);
+    border: 1px solid var(--color-public-search-border);
 }
 
-/*
-*/
-.btn:hover {
-    background-color: #333;
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero-titulo {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitulo {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+.hero-precio {
+    display: inline-block;
+    background: var(--color-public-yellow);
+    color: #3a2a00;
+    font-weight: 800;
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-pill);
+    margin-bottom: 1.5rem;
+}
+
+/* =========================================================
+   TARJETA DE PRODUCTO PUBLICO
+   ========================================================= */
+
+/* =========================================================
+   SHELL DEL SITIO PUBLICO
+   ========================================================= */
+
+.public-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.public-tagline {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+}
+
+.public-topbar {
+    font-size: 0.85rem;
+}
+
+.public-session-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    font-size: 0.85rem;
+}
+
+.public-session-spacer {
+    height: 42px;
+}
+
+.public-con-sesion .public-navbar {
+    top: 42px;
+}
+
+.public-main .btn-outline-light,
+.public-main .btn-outline-secondary {
+    background-color: #fff;
+    opacity: 1;
+}
+
+.public-main .btn-outline-light {
+    color: var(--color-public-teal);
+    border-color: #fff;
+}
+
+.public-main .btn-outline-light:hover,
+.public-main .btn-outline-light:focus {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-active);
+    border-color: var(--color-primary-soft);
+}
+
+.public-main .btn-outline-secondary {
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.public-main .btn-outline-secondary:hover,
+.public-main .btn-outline-secondary:focus {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-active);
+    border-color: var(--color-border);
+}
+
+.public-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+}
+
+.public-search {
+    width: min(100%, 420px);
+}
+
+.public-navbar .nav-link {
+    color: var(--color-text);
+    padding-inline: 0.75rem;
+}
+
+.public-navbar .nav-link:hover,
+.public-navbar .nav-link.active {
+    color: var(--color-public-teal);
+}
+
+.public-hero-img {
+    height: 420px;
+}
+
+.public-producto-img {
+    height: 220px;
+    object-fit: cover;
+}
+
+.public-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 2.25rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-active);
+    font-weight: 800;
+}
+
+@media (max-width: 991.98px) {
+    .public-search {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-titulo {
+        font-size: 2rem;
+    }
+
+    .public-hero-img {
+        height: 280px;
+    }
 }

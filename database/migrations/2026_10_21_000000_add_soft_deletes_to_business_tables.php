@@ -46,7 +46,7 @@ return new class extends Migration
         foreach ($this->tables as $candidates) {
             $resolved = $this->resolveTable($candidates);
 
-            if ($resolved === null || ! Schema::hasColumn($resolved, 'deleted_at')) {
+            if ($resolved === null || !Schema::hasColumn($resolved, 'deleted_at')) {
                 continue;
             }
 

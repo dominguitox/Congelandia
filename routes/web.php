@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\historialController;
+use App\Http\Controllers\HistorialController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
@@ -13,6 +13,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\VersionController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\PromocionController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
@@ -33,6 +34,11 @@ Route::get(
     '/catalogo',
     [PublicController::class, 'catalogo']
 )->name('public.catalogo');
+
+Route::get(
+    '/contacto',
+    [PublicController::class, 'contacto']
+)->name('public.contacto');
 
 
 // =========================================================
@@ -75,6 +81,11 @@ Route::middleware('auth')->group(function () {
     // =====================================================
 
     Route::get(
+        '/admin',
+        [DashboardController::class, 'index']
+    )->name('dashboard.index');
+
+    Route::get(
         '/dashboard',
         [DashboardController::class, 'index']
     )->name('dashboard.index');
@@ -98,16 +109,27 @@ Route::middleware('auth')->group(function () {
         '/inventario',
         [ProductoController::class, 'listarProductos']
     )->name('inventario.index');
-
-    Route::get(
-        '/inventario/{codigo}',
-        [ProductoController::class, 'show']
-    )->name('inventario.show');
-
+    /*
+    No se implementó, guardar por si acaso
+        Route::get(
+            '/inventario/{codigo}',
+            [ProductoController::class, 'show']
+        )->name('inventario.show');
+    */
     Route::put(
         '/productos/{codigo}',
         [ProductoController::class, 'editarProducto']
     )->name('inventario.editarProducto');
+
+    Route::post(
+        '/inventario/ingresos',
+        [ProductoController::class, 'registrarIngreso']
+    )->name('inventario.ingresos.store');
+
+    Route::post(
+        '/inventario/salidas',
+        [ProductoController::class, 'registrarSalida']
+    )->name('inventario.salidas.store');
 
 
     // =====================================================
@@ -131,7 +153,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get(
         '/historial',
-        [historialController::class, 'index']
+        [HistorialController::class, 'index']
     )->name('historial.index');
 
 
@@ -209,11 +231,6 @@ Route::middleware('auth')->group(function () {
         [ProveedorController::class, 'store']
     )->name('proveedores.store');
 
-    Route::get(
-        '/proveedores/{idProveedor}/productos',
-        [ProveedorController::class, 'productos']
-    )->name('proveedores.productos');
-
     Route::put(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'update']
@@ -260,6 +277,26 @@ Route::middleware([
     'auth',
     CheckRole::class . ':Administrador'
 ])->group(function () {
+
+    Route::post(
+        '/ofertas',
+        [PromocionController::class, 'store']
+    )->name('ofertas.store');
+
+    Route::put(
+        '/ofertas/{idPromocion}',
+        [PromocionController::class, 'update']
+    )->name('ofertas.update');
+
+    Route::patch(
+        '/ofertas/{idPromocion}/estado',
+        [PromocionController::class, 'toggle']
+    )->name('ofertas.toggle');
+
+    Route::delete(
+        '/ofertas/{idPromocion}',
+        [PromocionController::class, 'destroy']
+    )->name('ofertas.destroy');
 
     Route::post(
         '/productos/guardar',

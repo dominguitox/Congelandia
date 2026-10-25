@@ -2,15 +2,15 @@ CREATE DATABASE IF NOT EXISTS congelandia_db;
 USE congelandia_db;
 -- 1. Usuarios 
 INSERT INTO Usuario (nombre, contrasena, rol, email, activo) VALUES 
--- Realmente estos funcionan con 1234 o 12345 encriptados, el sistema todavia no hace el hasheo asi q no los toma
-('Admin 2', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador', 'admin2@congelandia.cl', TRUE),
-('Cajero 1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Cajero', 'cajero1@congelandia.cl', TRUE),
-('Cajero 2', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Cajero', 'cajero2@congelandia.cl', TRUE),
-('Supervisor', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Supervisor', 'supervisor@congelandia.cl', TRUE),
-('Bodeguero', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Bodeguero', 'bodeguero@congelandia.cl', TRUE),
+-- Contraseñas hasheadas: los primeros 5 usuarios usan "1234"; dev y Admin usan "12345"
+('Admin 2', '$2y$12$wfAJHF6avEgFPk.nr3mPsuQAYts1S7DQ0eqsggRnJxTANJ1Bv.ox2', 'Administrador', 'admin2@congelandia.cl', TRUE),
+('Cajero 1', '$2y$12$wfAJHF6avEgFPk.nr3mPsuQAYts1S7DQ0eqsggRnJxTANJ1Bv.ox2', 'Cajero', 'cajero1@congelandia.cl', TRUE),
+('Cajero 2', '$2y$12$wfAJHF6avEgFPk.nr3mPsuQAYts1S7DQ0eqsggRnJxTANJ1Bv.ox2', 'Cajero', 'cajero2@congelandia.cl', TRUE),
+('Supervisor', '$2y$12$wfAJHF6avEgFPk.nr3mPsuQAYts1S7DQ0eqsggRnJxTANJ1Bv.ox2', 'Supervisor', 'supervisor@congelandia.cl', TRUE),
+('Bodeguero', '$2y$12$wfAJHF6avEgFPk.nr3mPsuQAYts1S7DQ0eqsggRnJxTANJ1Bv.ox2', 'Bodeguero', 'bodeguero@congelandia.cl', TRUE),
 -- Por si acaso el admin no funciona
-('dev', '12345', 'Administrador', 'dev@congelandia.cl', TRUE),
-('Admin', '12345', 'Administrador', 'admin@congelandia.cl', TRUE);
+('dev', '$2y$12$Z1v08w6l4Z5l7tSz1rODE.ayntGM.70hncHa1w9ZSsxTBrL1JwCNK', 'Administrador', 'dev@congelandia.cl', TRUE),
+('Admin', '$2y$12$Z1v08w6l4Z5l7tSz1rODE.ayntGM.70hncHa1w9ZSsxTBrL1JwCNK', 'Administrador', 'admin@congelandia.cl', TRUE);
 
 -- 2. Clientes
 INSERT INTO Cliente (rutCliente, nombre, telefono, saldoDeuda) VALUES 
