@@ -702,7 +702,8 @@
         <form
             id="formRegistrarPago"
             method="POST"
-            action=""
+            action="{{ route('clientes.registrarPago', ['idSalida' => '__ID_SALIDA__']) }}"
+            data-action-template="{{ route('clientes.registrarPago', ['idSalida' => '__ID_SALIDA__']) }}"
         >
 
             @csrf
@@ -2029,6 +2030,11 @@ document.addEventListener(
 
                     return;
                 }
+
+                form.action = form.dataset.actionTemplate.replace(
+                    '__ID_SALIDA__',
+                    encodeURIComponent(select.value)
+                );
 
             }
         );
