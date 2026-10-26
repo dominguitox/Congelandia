@@ -11,4 +11,18 @@ return [
         'instagram' => env('PUBLIC_INSTAGRAM', ''),
     ],
 
+    /*
+    |------------------------------------------------------------------
+    | Estilos del sitio publico
+    |------------------------------------------------------------------
+    | Permite comparar propuestas visuales sin tocar el panel interno.
+    | Cada estilo vive en resources/css/public-temas/<estilo>.css
+    */
+
+    'estilo_default' => env('PUBLIC_ESTILO', 'fresco'),
+
+    // Muestra la barra flotante para alternar entre estilos.
+    // Dejar en false al publicar el sitio definitivo.
+    'selector_estilos' => env('PUBLIC_SELECTOR_ESTILOS', true),
+
 ];

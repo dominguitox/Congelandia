@@ -4,37 +4,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    @php
+        $estilos = [
+            'fresco' => 'Fresco',
+            'feria' => 'Feria',
+            'hielo' => 'Hielo',
+        ];
+
+        $estiloSesion = session('public_estilo', config('public.estilo_default', 'fresco'));
+
+        // "mercado" fue la primera propuesta; ahora se llama "feria".
+        if ($estiloSesion === 'mercado') {
+            $estiloSesion = 'feria';
+        }
+
+        $estiloQuery = request()->query('estilo');
+
+        if ($estiloQuery === 'mercado') {
+            $estiloQuery = 'feria';
+        }
+
+        if (is_string($estiloQuery) && array_key_exists($estiloQuery, $estilos)) {
+            session(['public_estilo' => $estiloQuery]);
+            $estiloSesion = $estiloQuery;
+        }
+
+        $estilo = array_key_exists($estiloSesion, $estilos) ? $estiloSesion : 'fresco';
+
+        if (request()->has('selector')) {
+            session(['public_selector' => request()->boolean('selector')]);
+        }
+
+        $mostrarSelector = config('public.selector_estilos', false) && session('public_selector', true);
+
+        $contacto = config('public.contacto');
+        $whatsappNumero = preg_replace('/\D+/', '', (string) $contacto['whatsapp']);
+        $whatsappUrl = $whatsappNumero
+            ? 'https://wa.me/' . $whatsappNumero . '?text=' . urlencode('Hola Congelandia, quiero hacer una consulta.')
+            : null;
+    @endphp
+
     <title>Congelandia - @yield('title', 'El mundo de los congelados')</title>
+    <meta name="description" content="@yield('descripcion', 'Congelados de calidad para tu mesa: empanadas, carnes, verduras y más. Revisa el catálogo y coordina tu pedido.')">
+    <meta name="theme-color" content="#082b45">
 
-    @vite(['resources/css/app.css', 'resources/css/public.css', 'resources/js/app.js'])
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Congelandia">
+    <meta property="og:title" content="Congelandia - @yield('title', 'El mundo de los congelados')">
+    <meta property="og:description" content="@yield('descripcion', 'Congelados de calidad para tu mesa. Revisa el catálogo y coordina tu pedido.')">
+    <meta property="og:image" content="{{ asset('images/hero/tomates.webp') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
 
-    @php($temaActivo = config('app.tema'))
-    @if($temaActivo && $temaActivo !== 'base' && file_exists(resource_path("css/theme/themes/{$temaActivo}.css")))
-        @vite(["resources/css/theme/themes/{$temaActivo}.css"])
-    @endif
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
+    @fonts
+    @vite([
+        'resources/css/app.css',
+        'resources/css/public.css',
+        "resources/css/public-temas/{$estilo}.css",
+        'resources/js/app.js',
+    ])
 
     @stack('css')
 
     @php($conSesion = auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
 </head>
 
-<body class="bg-white text-dark d-flex flex-column min-vh-100 {{ $conSesion ? 'public-con-sesion' : '' }}">
-    @php($contacto = config('public.contacto'))
+<body class="pub-body d-flex flex-column min-vh-100 {{ $conSesion ? 'public-con-sesion' : '' }} {{ $mostrarSelector ? 'has-stylebar' : '' }}" data-estilo="{{ $estilo }}">
     @php($usuarioSesion = session('usuario'))
     @php($nombreSesion = auth()->user()->nombre ?? (is_object($usuarioSesion) ? ($usuarioSesion->nombre ?? 'Usuario') : 'Usuario'))
 
     @if($conSesion)
-        <div class="public-session-bar bg-dark text-white shadow-sm">
-            <div class="container d-flex justify-content-between align-items-center gap-2">
-                <a class="btn btn-sm bg-orange text-white rounded-pill fw-bold px-3 flex-shrink-0"
-                    href="{{ route('dashboard.index') }}">
+        <div class="pub-session-bar">
+            <div class="pub-container">
+                <a class="pub-btn pub-btn--accent pub-btn--sm" href="{{ route('dashboard.index') }}">
                     Ir al panel
                 </a>
 
                 @if(isset($version) && $version)
-                    <div class="d-none d-md-flex align-items-center gap-2 small text-truncate">
+                    <div class="d-none d-md-flex align-items-center gap-2 small">
                         <span><strong>Versión:</strong> {{ $version->numero }}</span>
-                        <a href="{{ url('/version-info') }}" target="_blank" class="text-white">Ver detalles</a>
+                        <a href="{{ url('/version-info') }}" target="_blank" class="text-decoration-underline">Ver detalles</a>
                     </div>
                 @endif
 
@@ -48,112 +99,141 @@
         <div class="public-session-spacer" aria-hidden="true"></div>
     @endif
 
-    <div class="bg-teal-top text-white py-2 public-topbar">
-        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <span>Productos congelados listos para tu mesa</span>
-            <span class="d-flex flex-wrap gap-3">
+    <div class="pub-topbar">
+        <div class="pub-container">
+            <span class="pub-topbar__group">
+                <span class="pub-topbar__hide-sm">Cadena de frío garantizada</span>
+                <span class="pub-topbar__dot pub-topbar__hide-sm" aria-hidden="true">•</span>
+                <span>Despacho coordinado</span>
+            </span>
+
+            <span class="pub-topbar__group">
                 <span>{{ $contacto['horario'] }}</span>
-                <a href="tel:{{ preg_replace('/\s+/', '', $contacto['telefono']) }}" class="text-white">
+                <a href="tel:{{ preg_replace('/\s+/', '', $contacto['telefono']) }}">
                     {{ $contacto['telefono'] }}
                 </a>
             </span>
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm public-navbar">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center text-dark" href="{{ route('public.index') }}">
-                <img src="{{ asset('logo.png') }}" alt="Congelandia" class="public-logo me-2">
-                <span class="lh-1">
-                    <span class="d-block fw-bold fs-5">CONGELANDIA</span>
-                    <span class="text-teal fw-bold public-tagline">EL MUNDO DE LOS CONGELADOS</span>
+    <nav class="pub-nav">
+        <div class="pub-container">
+            <a class="pub-brand" href="{{ route('public.index') }}">
+                <span class="pub-brand__mark">
+                    <img src="{{ asset('images/brand/logo-marca.webp') }}" alt="" width="56" height="56">
+                </span>
+                <span class="pub-brand__text">
+                    <span class="pub-brand__name">Congelandia</span>
+                    <span class="pub-brand__tag">El mundo de los congelados</span>
                 </span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublico"
-                aria-controls="navbarPublico" aria-expanded="false" aria-label="Abrir navegación">
-                <span class="navbar-toggler-icon"></span>
+            <button class="pub-nav__toggle" type="button" data-bs-toggle="collapse"
+                data-bs-target="#pubNav" aria-controls="pubNav" aria-expanded="false"
+                aria-label="Abrir navegación">
+                <span></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarPublico">
-                <form class="d-flex public-search mx-lg-auto my-3 my-lg-0" action="{{ route('public.catalogo') }}"
-                    method="GET" role="search">
-                    <input class="form-control rounded-pill search-bar px-4" type="search" name="q"
-                        value="{{ request()->routeIs('public.catalogo') ? request('q') : '' }}"
-                        placeholder="Buscar productos" aria-label="Buscar productos">
-                    <button class="btn bg-orange text-white rounded-pill fw-bold ms-2 px-3" type="submit">
-                        Buscar
-                    </button>
-                </form>
-
-                <ul class="navbar-nav align-items-lg-center gap-lg-2">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('public.index') ? 'active fw-bold' : '' }}"
+            <div class="collapse pub-nav__collapse" id="pubNav">
+                <ul class="pub-nav__links">
+                    <li>
+                        <a class="{{ request()->routeIs('public.index') ? 'is-active' : '' }}"
                             href="{{ route('public.index') }}">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('public.catalogo') ? 'active fw-bold' : '' }}"
+                    <li>
+                        <a class="{{ request()->routeIs('public.catalogo') ? 'is-active' : '' }}"
                             href="{{ route('public.catalogo') }}">Catálogo</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('public.contacto') ? 'active fw-bold' : '' }}"
+                    <li>
+                        <a class="{{ request()->routeIs('public.contacto') ? 'is-active' : '' }}"
                             href="{{ route('public.contacto') }}">Contacto</a>
                     </li>
                 </ul>
+
+                <div class="pub-nav__actions">
+                    <form class="pub-search" action="{{ route('public.catalogo') }}" method="GET" role="search">
+                        <input type="search" name="q"
+                            value="{{ request()->routeIs('public.catalogo') ? request('q') : '' }}"
+                            placeholder="Buscar productos" aria-label="Buscar productos">
+                        <button type="submit" aria-label="Buscar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="7"></circle>
+                                <path d="m20 20-3.5-3.5"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    @if($whatsappUrl)
+                        <a class="pub-btn pub-btn--accent pub-btn--sm" href="{{ $whatsappUrl }}" target="_blank"
+                            rel="noopener">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12.04 2C6.5 2 2 6.5 2 12.04c0 1.77.46 3.5 1.34 5.02L2 22l5.08-1.33a10 10 0 0 0 4.96 1.3h.01C17.6 21.97 22 17.5 22 12.04 22 6.5 17.58 2 12.04 2Zm5.9 14.18c-.25.7-1.45 1.34-2 1.38-.55.05-1.07.24-3.6-.75-3.05-1.2-5-4.32-5.15-4.52-.15-.2-1.23-1.64-1.23-3.13 0-1.48.78-2.21 1.06-2.51.28-.3.61-.38.81-.38.2 0 .4 0 .58.01.18.01.43-.07.67.51.25.6.85 2.08.93 2.23.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.4-.45.53-.15.15-.3.31-.13.61.17.3.76 1.26 1.63 2.04 1.12 1 2.06 1.31 2.36 1.46.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.28.1 1.75.83 2.05.98.3.15.5.23.57.35.08.13.08.73-.17 1.43Z" />
+                            </svg>
+                            <span class="d-none d-xl-inline">Pedir por WhatsApp</span>
+                            <span class="d-xl-none">WhatsApp</span>
+                        </a>
+                    @endif
+                </div>
             </div>
         </div>
     </nav>
 
-    <main class="public-main flex-grow-1">
+    <main class="pub-main flex-grow-1">
         @yield('content')
     </main>
 
-    <footer class="bg-dark text-white pt-5 pb-4 mt-auto public-footer">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-5">
-                    <div class="d-flex align-items-center mb-3">
-                        <img src="{{ asset('logo.png') }}" alt="Congelandia" class="public-logo me-2">
-                        <span class="fs-5 fw-bold">CONGELANDIA</span>
-                    </div>
-                    <p class="text-white-50 mb-0">
-                        Congelados de calidad para compartir en casa. Revisa nuestro catálogo y contáctanos para
-                        coordinar tu pedido.
+    <footer class="pub-footer">
+        <div class="pub-container">
+            <div class="pub-footer__grid">
+                <div>
+                    <a class="pub-footer__brand" href="{{ route('public.index') }}">
+                        <img src="{{ asset('images/brand/logo-marca.webp') }}" alt="" width="72"
+                            height="72">
+                        <span>
+                            <strong>Congelandia</strong>
+                            <span>El mundo de los congelados</span>
+                        </span>
+                    </a>
+
+                    <p>
+                        Congelados de calidad para compartir en casa o en tu negocio.
+                        Revisa el catálogo y coordina tu pedido con nosotros.
                     </p>
                 </div>
 
-                <div class="col-6 col-lg-3">
-                    <h2 class="h6 text-uppercase text-white-50 mb-3">Navegación</h2>
-                    <ul class="list-unstyled d-grid gap-2 mb-0">
-                        <li><a class="link-light text-decoration-none" href="{{ route('public.index') }}">Inicio</a></li>
-                        <li><a class="link-light text-decoration-none" href="{{ route('public.catalogo') }}">Catálogo</a></li>
-                        <li><a class="link-light text-decoration-none" href="{{ route('public.contacto') }}">Contacto</a></li>
+                <div>
+                    <h2>Navegación</h2>
+                    <ul>
+                        <li><a href="{{ route('public.index') }}">Inicio</a></li>
+                        <li><a href="{{ route('public.catalogo') }}">Catálogo</a></li>
+                        <li><a href="{{ route('public.contacto') }}">Contacto</a></li>
                     </ul>
                 </div>
 
-                <div class="col-6 col-lg-4">
-                    <h2 class="h6 text-uppercase text-white-50 mb-3">Contacto</h2>
-                    <ul class="list-unstyled d-grid gap-2 mb-0 text-white-50">
+                <div>
+                    <h2>Contacto</h2>
+                    <ul>
                         <li>
-                            <a class="link-light text-decoration-none"
-                                href="tel:{{ preg_replace('/\s+/', '', $contacto['telefono']) }}">
+                            <a href="tel:{{ preg_replace('/\s+/', '', $contacto['telefono']) }}">
                                 {{ $contacto['telefono'] }}
                             </a>
                         </li>
                         <li>
-                            <a class="link-light text-decoration-none" href="mailto:{{ $contacto['email'] }}">
-                                {{ $contacto['email'] }}
-                            </a>
+                            <a href="mailto:{{ $contacto['email'] }}">{{ $contacto['email'] }}</a>
                         </li>
                         <li>{{ $contacto['direccion'] }}</li>
                         <li>{{ $contacto['horario'] }}</li>
+                        @if($contacto['instagram'])
+                            <li>
+                                <a href="{{ $contacto['instagram'] }}" target="_blank" rel="noopener">Instagram</a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </div>
 
-            <hr class="border-secondary my-4">
-
-            <div class="d-flex flex-wrap justify-content-between gap-2 small text-white-50">
+            <div class="pub-footer__bottom">
                 <span>&copy; {{ date('Y') }} Congelandia. Todos los derechos reservados.</span>
                 @if(isset($version) && $version)
                     <span>Versión {{ $version->numero }}</span>
@@ -161,6 +241,23 @@
             </div>
         </div>
     </footer>
+
+    @if($mostrarSelector)
+        <div class="pub-stylebar" role="group" aria-label="Vista previa de estilos">
+            <span class="pub-stylebar__label">Vista previa</span>
+
+            @foreach($estilos as $clave => $nombre)
+                <a class="pub-stylebar__btn {{ $estilo === $clave ? 'is-active' : '' }}"
+                    href="{{ request()->fullUrlWithQuery(['estilo' => $clave]) }}"
+                    @if($estilo === $clave) aria-current="true" @endif>
+                    {{ $nombre }}
+                </a>
+            @endforeach
+
+            <a class="pub-stylebar__close" href="{{ request()->fullUrlWithQuery(['selector' => 0]) }}"
+                aria-label="Ocultar selector de estilos">&times;</a>
+        </div>
+    @endif
 
     @stack('scripts')
 </body>

@@ -41,13 +41,25 @@ export default defineConfig({
                 'resources/css/auth.css',
 
                 'resources/css/public.css',
+                'resources/css/public-temas/fresco.css',
+                'resources/css/public-temas/feria.css',
+                'resources/css/public-temas/hielo.css',
             ],
 
             refresh: true,
 
             fonts: [
                 bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                    weights: [400, 500, 600, 700],
+                }),
+                bunny('Baloo 2', {
+                    weights: [500, 600, 700],
+                }),
+                bunny('Fraunces', {
+                    weights: [500, 600, 700],
+                }),
+                bunny('Anton', {
+                    weights: [400],
                 }),
             ],
         }),
