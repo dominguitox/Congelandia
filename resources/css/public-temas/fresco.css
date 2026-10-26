@@ -1,0 +1,60 @@
+/* =========================================================
+   ESTILO 1 - FRESCO (recomendado)
+   =========================================================
+   Cercano, familiar y luminoso. Crema calida, azul del logo
+   y dorado como acento. Tipografia redondeada.
+   Es el estilo base definido en resources/css/public.css.
+   ========================================================= */
+
+/* Iconos de categoria con acentos alternados */
+.pub-cat:nth-child(4n + 2) .pub-cat__icon {
+    background: #fff0d6;
+    color: #8a5200;
+}
+
+.pub-cat:nth-child(4n + 3) .pub-cat__icon {
+    background: var(--pub-coral-soft);
+    color: var(--pub-coral);
+}
+
+.pub-cat:nth-child(4n + 4) .pub-cat__icon {
+    background: #e7f6ec;
+    color: #1f6b45;
+}
+
+/* Un guino jugueton en la foto principal */
+.pub-hero__photo {
+    outline: 1px solid rgba(8, 43, 69, .06);
+    outline-offset: 8px;
+}
+
+.pub-sticker {
+    animation: pub-sticker-float 6s ease-in-out infinite;
+}
+
+@keyframes pub-sticker-float {
+    0%,
+    100% {
+        transform: rotate(8deg) translateY(0);
+    }
+
+    50% {
+        transform: rotate(6deg) translateY(-6px);
+    }
+}
+
+/* Los pasos se conectan visualmente */
+.pub-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50px;
+    right: -20px;
+    width: 20px;
+    border-top: 2px dashed var(--pub-line-strong);
+}
+
+@media (max-width: 991.98px) {
+    .pub-step::after {
+        display: none;
+    }
+}
