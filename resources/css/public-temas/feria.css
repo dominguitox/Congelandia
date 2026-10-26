@@ -1,0 +1,1111 @@
+/* =========================================================
+   ESTILO 2 - FERIA
+   =========================================================
+   Reemplaza a "Mercado". Es una propuesta de afiche: rojo,
+   mostaza y carbon, tipografia condensada, bordes gruesos y
+   sombras duras. Piensa en una feria/rotiseria de barrio con
+   actitud, no en una tienda delicada.
+   ========================================================= */
+
+:root {
+    --pub-bg: #fff4e0;
+    --pub-bg-alt: #ffe8c2;
+    --pub-surface: #fffdf7;
+    --pub-surface-soft: #fff8ea;
+
+    --pub-ink: #1b1b1b;
+    --pub-ink-soft: #5a5147;
+    --pub-ink-faint: #8a7c6b;
+
+    --pub-primary: #c81d25;
+    --pub-primary-deep: #9e161c;
+    --pub-primary-soft: #ffe1da;
+    --pub-accent: #ffb703;
+    --pub-accent-deep: #e09d00;
+    --pub-accent-ink: #231a00;
+    --pub-coral: #c81d25;
+    --pub-coral-soft: #ffe1da;
+
+    --pub-line: #1b1b1b;
+    --pub-line-strong: #1b1b1b;
+    --pub-footer: #1b1b1b;
+
+    --pub-shadow-card: 6px 6px 0 rgba(27, 27, 27, .14);
+    --pub-shadow-pop: 10px 10px 0 #c81d25;
+
+    --pub-display: 'Anton', Impact, 'Arial Narrow', sans-serif;
+    --pub-body: 'Instrument Sans', system-ui, 'Segoe UI', sans-serif;
+    --pub-radius: 0;
+    --pub-radius-sm: 0;
+}
+
+body.pub-body {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent 0 22px,
+        rgba(200, 29, 37, .035) 22px 23px
+    );
+}
+
+/* =========================================================
+   BARRA SUPERIOR Y NAVEGACION
+   ========================================================= */
+
+.pub-topbar {
+    background: var(--pub-primary);
+    color: #fff;
+    font-size: .76rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.pub-topbar a {
+    color: var(--pub-accent);
+}
+
+.pub-topbar__dot {
+    color: var(--pub-accent);
+}
+
+.pub-nav {
+    background: var(--pub-bg);
+    border-bottom: 3px solid var(--pub-ink);
+}
+
+.pub-nav .pub-container {
+    min-height: 78px;
+}
+
+.pub-brand__mark {
+    width: 54px;
+    height: 54px;
+    border: 3px solid var(--pub-ink);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--pub-accent);
+}
+
+.pub-brand__name {
+    font-family: var(--pub-display);
+    font-size: 1.85rem;
+    font-weight: 400;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+
+.pub-brand__tag {
+    color: var(--pub-primary);
+    font-size: .58rem;
+    letter-spacing: .2em;
+}
+
+.pub-nav__links a {
+    border-radius: 0;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.pub-nav__links a:hover,
+.pub-nav__links a.is-active {
+    background: var(--pub-ink);
+    color: #fff;
+}
+
+.pub-search input {
+    height: 42px;
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: #fff;
+}
+
+.pub-search input:focus {
+    width: 250px;
+    border-color: var(--pub-primary);
+    box-shadow: 4px 4px 0 var(--pub-accent);
+}
+
+.pub-search button {
+    border-radius: 0;
+    background: var(--pub-primary);
+}
+
+.pub-nav__toggle {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-accent);
+}
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.pub-btn {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--pub-ink);
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    font-size: .86rem;
+}
+
+.pub-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--pub-ink);
+}
+
+.pub-btn--primary {
+    background: var(--pub-primary);
+    color: #fff;
+    box-shadow: 4px 4px 0 var(--pub-ink);
+}
+
+.pub-btn--primary:hover {
+    background: var(--pub-primary-deep);
+    color: #fff;
+}
+
+.pub-btn--accent {
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+.pub-btn--accent:hover {
+    background: var(--pub-accent-deep);
+    color: var(--pub-ink);
+}
+
+.pub-btn--ghost {
+    background: transparent;
+    border-color: var(--pub-ink);
+    color: var(--pub-ink);
+}
+
+.pub-btn--ghost:hover {
+    background: var(--pub-ink);
+    color: #fff;
+}
+
+/* =========================================================
+   HERO TIPO AFICHE
+   ========================================================= */
+
+.pub-hero {
+    padding-block: 66px 150px;
+    background:
+        radial-gradient(620px 420px at 86% 12%, rgba(200, 29, 37, .14), transparent 62%),
+        var(--pub-bg);
+}
+
+.pub-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -8%;
+    width: 58%;
+    height: 100%;
+    background: var(--pub-primary);
+    clip-path: polygon(18% 0, 100% 0, 100% 100%, 0 100%);
+    opacity: .09;
+    mask-image: none;
+    background-image: none;
+    pointer-events: none;
+}
+
+/* Cinta inferior con textura de afiche */
+.pub-hero::after {
+    content: "EMPANADAS  ★  CARNES  ★  VERDURAS  ★  PESCADOS  ★  LISTOS PARA FREIR  ★  CADENA DE FRIO  ★  EMPANADAS  ★  CARNES  ★  VERDURAS  ★";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    overflow: hidden;
+    padding: 13px 0;
+    background: var(--pub-primary);
+    color: var(--pub-bg);
+    border-top: 3px solid var(--pub-ink);
+    font-family: var(--pub-display);
+    font-size: 1.02rem;
+    letter-spacing: .09em;
+    white-space: nowrap;
+    text-indent: 0;
+}
+
+.pub-hero__grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+    gap: 56px;
+}
+
+.pub-eyebrow {
+    padding: 7px 12px;
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    transform: rotate(-1.5deg);
+}
+
+.pub-hero__title {
+    margin: 22px 0;
+    font-family: var(--pub-display);
+    font-size: clamp(3rem, 6vw, 5.4rem);
+    font-weight: 400;
+    line-height: .88;
+    letter-spacing: .005em;
+    text-transform: uppercase;
+}
+
+.pub-hero__title em {
+    color: var(--pub-primary);
+    font-style: normal;
+    white-space: normal;
+}
+
+.pub-hero__title em::after {
+    left: 0;
+    right: 0;
+    bottom: .02em;
+    height: .3em;
+    border-radius: 0;
+    background: var(--pub-accent);
+    opacity: 1;
+    z-index: -1;
+}
+
+.pub-hero__lead {
+    max-width: 48ch;
+    margin-bottom: 28px;
+    color: var(--pub-ink-soft);
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.pub-hero__trust {
+    gap: 10px 20px;
+    margin-top: 26px;
+}
+
+.pub-hero__trust li {
+    color: var(--pub-ink);
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.pub-hero__trust svg {
+    color: var(--pub-primary);
+}
+
+/* Estadisticas del hero como sellos */
+.pub-hero__stats {
+    gap: 0;
+    margin-top: 28px;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.pub-hero__stats > div {
+    padding: 0 22px 0 0;
+}
+
+.pub-hero__stats > div + div {
+    padding-left: 22px;
+    border-left: 2px solid var(--pub-ink);
+}
+
+.pub-hero__stats strong {
+    font-family: var(--pub-display);
+    font-size: 2.1rem;
+    font-weight: 400;
+    color: var(--pub-primary);
+}
+
+.pub-hero__stats span {
+    color: var(--pub-ink);
+    font-size: .64rem;
+}
+
+/* Foto con marco duro */
+.pub-hero__media {
+    min-height: 530px;
+}
+
+.pub-hero__photo {
+    width: 94%;
+    aspect-ratio: 4 / 5;
+    border: 4px solid var(--pub-ink);
+    border-radius: 0;
+    box-shadow: 14px 14px 0 var(--pub-primary);
+    transform: rotate(2deg);
+}
+
+.pub-hero__photo::after {
+    background: linear-gradient(180deg, transparent 62%, rgba(27, 27, 27, .28));
+}
+
+.pub-hero__float {
+    left: -10px;
+    bottom: 18px;
+    width: 198px;
+    padding: 9px;
+    border: 3px solid var(--pub-ink);
+    border-radius: 0;
+    box-shadow: 7px 7px 0 var(--pub-ink);
+    transform: rotate(-4deg);
+}
+
+.pub-hero__float img {
+    border-radius: 0;
+}
+
+.pub-hero__float strong {
+    font-family: var(--pub-body);
+    font-size: .92rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.pub-hero__float span {
+    color: var(--pub-primary);
+    font-size: .66rem;
+}
+
+.pub-sticker {
+    top: 6px;
+    right: -2px;
+    width: 124px;
+    height: 124px;
+    border: 3px solid var(--pub-ink);
+    border-radius: 50%;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+    box-shadow: 5px 5px 0 var(--pub-ink);
+    font-family: var(--pub-display);
+    font-size: .72rem;
+    font-weight: 400;
+    letter-spacing: .06em;
+    transform: rotate(10deg);
+    animation: none;
+}
+
+.pub-sticker svg {
+    color: var(--pub-primary);
+}
+
+/* =========================================================
+   BENEFICIOS EN CINTA NEGRA
+   ========================================================= */
+
+.pub-benefits {
+    margin-top: 0;
+    padding-block: 28px;
+    background: var(--pub-ink);
+}
+
+.pub-benefits__grid {
+    gap: 0;
+}
+
+.pub-benefit {
+    padding: 4px 26px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.pub-benefit + .pub-benefit {
+    border-left: 1px solid rgba(255, 244, 224, .22);
+}
+
+.pub-benefit__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 0;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+.pub-benefit:nth-child(2) .pub-benefit__icon,
+.pub-benefit:nth-child(3) .pub-benefit__icon {
+    background: var(--pub-primary);
+    color: #fff;
+}
+
+.pub-benefit h3 {
+    margin-top: 0;
+    color: #fff;
+    font-family: var(--pub-body);
+    font-size: .92rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.pub-benefit p {
+    color: #c9bda9;
+    font-size: .82rem;
+}
+
+/* =========================================================
+   SECCIONES
+   ========================================================= */
+
+.pub-section {
+    padding-block: 78px;
+}
+
+.pub-section--alt {
+    background: var(--pub-bg-alt);
+}
+
+.pub-section-head {
+    align-items: end;
+    margin-bottom: 34px;
+    padding-top: 24px;
+    border-top: 3px solid var(--pub-ink);
+}
+
+.pub-section-head h2 {
+    margin-top: 10px;
+    font-family: var(--pub-display);
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 400;
+    letter-spacing: .005em;
+    text-transform: uppercase;
+}
+
+.pub-section-head p {
+    color: var(--pub-ink-soft);
+    font-size: .95rem;
+}
+
+.pub-link-arrow {
+    color: var(--pub-primary);
+    border-bottom: 2px solid var(--pub-ink);
+    font-size: .82rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   CATEGORIAS COMO ETIQUETAS
+   ========================================================= */
+
+.pub-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pub-cat {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 15px;
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-surface);
+    text-align: left;
+}
+
+.pub-cat__icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 0;
+    background: transparent;
+    color: var(--pub-primary);
+}
+
+.pub-cat__name {
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.pub-cat__count {
+    padding: 2px 7px;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+    font-size: .68rem;
+    font-weight: 800;
+}
+
+.pub-cat:hover {
+    transform: none;
+    border-color: var(--pub-primary);
+    background: var(--pub-primary);
+    box-shadow: 4px 4px 0 var(--pub-ink);
+    color: #fff;
+}
+
+.pub-cat:hover .pub-cat__icon {
+    color: var(--pub-accent);
+}
+
+.pub-cat:hover .pub-cat__count {
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+/* =========================================================
+   TARJETAS DE PRODUCTO TIPO AFICHE
+   ========================================================= */
+
+.pub-products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px;
+}
+
+.pub-catalog__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pub-product {
+    border: 3px solid var(--pub-ink);
+    border-radius: 0;
+    box-shadow: 5px 5px 0 rgba(27, 27, 27, .12);
+    background: var(--pub-surface);
+}
+
+.pub-product:hover {
+    transform: translate(-4px, -4px);
+    border-color: var(--pub-ink);
+    box-shadow: 9px 9px 0 var(--pub-primary);
+}
+
+.pub-product__media {
+    border-bottom: 3px solid var(--pub-ink);
+}
+
+.pub-product__badges {
+    inset: 10px 10px auto 10px;
+}
+
+.pub-chip {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+    font-size: .64rem;
+    padding: 5px 9px;
+}
+
+.pub-offer {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-primary);
+    color: #fff;
+    font-size: .68rem;
+}
+
+.pub-product__body {
+    padding: 16px 18px 18px;
+}
+
+.pub-product__cat {
+    color: var(--pub-primary);
+    font-size: .64rem;
+    letter-spacing: .12em;
+}
+
+.pub-product__title {
+    font-family: var(--pub-body);
+    font-size: 1.08rem;
+    font-weight: 800;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+
+.pub-product__desc {
+    color: var(--pub-ink-soft);
+    font-size: .84rem;
+}
+
+.pub-product__foot {
+    padding-top: 12px;
+    border-top: 2px solid var(--pub-ink);
+}
+
+.pub-price {
+    font-family: var(--pub-display);
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--pub-primary);
+}
+
+.pub-price small {
+    color: var(--pub-ink-faint);
+}
+
+.pub-product__cta {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-ink);
+    color: #fff;
+    font-size: .72rem;
+    text-transform: uppercase;
+}
+
+.pub-product__cta:hover {
+    background: var(--pub-primary);
+    border-color: var(--pub-primary);
+    color: #fff;
+}
+
+/* =========================================================
+   PASOS
+   ========================================================= */
+
+.pub-steps {
+    gap: 0;
+    border: 3px solid var(--pub-ink);
+}
+
+.pub-step {
+    padding: 28px 24px;
+    border: 0;
+    border-radius: 0;
+    background: var(--pub-surface);
+}
+
+.pub-step + .pub-step {
+    border-left: 3px solid var(--pub-ink);
+}
+
+.pub-step__num {
+    width: auto;
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 0;
+    background: transparent;
+    color: var(--pub-primary);
+    font-family: var(--pub-display);
+    font-size: 2.8rem;
+    line-height: 1;
+}
+
+.pub-step h3 {
+    font-family: var(--pub-body);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.pub-step p {
+    font-size: .86rem;
+}
+
+/* =========================================================
+   BANDA FINAL
+   ========================================================= */
+
+.pub-cta {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0 26px,
+            rgba(255, 255, 255, .05) 26px 28px
+        ),
+        var(--pub-primary);
+    border-top: 3px solid var(--pub-ink);
+    border-bottom: 3px solid var(--pub-ink);
+}
+
+.pub-cta::before,
+.pub-cta::after {
+    display: none;
+}
+
+.pub-cta h2 {
+    font-family: var(--pub-display);
+    font-size: clamp(2.4rem, 4.6vw, 4rem);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .005em;
+}
+
+.pub-cta p {
+    color: #ffe1da;
+}
+
+.pub-cta .pub-btn--ghost {
+    border-color: #fff;
+    color: #fff;
+}
+
+.pub-cta .pub-btn--ghost:hover {
+    background: #fff;
+    color: var(--pub-primary);
+}
+
+/* =========================================================
+   CABECERA DE PAGINAS
+   ========================================================= */
+
+.pub-page-head {
+    padding-block: 54px 58px;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0 30px,
+            rgba(255, 255, 255, .045) 30px 32px
+        ),
+        var(--pub-primary);
+    border-bottom: 3px solid var(--pub-ink);
+}
+
+.pub-page-head h1 {
+    font-family: var(--pub-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 400;
+    letter-spacing: .005em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.pub-page-head p {
+    color: #ffe1da;
+}
+
+.pub-breadcrumb {
+    color: #ffc9c0;
+}
+
+.pub-breadcrumb a {
+    color: #fff;
+}
+
+.pub-breadcrumb li + li::before {
+    color: #ffb3a8;
+}
+
+.pub-page-head__stats > div {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-accent);
+    box-shadow: 4px 4px 0 var(--pub-ink);
+}
+
+.pub-page-head__stats strong {
+    color: var(--pub-ink);
+    font-family: var(--pub-display);
+    font-size: 1.9rem;
+    font-weight: 400;
+}
+
+.pub-page-head__stats span {
+    color: var(--pub-ink-soft);
+}
+
+/* =========================================================
+   CATALOGO Y FILTROS
+   ========================================================= */
+
+.pub-filters {
+    padding: 20px;
+    border: 3px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-surface);
+    box-shadow: 6px 6px 0 rgba(27, 27, 27, .12);
+}
+
+.pub-field label {
+    color: var(--pub-ink);
+}
+
+.pub-input,
+.pub-select {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background-color: #fff;
+}
+
+.pub-filter-chip {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-surface);
+    text-transform: uppercase;
+    font-size: .74rem;
+    letter-spacing: .04em;
+}
+
+.pub-filter-chip.is-active {
+    background: var(--pub-primary);
+    border-color: var(--pub-ink);
+    box-shadow: 3px 3px 0 var(--pub-ink);
+}
+
+.pub-results-bar p {
+    color: var(--pub-ink-soft);
+}
+
+.pub-clear {
+    color: var(--pub-primary);
+    text-transform: uppercase;
+    font-size: .76rem;
+}
+
+.pub-empty {
+    border: 3px dashed var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-surface);
+}
+
+.pub-empty__icon {
+    border-radius: 0;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+.pub-empty h2 {
+    font-family: var(--pub-display);
+    font-size: 2.2rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   CONTACTO
+   ========================================================= */
+
+.pub-contact-grid {
+    gap: 26px;
+}
+
+.pub-card {
+    border: 3px solid var(--pub-ink);
+    border-radius: 0;
+    box-shadow: 7px 7px 0 rgba(27, 27, 27, .12);
+}
+
+.pub-card h2 {
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--pub-ink);
+    font-family: var(--pub-display);
+    font-size: 2rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.pub-contact-item {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-surface-soft);
+}
+
+.pub-contact-item__icon {
+    border-radius: 0;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+.pub-contact-item__label {
+    color: var(--pub-primary);
+}
+
+.pub-map {
+    border: 3px solid var(--pub-ink);
+    border-radius: 0;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0 26px,
+            rgba(255, 255, 255, .05) 26px 28px
+        ),
+        var(--pub-ink);
+}
+
+.pub-map__pin {
+    border-radius: 0;
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+.pub-map h3 {
+    font-family: var(--pub-display);
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.pub-faq .accordion-item {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0 !important;
+}
+
+.pub-faq .accordion-button {
+    border-radius: 0 !important;
+    font-family: var(--pub-body);
+    font-size: .96rem;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+}
+
+.pub-faq .accordion-button:not(.collapsed) {
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.pub-footer {
+    border-top: 6px solid var(--pub-primary);
+}
+
+.pub-footer__brand {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-bg);
+    box-shadow: 5px 5px 0 var(--pub-accent);
+}
+
+.pub-footer h2 {
+    color: var(--pub-accent);
+}
+
+.pub-footer li a:hover {
+    color: var(--pub-accent);
+}
+
+/* =========================================================
+   SELECTOR
+   ========================================================= */
+
+.pub-stylebar {
+    border: 2px solid var(--pub-ink);
+    border-radius: 0;
+    background: var(--pub-ink);
+    transform: translateX(-50%);
+}
+
+.pub-stylebar__btn {
+    border-radius: 0;
+}
+
+.pub-stylebar__btn.is-active {
+    background: var(--pub-accent);
+    color: var(--pub-ink);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+    .pub-hero {
+        padding-block: 44px 118px;
+    }
+
+    .pub-hero__grid {
+        grid-template-columns: 1fr;
+        gap: 38px;
+    }
+
+    .pub-hero__media {
+        min-height: 0;
+    }
+
+    .pub-hero__photo {
+        transform: none;
+        box-shadow: 10px 10px 0 var(--pub-primary);
+    }
+
+    .pub-benefit + .pub-benefit {
+        border-left: 0;
+        border-top: 1px solid rgba(255, 244, 224, .18);
+    }
+
+    .pub-benefit {
+        padding: 18px 8px;
+    }
+
+    .pub-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pub-catalog__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pub-step + .pub-step {
+        border-left: 0;
+        border-top: 3px solid var(--pub-ink);
+    }
+
+    .pub-nav__links a.is-active,
+    .pub-nav__links a:hover {
+        background: var(--pub-primary);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .pub-hero__title {
+        font-size: 2.9rem;
+    }
+
+    .pub-hero__stats > div {
+        padding-right: 10px;
+    }
+
+    .pub-hero__stats > div + div {
+        padding-left: 10px;
+    }
+
+    .pub-hero__stats strong {
+        font-size: 1.8rem;
+    }
+
+    .pub-hero__stats span {
+        font-size: .55rem;
+        letter-spacing: .04em;
+    }
+
+    .pub-hero__photo {
+        border-width: 3px;
+    }
+
+    .pub-hero__float {
+        width: 154px;
+        left: 0;
+        bottom: -6px;
+    }
+
+    .pub-sticker {
+        width: 96px;
+        height: 96px;
+        font-size: .6rem;
+    }
+
+    .pub-section-head {
+        padding-top: 18px;
+    }
+
+    .pub-products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pub-catalog__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pub-step__num {
+        font-size: 2.3rem;
+    }
+
+    .pub-stylebar {
+        border-radius: 0;
+        transform: none;
+    }
+}

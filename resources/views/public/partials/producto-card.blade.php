@@ -1,46 +1,79 @@
 @php
     $imagen = $producto->imagenes->first();
+    $ruta = $imagen?->rutaImagen;
+    $existe = $ruta && file_exists(public_path($ruta));
+    $optimizada = $existe
+        ? 'images/productos/opt/' . pathinfo($ruta, PATHINFO_FILENAME) . '.webp'
+        : null;
+    $src = $optimizada && file_exists(public_path($optimizada))
+        ? asset($optimizada)
+        : ($existe ? asset($ruta) : null);
+
     $precio = $producto->precioActual?->precioVenta;
+    $descuento = $producto->mayor_descuento ?? null;
     $categoria = $producto->categoria?->nombre ?? 'Sin categoría';
+
+    $whatsapp = preg_replace('/\D+/', '', (string) config('public.contacto.whatsapp'));
+    $consulta = $whatsapp
+        ? 'https://wa.me/' . $whatsapp . '?text=' . urlencode(
+            'Hola Congelandia, quiero consultar por ' . $producto->nombre . ' (' . $producto->codigo . ').'
+        )
+        : null;
 @endphp
 
-<article class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden producto-publico">
-    @if($imagen)
-        <img src="{{ asset($imagen->rutaImagen) }}" alt="{{ $imagen->alt ?? $producto->nombre }}"
-            class="card-img-top public-producto-img" loading="lazy">
-    @else
-        <div class="card-img-top public-producto-img d-flex align-items-center justify-content-center bg-light"
-            role="img" aria-label="Producto sin imagen">
-            <svg width="140" height="105" viewBox="0 0 800 600" aria-hidden="true">
-                <g fill="none" stroke="#009fc3" stroke-width="18" stroke-linecap="round">
-                    <path d="M400 180v240M296 240l208 120M504 240L296 360" />
-                    <path d="M400 180l-40 40M400 180l40 40M400 420l-40-40M400 420l40-40" />
-                    <path d="M296 240l-56-8M296 240l-8-56M504 360l56 8M504 360l8 56" />
-                    <path d="M504 240l56-8M504 240l8-56M296 360l-56 8M296 360l-8 56" />
-                </g>
-            </svg>
-        </div>
-    @endif
-
-    <div class="card-body d-flex flex-column">
-        <div class="d-flex flex-wrap gap-2 mb-2">
-            <span class="badge rounded-pill text-bg-light">{{ $categoria }}</span>
-            @if(isset($producto->mayor_descuento) && $producto->mayor_descuento !== null)
-                <span class="badge rounded-pill bg-orange text-white">-{{ number_format((float) $producto->mayor_descuento, 0) }}%</span>
-            @endif
-        </div>
-        <h3 class="h5 fw-bold text-dark mb-1">{{ $producto->nombre }}</h3>
-
-        @if($producto->descripcion)
-            <p class="text-muted small mb-3">{{ \Illuminate\Support\Str::limit($producto->descripcion, 90) }}</p>
+<article class="pub-product">
+    <div class="pub-product__media {{ $src ? '' : 'pub-product__media--empty' }}">
+        @if($src)
+            <img src="{{ $src }}" alt="{{ $imagen->alt ?? $producto->nombre }}" width="900" height="675"
+                loading="lazy">
+        @else
+            <div class="pub-product__empty" role="img" aria-label="Foto de {{ $producto->nombre }} próximamente">
+                <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
+                    <path d="M12 5.5 9.8 3.8M12 5.5l2.2-1.7M12 18.5l-2.2 1.7M12 18.5l2.2 1.7" />
+                    <path d="m5.6 8.4-2.7-.4M5.6 8.4l-.4-2.7M18.4 15.6l2.7.4M18.4 15.6l.4 2.7" />
+                    <path d="m18.4 8.4 2.7-.4M18.4 8.4l.4-2.7M5.6 15.6l-2.7.4M5.6 15.6l-.4 2.7" />
+                </svg>
+                <span>Foto próximamente</span>
+            </div>
         @endif
 
-        <div class="mt-auto">
+        @if($descuento !== null)
+            <div class="pub-product__badges">
+                <span></span>
+                <span class="pub-offer">-{{ number_format((float) $descuento, 0) }}%</span>
+            </div>
+        @endif
+    </div>
+
+    <div class="pub-product__body">
+        <p class="pub-product__cat">{{ $categoria }}</p>
+        <h3 class="pub-product__title">{{ $producto->nombre }}</h3>
+
+        @if($producto->descripcion)
+            <p class="pub-product__desc">{{ $producto->descripcion }}</p>
+        @endif
+
+        <div class="pub-product__foot">
             @if($precio !== null && (float) $precio > 0)
-                <span class="text-teal fw-bold fs-4">${{ number_format((float) $precio, 0, ',', '.') }}</span>
-                <small class="text-muted">CLP</small>
+                <span class="pub-price">
+                    ${{ number_format((float) $precio, 0, ',', '.') }}
+                    <small>CLP</small>
+                </span>
             @else
-                <span class="text-muted fw-semibold">Precio por confirmar</span>
+                <span class="pub-price--pending">Precio por confirmar</span>
+            @endif
+
+            @if($consulta)
+                <a class="pub-product__cta" href="{{ $consulta }}" target="_blank" rel="noopener"
+                    aria-label="Consultar por {{ $producto->nombre }} en WhatsApp">
+                    Consultar
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </a>
             @endif
         </div>
     </div>
