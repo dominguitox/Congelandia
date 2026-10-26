@@ -358,21 +358,16 @@ class ClienteController extends Controller
 
     public function destroy($rutCliente)
     {
-        // Buscar solamente clientes activos
-        $cliente = Cliente::where('rutCliente', $rutCliente)
-            ->whereNull('deleted_at')
-            ->firstOrFail();
+        $cliente = Cliente::where('rutCliente', $rutCliente)->firstOrFail();
 
         /*
-         * Eliminación lógica.
+         * Eliminación lógica mediante SoftDeletes.
          *
          * No se elimina físicamente el cliente.
          * Se conserva su historial y sus ventas.
          */
 
-        $cliente->deleted_at = now();
-
-        $cliente->save();
+        $cliente->delete();
 
         return redirect()
             ->route('clientes.index')

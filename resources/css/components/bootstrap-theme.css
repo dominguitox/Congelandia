@@ -1,0 +1,394 @@
+/* =========================================================
+   COMPONENTE - TEMA BOOTSTRAP
+   =========================================================
+   Alinea los modulos que usan clases de Bootstrap (dashboard,
+   POS, inventario, categorias, usuarios, reportes) con los
+   tokens del sistema, sin tocar su HTML.
+   ========================================================= */
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.btn {
+    --bs-btn-border-radius: var(--radius-md);
+    --bs-btn-font-weight: 600;
+    --bs-btn-padding-y: 0.55rem;
+    --bs-btn-padding-x: 1.1rem;
+}
+
+.btn-lg {
+    --bs-btn-border-radius: var(--radius-md);
+    --bs-btn-font-size: var(--fs-lg);
+}
+
+.btn-sm {
+    --bs-btn-border-radius: var(--radius-xs);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-primary-hover);
+    --bs-btn-hover-border-color: var(--color-primary-hover);
+    --bs-btn-active-bg: var(--color-primary-active);
+    --bs-btn-active-border-color: var(--color-primary-active);
+    --bs-btn-disabled-bg: var(--color-primary);
+    --bs-btn-disabled-border-color: var(--color-primary);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-primary);
+    --bs-btn-hover-border-color: var(--color-primary);
+    --bs-btn-active-bg: var(--color-primary-active);
+    --bs-btn-active-border-color: var(--color-primary-active);
+}
+
+.btn-success {
+    --bs-btn-bg: var(--color-success);
+    --bs-btn-border-color: var(--color-success);
+    --bs-btn-hover-bg: var(--color-success);
+    --bs-btn-hover-border-color: var(--color-success);
+    --bs-btn-active-bg: var(--color-success);
+    --bs-btn-active-border-color: var(--color-success);
+}
+
+.btn-danger {
+    --bs-btn-bg: var(--color-danger-strong);
+    --bs-btn-border-color: var(--color-danger-strong);
+    --bs-btn-hover-bg: var(--color-danger);
+    --bs-btn-hover-border-color: var(--color-danger);
+    --bs-btn-active-bg: var(--color-danger);
+    --bs-btn-active-border-color: var(--color-danger);
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--color-danger);
+    --bs-btn-border-color: var(--color-danger);
+    --bs-btn-hover-bg: var(--color-danger);
+    --bs-btn-hover-border-color: var(--color-danger);
+    --bs-btn-active-bg: var(--color-danger);
+    --bs-btn-active-border-color: var(--color-danger);
+}
+
+.btn-outline-info {
+    --bs-btn-color: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-primary);
+    --bs-btn-hover-border-color: var(--color-primary);
+    --bs-btn-active-bg: var(--color-primary-active);
+    --bs-btn-active-border-color: var(--color-primary-active);
+}
+
+.btn-warning {
+    --bs-btn-color: var(--color-text-light);
+    --bs-btn-bg: var(--color-warning);
+    --bs-btn-border-color: var(--color-warning);
+    --bs-btn-hover-color: var(--color-text-light);
+    --bs-btn-hover-bg: var(--color-warning);
+    --bs-btn-hover-border-color: var(--color-warning);
+    --bs-btn-active-bg: var(--color-warning);
+    --bs-btn-active-border-color: var(--color-warning);
+}
+
+.btn-info {
+    --bs-btn-color: var(--color-text-light);
+    --bs-btn-bg: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-color: var(--color-text-light);
+    --bs-btn-hover-bg: var(--color-primary-hover);
+    --bs-btn-hover-border-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+    --bs-btn-bg: var(--color-btn-muted-text);
+    --bs-btn-border-color: var(--color-btn-muted-text);
+    --bs-btn-hover-bg: var(--color-text-heading);
+    --bs-btn-hover-border-color: var(--color-text-heading);
+}
+
+.btn-light {
+    --bs-btn-bg: var(--color-btn-neutral-bg);
+    --bs-btn-border-color: var(--color-btn-neutral-bg);
+    --bs-btn-color: var(--color-btn-neutral-text);
+    --bs-btn-hover-bg: var(--color-btn-muted-bg);
+    --bs-btn-hover-border-color: var(--color-btn-muted-bg);
+    --bs-btn-hover-color: var(--color-btn-neutral-text);
+}
+
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+
+.card {
+    --bs-card-border-color: var(--color-border-soft);
+    --bs-card-border-radius: var(--radius-2xl);
+    --bs-card-bg: var(--color-surface);
+    --bs-card-inner-border-radius: calc(var(--radius-2xl) - 1px);
+    box-shadow: var(--shadow-card);
+}
+
+.card-header {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border-soft);
+    padding: var(--control-height-sm) var(--space-xl);
+    border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
+}
+
+.card-body {
+    padding: var(--space-xl);
+}
+
+.card-footer {
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border-soft);
+    padding: var(--space-lg) var(--space-xl);
+}
+
+/* =========================================================
+   TABLAS
+   ========================================================= */
+
+.table {
+    --bs-table-color: var(--color-text-muted);
+    --bs-table-border-color: var(--color-border-soft);
+    --bs-table-hover-bg: var(--color-surface-alt);
+    --bs-table-bg: transparent;
+    margin-bottom: 0;
+}
+
+.table > thead {
+    background: var(--color-table-header);
+}
+
+.table > thead th {
+    padding: var(--space-md) 18px;
+    color: var(--color-text-heading);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.table > tbody td {
+    padding: var(--space-md) 18px;
+    border-bottom: 1px solid var(--color-border-soft);
+    font-size: var(--fs-base);
+    vertical-align: middle;
+}
+
+.table-bordered {
+    --bs-table-border-color: var(--color-border-soft);
+}
+
+.table-bordered > :not(caption) > * > * {
+    border-width: 0 0 1px 0;
+}
+
+.table-dark {
+    --bs-table-color: var(--color-text-light);
+}
+
+.table > thead.table-dark th {
+    background: var(--color-navy-mid);
+    color: var(--color-text-light);
+    border-bottom-color: var(--color-navy-mid);
+}
+
+.table .table-light,
+.table > thead.table-light th {
+    background: var(--color-table-header);
+}
+
+/* =========================================================
+   FORMULARIOS
+   ========================================================= */
+
+.form-control,
+.form-select {
+    border-color: var(--color-border);
+    border-radius: var(--radius-sm);
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    color: var(--color-text);
+}
+
+.form-control-lg,
+.form-select-lg {
+    border-radius: var(--radius-md);
+    font-size: var(--fs-md);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem var(--color-primary-soft);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.form-control.bg-light,
+.form-select.bg-light {
+    background: var(--color-surface-input) !important;
+    border-color: transparent;
+}
+
+.input-group > .form-control {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.input-group > .btn {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* =========================================================
+   MODALES
+   ========================================================= */
+
+.modal-content {
+    border: none;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-modal);
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--color-border-soft);
+    padding: var(--space-lg) var(--space-xl);
+}
+
+.modal-header.bg-dark {
+    background: var(--color-navy-mid) !important;
+}
+
+.modal-header.bg-primary {
+    background: var(--color-primary) !important;
+}
+
+.modal-header.bg-danger {
+    background: var(--color-danger-strong) !important;
+}
+
+.modal-title {
+    font-weight: 700;
+}
+
+.modal-body {
+    padding: var(--space-xl);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--color-border-soft);
+    padding: var(--space-lg) var(--space-xl);
+}
+
+.modal-footer.bg-light {
+    background: var(--color-surface-alt) !important;
+}
+
+/* =========================================================
+   ALERTAS
+   ========================================================= */
+
+.alert {
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+}
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.badge {
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    padding: 0.4em 0.8em;
+}
+
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+/* =========================================================
+   CABECERAS DE SECCION / TEXTOS
+   ========================================================= */
+
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6 {
+    color: var(--color-text-heading);
+}
+
+.text-muted {
+    color: var(--color-text-muted) !important;
+}
+
+/* =========================================================
+   CONTENEDORES (evita que Bootstrap limite el ancho)
+   ========================================================= */
+
+.app-main .container,
+.app-main .container-fluid {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .form-control,
+    .form-select {
+        font-size: 16px;
+    }
+
+    .input-group > .form-control {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .modal-dialog {
+        margin: var(--space-xs);
+    }
+
+    .modal-content {
+        border-radius: var(--radius-lg);
+    }
+
+    .modal-header,
+    .modal-body {
+        padding: var(--space-md);
+    }
+
+    .modal-footer {
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+        padding: var(--space-md);
+    }
+
+    .modal-footer > .btn,
+    .modal-footer > .btn-soft,
+    .modal-footer > .btn-solid {
+        flex: 1 1 auto;
+    }
+
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: var(--space-lg) var(--space-md);
+    }
+}

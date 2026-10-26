@@ -11,7 +11,7 @@
                 ['label' => 'Proveedores', 'url' => url('/proveedores'), 'pattern' => 'proveedores*'],
                 ['label' => 'Categorías', 'url' => url('/categorias'), 'pattern' => 'categorias*'],
                 ['label' => 'Usuarios', 'url' => url('/usuarios'), 'pattern' => 'usuarios*'],
-                ['label' => 'Roles', 'url' => url('/Roles'), 'pattern' => 'Roles*'],
+              //      ['label' => 'Roles', 'url' => url('/Roles'), 'pattern' => 'Roles*'],
             ];
 
             // Agregamos reportes solo si es Administrador
@@ -41,8 +41,7 @@
             <li class="nav-item mt-3">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit"
-                        class="w-full text-left flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 rounded">
+                    <button type="submit" class="sidebar-logout">
                         Cerrar sesión
                     </button>
                 </form>

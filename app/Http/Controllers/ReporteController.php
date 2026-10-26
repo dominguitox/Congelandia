@@ -58,6 +58,8 @@ class ReporteController extends Controller
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 DB::raw('DATE(salida.fecha) as fecha'),
                 'producto.nombre',
@@ -76,6 +78,8 @@ class ReporteController extends Controller
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 'producto.nombre',
                 DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
@@ -90,18 +94,21 @@ class ReporteController extends Controller
     // 2. Total de ingresos recaudados
     private function totalIngresosPorFecha($fechaInicio, $fechaFin)
     {
-        $polla= DB::table('detalle_salida')
+        return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
-            ->sum(DB::raw('detalle_salida.cantidad * detalle_salida.precio_venta'));
-            
-            dd($polla);
+            ->sum(DB::raw('detalle_salida.cantidad * detalle_salida.precioCobrado'));
+
+
     }
 
     // 3. Cantidad de ventas efectuadas
     private function cantidadVentasEfectuadasPorFecha($fechaInicio, $fechaFin)
     {
         return DB::table('salida')
+            ->whereNull('deleted_at')
             ->whereBetween(DB::raw('DATE(fecha)'), [$fechaInicio, $fechaFin])
             ->count('idSalida');
     }
@@ -110,6 +117,8 @@ class ReporteController extends Controller
     {
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->sum('detalle_salida.cantidad');
     }
@@ -129,10 +138,12 @@ class ReporteController extends Controller
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
             ->join('producto', 'detalle_salida.codigoProducto', '=', 'producto.codigo')
             ->join('categoria', 'producto.idCategoria', '=', 'categoria.idCategoria')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 'categoria.nombre as categoria',
                 DB::raw('SUM(detalle_salida.cantidad) as total_unidades'),
-                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precio_venta) as ingresos')
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precioCobrado) as ingresos')
             )
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->groupBy('categoria.idCategoria', 'categoria.nombre')
@@ -145,9 +156,11 @@ class ReporteController extends Controller
     {
         return DB::table('detalle_salida')
             ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+            ->whereNull('detalle_salida.deleted_at')
+            ->whereNull('salida.deleted_at')
             ->select(
                 DB::raw('DAYNAME(salida.fecha) as dia'),
-                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precio_venta) as ingresos')
+                DB::raw('SUM(detalle_salida.cantidad * detalle_salida.precioCobrado) as ingresos')
             )
             ->whereBetween(DB::raw('DATE(salida.fecha)'), [$fechaInicio, $fechaFin])
             ->groupBy(DB::raw('DAYNAME(salida.fecha)'), DB::raw('DAYOFWEEK(salida.fecha)'))
@@ -159,6 +172,7 @@ class ReporteController extends Controller
     private function horariosConMasTrafico($fechaInicio, $fechaFin)
     {
         return DB::table('salida')
+            ->whereNull('deleted_at')
             ->select(
                 DB::raw('HOUR(fecha) as hora'),
                 DB::raw('COUNT(idSalida) as cantidad_transacciones')
@@ -172,34 +186,62 @@ class ReporteController extends Controller
     // 9. Productos con bajo stock
     private function productosConBajoStock()
     {
-        // Se consulta sobre la tabla independiente de inventario, cumpliendo 
-        // estrictamente con la regla de no almacenar la cantidad de stock en la tabla producto.
-        return DB::table('inventario')
-            ->join('producto', 'inventario.codigoProducto', '=', 'producto.codigo')
+        $stock = $this->stockProductoSubquery();
+
+        return DB::table('producto')
+            ->whereNull('producto.deleted_at')
             ->select(
                 'producto.nombre',
-                'inventario.cantidad as stock_actual'
+                DB::raw($stock . ' as stock_actual')
             )
-            ->whereColumn('inventario.cantidad', '<=', 'inventario.stock_minimo')
-            ->orderBy('inventario.cantidad', 'ASC')
+            ->whereRaw($stock . ' < ?', [10])
+            ->orderBy('stock_actual', 'ASC')
             ->get();
     }
 
     // 10. Productos próximos a vencer
     private function productosProximosAVencer()
     {
-        // El control de caducidad se asume normalizado en una tabla de lotes o detalles de ingreso.
-        return DB::table('lote')
-            ->join('producto', 'lote.codigoProducto', '=', 'producto.codigo')
+        $stock = $this->stockProductoSubquery();
+
+        return DB::table('detalle_ingreso')
+            ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+            ->join('producto', 'detalle_ingreso.codigoProducto', '=', 'producto.codigo')
+            ->whereNull('detalle_ingreso.deleted_at')
+            ->whereNull('ingreso.deleted_at')
+            ->whereNull('producto.deleted_at')
+            ->whereBetween('detalle_ingreso.fechaVencimiento', [
+                now()->toDateString(),
+                now()->addDays(30)->toDateString()
+            ])
             ->select(
                 'producto.nombre',
-                'lote.fecha_vencimiento',
-                'lote.cantidad_disponible'
+                'detalle_ingreso.fechaVencimiento as fecha_vencimiento',
+                DB::raw($stock . ' as cantidad_disponible')
             )
-            ->whereBetween('lote.fecha_vencimiento', [now()->toDateString(), now()->addDays(30)->toDateString()])
-            ->where('lote.cantidad_disponible', '>', 0)
-            ->orderBy('lote.fecha_vencimiento', 'ASC')
+            ->groupBy('producto.codigo', 'producto.nombre', 'detalle_ingreso.fechaVencimiento')
+            ->havingRaw($stock . ' > 0')
+            ->orderBy('detalle_ingreso.fechaVencimiento', 'ASC')
             ->get();
+    }
+
+    private function stockProductoSubquery(): string
+    {
+        return '(IFNULL((
+                    SELECT SUM(di.cantidad)
+                    FROM detalle_ingreso di
+                    INNER JOIN ingreso i ON di.idIngreso = i.idIngreso
+                    WHERE di.codigoProducto = producto.codigo
+                        AND di.deleted_at IS NULL
+                        AND i.deleted_at IS NULL
+                ), 0) - IFNULL((
+                    SELECT SUM(ds.cantidad)
+                    FROM detalle_salida ds
+                    INNER JOIN salida s ON ds.idSalida = s.idSalida
+                    WHERE ds.codigoProducto = producto.codigo
+                        AND ds.deleted_at IS NULL
+                        AND s.deleted_at IS NULL
+                ), 0))';
     }
 }
 

@@ -1,336 +1,373 @@
-/* ============================
-   CONTENEDOR PRINCIPAL
-============================ */
+/* =========================================================
+   HISTORIAL
+   =========================================================
+   Solo los estilos propios del modulo. La base comun vive en
+   resources/css/components/.
+   ========================================================= */
 
-.historial-container {
+/* =========================================================
+   BUSCADOR Y FILTROS
+   ========================================================= */
 
-    width: 100%;
-
+.historial-search {
+    position: relative;
 }
-
-
-
-/* ============================
-   CABECERA
-============================ */
-
-.historial-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 35px;
-
-}
-
-
-
-.historial-header h2 {
-
-    margin: 0;
-
-    color: #123447;
-
-    font-size: 32px;
-
-    font-weight: 700;
-
-}
-
-
-
-.historial-header p {
-
-    margin-top: 6px;
-
-    color: #52788a;
-
-    font-size: 16px;
-
-}
-
-
-
-/* ============================
-   BUSCADOR
-============================ */
 
 .historial-search input {
-
-    width: 290px;
-
-    height: 42px;
-
-    border-radius: 20px;
-
-    border: 1px solid #b9ddeb;
-
-    padding: 0 20px;
-
-    font-size: 14px;
-
-    color: #52788a;
-
+    width: 260px;
+    height: var(--control-height-sm);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0 18px 0 40px;
+    font-size: var(--fs-base);
+    color: var(--color-text-muted);
     outline: none;
-
 }
-
-
 
 .historial-search input:focus {
-
-    border-color: #3d8ca8;
-
+    border-color: var(--color-primary);
 }
 
+.historial-search input::placeholder {
+    color: var(--color-text-faint);
+}
 
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    font-size: 20px;
+    pointer-events: none;
+}
 
-/* ============================
-   TARJETA TABLA
-============================ */
+.historial-select {
+    height: var(--control-height-sm);
+    min-width: 150px;
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0 16px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-base);
+    outline: none;
+    cursor: pointer;
+}
+
+.historial-select:focus {
+    border-color: var(--color-primary);
+}
+
+/* =========================================================
+   TARJETA DE TABLA
+   ========================================================= */
 
 .historial-card {
-
-    background: white;
-
-    border-radius: 20px;
-
+    width: 100%;
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
     overflow: hidden;
-
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-
+    box-shadow: var(--shadow-card);
 }
 
-
-
-/* ============================
-   TABLA
-============================ */
+/* =========================================================
+   ANCHOS DE COLUMNAS
+   ========================================================= */
 
 .historial-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-
+    table-layout: fixed;
 }
 
-
-
-.historial-table thead {
-
-    background: #d8f0f8;
-
+.historial-table th:nth-child(1),
+.historial-table td:nth-child(1) {
+    width: 18%;
 }
 
+.historial-table th:nth-child(2),
+.historial-table td:nth-child(2) {
+    width: 17%;
+}
 
+.historial-table th:nth-child(3),
+.historial-table td:nth-child(3) {
+    width: 17%;
+}
 
-.historial-table th {
+.historial-table th:nth-child(4),
+.historial-table td:nth-child(4) {
+    width: 14%;
+}
 
-    text-align: left;
+.historial-table th:nth-child(5),
+.historial-table td:nth-child(5) {
+    width: 17%;
+}
 
-    padding: 18px 20px;
+.historial-table th:nth-child(6),
+.historial-table td:nth-child(6) {
+    width: 12%;
+}
 
-    color: #27627c;
+.historial-table th:nth-child(7),
+.historial-table td:nth-child(7) {
+    width: 5%;
+    text-align: center;
+}
 
-    font-size: 15px;
+/* =========================================================
+   ID MOVIMIENTO
+   ========================================================= */
 
+.movimiento-id strong {
+    color: var(--color-text);
     font-weight: 700;
-
 }
 
-
-
-.historial-table td {
-
-    padding: 16px 20px;
-
-    color: #52788a;
-
-    font-size: 15px;
-
-    border-bottom: 1px solid #d8eaf1;
-
-}
-
-
-
-.historial-table tbody tr:last-child td {
-
-    border-bottom: none;
-
-}
-
-
-
-/* ============================
-   ELEMENTOS ESPECIALES
-============================ */
-
-.ticket {
-
-    color: #0089c7;
-
-    font-weight: 700;
-
-}
-
-
+/* =========================================================
+   TOTAL
+   ========================================================= */
 
 .total {
-
+    color: var(--color-text) !important;
     font-weight: 700;
-
-    color: #123447;
-
 }
 
+/* =========================================================
+   BOTON EXPANDIR
+   ========================================================= */
 
+.acciones {
+    text-align: center;
+}
 
 .btn-expand {
-
-    border: none;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    font-size: 18px;
-
-    color: #347d98;
-
-    transition: transform .2s;
-
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-xs);
+    font-size: var(--fs-md);
 }
 
-
-
-.btn-expand:hover {
-
-    transform: scale(1.15);
-
+.btn-expand.abierto {
+    transform: rotate(180deg);
 }
 
-
-
-/* ============================
-   DETALLE DE VENTA
-============================ */
-
+/* =========================================================
+   DETALLE
+   ========================================================= */
 
 .detalle-row {
-
     display: none;
-
-    border-top: 1px solid #d8eaf1;
-
 }
 
+.detalle-row.detalle-visible {
+    display: table-row;
+}
 
+.detalle-row td {
+    padding: 0;
+    background: var(--color-surface-alt);
+}
 
 .detalle-container {
-
-    background: #f7fcfe;
-
-    padding: 14px 25px;
-
+    padding: 18px 25px 20px;
+    border-top: 1px solid var(--color-border-soft);
 }
 
+.detalle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-sm);
+    margin-bottom: 5px;
+}
 
-
-.detalle-container h4 {
-
-    margin: 0 0 8px 0;
-
-    color: #173746;
-
-    font-size: 15px;
-
+.detalle-header h4 {
+    margin: 0;
+    color: var(--color-text-heading);
+    font-size: var(--fs-base);
     font-weight: 700;
-
 }
 
+.detalle-header span {
+    display: block;
+    margin-top: 3px;
+    color: var(--color-text-faint);
+    font-size: var(--fs-xs);
+}
 
+.detalle-extra {
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+}
+
+.detalle-extra strong {
+    color: var(--color-text-heading);
+}
+
+/* =========================================================
+   ITEM DEL DETALLE
+   ========================================================= */
 
 .detalle-item {
-
-    display:flex;
-
-    align-items:center;
-
-    padding:7px 0;
-
-    font-size:14px;
-
-    color:#52788a;
-
-    border-bottom:1px solid #e1eef3;
-
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--color-border-soft);
+    color: var(--color-text-muted);
 }
 
 .detalle-item:last-child {
-
-    border-bottom:none;
-
+    border-bottom: none;
 }
 
-.detalle-item .cantidad {
-
-    width:55px;
-
-    font-weight:700;
-
+.detalle-cantidad {
+    width: 45px;
+    color: var(--color-primary);
+    font-weight: 700;
 }
 
-
-.detalle-item .producto {
-
-    flex:1;
-
-    padding-left:20px;
-
+.detalle-producto {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
-
-.detalle-item .precio-unitario {
-
-    width:180px;
-
-    text-align:right;
-
-    padding-right:45px;
-
-    color:#52788a;
-
+.detalle-producto strong {
+    color: var(--color-text-heading);
+    font-size: var(--fs-sm);
 }
 
-
-.detalle-item .subtotal {
-
-    width:110px;
-
-    text-align:right;
-
-    font-weight:700;
-
-    color:#52788a;
-
+.detalle-producto small {
+    color: var(--color-text-faint);
+    font-size: 11px;
 }
 
+.detalle-precio {
+    width: 140px;
+    text-align: right;
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+}
 
-/* ============================
-   MENSAJE VACIO
-============================ */
+.detalle-subtotal {
+    width: 110px;
+    text-align: right;
+    color: var(--color-text-heading);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+}
 
-.empty-message {
+/* =========================================================
+   VENCIMIENTOS
+   ========================================================= */
 
-    text-align: center;
+.vencimientos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border-soft);
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
 
-    padding: 30px;
+.vencimientos strong {
+    color: var(--color-text-heading);
+}
 
-    color: #789;
+.vencimientos span {
+    background: var(--color-btn-neutral-bg);
+    padding: 5px 9px;
+    border-radius: var(--radius-xs);
+}
 
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .historial-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .historial-filtros {
+        width: 100%;
+    }
+
+    .historial-search {
+        flex: 1;
+    }
+
+    .historial-search input {
+        width: 100%;
+    }
+
+    .historial-select {
+        min-width: 140px;
+    }
+
+    .historial-table {
+        min-width: 850px;
+    }
+
+    .historial-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .historial-search input,
+    .historial-select {
+        font-size: 16px;
+    }
+
+    .detalle-header {
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+    }
+
+    .detalle-container {
+        padding: var(--space-md) var(--space-lg);
+    }
+}
+
+@media (max-width: 700px) {
+
+    .historial-filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .historial-select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .detalle-item {
+        flex-wrap: wrap;
+        gap: var(--space-xs) var(--space-sm);
+    }
+
+    .detalle-producto {
+        flex: 1 1 calc(100% - 60px);
+    }
+
+    .detalle-precio,
+    .detalle-subtotal {
+        width: auto;
+        margin-left: auto;
+        text-align: right;
+    }
 }

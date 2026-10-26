@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class Login extends Controller
 {
@@ -20,8 +21,8 @@ class Login extends Controller
             ->where('activo', true)
             ->first();
 
-        // Validar contraseña almacenada en la columna contrasena
-        if ($user && $credentials['password'] === $user->contrasena) {
+        // Validar contraseña hasheada en la columna contrasena
+        if ($user && Hash::check($credentials['password'], $user->contrasena)) {
 
             Auth::login($user, $request->boolean('remember'));
 

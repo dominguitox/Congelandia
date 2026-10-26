@@ -1,0 +1,57 @@
+/* =========================================================
+   COMPONENTE - BUSCADOR / FILTROS
+   ========================================================= */
+
+/* =========================================================
+   FILA DE ACCIONES (buscador + boton)
+   ========================================================= */
+
+.clientes-actions,
+.proveedores-actions,
+.historial-filtros {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    min-width: 0;
+}
+
+/* =========================================================
+   BUSCADOR CON ICONO (proveedores)
+   ========================================================= */
+
+.buscador-proveedor {
+    width: 285px;
+    max-width: 100%;
+    height: var(--control-height);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-sizing: border-box;
+    color: var(--color-text-muted);
+}
+
+.buscador-proveedor input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--color-text-heading);
+    font-size: var(--fs-base);
+}
+
+.buscador-proveedor input::placeholder {
+    color: var(--color-text-soft);
+}
+
+@media (max-width: 767.98px) {
+
+    .buscador-proveedor input {
+        font-size: 16px;
+    }
+}
