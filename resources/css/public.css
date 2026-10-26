@@ -30,6 +30,14 @@
     background-color: var(--color-public-orange);
 }
 
+.btn.bg-orange:hover,
+.btn.bg-orange:focus-visible,
+.btn.bg-orange:active {
+    background-color: color-mix(in srgb, var(--color-public-orange), #000 14%);
+    color: #fff;
+    opacity: 1;
+}
+
 .text-orange {
     color: var(--color-public-orange);
 }
