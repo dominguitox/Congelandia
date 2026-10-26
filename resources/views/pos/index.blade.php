@@ -70,6 +70,18 @@
                             data-descuento="{{ $descuentoOferta }}"
                             data-stock="{{ $producto->stock }}" role="button" tabindex="0">
 
+                            <div class="producto-card-imagen" aria-hidden="true">
+                                @if ($producto->imagenProducto)
+                                    <img src="{{ asset($producto->imagenProducto) }}"
+                                        alt="{{ $producto->nombre }}"
+                                        loading="lazy"
+                                        onerror="this.hidden=true; this.nextElementSibling.hidden=false">
+                                    <span class="producto-card-sin-imagen" hidden>📦</span>
+                                @else
+                                    <span class="producto-card-sin-imagen">📦</span>
+                                @endif
+                            </div>
+
                             <div class="producto-card-top">
                                 <span class="badge bg-info" id="badge-carrito-{{ $producto->codigo }}" hidden>En carrito: 0</span>
                                 @if ($descuentoOferta > 0)
@@ -77,8 +89,10 @@
                                 @endif
                             </div>
 
-                            <h5 class="producto-card-nombre">{{ $producto->nombre }}</h5>
-                            <p class="producto-card-categoria">{{ $producto->categoria }}</p>
+                            <div class="producto-card-info">
+                                <h5 class="producto-card-nombre">{{ $producto->nombre }}</h5>
+                                <p class="producto-card-categoria">{{ $producto->categoria }}</p>
+                            </div>
 
                             <div class="producto-card-pie">
                                 <span class="producto-card-precio-wrap">
