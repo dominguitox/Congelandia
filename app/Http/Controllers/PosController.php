@@ -50,6 +50,14 @@ class PosController extends Controller
                         ->limit(1)
                 ])
                 ->addSelect([
+                    'imagenProducto' => DB::table('IMAGEN_PRODUCTO')
+                        ->select('rutaImagen')
+                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->whereNull('deleted_at')
+                        ->orderByDesc('id')
+                        ->limit(1)
+                ])
+                ->addSelect([
                     'costo' => DB::table('Detalle_Ingreso')
                         ->select('Detalle_Ingreso.precioCompra')
                         ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')

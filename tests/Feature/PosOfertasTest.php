@@ -19,6 +19,12 @@ function prepararPosConOferta(float $descuento = 20): User
         'activo' => true,
     ]);
     Producto::create(['codigo' => 'POS-OFERTA-1', 'nombre' => 'Helado en oferta']);
+    DB::table('IMAGEN_PRODUCTO')->insert([
+        'rutaImagen' => 'images/productos/helado-oferta.jpg',
+        'codigoProducto' => 'POS-OFERTA-1',
+        'alt' => 'Helado en oferta',
+        'descripcion' => 'Imagen del producto',
+    ]);
 
     DB::table('Lista_Precio')->insert([
         'codigoProducto' => 'POS-OFERTA-1',
@@ -49,6 +55,7 @@ test('el POS muestra precio normal y precio con oferta en el producto', function
         ->assertSee('data-precio-normal="1000"', false)
         ->assertSee('data-precio-oferta="800"', false)
         ->assertSee('class="badge badge-oferta">-20%</span>', false)
+        ->assertSee('src="' . asset('images/productos/helado-oferta.jpg') . '"', false)
         ->assertSee('id="badge-carrito-POS-OFERTA-1" hidden', false)
         ->assertDontSee('Oferta: $800');
 });
