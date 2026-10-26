@@ -8,6 +8,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\ReporteController;
+
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CategoriaController;
@@ -240,6 +242,12 @@ Route::middleware('auth')->group(function () {
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'destroy']
     )->name('proveedores.destroy');
+
+    // =====================================================
+    // REPORTES
+    // =====================================================
+
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
 
     // =====================================================
