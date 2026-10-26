@@ -1,0 +1,128 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version a registrar (ej. 1.2.0)"
+        required: true
+        type: string
+      comentarios:
+        description: "Comentarios de la version"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Compilar y probar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, intl, pdo_mysql, bcmath, gd, zip, fileinfo
+          coverage: none
+          tools: composer
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias PHP
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Instalar dependencias JS
+        run: npm ci
+
+      - name: Compilar assets
+        run: npm run build
+
+      - name: Preparar entorno de pruebas
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Ejecutar tests
+        run: php artisan test
+
+      - name: Guardar assets compilados
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-build
+          path: public/build
+          retention-days: 1
+
+  deploy:
+    name: Desplegar por SSH
+    needs: build
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+
+    steps:
+      - name: Descargar assets compilados
+        uses: actions/download-artifact@v4
+        with:
+          name: public-build
+          path: public/build
+
+      - name: Configurar SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Actualizar codigo y dependencias
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+            "DEPLOY_PATH='$DEPLOY_PATH' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$DEPLOY_PATH"
+          git pull --ff-only origin main
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          php artisan migrate --force
+          REMOTE
+
+      - name: Subir assets compilados
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$DEPLOY_PATH/public/build'"
+          scp -i ~/.ssh/deploy_key -P "$SSH_PORT" -r public/build/. \
+            "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/public/build/"
+
+      - name: Registrar version y regenerar caches
+        run: |
+          VERSION_B64=$(printf '%s' "${{ inputs.version }}" | base64 -w0)
+          COMMENTS_B64=$(printf '%s' "${{ inputs.comentarios }}" | base64 -w0)
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+            "DEPLOY_PATH='$DEPLOY_PATH' VERSION_B64='$VERSION_B64' COMMENTS_B64='$COMMENTS_B64' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$DEPLOY_PATH"
+          php artisan version:registrar \
+            "$(printf '%s' "$VERSION_B64" | base64 -d)" \
+            --comentarios="$(printf '%s' "$COMMENTS_B64" | base64 -d)"
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          REMOTE

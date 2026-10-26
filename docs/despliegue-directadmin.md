@@ -340,3 +340,52 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 
 Así las actualizaciones son un `git pull` + 2 comandos.
+
+## 13. Deploy automático con GitHub Actions (un click)
+
+El workflow `.github/workflows/deploy.yml` hace todo el proceso desde **GitHub → Actions → Deploy → Run workflow**:
+
+1. Instala PHP/Node, compila con Vite (`npm run build`) y corre los tests.
+2. Entra por SSH al servidor, ejecuta `git pull`, `composer install --no-dev` y `php artisan migrate --force`.
+3. Sube `public/build` compilado.
+4. Registra la versión con `php artisan version:registrar` y regenera las cachés.
+
+### 13.1 Requisitos en DirectAdmin
+
+- Acceso **SSH** habilitado (DirectAdmin → SSH Keys).
+- Repositorio clonado en el servidor (`git clone`) apuntando a `main`, con permiso de lectura (deploy key del repo).
+- PHP 8.3+ y **Composer** disponibles por SSH.
+- `.env` de producción ya creado y `APP_KEY` generada.
+- El usuario SSH debe poder escribir en `storage/`, `bootstrap/cache/` y `public/build/`.
+
+### 13.2 Secrets del repositorio (GitHub → Settings → Secrets and variables → Actions)
+
+| Secret | Contenido |
+| --- | --- |
+| `SSH_HOST` | IP o dominio del servidor |
+| `SSH_USER` | Usuario SSH |
+| `SSH_PORT` | Puerto SSH (opcional, por defecto 22) |
+| `SSH_PRIVATE_KEY` | Clave privada cuya pública está en `~/.ssh/authorized_keys` del servidor |
+| `DEPLOY_PATH` | Ruta absoluta del proyecto en el servidor (donde está `artisan`) |
+
+### 13.3 Uso
+
+1. GitHub → **Actions** → **Deploy** → **Run workflow**.
+2. Escribe la versión (ej. `1.3.0`) y los comentarios.
+3. El workflow falla si los tests no pasan; si todo va bien, la fila queda en `versiones` y esa versión aparece en el sitio público.
+
+También se puede ejecutar el comando a mano en el servidor:
+
+```bash
+php artisan version:registrar 1.3.0 --comentarios="Corrige reportes 9 y 10"
+```
+
+### 13.4 Si solo tienes la herramienta Git de DirectAdmin (sin SSH)
+
+La herramienta Git del panel es *pull* (el servidor jala cambios), no se puede disparar desde GitHub Actions. En ese caso:
+
+- Configura el Git de DirectAdmin para hacer `git pull` de `main` por cron o webhook.
+- El workflow puede seguir compilando y subiendo `public/build` por FTP, o bien compilar en local y subir esa carpeta.
+- Para registrar la versión, agrega un comando post-pull en el servidor (`php artisan version:registrar ...`); si el panel no permite hooks, ejecútalo manualmente por SSH/cron.
+
+> ⚠️ Recordatorio: en Linux el casing de tablas es sensible (ver #66 en [pendientes.md](pendientes.md)). Si `migrate` o `version:registrar` fallan con "table doesn't exist", hay que normalizar el casing antes de usar este deploy.
