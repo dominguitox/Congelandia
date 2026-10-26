@@ -23,7 +23,12 @@
     @endif
 
     <div class="card-body d-flex flex-column">
-        <span class="badge rounded-pill text-bg-light align-self-start mb-2">{{ $categoria }}</span>
+        <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="badge rounded-pill text-bg-light">{{ $categoria }}</span>
+            @if(isset($producto->mayor_descuento) && $producto->mayor_descuento !== null)
+                <span class="badge rounded-pill bg-orange text-white">-{{ number_format((float) $producto->mayor_descuento, 0) }}%</span>
+            @endif
+        </div>
         <h3 class="h5 fw-bold text-dark mb-1">{{ $producto->nombre }}</h3>
 
         @if($producto->descripcion)

@@ -37,6 +37,12 @@ class Producto extends Model
     {
         return $this->hasMany(ImagenProducto::class, 'codigoProducto', 'codigo');
     }
+
+    public function promociones()
+    {
+        return $this->hasMany(Promocion::class, 'codigoProducto', 'codigo');
+    }
+
     // Relación para obtener el precio actual del producto
     public function precioActual()
     {

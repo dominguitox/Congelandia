@@ -15,6 +15,9 @@ class PublicController extends Controller
         $version = Version::where('activa', 1)->latest('id')->first();
 
         $productos = Producto::with(['imagenes', 'precioActual', 'categoria'])
+            ->withMax(['promociones as mayor_descuento' => fn ($query) => $query->vigentes()], 'porcentajeDescuento')
+            ->whereHas('promociones', fn ($query) => $query->vigentes())
+            ->orderByDesc('mayor_descuento')
             ->orderBy('nombre')
             ->limit(6)
             ->get();
