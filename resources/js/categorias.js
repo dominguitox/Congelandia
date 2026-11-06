@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const id = this.getAttribute('data-id');
             const nombre = this.getAttribute('data-nombre');
 
-            formEditar.action = `/categorias/${id}`;
+            formEditar.action = this.dataset.updateUrl;
             inputEditarNombre.value = nombre;
         });
     });
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const nombre = this.getAttribute('data-nombre');
             const count = parseInt(this.getAttribute('data-count'));
 
-            formEliminar.action = `/categorias/${id}`;
+            formEliminar.action = this.dataset.deleteUrl;
             textoEliminarNombre.textContent = nombre;
 
             if (count > 0) {
