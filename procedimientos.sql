@@ -36,7 +36,7 @@ BEGIN
     -- Inserción en la tabla Venta
 	INSERT INTO salida (fecha, idTipo, idUsuario, rutCliente, totalSalida)
 	VALUES (NOW(), p_idTipo, p_idUsuario, p_rutCliente, p_totalVenta);
-    
+
     -- Capturar el ID generado para la venta actual
     SET p_idVenta = LAST_INSERT_ID();
     SET p_resultado = 1;
@@ -54,7 +54,7 @@ CREATE PROCEDURE SP_RegistrarDetalleVenta(
 )
 BEGIN
     -- Insertar directamente en la tabla de detalle (ajusta la llave foránea idVenta/idSalida según tu tabla)
-    INSERT INTO Detalle_Salida (idVenta, codigoProducto, cantidad, precioCobrado)
+    INSERT INTO detalle_salida (idVenta, codigoProducto, cantidad, precioCobrado)
     VALUES (p_idVenta, p_codigoProducto, p_cantidad, p_precioCobrado);
 
     SET p_resultado = 1;
@@ -66,26 +66,26 @@ CREATE PROCEDURE SP_ObtenerProductoPorId(
     IN p_codigoBuscado VARCHAR(50)
 )
 BEGIN
-    SELECT 
-        p.codigo, 
-        p.nombre, 
+    SELECT
+        p.codigo,
+        p.nombre,
         c.nombre AS categoria,
-        (SELECT precioVenta FROM Lista_Precio WHERE codigoProducto = p.codigo AND fechaFin IS NULL LIMIT 1) AS precio,
-        (SELECT di.precioCompra FROM Detalle_Ingreso di 
-         JOIN Ingreso i ON di.idIngreso = i.idIngreso 
-         WHERE di.codigoProducto = p.codigo 
+        (SELECT precioVenta FROM lista_precio WHERE codigoProducto = p.codigo AND fechaFin IS NULL LIMIT 1) AS precio,
+        (SELECT di.precioCompra FROM detalle_ingreso di
+         JOIN ingreso i ON di.idIngreso = i.idIngreso
+         WHERE di.codigoProducto = p.codigo
          ORDER BY i.fecha DESC LIMIT 1) AS costo,
-        (SELECT prov.nombre FROM Detalle_Ingreso di 
-         JOIN Ingreso i ON di.idIngreso = i.idIngreso 
-         JOIN Proveedor prov ON i.idProveedor = prov.idProveedor
-         WHERE di.codigoProducto = p.codigo 
+        (SELECT prov.nombre FROM detalle_ingreso di
+         JOIN ingreso i ON di.idIngreso = i.idIngreso
+         JOIN proveedor prov ON i.idProveedor = prov.idProveedor
+         WHERE di.codigoProducto = p.codigo
          ORDER BY i.fecha DESC LIMIT 1) AS proveedor,
-        (IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = p.codigo), 0) 
-        - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = p.codigo), 0)
+        (IFNULL((SELECT SUM(cantidad) FROM detalle_ingreso WHERE codigoProducto = p.codigo), 0)
+        - IFNULL((SELECT SUM(cantidad) FROM detalle_salida WHERE codigoProducto = p.codigo), 0)
         ) AS stock
-    FROM Producto p
-    LEFT JOIN Categoria c ON p.idCategoria = c.idCategoria
-    WHERE p.codigo = p_codigoBuscado; 
+    FROM producto p
+    LEFT JOIN categoria c ON p.idCategoria = c.idCategoria
+    WHERE p.codigo = p_codigoBuscado;
 END //
 
 CREATE PROCEDURE SP_listarProveedores()
@@ -105,28 +105,28 @@ END //
 
 CREATE PROCEDURE SP_listarSalidas()
 BEGIN
-    SELECT 
+    SELECT
         s.idSalida,
         s.fecha,
         (SELECT t.nombre FROM tipo_salida t WHERE idTIpo = s.idTipo) AS tipo,
         (SELECT u.nombre FROM usuario u WHERE idUsuario = s.idUsuario) AS usuario,
         s.rutCliente,
         s.totalSalida,
-       (SELECT sum(CANTIDAD) FROM DETALLE_SALIDA WHERE idSalida = s.idSalida) as cantidad
-    FROM SALIDA s;
+       (SELECT sum(CANTIDAD) FROM detalle_salida WHERE idSalida = s.idSalida) as cantidad
+    FROM salida s;
 END //
 
 CREATE PROCEDURE SP_DetalleSalida(
     IN p_idSalida INT
 )
 BEGIN
-    SELECT	
+    SELECT
         p.nombre AS producto,
         ds.cantidad,
         ds.precioCobrado AS subtotal,
         (ds.precioCobrado / ds.cantidad) AS precioUnitario
-    FROM Detalle_Salida ds
-    INNER JOIN Producto p
+    FROM detalle_salida ds
+    INNER JOIN producto p
         ON ds.codigoProducto = p.codigo
     WHERE ds.idSalida = p_idSalida;
 END //

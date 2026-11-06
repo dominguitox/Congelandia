@@ -2,6 +2,8 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
+> Correcciones de esta rama: [informe de revisión](revision-tablas.md). Los cambios siguen sin commit y no se atribuyen a main.
+
 ## P0 — Rompe la app hoy (críticos)
 
 | # | Problema | Ubicación |
@@ -37,7 +39,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 17 | ~~Carpeta de vistas `POS/` (mayúsculas) vs `view('pos.index')` buscada en minúsculas~~ ✓ **resuelto**: carpeta renombrada a `resources/views/pos/` | `resources/views/pos/` |
 | 18 | ~~`usuarioos.js` (typo, vacío 0 bytes) referenciado por `@vite` en usuarios pero NO está como input de vite~~ ✓ **resuelto**: renombrado a `usuarios.js` y registrado en `vite.config.js` (sigue vacío, ver #33) | `resources/js/usuarios.js`, `vite.config.js` |
 | 19 | ~~`public.css` se referencia vía `@vite` y no es input de vite; `public.js` no existe~~ ✓ **resuelto** (`public.css` registrado como input; se quitó la referencia a `public.js`) | `public/index.blade.php`, `vite.config.js` (rama `implementacion-estilos-css`) |
-| 66 | **Casing de tablas en MySQL Linux**: las migraciones crean `Cliente`, `Categoria`, `Producto`, `Lista_Precio`, `Ingreso`, `Salida`, `Detalle_Salida`, `Tipo_Salida`, etc., pero casi todos los modelos usan `$table` en minúsculas (`categoria`, `producto`, `ingreso`, `salida`, `detalle_salida`, `tipo_salida`) y varias queries crudas también. Con `lower_case_table_names=0` fallan tanto Eloquent como `DB::table()`/subqueries. Si en cambio la BD se importa desde los `.sql` (minúsculas), fallan los modelos que usan PascalCase (`Cliente`, `Usuario`, `IMAGEN_PRODUCTO`). Hay que unificar todo a un solo casing (recomendado: minúsculas snake_case) | Modelos en `app/Models/*.php`; `HistorialController.php:33,61,86,121,229`; `ReporteController.php`; `ProveedorController.php:111,141,229`; migraciones `create_*` |
+| 66 | ~~**Casing de tablas en MySQL Linux**: las migraciones crean `Cliente`, `Categoria`, `Producto`, `Lista_Precio`, `Ingreso`, `Salida`, `Detalle_Salida`, `Tipo_Salida`, etc., pero casi todos los modelos usan `$table` en minúsculas (`categoria`, `producto`, `ingreso`, `salida`, `detalle_salida`, `tipo_salida`) y varias queries crudas también. Con `lower_case_table_names=0` fallan tanto Eloquent como `DB::table()`/subqueries. Si en cambio la BD se importa desde los `.sql` (minúsculas), fallan los modelos que usan PascalCase (`Cliente`, `Usuario`, `IMAGEN_PRODUCTO`). Hay que unificar todo a un solo casing (recomendado: minúsculas snake_case)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-tablas.md) | Modelos en `app/Models/*.php`; `HistorialController.php:33,61,86,121,229`; `ReporteController.php`; `ProveedorController.php:111,141,229`; migraciones `create_*` |
 
 > Estrategia sugerida para #66: un PR único "normalización de tablas" que cambie migraciones, modelos y queries crudas al mismo casing, y valide con `migrate:fresh` + tests en un MySQL Linux (o contenedor).
 

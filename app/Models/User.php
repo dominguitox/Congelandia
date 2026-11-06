@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
-    protected $table = 'Usuario';
+    protected $table = 'usuario';
     protected $primaryKey = 'idUsuario';
     public $incrementing = true;
     protected $keyType = 'int';

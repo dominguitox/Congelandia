@@ -15,10 +15,10 @@ test('migrate crea todas las tablas del negocio', function () {
     Artisan::call('migrate:fresh');
 
     $tablas = [
-        'Usuario', 'Cliente', 'Categoria', 'Producto', 'Lista_Precio', 'Promocion',
-        'Proveedor', 'Ingreso', 'Detalle_Ingreso', 'Tipo_Salida', 'Salida',
-        'Detalle_Salida', 'Metodo_Pago', 'Pago_Salida', 'Tipo_Devolucion',
-        'Devolucion', 'IMAGEN_PRODUCTO', 'Versiones', 'log_errors',
+        'usuario', 'cliente', 'categoria', 'producto', 'lista_precio', 'promocion',
+        'proveedor', 'ingreso', 'detalle_ingreso', 'tipo_salida', 'salida',
+        'detalle_salida', 'metodo_pago', 'pago_salida', 'tipo_devolucion',
+        'devolucion', 'imagen_producto', 'versiones', 'log_errors',
     ];
 
     foreach ($tablas as $t) {
@@ -40,10 +40,10 @@ test('el grafo de FK soporta un flujo de venta completo', function () {
     $producto = Producto::create([
         'codigo' => 'TEST-001',
         'nombre' => 'Producto test',
-        'idCategoria' => DB::table('Categoria')->insertGetId(['nombre' => 'TestCat']),
+        'idCategoria' => DB::table('categoria')->insertGetId(['nombre' => 'TestCat']),
     ]);
     $tipo = TipoSalida::create(['nombre' => 'venta test']);
-    $metodo = DB::table('Metodo_Pago')->insertGetId(['nombre' => 'efectivo']);
+    $metodo = DB::table('metodo_pago')->insertGetId(['nombre' => 'efectivo']);
 
     $salida = Salida::create([
         'fecha' => now(),

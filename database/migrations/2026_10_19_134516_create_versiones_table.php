@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('Versiones', function (Blueprint $table) {
+        Schema::create('versiones', function (Blueprint $table) {
             $table->id();
             $table->string('numero', 20);
             $table->text('comentarios')->nullable();
@@ -19,6 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('Versiones');
+        Schema::dropIfExists('versiones');
     }
 };

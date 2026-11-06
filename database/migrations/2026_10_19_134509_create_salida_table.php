@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('Salida', function (Blueprint $table) {
+        Schema::create('salida', function (Blueprint $table) {
             $table->id('idSalida');
             $table->dateTime('fecha');
             $table->unsignedBigInteger('idTipo');
@@ -17,14 +17,14 @@ return new class extends Migration
             $table->decimal('totalSalida', 12, 2)->default(0.00);
             $table->softDeletes();
 
-            $table->foreign('idTipo')->references('idTipo')->on('Tipo_Salida');
-            $table->foreign('idUsuario')->references('idUsuario')->on('Usuario');
-            $table->foreign('rutCliente')->references('rutCliente')->on('Cliente');
+            $table->foreign('idTipo')->references('idTipo')->on('tipo_salida');
+            $table->foreign('idUsuario')->references('idUsuario')->on('usuario');
+            $table->foreign('rutCliente')->references('rutCliente')->on('cliente');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('Salida');
+        Schema::dropIfExists('salida');
     }
 };
