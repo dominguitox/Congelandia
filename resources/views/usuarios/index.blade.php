@@ -251,9 +251,9 @@
                         <label for="rol" class="form-label">Rol *</label>
                         <select class="form-select" id="rol" name="rol" required>
                             <option value="" selected disabled>Selecciona un rol</option>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Jefe">Jefe</option>
-                            <option value="Cajero">Cajero</option>
+                            @foreach (\App\Models\User::ROLES as $rol)
+                                <option value="{{ $rol }}" @selected(old('rol') === $rol)>{{ $rol }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

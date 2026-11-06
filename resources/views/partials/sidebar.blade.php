@@ -8,9 +8,9 @@
                 ['label' => 'Inventario', 'url' => url('/inventario'), 'pattern' => 'inventario*'],
                 ['label' => 'Historial', 'url' => url('/historial'), 'pattern' => 'historial*'],
                 ['label' => 'Clientes', 'url' => route('clientes.index'), 'pattern' => 'clientes.*', 'isRoute' => true],
-                ['label' => 'Proveedores', 'url' => url('/proveedores'), 'pattern' => 'proveedores*'],
-                ['label' => 'Categorías', 'url' => url('/categorias'), 'pattern' => 'categorias*'],
-                ['label' => 'Usuarios', 'url' => url('/usuarios'), 'pattern' => 'usuarios*'],
+                ['label' => 'Proveedores', 'url' => url('/proveedores'), 'pattern' => 'proveedores*', 'admin' => true],
+                ['label' => 'Categorías', 'url' => url('/categorias'), 'pattern' => 'categorias*', 'admin' => true],
+                ['label' => 'Usuarios', 'url' => url('/usuarios'), 'pattern' => 'usuarios*', 'admin' => true],
               //      ['label' => 'Roles', 'url' => url('/Roles'), 'pattern' => 'Roles*'],
             ];
 
@@ -22,6 +22,7 @@
 
         <ul class="nav flex-column p-3">
             @foreach($menuItems as $item)
+                @continue(($item['admin'] ?? false) && ! auth()->user()->tieneRol('Administrador'))
                 @php
                     // Comprobamos si está activo según corresponda (ruta nombrada o patrón de URL)
                     $isActive = isset($item['isRoute'])

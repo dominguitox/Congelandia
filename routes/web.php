@@ -19,7 +19,6 @@ use App\Http\Controllers\PromocionController;
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
 
-use App\Http\Middleware\CheckRole;
 
 
 // =========================================================
@@ -99,7 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::get(
         '/reportes',
         [ReporteController::class, 'index']
-    )->name('reportes.index');
+    )->middleware('role:Administrador')->name('reportes.index');
 
 
     // =====================================================
@@ -120,7 +119,7 @@ Route::middleware('auth')->group(function () {
     Route::put(
         '/productos/{codigo}',
         [ProductoController::class, 'editarProducto']
-    )->name('inventario.editarProducto');
+    )->middleware('role:Administrador')->name('inventario.editarProducto');
 
     Route::post(
         '/inventario/ingresos',
@@ -165,22 +164,22 @@ Route::middleware('auth')->group(function () {
     Route::get(
         '/categorias',
         [CategoriaController::class, 'index']
-    )->name('categorias.index');
+    )->middleware('role:Administrador')->name('categorias.index');
 
     Route::post(
         '/categorias',
         [CategoriaController::class, 'store']
-    )->name('categorias.store');
+    )->middleware('role:Administrador')->name('categorias.store');
 
     Route::put(
         '/categorias/{idCategoria}',
         [CategoriaController::class, 'update']
-    )->name('categorias.update');
+    )->middleware('role:Administrador')->name('categorias.update');
 
     Route::delete(
         '/categorias/{idCategoria}',
         [CategoriaController::class, 'destroy']
-    )->name('categorias.destroy');
+    )->middleware('role:Administrador')->name('categorias.destroy');
 
 
     // =====================================================
@@ -225,28 +224,28 @@ Route::middleware('auth')->group(function () {
     Route::get(
         '/proveedores',
         [ProveedorController::class, 'listarProveedores']
-    )->name('proveedores.index');
+    )->middleware('role:Administrador')->name('proveedores.index');
 
     Route::post(
         '/proveedores',
         [ProveedorController::class, 'store']
-    )->name('proveedores.store');
+    )->middleware('role:Administrador')->name('proveedores.store');
 
     Route::put(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'update']
-    )->name('proveedores.update');
+    )->middleware('role:Administrador')->name('proveedores.update');
 
     Route::delete(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'destroy']
-    )->name('proveedores.destroy');
+    )->middleware('role:Administrador')->name('proveedores.destroy');
 
     // =====================================================
     // REPORTES
     // =====================================================
 
-    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes', [ReporteController::class, 'index'])->middleware('role:Administrador')->name('reportes.index');
 
 
     // =====================================================
@@ -256,12 +255,12 @@ Route::middleware('auth')->group(function () {
     Route::get(
         '/usuarios',
         [UserController::class, 'index']
-    )->name('usuarios.index');
+    )->middleware('role:Administrador')->name('usuarios.index');
 
     Route::post(
         '/usuarios',
         [UserController::class, 'store']
-    )->name('usuarios.store');
+    )->middleware('role:Administrador')->name('usuarios.store');
 
 
     // =====================================================
@@ -282,7 +281,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware([
     'auth',
-    CheckRole::class . ':Administrador'
+    'role:Administrador'
 ])->group(function () {
 
     Route::post(

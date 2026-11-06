@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -20,7 +21,7 @@ class UserController extends Controller
             'nombre' => 'required|string|max:255',
             'email' => 'required|email|unique:Usuario,email',
             'contrasena' => 'required|string|min:4',
-            'rol' => 'required|string',
+            'rol' => ['required', Rule::in(User::ROLES)],
         ]);
 
         User::create([
