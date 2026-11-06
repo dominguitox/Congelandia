@@ -66,7 +66,7 @@ Listado con filtros, ficha de producto (precio vigente, costo, proveedor, stock 
 | **Vista** | `clientes/index.blade.php` (con ~1.500 líneas inline de CSS/JS), JS: `resources/js/app.js` (función duplicada) |
 | **Estado** | ⚠️ Funcional en general (gestión de deudas/créditos); el formulario de abono usa la ruta `clientes.registrarPago`. Sigue la deuda técnica de CSS/JS inline y dos tablas con lógica duplicada. |
 
-Gestión de clientes con compras referenciadas. Dos pestañas: deudas abiertas y pagados. Los pagos se registran sobre `pago_salida` y descienden el saldo total de la venta a crédito.
+Gestión de todos los clientes activos, separados en deudas activas y clientes sin deuda (incluidos quienes todavía no tienen compras ni pagos). El alta muestra confirmación o errores de validación conservando los datos. Los pagos se registran sobre `pago_salida` y descienden el saldo total de la venta a crédito. Ver [creación, listado y pruebas](clientes.md).
 
 ## 7. Proveedores
 
