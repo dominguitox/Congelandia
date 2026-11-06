@@ -436,20 +436,26 @@
 
             <form action="{{ route('productos.crearProducto') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_modal" value="modalCrearProducto">
                 <div class="modal-body">
+                    @if ($errors->any() && old('_modal') === 'modalCrearProducto')
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
                     <h6 class="text-primary fw-bold mb-3">Datos del Catálogo</h6>
                     <div class="row g-3 mb-3">
                         <div class="col-md-5">
                             <label for="codigo" class="form-label">Código de Barras *</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Haz clic aquí para escanear" required>
+                                <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Haz clic aquí para escanear" required value="{{ old('_modal') === 'modalCrearProducto' ? old('codigo') : '' }}">
                                 <button class="btn btn-primary fw-bold" type="button" id="btnEscanear">Escanear</button>
                             </div>
                         </div>
 
                         <div class="col-md-7">
                             <label for="nombre" class="form-label">Nombre del Producto *</label>
-                            <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ej. Hamburguesa de Res" required>
+                            <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ej. Hamburguesa de Res" required value="{{ old('_modal') === 'modalCrearProducto' ? old('nombre') : '' }}">
                         </div>
 
                         <div class="col-md-4">
@@ -457,19 +463,19 @@
                             <select class="form-select" name="idCategoria" id="idCategoria" required>
                                 <option value="">Seleccione una categoría...</option>
                                 @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->idCategoria }}">{{ $categoria->nombre }}</option>
+                                    <option value="{{ $categoria->idCategoria }}" @selected(old('_modal') === 'modalCrearProducto' && old('idCategoria') == $categoria->idCategoria)>{{ $categoria->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="col-md-4">
                             <label for="precioVenta" class="form-label">Precio de Venta ($) *</label>
-                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta" required>
+                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta" required value="{{ old('_modal') === 'modalCrearProducto' ? old('precioVenta') : '' }}">
                         </div>
 
                         <div class="col-md-4">
                             <label for="descripcion" class="form-label">Descripción</label>
-                            <input type="text" class="form-control" name="descripcion" id="descripcion">
+                            <input type="text" class="form-control" name="descripcion" id="descripcion" value="{{ old('_modal') === 'modalCrearProducto' ? old('descripcion') : '' }}">
                         </div>
 
                         <div class="col-12">
@@ -496,21 +502,21 @@
                                     <select class="form-select" name="idProveedor" id="idProveedor">
                                         <option value="">Seleccione proveedor...</option>
                                         @foreach ($proveedores as $proveedor)
-                                            <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
+                                            <option value="{{ $proveedor->idProveedor }}" @selected(old('_modal') === 'modalCrearProducto' && old('idProveedor') == $proveedor->idProveedor)>{{ $proveedor->nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="stockInicial" class="form-label">Stock Inicial</label>
-                                    <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0" min="0">
+                                    <input type="number" class="form-control" name="stockInicial" id="stockInicial" min="0" value="{{ old('_modal') === 'modalCrearProducto' ? old('stockInicial') : '0' }}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
-                                    <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra">
+                                    <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra" value="{{ old('_modal') === 'modalCrearProducto' ? old('precioCompra') : '' }}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
-                                    <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento">
+                                    <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento" value="{{ old('_modal') === 'modalCrearProducto' ? old('fechaVencimiento') : '' }}">
                                 </div>
                             </div>
                         </div>
@@ -539,20 +545,26 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="" method="POST" id="formEditarProducto" enctype="multipart/form-data">
+            <form action="" method="POST" id="formEditarProducto" data-old-action="{{ old('_modal') === 'modalEditarProducto' && old('codigo') ? route('inventario.editarProducto', old('codigo')) : '' }}" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_modal" value="modalEditarProducto">
                 @method('PUT')
                 <div class="modal-body">
+                    @if ($errors->any() && old('_modal') === 'modalEditarProducto')
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
                     <h6 class="text-primary fw-bold mb-3">Datos del Catálogo</h6>
                     <div class="row g-3 mb-3">
                         <div class="col-md-5">
                             <label for="edit_codigo" class="form-label">Código de Barras *</label>
-                            <input type="text" class="form-control bg-light" name="codigo" id="edit_codigo" readonly required>
+                            <input type="text" class="form-control bg-light" name="codigo" id="edit_codigo" readonly required value="{{ old('_modal') === 'modalEditarProducto' ? old('codigo') : '' }}">
                         </div>
 
                         <div class="col-md-7">
                             <label for="edit_nombre" class="form-label">Nombre del Producto *</label>
-                            <input type="text" class="form-control" name="nombre" id="edit_nombre" required>
+                            <input type="text" class="form-control" name="nombre" id="edit_nombre" required value="{{ old('_modal') === 'modalEditarProducto' ? old('nombre') : '' }}">
                         </div>
 
                         <div class="col-md-4">
@@ -560,19 +572,19 @@
                             <select class="form-select" name="idCategoria" id="edit_idCategoria" required>
                                 <option value="">Seleccione categoría...</option>
                                 @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->idCategoria }}">{{ $categoria->nombre }}</option>
+                                    <option value="{{ $categoria->idCategoria }}" @selected(old('_modal') === 'modalEditarProducto' && old('idCategoria') == $categoria->idCategoria)>{{ $categoria->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="col-md-4">
                             <label for="edit_precioVenta" class="form-label">Precio de Venta ($) *</label>
-                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="edit_precioVenta" required>
+                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="edit_precioVenta" required value="{{ old('_modal') === 'modalEditarProducto' ? old('precioVenta') : '' }}">
                         </div>
 
                         <div class="col-md-4">
                             <label for="edit_descripcion" class="form-label">Descripción</label>
-                            <input type="text" class="form-control" name="descripcion" id="edit_descripcion">
+                            <input type="text" class="form-control" name="descripcion" id="edit_descripcion" value="{{ old('_modal') === 'modalEditarProducto' ? old('descripcion') : '' }}">
                         </div>
 
                         <div class="col-md-12">

@@ -64,7 +64,7 @@ Versiones, Log_Errors (sistema, sin soft delete)
 | `PagoSalida` | `pago_salida` | `idPago` | Sí | `salida()` |
 | `ListaPrecio` | `lista_precio` | `idPrecio` | Sí | Histórico de precios (vigente = `fechaFin` null, última `fechaInicio`) |
 | `Promocion` | `promocion` | `idPromocion` | Sí | `producto()` mapea `codigoProducto`→`codigo`; `vigentes()` alimenta dashboard, inventario y POS. El gestor de ofertas vive en Inventario; las acciones se limitan a Administrador. |
-| `ImagenProducto` | `IMAGEN_PRODUCTO` | *(no declarada)* | Sí | ⚠️ Su relación `producto()` mapea a `Producto.id` que **no existe** (la PK real es `codigo`) — relación rota, nunca la usa el código; los controladores usan `Producto::imagenes()` |
+| `ImagenProducto` | `IMAGEN_PRODUCTO` | *(no declarada)* | Sí | ⚠️ Su relación `producto()` mapea a `Producto.codigo`, la PK real; el modelo se conserva porque se usa al guardar y cargar imágenes |
 | `ProductoVenta` | `PRODUCTO_VENTA` | *default* | No | **Sin ningún uso** en la app; sin tabla/migración activa |
 
 > **Soft deletes (commit `5282d75`)**: la migración `2026_10_21_000000_add_soft_deletes_to_business_tables.php` agregó `deleted_at` a `ingreso`, `detalle_ingreso`, `detalle_salida`, `lista_precio`, `promocion`, `imagen_producto`, `pago_salida`, `tipo_salida`, `metodo_pago`, `tipo_devolucion` y `devolucion`. Junto con las tablas que ya lo tenían (`usuario`, `cliente`, `categoria`, `producto`, `proveedor`, `salida`), todas las tablas de negocio soportan borrado lógico. Se excluyó `log_errors` (log) y `versiones` (metadato del sistema). `metodo_pago`, `tipo_devolucion` y `devolucion` tienen la columna pero aún no tienen modelo; al crearlos deben usar `SoftDeletes`.
@@ -96,7 +96,7 @@ COALESCE((SELECT SUM(cantidad) FROM detalle_salida ds
             AND s.deleted_at IS NULL), 0)
 ```
 
-Las consultas crudas deben filtrar `deleted_at` a mano; Eloquent lo aplica solo por el trait `SoftDeletes`. Esa subconsulta está copiada en 4 lugares (PosController, ProductoController ×2, DashboardController). Consolidarla en un scope o helper es uno de los mejoramientos del backlog (ver [pendientes.md](pendientes.md) y [convenciones.md](convenciones.md)).
+Las consultas crudas deben filtrar `deleted_at` a mano; Eloquent lo aplica solo por el trait `SoftDeletes`. En esta rama Producto::conDetalle centraliza esa consulta para inventario, POS y dashboard. Ver [alcance y pruebas](revision-productos.md).
 
 ## Precios y costos
 
