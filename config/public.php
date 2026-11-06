@@ -19,7 +19,7 @@ return [
     | Cada estilo vive en resources/css/public-temas/<estilo>.css
     */
 
-    'estilo_default' => env('PUBLIC_ESTILO', 'fresco'),
+    'estilo_default' => env('PUBLIC_ESTILO', 'hielo'),
 
     // Muestra la barra flotante para alternar entre estilos.
     // Dejar en false al publicar el sitio definitivo.
