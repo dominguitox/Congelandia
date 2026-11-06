@@ -10,7 +10,7 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 | [arquitectura.md](arquitectura.md) | Stack tecnológico, estructura de carpetas, flujo de una petición y manejo de errores |
 | [rutas.md](rutas.md) | Referencia completa de todas las rutas del sistema (método, URL, nombre, controlador, roles) |
 | [modelos-datos.md](modelos-datos.md) | Esquema de base de datos, modelos Eloquent, relaciones y procedimientos almacenados |
-| [migraciones.md](migraciones.md) | Migraciones Laravel del esquema completo (rama `migracion-sql-a-laravel`, pendiente de merge) |
+| [migraciones.md](migraciones.md) | Migraciones Laravel del esquema completo (ya integrado en main) |
 | [modulos.md](modulos.md) | Funcionalidad de cada módulo del sistema, vista por vista |
 | [estilos.md](estilos.md) | Arquitectura CSS, componentes compartidos y sistema de temas (APP_TEMA) |
 | [responsividad.md](responsividad.md) | Alcance, breakpoints y cambios para que la app interna se vea bien en celular (rama `responsividad-movil`) |
@@ -30,3 +30,5 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 ## Estado del proyecto
 
 Proyecto en desarrollo activo (portafolio de título). Los bugs y pendientes conocidos están centralizados en [pendientes.md](pendientes.md); revisa ese documento antes de reportar que "algo no funciona".
+
+Auditoría actual y ramas independientes: [revision-documentacion.md](revision-documentacion.md).

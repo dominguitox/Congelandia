@@ -1,102 +1,24 @@
 # Congelandia
 
-Sistema de gestión para la tienda Congelandia (productos congelados): catálogo público, punto de venta (POS), inventario con stock calculado, clientes con compras a crédito, proveedores, categorías, historial de ventas y reportes.
+Sistema de gestión de productos congelados: catálogo público, POS, inventario, clientes con crédito, proveedores, categorías, historial y reportes.
 
-**Estado:** en desarrollo activo (portafolio de título). Bugs conocidos y pendientes: [docs/pendientes.md](docs/pendientes.md)
-
-## Stack
-
-| Capa | Tecnología |
-| --- | --- |
-| Backend | Laravel 13, PHP >= 8.4 |
-| Base de datos | MySQL 8 |
-| Frontend | Blade + Bootstrap 5 + Tailwind 4 |
-| Assets | Vite 8 |
-| Tests | Pest (solo stubs, sin cobertura de negocio) |
-
-## Requisitos
-
-- PHP >= 8.4
-- Composer
-- Node.js (con npm)
-- MySQL 8
-- Git
-
-> Opcional: Laravel Herd instala PHP, Composer y Node.js automáticamente (con PHP reciente).
+Laravel 13 · PHP >= 8.4 · MySQL 8 · Blade/Bootstrap 5/Tailwind 4 · Vite 8 · Pest.
 
 ## Instalación
 
-```bash
-git clone https://github.com/dominguitox/Congelandia
-cd Congelandia
-composer run setup
-```
+1. Instalar PHP >= 8.4, Composer, Node compatible con Vite 8 y MySQL 8.
+2. Ejecutar `composer install`, copiar `.env.example` a `.env` y configurar una base de datos vacía.
+3. Ejecutar `php artisan key:generate`, `php artisan migrate --seed`, `npm ci --ignore-scripts` y `npm run build`.
+4. Iniciar desarrollo con `composer run dev`.
 
-Después:
+Las migraciones ya cubren el negocio y el framework. No importar los SQL de legado sobre la base migrada. `composer run setup` usa migrate:fresh y borra tablas: reservarlo para un entorno nuevo/desechable, después de configurar su conexión.
 
-1. Configurar `.env` con credenciales MySQL (`DB_CONNECTION=mysql`, host/puerto/bd/usuario/password).
-2. **Importar los SQL del negocio** (las migraciones solo cubren tablas de framework):
+## Verificación
 
-```bash
-mysql -u root -p < "create table.sql"      # esquema real de negocio
-mysql -u root -p < "inserts.sql"           # datos semilla
-mysql -u root -p < "procedimientos.sql"    # stored procedures (opcional)
-```
-
-> **En la rama `migracion-sql-a-laravel` este paso ya no es necesario:** el esquema completo vive en migraciones Laravel y `composer run setup` lo crea todo. Ver [docs/migraciones.md](docs/migraciones.md) (rama pendiente de merge).
-
-Guía completa y solución de problemas: [docs/instalacion.md](docs/instalacion.md)
-
-## Desarrollo
-
-```bash
-composer run dev
-```
-
-Levanta en paralelo: `php artisan serve` (app en http://localhost:8000), worker de colas y Vite con hot reload.
-
-Otros scripts:
-
-| Comando | Qué hace |
-| --- | --- |
-| `composer run setup` | instalación inicial completa (dependencias, `.env`, key, migraciones, build) |
-| `composer run dev` | entorno de desarrollo (serve + queue + vite) |
-| `composer run test` | limpia config y corre la suite Pest |
-| `npm run build` | compila assets de producción |
-
-## Estructura del proyecto
-
-```
-app/Http/Controllers   # Controladores (lógica de cada módulo)
-app/Http/Middleware    # CheckRole (roles caseros sobre Usuario.rol)
-app/Models             # 19 modelos Eloquent
-bootstrap/app.php      # Registro: rutas, alias middleware, handler global de excepciones
-docs/                  # Documentación del proyecto
-database/              # Migraciones de framework (negocio va en SQL raíz), seeders
-resources/views        # Vistas Blade por módulo + layouts + partials
-resources/css, /js     # Assets por módulo (algunos vacíos — ver docs/pendientes.md)
-routes/web.php         # Todas las rutas
-create table.sql       # Esquema real de negocio (fuente de verdad de la BD)
-inserts.sql            # Datos semilla
-procedimientos.sql     # Stored procedures
-MWB.mwb                # Diagrama ER (Workbench)
-```
+`composer run test` ejecuta Pest con SQLite en memoria según phpunit.xml. La base tiene pruebas de esquema/FK, páginas públicas y promociones/POS. Falta cobertura de stock en la base (ver ramas de revisión). `npm run build` compila assets; no sustituye revisar la interacción en navegador. SQLite no valida el casing de tablas en MySQL Linux.
 
 ## Documentación
 
-La documentación detallada vive en [`docs/`](docs/) (leer primero [docs/index.md](docs/index.md)):
+Leer [docs/index.md](docs/index.md), [instalación](docs/instalacion.md), [arquitectura](docs/arquitectura.md), [rutas](docs/rutas.md), [modelos](docs/modelos-datos.md), [migraciones](docs/migraciones.md), [módulos](docs/modulos.md) y [convenciones](docs/convenciones.md).
 
-| Documento | Tema |
-| --- | --- |
-| [docs/instalacion.md](docs/instalacion.md) | Instalación paso a paso, SQL y troubleshooting |
-| [docs/arquitectura.md](docs/arquitectura.md) | Stack, estructura, flujo de petición, errores |
-| [docs/rutas.md](docs/rutas.md) | Tabla de las 30+ rutas con controlador y roles |
-| [docs/modelos-datos.md](docs/modelos-datos.md) | Esquema, modelos, relaciones y SPs |
-| [docs/migraciones.md](docs/migraciones.md) | Migraciones del esquema completo (rama `migracion-sql-a-laravel`) |
-| [docs/modulos.md](docs/modulos.md) | Funcionalidad por módulo y estado actual |
-| [docs/convenciones.md](docs/convenciones.md) | Convenciones del código y del equipo |
-| [docs/pendientes.md](docs/pendientes.md) | Backlog de bugs y refactor (60+ ítems priorizados) |
-
-## Registro de errores
-
-El sistema guarda excepciones no catalogadas en la tabla `log_errors` (definido en `bootstrap/app.php`) y redirige con un flash "Ocurrió un error en el sistema". Para depurar, revisa esa tabla o `storage/logs/laravel.log`.
+Los pendientes contrastados con código están en [docs/pendientes.md](docs/pendientes.md) y la [auditoría de noviembre](docs/revision-documentacion.md), con grupos, ramas y decisiones abiertas. Los temas y componentes visuales se describen en [estilos](docs/estilos.md).

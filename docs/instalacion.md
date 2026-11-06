@@ -2,124 +2,63 @@
 
 ## Requisitos
 
-| Software | Versión |
-| --- | --- |
-| PHP | >= 8.4 |
-| Composer | 2.x |
-| Node.js | 18+ (con npm) |
-| MySQL | 8.x (o compatible con MariaDB 10.x) |
-| Git | — |
+PHP >= 8.4 con extensiones de Laravel, PDO MySQL y PDO SQLite para pruebas; Composer 2; Node compatible con Vite 8 (consultar engines de la versión instalada), npm; MySQL 8; Git.
 
-Verifica tus versiones:
+## Entorno nuevo
 
 ```bash
-php -v
-composer -V
-node -v
-mysql --version
+composer install
+cp .env.example .env
 ```
 
-## Instalación
-
-### 1. Clonar e instalar dependencias
-
-```bash
-git clone https://github.com/dominguitox/Congelandia
-cd Congelandia
-composer run setup
-```
-
-El script `setup` (definido en `composer.json`) ejecuta en orden:
-
-1. `composer install`
-2. Copia `.env.example` a `.env` (si no existe)
-3. `php artisan key:generate`
-4. `php artisan migrate:fresh --force`
-5. `php artisan db:seed --force`
-6. `npm install --ignore-scripts`
-7. `npm run build`
-
-> **Ojo (rama `migracion-sql-a-laravel`):** `migrate:fresh --seed` crea ahora **todo el esquema** (framework + negocio + usuario admin inicial). Ya no es necesario importar `create table.sql`. Ver [migraciones.md](migraciones.md). En `main` sigue siendo obligatorio el paso 3 con los SQL.
-
-> ⚠️ **Incoherencia conocida:** `composer.json` declara `"php": "^8.3"`, pero el proyecto corre con PHP 8.4 (y Laravel 13 que exige PHP 8.4+). Ver [pendientes.md](pendientes.md).
-
-### 2. Configurar `.env` para MySQL
-
-El `.env.example` trae la conexión SQLite por defecto. Descomenta y completa estas claves:
+En PowerShell usar `Copy-Item .env.example .env`. Configurar `.env` antes de ejecutar migraciones:
 
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=congelandia_db
-DB_USERNAME=root
-DB_PASSWORD=tu_clave
+DB_USERNAME=usuario
+DB_PASSWORD=clave
 ```
 
-La base de datos `congelandia_db` se crea sola al importar `create table.sql` (incluye `CREATE DATABASE`). Si la creas a mano, usa el mismo nombre.
-
-### 3. Cargar las tablas del negocio y los datos
-
-> **Rama `migracion-sql-a-laravel`:** este paso ya **no es necesario** — `composer run setup` lo cubre con migraciones + seeder. Lo dejo documentado porque en `main` sigue vigente y los SQL quedan como legado/referencia.
-
-Los archivos SQL están en la raíz del repositorio. Importar **en este orden** (desde MySQL CLI o Workbench):
+Crear previamente la base vacía con ese nombre. Luego:
 
 ```bash
-mysql -u root -p < "create table.sql"      # esquema completo (business tables)
-mysql -u root -p < "inserts.sql"           # datos semilla
-mysql -u root -p < "procedimientos.sql"    # stored procedures (opcional)
-```
-
-| Archivo | Qué hace | Advertencias |
-| --- | --- | --- |
-| `create table.sql` | Crea la BD `congelandia_db` y todas las tablas de negocio (`Usuario`, `Cliente`, `Producto`, etc.). Es el esquema real que usan los modelos. | ⚠️ Corre destrucción: contiene `DROP TABLE` y `SET FOREIGN_KEY_CHECKS=0`. No correr en ambientes con datos reales sin revisar. |
-| `inserts.sql` | Datos semilla: 7 usuarios, 5 clientes, 8 categorías, 10 productos (PROD-001..010), proveedores, ingresos y ventas de ejemplo. | ⚠️ Contraseñas en texto plano (los usuarios semilla entran con la comparación actual de `Auth\Login`). Ver [pendientes.md](pendientes.md). |
-| `procedimientos.sql` | Almacena 8 procedimientos (`SP_RegistrarVenta`, `SP_ObtenerProductoPorId`, `SP_listarProveedores`, etc.). | ⚠️ `SP_RegistrarDetalleVenta` tiene un bug: inserta en columna `idVenta` que no existe (la tabla usa `idSalida`). Ver [pendientes.md](pendientes.md). |
-| `congelandia_backup.sql` | Dump mysqldump de las tablas de **framework** (cache, sessions, users...). NO contiene datos de negocio. | Solo sirve como respaldo de tablas de framework. |
-| `listado procedimientos.txt` | Nota de diseño con procedimientos planeados. | No es SQL ejecutable. |
-| `MWB.mwb` | Diagrama ER de MySQL Workbench (fuente del esquema). | Abrir con Workbench, no ejecutable. |
-
-### 4. Levantar el entorno de desarrollo
-
-```bash
+php artisan key:generate
+php artisan migrate --seed
+npm ci --ignore-scripts
+npm run build
 composer run dev
 ```
 
-Ejecuta 3 procesos en paralelo (con `concurrently`):
+Las migraciones de negocio y el seeder están en main; ver [migraciones.md](migraciones.md). UsuarioSeeder crea el administrador inicial (credenciales en el archivo); cambiar su contraseña al usar un entorno real. El login valida hashes con Hash::check. No importar create table.sql/inserts.sql encima del esquema migrado.
 
-| Proceso | Comando | Descripción |
-| --- | --- | --- |
-| `server` | `php artisan serve` | App en http://localhost:8000 |
-| `queue` | `php artisan queue:listen --tries=1` | Worker de colas |
-| `vite` | `npm run dev` | Assets con hot reload |
+`composer run setup` instala dependencias, genera clave, ejecuta **migrate:fresh --force**, seed y build. Ese comando destruye las tablas de la conexión configurada; usar únicamente en una base nueva o desechable. Para conservar datos usar migrate, y revisar los efectos del seeder antes de repetirlo.
 
-### 5. Usuarios semilla para login
+## SQL histórico
 
-Con secciones (`db:seed`) hay un usuario administrador disponible: `admin@congelandia.cl` / `1234` (cambiar en producción). Alternativamente, importando `inserts.sql` hay 7 usuarios disponibles (ver el propio archivo para credenciales). El rol `Administrador` es necesario para acceder a las secciones restringidas (ver [rutas.md](rutas.md)).
+create table.sql e inserts.sql conservan esquema/datos de demostración de la vía manual. No son la fuente principal de instalación; difieren de las migraciones (incluidos soft deletes y promociones). procedimientos.sql es opcional y no se llama desde la app: tiene deuda #29/#62 y no se recomienda importarlo. El respaldo congelandia_backup.sql solo cubre tablas de framework. MWB.mwb es el diagrama histórico, no una migración.
 
-## Assets de producción (deploy)
-
-```bash
-npm run build
-```
-
-El manifiesto está configurado en `vite.config.js`. Los bundles se generan en `public/build/`.
-
-## Solución de problemas
-
-| Síntoma | Causa probable | Solución |
-| --- | --- | --- |
-| Error SQL "table not found" al abrir un módulo | Faltan importar `create table.sql`/`inserts.sql` | Importa los SQL en el orden indicado |
-| Error SQL "table not found" solo en Linux con BD creada por migraciones | MySQL Linux es case-sensitive en tablas: las migraciones crean `Ingreso`/`Salida`/`Producto`, pero modelos y queries crudas usan minúsculas | Ver [pendientes.md](pendientes.md) #66 (normalización de casing a futuro) |
-| `@vite` no encuentra entrada en producción | Entradas faltantes en `vite.config.js` | Ya resueltos `public.css` y `usuarios.js`; revisa entradas nuevas |
-| Login rechaza credenciales creadas desde la app | `Auth\Login` compara texto plano pero `UserController::store` guarda con `bcrypt` | Ver [pendientes.md](pendientes.md) (bug crítico) |
-| Página de error genérica tras una excepción | El handler global lo redirige atrás con mensaje "Ocurrió un error en el sistema" y registra en `log_errors` | Revisa la tabla `log_errors` para el detalle real |
-| `user-select` bloqueado (no puedes copiar texto) | Regla global `* { user-select: none; }` en `resources/css/app.css` | Remover la regla (ver [pendientes.md](pendientes.md)) |
-
-## Tests
+## Verificaciones
 
 ```bash
 composer run test
+php artisan route:list
+php artisan view:cache
+npm run build
 ```
 
-Solo existen los tests stub de Laravel (`tests/Feature/ExampleTest.php`, `tests/Unit/ExampleTest.php`). No hay cobertura de negocio aún — ver [pendientes.md](pendientes.md).
+La suite tiene pruebas de negocio (migraciones/FK y ofertas/POS) además de ejemplos. phpunit.xml usa SQLite en memoria. Nunca sobrescribir su conexión para apuntar a datos reales: las pruebas usan migrate:fresh.
+
+En navegador probar login/logout, catálogo/contacto, dashboard, POS, inventario, clientes y administración. Las tablas mezclan casing en la base actual: comprobar MySQL Linux con lower_case_table_names=0 antes de desplegar; ver #66 y [auditoría](revision-documentacion.md).
+
+## Diagnóstico
+
+- Assets ausentes: revisar Vite en desarrollo o ejecutar npm run build.
+- Tablas ausentes: revisar conexión y php artisan migrate:status; no usar migrate:fresh como reparación en una base con datos.
+- Login: verificar usuario activo, contraseña hasheada y conexión. UserController ya crea hashes compatibles.
+- Errores: revisar storage/logs/laravel.log y el canal LOG_CHANNEL configurado. bootstrap/app.php usa el manejo estándar de Laravel; no hay persistencia global automática en log_errors.
+- Copia de texto bloqueada: la regla user-select está en resources/css/theme/base.css (pendiente #35).
+
+Despliegue: [despliegue-directadmin.md](despliegue-directadmin.md). Estado contrastado: [revision-documentacion.md](revision-documentacion.md).

@@ -2,18 +2,18 @@
 
 ## Fuentes de verdad del esquema
 
-1. **`create table.sql`** (raíz) — esquema real de las tablas de negocio. Lo que usan los modelos.
+1. **`database/migrations/`** — fuente principal del esquema de framework y negocio; ver [migraciones.md](migraciones.md).
 2. **`MWB.mwb`** — diagrama ER de MySQL Workbench.
-3. **`database/migrations/`** — ver [migraciones.md](migraciones.md): en la rama `migracion-sql-a-laravel` (pendiente #61, aun sin merge) el esquema completo vive en migraciones; en `main` solo cubren framework + `log_errors`.
+3. **`create table.sql` e `inserts.sql`** — referencia histórica, no superponer a las migraciones.
 
-> ⚠️ **En `main`, las tablas de negocio no tienen migraciones Laravel**: la BD se monta con `create table.sql` + `inserts.sql` manualmente. En la rama `migracion-sql-a-laravel` `migrate:fresh --seed` produce la BD completa.
+> Las migraciones ya cubren el negocio. Los SQL raíz son legado y no se deben superponer al esquema migrado.
 
 ## Diagrama lógico (resumen)
 
 ```
 Usuario (idUsuario, nombre, email, contrasena, rol, activo)
    └── salida.idUsuario → Usuario.idUsuario
-   └── ingresa productos (los ingresos no registran usuario)
+   └── ingreso.idUsuario → Usuario.idUsuario
 
 Categoria (idCategoria, nombre)  [soft delete]
    └── producto.idCategoria → Categoria.idCategoria   [soft delete]
@@ -41,7 +41,7 @@ Salida (idSalida, fecha, idTipo, idUsuario, rutCliente, totalSalida)  [soft dele
    ├── detalle_salida.idSalida → salida.idSalida  [soft delete]
    └── pago_salida.idSalida → salida.idSalida  [soft delete]
 
-Metodo_Pago (metodos de pago)  [soft delete], Tipo_Devolucion + Devolucion  [soft delete] (tablas definidas en SQL, sin modelos ni uso en app)
+Metodo_Pago (metodos de pago)  [soft delete], Tipo_Devolucion + Devolucion  [soft delete] (tablas migradas; metodo_pago se consulta con query builder, devoluciones aún no tienen flujo activo)
 
 Versiones, Log_Errors (sistema, sin soft delete)
 ```
@@ -59,12 +59,12 @@ Versiones, Log_Errors (sistema, sin soft delete)
 | `Ingreso` | `ingreso` | `idIngreso` | Sí | `proveedor()`, `detalles()` |
 | `DetalleIngreso` | `detalle_ingreso` | `idDetalle` | Sí | `ingreso()`, `producto()` |
 | `Salida` | `salida` | `idSalida` | Sí | No usa timestamps. `usuario()`, `detalles()`, `tipo()`, `pagos()` |
-| `DetalleSalida` | `detalle_salida` | `idDetalle` (✓ declarado en rama `migracion-sql-a-laravel`) | Sí | `producto()` |
+| `DetalleSalida` | `detalle_salida` | `idDetalle` (declarado en main) | Sí | `producto()` |
 | `TipoSalida` | `tipo_salida` | `idTipo` | Sí | `salidas()` |
 | `PagoSalida` | `pago_salida` | `idPago` | Sí | `salida()` |
 | `ListaPrecio` | `lista_precio` | `idPrecio` | Sí | Histórico de precios (vigente = `fechaFin` null, última `fechaInicio`) |
 | `Promocion` | `promocion` | `idPromocion` | Sí | `producto()` mapea `codigoProducto`→`codigo`; `vigentes()` alimenta dashboard, inventario y POS. El gestor de ofertas vive en Inventario; las acciones se limitan a Administrador. |
-| `ImagenProducto` | `IMAGEN_PRODUCTO` | *(no declarada)* | Sí | ⚠️ Su relación `producto()` mapea a `Producto.id` que **no existe** (la PK real es `codigo`) — relación rota, nunca la usa el código; los controladores usan `Producto::imagenes()` |
+| `ImagenProducto` | `IMAGEN_PRODUCTO` | *(no declarada)* | Sí | ⚠️ Su relación `producto()` mapea a `Producto.id` que **no existe** (la PK real es `codigo`) — relación inversa rota; el modelo sí se usa desde Producto::imagenes() y al guardar imágenes |
 | `ProductoVenta` | `PRODUCTO_VENTA` | *default* | No | **Sin ningún uso** en la app; sin tabla/migración activa |
 
 > **Soft deletes (commit `5282d75`)**: la migración `2026_10_21_000000_add_soft_deletes_to_business_tables.php` agregó `deleted_at` a `ingreso`, `detalle_ingreso`, `detalle_salida`, `lista_precio`, `promocion`, `imagen_producto`, `pago_salida`, `tipo_salida`, `metodo_pago`, `tipo_devolucion` y `devolucion`. Junto con las tablas que ya lo tenían (`usuario`, `cliente`, `categoria`, `producto`, `proveedor`, `salida`), todas las tablas de negocio soportan borrado lógico. Se excluyó `log_errors` (log) y `versiones` (metadato del sistema). `metodo_pago`, `tipo_devolucion` y `devolucion` tienen la columna pero aún no tienen modelo; al crearlos deben usar `SoftDeletes`.
@@ -75,7 +75,7 @@ Versiones, Log_Errors (sistema, sin soft delete)
 | --- | --- | --- | --- |
 | `User` (autenticable) | `Usuario` | `idUsuario` | Sin timestamps. Campos: nombre, email, `contrasena` (oculto), `rol`, `activo` (cast boolean). `getAuthPassword()` devuelve `contrasena`; `getRememberTokenName()` devuelve null. `tieneRol($rol)` compara exacto (trim sobre texto libre). `SoftDeletes` aplicado: usuarios eliminados no aparecen ni pueden autenticarse |
 | `Version` | `versiones` | *(no declarada)* | Usada por `PublicController::versionInfo` |
-| `LogError` | `log_errors` | *default* | Escrito desde el handler global de excepciones (`bootstrap/app.php`). Sin campo `usuario` poblado |
+| `LogError` | `log_errors` | *default* | Tabla disponible, sin escritura automática desde bootstrap/app.php en la base actual |
 | `Reporte` | (default `reportes`) | *default* | **Sin uso** — `ReporteController` hace queries crudas con `DB::table`, no pasa por este modelo. Candidato a eliminar |
 
 ## Convención de stock
@@ -124,4 +124,4 @@ Ver [convenciones.md](convenciones.md). Resumen:
 
 - Todos los nombres de tabla/columnas que usan los controladores deben coincidir exactamente con el esquema. En MySQL Linux el casing de **tablas** es sensible: si la BD nace de migraciones, modelos (`$table`) y queries crudas deben usar el mismo casing que la migración (`Cliente`, `Producto`, `Ingreso`, `Salida`, etc.). Ver pendientes #66.
 - Todos los modelos de negocio usan `SoftDeletes`. En consultas Eloquent no hace falta `whereNull('deleted_at')`; en consultas crudas (`DB::table`, subqueries, reportes) sí hay que filtrar `deleted_at IS NULL` explícitamente.
-- Los cambios de esquema van a `create table.sql` hasta que el equipo decida migrar todo a migraciones Laravel (ver [pendientes.md](pendientes.md)).
+- Los cambios de esquema van en migraciones Laravel; el SQL raíz se conserva como referencia histórica.

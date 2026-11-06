@@ -6,7 +6,7 @@ Guía para subir el proyecto Laravel ya compilado y funcional a un servidor con 
 
 En DirectAdmin entra a **"Select PHP Version"** (o "PHP Selector") y elige:
 
-- PHP **8.3 o superior** (el proyecto usa `php: ^8.3`)
+- PHP **8.4 o superior** (el proyecto declara `php: ^8.4`)
 - Extensiones activas: `pdo_mysql`, `mbstring`, `intl`, `fileinfo`, `gd`, `zip`, `bcmath`, `opcache`, `openssl`, `curl`
 
 Si el hosting ofrece SSH, úsalo (mucho más fácil). Si no, todo se puede hacer con el **File Manager** de DirectAdmin y **phpMyAdmin**.

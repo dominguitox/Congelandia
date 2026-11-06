@@ -1,8 +1,8 @@
-# Migraciones (rama `migracion-sql-a-laravel`)
+# Migraciones
 
-> ⚠️ **Esta documentación corresponde a los cambios de la rama `migracion-sql-a-laravel`** (pendiente #61 de [pendientes.md](pendientes.md)). Todavía **no está en `main`** hasta que el equipo apruebe el merge. En `main` sigue vigente la vía SQL manual de [instalacion.md](instalacion.md).
+> El esquema completo ya está en main (base 0c10668). No importar SQL de legado para instalar. Ver [instalacion.md](instalacion.md).
 
-En esta rama el esquema de negocio completo pasa de los archivos SQL manuales a **migraciones Laravel**. Ahora `php artisan migrate:fresh` + `php artisan db:seed` produce una base de datos 100% usable sin importar `create table.sql` ni `inserts.sql`.
+El esquema de negocio completo pasa de los archivos SQL manuales a **migraciones Laravel**. Ahora `php artisan migrate:fresh` + `php artisan db:seed` produce una base de datos 100% usable sin importar `create table.sql` ni `inserts.sql`.
 
 ## Mapa de migraciones
 
@@ -35,7 +35,7 @@ Orden real de ejecución (los FK exigen este orden):
 
 Columnas y longitudes replicadas del `create table.sql` original (nombres y PK exactamente iguales: `rutCliente`, `codigo`, `idUsuario`, `totalSalida`, etc.).
 
-## Cómo montar el entorno con esta rama
+## Cómo montar el entorno
 
 ```bash
 # si ya tienes el proyecto clonado con datos viejos:
@@ -44,7 +44,7 @@ php artisan migrate:fresh --seed
 # desde cero: `composer run setup` conserva todos los pasos; ahora usa migrate:fresh + db:seed
 ```
 
-El `DatabaseSeeder` crea solo al usuario administrador (`UsuarioSeeder`, credenciales en el archivo). El resto de los datos semilla de `inserts.sql` (clientes, productos, ventas de muestra) quedaron en ese archivo como legado: si los necesitas para demo, importa `inserts.sql` manualmente después de migrar, o crea secciones en `database/seeders/` siguiendo el patrón de `UsuarioSeeder`.
+El `DatabaseSeeder` crea solo al usuario administrador (`UsuarioSeeder`, credenciales en el archivo). El resto de los datos semilla de `inserts.sql` (clientes, productos, ventas de muestra) quedaron en ese archivo como legado: si los necesitas para demo, crea seeders compatibles (no superpongas el SQL histórico al esquema migrado) o crea secciones en `database/seeders/` siguiendo el patrón de `UsuarioSeeder`.
 
 ## Deltas intencionales respecto del SQL original
 

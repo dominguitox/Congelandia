@@ -2,13 +2,15 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
+> Revisión actual: [auditoría del 6 de noviembre de 2026](revision-documentacion.md). El estado de esta rama describe la base 0c10668; las correcciones en otros worktrees siguen sin integrar.
+
 ## P0 — Rompe la app hoy (críticos)
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
 | 1 | ~~Vista `public.catalogo` no existe~~ ✓ **resuelto**: catálogo implementado con búsqueda, filtro por categoría y tarjetas sin carrito ni stock | `PublicController.php`; `resources/views/public/catalogo.blade.php` |
 | 2 | ~~Vista `inventario.show` no existe → `GET /inventario/{codigo}` (ruta viva) lanza error~~ ✓ **resuelto**: ruta desactivada (comentada) en `routes/web.php`; no se implementará por ahora | `routes/web.php:101-108` |
-| 3 | `show()` no filtra por código: devuelve TODOS los productos y muestra el primero, ignorando el parámetro de ruta. La ruta quedó desactivada (#2), pero el método sigue así | `ProductoController.php:227-261` (falta `where('producto.codigo', $codigo)`) |
+| 3 | ✓ **resuelto en la base**: show ya filtra por codigo. La ruta permanece desactivada (#2); no reactivarla sin implementar la vista | `ProductoController.php:227-261` (falta `where('producto.codigo', $codigo)`) |
 | 4 | ~~`ProveedorController::productos` no existe → `GET /proveedores/{id}/productos` (ruta viva) rompe~~ ✓ **resuelto**: ruta huérfana eliminada; los productos se listan server-side en `proveedores.index` | `routes/web.php`; `ProveedorController.php:42-97` |
 | 5 | ~~Login compara contraseñas en **texto plano**, pero `usuarios.store` guarda con `bcrypt` → un usuario creado desde el sistema nunca puede iniciar sesión~~ ✓ **resuelto**: `Login` valida con `Hash::check` y todos los usuarios de la BD quedaron hasheados | `Auth\Login.php:25` vs `UserController.php:29` |
 | 6 | ~~Reportes rompen: queries sobre tablas inexistentes (`inventario`, `lote`) para "bajo stock" y "próximos a vencer"~~ ✓ **resuelto**: stock calculado como ingresos - salidas (umbral < 10) y vencimientos desde `detalle_ingreso.fechaVencimiento` (próximos 30 días) | `ReporteController.php:186-233` |
@@ -51,16 +53,16 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 23 | ~~Typo `Orden #s{{...}}` renderiza "Orden #s5"~~ ✓ **resuelto** | `dashboard/index.blade.php` |
 | 24 | ~~Dos `</div>` duplicados generan DOM malformado en el dashboard~~ ✓ **resuelto** (vista reescrita) | `dashboard/index.blade.php` |
 | 25 | ~~Card de usuarios malformada (`card-body` fuera del `card`); tabla vacía con `colspan="5"` para 6 columnas~~ ✓ **resuelto** | `usuarios/index.blade.php` |
-| 26 | `dd($errors)` en modales de inventario: se **eliminó** el volcado de debug; falta mostrar los mensajes de validación con `@error` | `inventario/index.blade.php` |
+| 26 | **parcial**: ingreso/salida/ofertas ya muestran validación; faltan los errores y recuperación del formulario de creación/edición del catálogo | `inventario/index.blade.php` |
 | 27 | ~~Login con clases DaisyUI que no está instalado~~ ✓ **resuelto** (reescrito con Bootstrap + `auth.css`) | `auth/login.blade.php` |
 | 28 | ~~Div con clases inválidas y `style="padding-top:45px"` impreso antes de `<body>` (HTML inválido) y `session('usuario')` puede lanzar si la sesión trae escalar~~ ✓ **resuelto**: home reescrita sobre `layouts.public` y nombre de sesión normalizado | `layouts/public.blade.php`; `public/index.blade.php` |
 | 29 | `SP_RegistrarDetalleVenta` inserta en columna `idVenta` que no existe (la tabla usa `idSalida`) — ningún SP se llama desde la app hoy | `procedimientos.sql:57` |
 | 30 | ~~Incoherencia PHP: `composer.json` declara `^8.3`, el proyecto corre con 8.4 — alinear declaración~~ ✓ **resuelto**, es obligatorio el 8.4, no vale la pena intentar hacerlo funcionar en 8.3| `composer.json:12` |
-| 31 | Dependencia `laravel/pao` (typo de `laravel/pail`? ya está `pail`) — revisar para qué está o quitarla | `composer.json:20` |
+| 31 | ✓ **aclarado**: laravel/pao es un paquete real para salida de herramientas de pruebas optimizada para agentes; es distinto de Pail y se conserva | `composer.json:20` |
 | 32 | `spatie/laravel-permission` instalada y sin uso (los roles son columna de texto + CheckRole casero). Decidir: adoptar o eliminar la dependencia | `composer.json:15` |
 | 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarios.js` (vacío). ~~CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`)~~ ✓ estos ya tienen contenido | `resources/js` |
 | 34 | Timezone UTC y locale `en`: cambiar a `America/Santiago` y `es` (efectos en fechas mostradas y validaciones) | `config/app.php:58-68`, `.env` (`APP_LOCALE`, `APP_TIMEZONE` no existe → agregar) |
-| 35 | `* { user-select: none; }` global evita que el usuario pueda copiar texto (también afecta inputs de búsqueda) | `resources/css/app.css:2-4` |
+| 35 | La regla universal user-select: none sigue vigente, ahora en resources/css/theme/base.css; impide copiar texto | `resources/css/app.css:2-4` |
 | 67 | ~~POS no aplicaba las ofertas~~ ✓ **resuelto**: muestra precio normal y precio final en catálogo/carrito, aplica el descuento vigente sobre la lista de precios activa, recalcula el total en servidor y rechaza carritos con precio obsoleto; las promociones activas solapadas del mismo producto no se permiten | `PosController.php`; `pos/index.blade.php`; `resources/js/venta.js`; `PromocionController.php` |
 
 ## P4 — Deuda técnica / refactor
@@ -73,7 +75,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 39 | ~~Los modales de ingreso y salida compartían campos duplicados y apuntaban a crear producto~~ ✓ **resuelto**: cada modal tiene campos propios y endpoint separado; la salida valida stock y reutiliza o crea el motivo de merma al registrar el movimiento, sin seeder adicional | `inventario/index.blade.php`; `routes/web.php`; `ProductoController::registrarIngreso` y `registrarSalida` |
 | 40 | ~~Soft delete manual con `whereNull('deleted_at')` duplicado~~ ✓ **parcial**: `SoftDeletes` aplicado a todos los modelos de negocio y `ClienteController::destroy` usa `delete()`. Queda limpiar los `whereNull('deleted_at')` redundantes (~10 lugares) y decidir la cascada lógica de hijos | `PosController.php:58`, `ProductoController.php:24,137`, `DashboardController.php:115`, `ClienteController.php:22,146,191`, `ProveedorController.php` (varios) |
 | 41 | Dos sistemas de modales convivendo (Bootstrap en inventario/categorías/usuarios vs overlays hechos a mano en clientes/proveedores) → estandarizar componentes | vistas de ambos módulos |
-| 42 | Copia de mensajes de error: "Error al cargar el historial" dentro de DashboardController | `DashboardController.php:132` |
+| 42 | ✓ **resuelto en la base**: el catch registra la excepción y responde «Error al cargar el dashboard» | `DashboardController.php:132` |
 | 43 | URLs hardcodeadas en JS en lugar de rutas nombradas / data-attributes | `venta.js:156`, `categorias.js:24,42`, `proveedores.js:282,359`, `producto.js:8,18`, `clientes/index.blade.php:1569,1682,2007` |
 | 44 | Sidebar mezcla `route()` y `url()` y checks de activación (`routeIs` vs `is`) con patrones inconsistentes | `partials/sidebar.blade.php` |
 
@@ -86,25 +88,25 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | 45 | `resources/views/welcome.blade.php` | Starter de Laravel, `welcome.blade.php` sin uso |
 | 46 | ~~`resources/views/layouts/public.blade.php`~~ ✓ **resuelto**: layout compartido por home, catálogo y contacto | `layouts/public.blade.php` |
 | 47 | `resources/views/partials/navbar.blade.php` | Sin uso; competía con `partials/header` ; logout con `action=""` |
-| 48 | `partials/footer.blade.php` | Vacío — decidir si se llena o se elimina |
+| 48 | **conservar**: footer vacío pero incluido por layouts/app; no es un archivo sin referencias | Vacío — decidir si se llena o se elimina |
 | 49 | `DetalleIngresoController`, `IngresoController`, `ListaPrecioController` | Archivos vacíos |
 | 50 | `VentaController` (archivo `VentaController.php`, antes `SalidaController.php`) | **PSR-4 ✓ resuelto**, pero sigue huérfano: SQL incompatible con el esquema y sin rutas |
 | 51 | ~~Gestión de ofertas inexistente~~ ✓ **resuelto**: gestor en Inventario con alta, edición, pausa/reactivación, eliminación lógica, control de vigencia/solapamientos, rutas restringidas a Administrador e integración de precio promocional en POS (#67) | `PromocionController.php`; `inventario/index.blade.php`; `routes/web.php`; `Promocion.php`; `PosController.php` |
 | 52 | `VersionController` | Importado en `routes/web.php:14` y no usado; su `index()` apunta a `view('dashboard')` inexistente |
 | 53 | `ProductoController::index()` (método vacío) | Sin ruta |
 | 54 | Modelo `Reporte` | Sin referencias (el controlador usa queries crudas) |
-| 55 | Modelo `ImagenProducto` (su relación `producto()` rota → `Producto.id` inexistente) | El código funcional usa `Producto::imagenes()` |
+| 55 | **vigente, no eliminar**: ImagenProducto sí se usa en relaciones y al guardar fotos; solo su relación inversa apunta a id en lugar de codigo | El código funcional usa `Producto::imagenes()` |
 | 56 | `ProductoVenta` (tabla `PRODUCTO_VENTA`) | Sin uso en la app |
-| 57 | Carpeta `viejo/` | Vacía |
+| 57 | ✓ **sin pendiente versionado**: viejo/ no está rastreado; Git no conserva carpetas vacías | Vacía |
 | 58 | `congelandia_backup.sql` | Dump de tablas de framework, sin datos de negocio — decidir si se conserva en git |
 | 59 | `resources/js/error.js` | Placeholder |
-| 60 | `routes/web.php:20` import de `CheckRole` no utilizado como alias, y ruta `VersionController` import muerta | limpiar imports |
+| 60 | **parcial**: VersionController es import huérfano; CheckRole sí se usa con FQCN en el grupo administrador. Normalizar al alias role sin perder la restricción | limpiar imports |
 
 ## P6 — Estructura del proyecto (decisiones pendientes del equipo)
 
 | # | Decisión | Contexto |
 | --- | --- | --- |
-| 61 | ~~**Migrar tablas de negocio a migraciones Laravel**~~ ✓ **resuelto en rama `migracion-sql-a-laravel`** (pendiente de merge a main) | Todas las tablas de negocio + secciones/`Versiones`/`IMAGEN_PRODUCTO` tienen migración; `migrate:fresh` + `db:seed` producen una BD usable (`composer run setup` ahora corre ambos). La migración `usuarios` incoherente fue reemplazada. Detalle y deltas: [migraciones.md](migraciones.md) |
+| 61 | ✓ **resuelto en main**: las migraciones de negocio, seeder corregido y MigrationsTest ya están en 0c10668; no falta integrar esa rama | Todas las tablas de negocio + secciones/`Versiones`/`IMAGEN_PRODUCTO` tienen migración; `migrate:fresh` + `db:seed` producen una BD usable (`composer run setup` ahora corre ambos). La migración `usuarios` incoherente fue reemplazada. Detalle y deltas: [migraciones.md](migraciones.md) |
 | 62 | ¿Se mantienen los stored procedures? Hoy la app no los llama | `procedimientos.sql` — si se conservan, corregir #29 y quitar los `select *` debug y los `DELIMITER //` sueltos |
 | 63 | Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas) | ~~Solo 2 stubs~~ se agrego `tests/Feature/MigrationsTest.php` (esquema + FK) en la rama `migracion-sql-a-laravel`; falta la regresión del cálculo de stock |
 | 64 | Definir roles canónicos y documentar en el seed | `Administrador`, `Cajero` aparecen en datos; `UserController` acepta cualquier string (ver #12) |
@@ -121,4 +123,4 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 2. **P2 (portabilidad)**: #15–#19 ya resueltos; queda #66 (casing de tablas) en un PR único que toque migraciones, modelos y queries crudas a la vez, validado en MySQL Linux.
 3. **P1 (roles)** completo en un PR, con pruebas de que Cajero queda bloqueado.
 4. **P4/P5** con acuerdos del equipo; P5 en un solo PR de limpieza con `git rm`.
-5. **P6** discutirlo en reunión: impacta cómo se trabaja hacia adelante más que un fix puntual. #61 ya está resuelto como rama `migracion-sql-a-laravel` — solo falta aprobar el merge a `main`.
+5. **P6** discutirlo en reunión: impacta cómo se trabaja hacia adelante más que un fix puntual. #61 ya está integrado en `main`.
