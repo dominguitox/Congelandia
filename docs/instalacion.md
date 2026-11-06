@@ -1,5 +1,10 @@
 # Instalación y puesta en marcha
 
+## Fecha e idioma en esta rama
+
+Configurar APP_TIMEZONE=America/Santiago, APP_LOCALE=es, APP_FALLBACK_LOCALE=es y APP_FAKER_LOCALE=es_CL en el entorno existente y limpiar caché de configuración. No se convierten datos históricos ni se agrega un catálogo completo de traducciones. Ver [pruebas y limitaciones](revision-chile.md).
+
+
 ## Requisitos
 
 | Software | Versión |
