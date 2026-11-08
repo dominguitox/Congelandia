@@ -46,62 +46,7 @@ class DashboardController extends Controller
                 return $salida->detalles->sum('cantidad');
             });
 
-            $productos = Producto::select(
-                'Producto.codigo',
-                'Producto.nombre',
-                'Producto.idCategoria',
-                'Producto.descripcion',
-                'Categoria.nombre as categoria'
-            )
-                ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
-                ->addSelect([
-                    'precio' => DB::table('Lista_Precio')
-                        ->select('precioVenta')
-                        ->whereColumn('codigoProducto', 'Producto.codigo')
-                        ->whereNull('fechaFin')
-                        ->whereNull('deleted_at')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'costo' => DB::table('Detalle_Ingreso')
-                        ->select('Detalle_Ingreso.precioCompra')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->whereNull('Detalle_Ingreso.deleted_at')
-                        ->whereNull('Ingreso.deleted_at')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'proveedor' => DB::table('Detalle_Ingreso')
-                        ->select('Proveedor.nombre')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->whereNull('Detalle_Ingreso.deleted_at')
-                        ->whereNull('Ingreso.deleted_at')
-                        ->whereNull('Proveedor.deleted_at')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'precioVenta' => ListaPrecio::select('precioVenta')
-                        ->whereColumn('codigoProducto', 'producto.codigo')
-                        ->orderByDesc('fechaInicio')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'fechaVencimiento' => DB::table('Detalle_Ingreso')
-                        ->select('Detalle_Ingreso.fechaVencimiento')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->whereNull('Detalle_Ingreso.deleted_at')
-                        ->whereNull('Ingreso.deleted_at')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->selectRaw('(IFNULL((SELECT SUM(di.cantidad) FROM Detalle_Ingreso di INNER JOIN Ingreso i ON di.idIngreso = i.idIngreso WHERE di.codigoProducto = Producto.codigo AND di.deleted_at IS NULL AND i.deleted_at IS NULL), 0) - IFNULL((SELECT SUM(ds.cantidad) FROM Detalle_Salida ds INNER JOIN Salida s ON ds.idSalida = s.idSalida WHERE ds.codigoProducto = Producto.codigo AND ds.deleted_at IS NULL AND s.deleted_at IS NULL), 0)) AS stock')
-                ->get();
+            $productos = Producto::conDetalle()->get();
             $alertasActivas = 0;
             $fechaHoyCarbon = Carbon::now()->startOfDay();
             $listaAlertas = [];

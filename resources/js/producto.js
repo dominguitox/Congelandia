@@ -35,6 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
     productoSalida?.addEventListener('change', actualizarLimiteSalida);
     modalSalida?.addEventListener('show.bs.modal', actualizarLimiteSalida);
 
+    const formEditar = document.getElementById('formEditarProducto');
+    if (formEditar && document.querySelector('[data-modal-error]')?.dataset.modalError === 'modalEditarProducto') {
+        formEditar.action = formEditar.dataset.oldAction;
+    }
+
     const modalConErrores = document.querySelector('[data-modal-error]')?.dataset.modalError;
     const modal = modalConErrores ? document.getElementById(modalConErrores) : null;
 

@@ -2,7 +2,7 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
-> Correcciones de esta rama: [informe de revisión](revision-frontend.md). Los cambios siguen sin commit y no se atribuyen a main.
+> Correcciones de esta rama: [informe de revisión](revision-productos.md). Los cambios siguen sin commit y no se atribuyen a main.
 
 ## P0 — Rompe la app hoy (críticos)
 
@@ -53,7 +53,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 23 | ~~Typo `Orden #s{{...}}` renderiza "Orden #s5"~~ ✓ **resuelto** | `dashboard/index.blade.php` |
 | 24 | ~~Dos `</div>` duplicados generan DOM malformado en el dashboard~~ ✓ **resuelto** (vista reescrita) | `dashboard/index.blade.php` |
 | 25 | ~~Card de usuarios malformada (`card-body` fuera del `card`); tabla vacía con `colspan="5"` para 6 columnas~~ ✓ **resuelto** | `usuarios/index.blade.php` |
-| 26 | `dd($errors)` en modales de inventario: se **eliminó** el volcado de debug; falta mostrar los mensajes de validación con `@error` | `inventario/index.blade.php` |
+| 26 | ~~`dd($errors)` en modales de inventario: se **eliminó** el volcado de debug; falta mostrar los mensajes de validación con `@error`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-productos.md) | `inventario/index.blade.php` |
 | 27 | ~~Login con clases DaisyUI que no está instalado~~ ✓ **resuelto** (reescrito con Bootstrap + `auth.css`) | `auth/login.blade.php` |
 | 28 | ~~Div con clases inválidas y `style="padding-top:45px"` impreso antes de `<body>` (HTML inválido) y `session('usuario')` puede lanzar si la sesión trae escalar~~ ✓ **resuelto**: home reescrita sobre `layouts.public` y nombre de sesión normalizado | `layouts/public.blade.php`; `public/index.blade.php` |
 | 29 | `SP_RegistrarDetalleVenta` inserta en columna `idVenta` que no existe (la tabla usa `idSalida`) — ningún SP se llama desde la app hoy | `procedimientos.sql:57` |
@@ -69,9 +69,9 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
-| 36 | Consulta de producto con precio/costo/proveedor/stock **copiada 4 veces** → consolidar en scope `Producto::scopeConDetalle()` | `PosController.php:22-53`, `ProductoController.php:95-134,227-258`, `DashboardController.php:45-92` |
-| 37 | `listarProductos` selecciona `precio` Y `precioVenta` (dos subconsultas a la misma tabla) — redundante | `ProductoController.php:103-109,127-132` |
-| 38 | ~~CSS inline masivo en clientes ✓ **CSS extraído** a `resources/css/clientes.css`; falta extraer el bloque `<script>` inline (`clientes/index.blade.php`) a `resources/js/clientes.js` (duplica el toggle de `resources/js/app.js:28-46`)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-frontend.md) | `clientes/index.blade.php` |
+| 36 | ~~Consulta de producto con precio/costo/proveedor/stock **copiada 4 veces** → consolidar en scope `Producto::scopeConDetalle()`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-productos.md) | `PosController.php:22-53`, `ProductoController.php:95-134,227-258`, `DashboardController.php:45-92` |
+| 37 | ~~`listarProductos` selecciona `precio` Y `precioVenta` (dos subconsultas a la misma tabla) — redundante~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-productos.md) | `ProductoController.php:103-109,127-132` |
+| 38 | ~~CSS inline masivo en clientes~~ ✓ **CSS extraído** a `resources/css/clientes.css`; falta extraer el bloque `<script>` inline (`clientes/index.blade.php`) a `resources/js/clientes.js` (duplica el toggle de `resources/js/app.js:28-46`) | `clientes/index.blade.php` |
 | 39 | ~~Los modales de ingreso y salida compartían campos duplicados y apuntaban a crear producto~~ ✓ **resuelto**: cada modal tiene campos propios y endpoint separado; la salida valida stock y reutiliza o crea el motivo de merma al registrar el movimiento, sin seeder adicional | `inventario/index.blade.php`; `routes/web.php`; `ProductoController::registrarIngreso` y `registrarSalida` |
 | 40 | ~~Soft delete manual con `whereNull('deleted_at')` duplicado~~ ✓ **parcial**: `SoftDeletes` aplicado a todos los modelos de negocio y `ClienteController::destroy` usa `delete()`. Queda limpiar los `whereNull('deleted_at')` redundantes (~10 lugares) y decidir la cascada lógica de hijos | `PosController.php:58`, `ProductoController.php:24,137`, `DashboardController.php:115`, `ClienteController.php:22,146,191`, `ProveedorController.php` (varios) |
 | 41 | Dos sistemas de modales convivendo (Bootstrap en inventario/categorías/usuarios vs overlays hechos a mano en clientes/proveedores) → estandarizar componentes | vistas de ambos módulos |
@@ -95,7 +95,7 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | 52 | ~~`VersionController`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Importado en `routes/web.php:14` y no usado; su `index()` apunta a `view('dashboard')` inexistente |
 | 53 | ~~`ProductoController::index()` (método vacío)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin ruta |
 | 54 | ~~Modelo `Reporte`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin referencias (el controlador usa queries crudas) |
-| 55 | Modelo `ImagenProducto` (su relación `producto()` rota → `Producto.id` inexistente) | El código funcional usa `Producto::imagenes()` |
+| 55 | ~~Modelo `ImagenProducto` (su relación `producto()` rota → `Producto.id` inexistente)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-productos.md) | El código funcional usa `Producto::imagenes()` |
 | 56 | ~~`ProductoVenta` (tabla `PRODUCTO_VENTA`)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin uso en la app |
 | 57 | Carpeta `viejo/` | Vacía |
 | 58 | `congelandia_backup.sql` | Dump de tablas de framework, sin datos de negocio — decidir si se conserva en git |
@@ -108,7 +108,7 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | --- | --- | --- |
 | 61 | ~~**Migrar tablas de negocio a migraciones Laravel**~~ ✓ **resuelto en rama `migracion-sql-a-laravel`** (pendiente de merge a main) | Todas las tablas de negocio + secciones/`Versiones`/`IMAGEN_PRODUCTO` tienen migración; `migrate:fresh` + `db:seed` producen una BD usable (`composer run setup` ahora corre ambos). La migración `usuarios` incoherente fue reemplazada. Detalle y deltas: [migraciones.md](migraciones.md) |
 | 62 | ¿Se mantienen los stored procedures? Hoy la app no los llama | `procedimientos.sql` — si se conservan, corregir #29 y quitar los `select *` debug y los `DELIMITER //` sueltos |
-| 63 | Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas) | ~~Solo 2 stubs~~ se agrego `tests/Feature/MigrationsTest.php` (esquema + FK) en la rama `migracion-sql-a-laravel`; falta la regresión del cálculo de stock |
+| 63 | ~~Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-productos.md) | ~~Solo 2 stubs~~ se agrego `tests/Feature/MigrationsTest.php` (esquema + FK) en la rama `migracion-sql-a-laravel`; falta la regresión del cálculo de stock |
 | 64 | Definir roles canónicos y documentar en el seed | `Administrador`, `Cajero` aparecen en datos; `UserController` acepta cualquier string (ver #12) |
 | 65 | ~~Welcome/branding: imágenes faltantes (#20), texto placeholder "Delivery? Ubicación?" sin definir~~ ✓ **resuelto**: hero con imagen existente, placeholder SVG y contacto centralizado en `config/public.php` | `public/index.blade.php` |
 
