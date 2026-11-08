@@ -2,7 +2,7 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
-> Correcciones de esta rama: [informe de revisión](revision-roles.md). Los cambios siguen sin commit y no se atribuyen a main.
+> Estado de la integración posterior a los PR #50 a #56: [correcciones y validación conjunta](revision-integracion.md). Los informes individuales conservan sus resultados históricos.
 
 ## P0 — Rompe la app hoy (críticos)
 

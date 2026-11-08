@@ -241,15 +241,6 @@ Route::middleware('auth')->group(function () {
     )->middleware('role:Administrador')->name('proveedores.destroy');
 
     // =====================================================
-    // REPORTES
-    // =====================================================
-
-    Route::get('/reportes',
-    [ReporteController::class, 'index']
-    )->middleware('role:Administrador')->name('reportes.index');
-
-
-    // =====================================================
     // USUARIOS
     // =====================================================
 
