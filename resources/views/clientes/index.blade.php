@@ -18,6 +18,9 @@
 
 <div class="clientes-container">
 
+    @if(session('success'))
+        <div class="alert alert-success" role="status">{{ session('success') }}</div>
+    @endif
 
     {{-- =====================================================
          ENCABEZADO
@@ -26,11 +29,11 @@
     <div class="clientes-header">
 
         <h2>
-            Clientes con Deudas
+            Clientes
         </h2>
 
         <p>
-            Gestiona los clientes que tienen deudas pendientes
+            Gestiona los clientes y sus deudas pendientes
         </p>
 
     </div>
@@ -79,11 +82,11 @@
         <div class="cliente-card">
 
             <span>
-                Pagados
+                Sin deuda
             </span>
 
             <strong>
-                {{ $clientesPagadosRecientes->count() }}
+                {{ $clientesSinDeuda->count() }}
             </strong>
 
             <div class="icon success">
@@ -125,7 +128,7 @@
     <div
         class="nuevo-cliente"
         id="formularioCliente"
-        style="display: none;"
+        style="display: {{ $errors->crearCliente->any() ? 'block' : 'none' }};"
     >
 
         <div class="nuevo-cliente-header">
@@ -152,6 +155,17 @@
 
             @csrf
 
+            @if($errors->crearCliente->any())
+                <div class="alert alert-danger" role="alert">
+                    <strong>No se pudo crear el cliente</strong>
+                    <ul class="mb-0">
+                        @foreach($errors->crearCliente->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="form-grid">
 
                 <div>
@@ -163,6 +177,7 @@
                     <input
                         type="text"
                         name="rutCliente"
+                        value="{{ $errors->crearCliente->any() ? old('rutCliente') : '' }}"
                         placeholder="11111111-1"
                         maxlength="15"
                         required
@@ -180,6 +195,7 @@
                     <input
                         type="text"
                         name="nombre"
+                        value="{{ $errors->crearCliente->any() ? old('nombre') : '' }}"
                         placeholder="Nombre del cliente"
                         maxlength="100"
                         required
@@ -197,6 +213,7 @@
                     <input
                         type="text"
                         name="telefono"
+                        value="{{ $errors->crearCliente->any() ? old('telefono') : '' }}"
                         placeholder="+56 9 1234 5678"
                         maxlength="20"
                     >
@@ -399,11 +416,11 @@
 
 
     {{-- =====================================================
-         PAGADOS RECIENTEMENTE
+         CLIENTES SIN DEUDA
     ====================================================== --}}
 
     <h3>
-        Pagados Recientemente
+        Clientes sin deuda
     </h3>
 
 
@@ -417,8 +434,8 @@
 
                     <th>Cliente</th>
                     <th>Teléfono</th>
-                    <th>Monto Pagado</th>
-                    <th>Fecha Pago</th>
+                    <th>Último pago</th>
+                    <th>Fecha último pago</th>
                     <th>Acciones</th>
 
                 </tr>
@@ -428,9 +445,9 @@
 
             <tbody id="tablaPagados">
 
-                @if($clientesPagadosRecientes->count() > 0)
+                @if($clientesSinDeuda->count() > 0)
 
-                    @foreach($clientesPagadosRecientes as $cliente)
+                    @foreach($clientesSinDeuda as $cliente)
 
                     <tr class="fila-cliente">
 
@@ -550,7 +567,7 @@
                     <tr>
 
                         <td colspan="5">
-                            No existen clientes pagados
+                            No existen clientes sin deuda
                         </td>
 
                     </tr>
