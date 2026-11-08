@@ -267,5 +267,3 @@
 </div>
 
 @endsection
-
-@vite(['resources/js/usuarios.js'])

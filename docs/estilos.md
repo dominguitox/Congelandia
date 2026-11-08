@@ -1,5 +1,10 @@
 # Estilos y temas
 
+## Selección nativa de texto
+
+Esta rama retira el user-select: none universal de theme/base.css. Mantener la selección de códigos, nombres, tablas e inputs para copiar texto sin cambiar las clases ni tokens visuales. Ver [verificación](revision-seleccion.md).
+
+
 Documentación de la arquitectura CSS de Congelandia: cómo está organizada, cómo se reutilizan los componentes y cómo crear y activar **temas** para distintos clientes.
 
 Relacionado: [convenciones.md](convenciones.md) (reglas de código), [modulos.md](modulos.md) (qué usa cada módulo).

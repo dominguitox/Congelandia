@@ -7,7 +7,7 @@ window.editarProducto = function (boton) {
     document.getElementById('edit_precioVenta').value = boton.dataset.precio;
     document.getElementById('edit_descripcion').value = boton.dataset.descripcion;
 
-    document.getElementById('formEditarProducto').action = '/productos/' + boton.dataset.codigo;
+    document.getElementById('formEditarProducto').action = boton.dataset.updateUrl;
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         boton.removeAttribute('data-bs-target');
         boton.addEventListener('click', () => {
             const form = document.getElementById('formEditarOferta');
-            form.action = `/ofertas/${boton.dataset.id}`;
+            form.action = boton.dataset.updateUrl;
             document.getElementById('editarOfertaId').value = boton.dataset.id;
             document.getElementById('editarOfertaProducto').value = boton.dataset.codigo;
             document.getElementById('editarOfertaDescuento').value = boton.dataset.descuento;

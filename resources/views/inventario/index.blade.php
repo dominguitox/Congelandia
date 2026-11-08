@@ -212,6 +212,7 @@
                                             data-categoria="{{ $producto->idCategoria }}"
                                             data-precio="{{ $producto->precioVenta }}"
                                             data-descripcion="{{ $producto->descripcion }}"
+                                            data-update-url="{{ route('inventario.editarProducto', $producto->codigo) }}"
                                             onclick="editarProducto(this)">
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M12 20h9"/>
@@ -303,7 +304,7 @@
                                             <td class="text-end text-nowrap">
                                                 <button type="button" class="btn btn-sm btn-outline-primary js-editar-oferta"
                                                     data-bs-toggle="modal" data-bs-target="#modalEditarOferta"
-                                                    data-id="{{ $oferta->idPromocion }}" data-codigo="{{ $oferta->codigoProducto }}"
+                                                    data-id="{{ $oferta->idPromocion }}" data-update-url="{{ route('ofertas.update', $oferta->idPromocion) }}" data-codigo="{{ $oferta->codigoProducto }}"
                                                     data-descuento="{{ $oferta->porcentajeDescuento }}"
                                                     data-inicio="{{ $inicioOferta->format('Y-m-d\\TH:i') }}"
                                                     data-fin="{{ $finOferta->format('Y-m-d\\TH:i') }}">Editar</button>

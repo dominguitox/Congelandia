@@ -22,11 +22,6 @@ use Illuminate\Validation\Rule;
 
 class ProductoController extends Controller
 {
-    public function index()
-    {
-        $productos = Producto::whereNull('deleted_at')->get();
-
-    }
     public function crearProducto(Request $request)
     {
         $request->validate([
