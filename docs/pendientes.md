@@ -2,7 +2,7 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
-> Correcciones de esta rama: [informe de revisión](revision-seleccion.md). Los cambios siguen sin commit y no se atribuyen a main.
+> Correcciones de esta rama: [informe de revisión](revision-limpieza.md). Los cambios siguen sin commit y no se atribuyen a main.
 
 ## P0 — Rompe la app hoy (críticos)
 
@@ -60,7 +60,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 30 | ~~Incoherencia PHP: `composer.json` declara `^8.3`, el proyecto corre con 8.4 — alinear declaración~~ ✓ **resuelto**, es obligatorio el 8.4, no vale la pena intentar hacerlo funcionar en 8.3| `composer.json:12` |
 | 31 | Dependencia `laravel/pao` (typo de `laravel/pail`? ya está `pail`) — revisar para qué está o quitarla | `composer.json:20` |
 | 32 | `spatie/laravel-permission` instalada y sin uso (los roles son columna de texto + CheckRole casero). Decidir: adoptar o eliminar la dependencia | `composer.json:15` |
-| 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarios.js` (vacío). ~~CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`)~~ ✓ estos ya tienen contenido | `resources/js` |
+| 33 | ~~Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarios.js` (vacío). CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`) ✓ estos ya tienen contenido~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | `resources/js` |
 | 34 | Timezone UTC y locale `en`: cambiar a `America/Santiago` y `es` (efectos en fechas mostradas y validaciones) | `config/app.php:58-68`, `.env` (`APP_LOCALE`, `APP_TIMEZONE` no existe → agregar) |
 | 35 | ~~`* { user-select: none; }` global evita que el usuario pueda copiar texto (también afecta inputs de búsqueda)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-seleccion.md) | `resources/css/app.css:2-4` |
 | 67 | ~~POS no aplicaba las ofertas~~ ✓ **resuelto**: muestra precio normal y precio final en catálogo/carrito, aplica el descuento vigente sobre la lista de precios activa, recalcula el total en servidor y rechaza carritos con precio obsoleto; las promociones activas solapadas del mismo producto no se permiten | `PosController.php`; `pos/index.blade.php`; `resources/js/venta.js`; `PromocionController.php` |
@@ -85,22 +85,22 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 
 | # | Ítem | Nota |
 | --- | --- | --- |
-| 45 | `resources/views/welcome.blade.php` | Starter de Laravel, `welcome.blade.php` sin uso |
+| 45 | ~~`resources/views/welcome.blade.php`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Starter de Laravel, `welcome.blade.php` sin uso |
 | 46 | ~~`resources/views/layouts/public.blade.php`~~ ✓ **resuelto**: layout compartido por home, catálogo y contacto | `layouts/public.blade.php` |
-| 47 | `resources/views/partials/navbar.blade.php` | Sin uso; competía con `partials/header` ; logout con `action=""` |
+| 47 | ~~`resources/views/partials/navbar.blade.php`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin uso; competía con `partials/header` ; logout con `action=""` |
 | 48 | `partials/footer.blade.php` | Vacío — decidir si se llena o se elimina |
-| 49 | `DetalleIngresoController`, `IngresoController`, `ListaPrecioController` | Archivos vacíos |
-| 50 | `VentaController` (archivo `VentaController.php`, antes `SalidaController.php`) | **PSR-4 ✓ resuelto**, pero sigue huérfano: SQL incompatible con el esquema y sin rutas |
+| 49 | ~~`DetalleIngresoController`, `IngresoController`, `ListaPrecioController`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Archivos vacíos |
+| 50 | ~~`VentaController` (archivo `VentaController.php`, antes `SalidaController.php`)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | **PSR-4 ✓ resuelto**, pero sigue huérfano: SQL incompatible con el esquema y sin rutas |
 | 51 | ~~Gestión de ofertas inexistente~~ ✓ **resuelto**: gestor en Inventario con alta, edición, pausa/reactivación, eliminación lógica, control de vigencia/solapamientos, rutas restringidas a Administrador e integración de precio promocional en POS (#67) | `PromocionController.php`; `inventario/index.blade.php`; `routes/web.php`; `Promocion.php`; `PosController.php` |
-| 52 | `VersionController` | Importado en `routes/web.php:14` y no usado; su `index()` apunta a `view('dashboard')` inexistente |
-| 53 | `ProductoController::index()` (método vacío) | Sin ruta |
-| 54 | Modelo `Reporte` | Sin referencias (el controlador usa queries crudas) |
+| 52 | ~~`VersionController`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Importado en `routes/web.php:14` y no usado; su `index()` apunta a `view('dashboard')` inexistente |
+| 53 | ~~`ProductoController::index()` (método vacío)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin ruta |
+| 54 | ~~Modelo `Reporte`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin referencias (el controlador usa queries crudas) |
 | 55 | Modelo `ImagenProducto` (su relación `producto()` rota → `Producto.id` inexistente) | El código funcional usa `Producto::imagenes()` |
-| 56 | `ProductoVenta` (tabla `PRODUCTO_VENTA`) | Sin uso en la app |
+| 56 | ~~`ProductoVenta` (tabla `PRODUCTO_VENTA`)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Sin uso en la app |
 | 57 | Carpeta `viejo/` | Vacía |
 | 58 | `congelandia_backup.sql` | Dump de tablas de framework, sin datos de negocio — decidir si se conserva en git |
-| 59 | `resources/js/error.js` | Placeholder |
-| 60 | `routes/web.php:20` import de `CheckRole` no utilizado como alias, y ruta `VersionController` import muerta | limpiar imports |
+| 59 | ~~`resources/js/error.js`~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-limpieza.md) | Placeholder |
+| 60 | **parcial en chore/codigo-sin-uso, sin integrar**: import de VersionController retirado; CheckRole se mantiene porque sí se usa | limpiar imports |
 
 ## P6 — Estructura del proyecto (decisiones pendientes del equipo)
 

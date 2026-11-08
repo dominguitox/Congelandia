@@ -1,1 +1,0 @@
-//Manejo de errores... nose despues lo pienso mas
