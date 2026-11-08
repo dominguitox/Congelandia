@@ -94,7 +94,52 @@ class ProductoController extends Controller
     public function listarProductos(Request $request)
     {
         try {
-            $productos = Producto::conDetalle()->get();
+            $productos = Producto::select(
+                'producto.codigo',
+                'producto.nombre',
+                'producto.idCategoria',
+                'producto.descripcion',
+                'categoria.nombre as categoria'
+            )
+                ->leftJoin('categoria', 'producto.idCategoria', '=', 'categoria.idCategoria')
+                ->addSelect([
+                    'precio' => DB::table('lista_precio')
+                        ->select('precioVenta')
+                        ->whereColumn('codigoProducto', 'producto.codigo')
+                        ->whereNull('fechaFin')
+                        ->whereNull('deleted_at')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'costo' => DB::table('detalle_ingreso')
+                        ->select('detalle_ingreso.precioCompra')
+                        ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+                        ->whereColumn('detalle_ingreso.codigoProducto', 'producto.codigo')
+                        ->whereNull('detalle_ingreso.deleted_at')
+                        ->whereNull('ingreso.deleted_at')
+                        ->orderByDesc('ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'proveedor' => DB::table('detalle_ingreso')
+                        ->select('proveedor.nombre')
+                        ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+                        ->join('proveedor', 'ingreso.idProveedor', '=', 'proveedor.idProveedor')
+                        ->whereColumn('detalle_ingreso.codigoProducto', 'producto.codigo')
+                        ->whereNull('detalle_ingreso.deleted_at')
+                        ->whereNull('ingreso.deleted_at')
+                        ->whereNull('proveedor.deleted_at')
+                        ->orderByDesc('ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'precioVenta' => ListaPrecio::select('precioVenta')
+                        ->whereColumn('codigoProducto', 'producto.codigo')
+                        ->orderByDesc('fechaInicio')
+                        ->limit(1)
+                ])
+                ->selectRaw('(IFNULL((SELECT SUM(di.cantidad) FROM detalle_ingreso di INNER JOIN ingreso i ON di.idIngreso = i.idIngreso WHERE di.codigoProducto = producto.codigo AND di.deleted_at IS NULL AND i.deleted_at IS NULL), 0) - IFNULL((SELECT SUM(ds.cantidad) FROM detalle_salida ds INNER JOIN salida s ON ds.idSalida = s.idSalida WHERE ds.codigoProducto = producto.codigo AND ds.deleted_at IS NULL AND s.deleted_at IS NULL), 0)) AS stock')
+                ->get();
             // Descomentar para debug
             // dd($productos);
             $proveedores = Proveedor::whereNull('deleted_at')->get();
@@ -117,8 +162,8 @@ class ProductoController extends Controller
     public function registrarIngreso(Request $request)
     {
         $datos = $request->validate([
-            'codigoProducto' => ['required', 'string', Rule::exists('Producto', 'codigo')->whereNull('deleted_at')],
-            'idProveedor' => ['required', 'integer', Rule::exists('Proveedor', 'idProveedor')->whereNull('deleted_at')],
+            'codigoProducto' => ['required', 'string', Rule::exists('producto', 'codigo')->whereNull('deleted_at')],
+            'idProveedor' => ['required', 'integer', Rule::exists('proveedor', 'idProveedor')->whereNull('deleted_at')],
             'cantidad' => ['required', 'integer', 'min:1'],
             'precioCompra' => ['required', 'numeric', 'min:0'],
             'fechaVencimiento' => ['required', 'date', 'after_or_equal:today'],
@@ -126,26 +171,26 @@ class ProductoController extends Controller
         ]);
 
         DB::transaction(function () use ($datos) {
-            $producto = DB::table('Producto')
+            $producto = DB::table('producto')
                 ->where('codigo', $datos['codigoProducto'])
                 ->whereNull('deleted_at')
                 ->lockForUpdate()
                 ->first();
-            $proveedor = DB::table('Proveedor')
+            $proveedor = DB::table('proveedor')
                 ->where('idProveedor', $datos['idProveedor'])
                 ->whereNull('deleted_at')
                 ->first();
             abort_if(! $producto || ! $proveedor, 404);
             $totalCompra = $datos['cantidad'] * $datos['precioCompra'];
 
-            $idIngreso = DB::table('Ingreso')->insertGetId([
+            $idIngreso = DB::table('ingreso')->insertGetId([
                 'fecha' => now(),
                 'idProveedor' => $proveedor->idProveedor,
                 'idUsuario' => auth()->user()->idUsuario,
                 'totalCompra' => $totalCompra,
             ], 'idIngreso');
 
-            DB::table('Detalle_Ingreso')->insert([
+            DB::table('detalle_ingreso')->insert([
                 'idIngreso' => $idIngreso,
                 'codigoProducto' => $producto->codigo,
                 'cantidad' => $datos['cantidad'],
@@ -160,33 +205,33 @@ class ProductoController extends Controller
     public function registrarSalida(Request $request)
     {
         $datos = $request->validate([
-            'codigoProducto' => ['required', 'string', Rule::exists('Producto', 'codigo')->whereNull('deleted_at')],
+            'codigoProducto' => ['required', 'string', Rule::exists('producto', 'codigo')->whereNull('deleted_at')],
             'motivo' => ['required', Rule::in(['Merma por Vencimiento', 'Merma por Daño'])],
             'cantidad' => ['required', 'integer', 'min:1'],
             '_modal' => ['required', 'in:modalRegistrarSalida'],
         ]);
 
         DB::transaction(function () use ($datos) {
-            $producto = DB::table('Producto')
+            $producto = DB::table('producto')
                 ->where('codigo', $datos['codigoProducto'])
                 ->whereNull('deleted_at')
                 ->lockForUpdate()
                 ->first();
             abort_if(! $producto, 404);
 
-            $cantidadIngresada = DB::table('Detalle_Ingreso')
-                ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                ->where('Detalle_Ingreso.codigoProducto', $producto->codigo)
-                ->whereNull('Detalle_Ingreso.deleted_at')
-                ->whereNull('Ingreso.deleted_at')
-                ->sum('Detalle_Ingreso.cantidad');
+            $cantidadIngresada = DB::table('detalle_ingreso')
+                ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+                ->where('detalle_ingreso.codigoProducto', $producto->codigo)
+                ->whereNull('detalle_ingreso.deleted_at')
+                ->whereNull('ingreso.deleted_at')
+                ->sum('detalle_ingreso.cantidad');
 
-            $cantidadSalida = DB::table('Detalle_Salida')
-                ->join('Salida', 'Detalle_Salida.idSalida', '=', 'Salida.idSalida')
-                ->where('Detalle_Salida.codigoProducto', $producto->codigo)
-                ->whereNull('Detalle_Salida.deleted_at')
-                ->whereNull('Salida.deleted_at')
-                ->sum('Detalle_Salida.cantidad');
+            $cantidadSalida = DB::table('detalle_salida')
+                ->join('salida', 'detalle_salida.idSalida', '=', 'salida.idSalida')
+                ->where('detalle_salida.codigoProducto', $producto->codigo)
+                ->whereNull('detalle_salida.deleted_at')
+                ->whereNull('salida.deleted_at')
+                ->sum('detalle_salida.cantidad');
 
             $stockDisponible = $cantidadIngresada - $cantidadSalida;
             if ($datos['cantidad'] > $stockDisponible) {
@@ -195,7 +240,7 @@ class ProductoController extends Controller
                 ]);
             }
 
-            $tipo = DB::table('Tipo_Salida')
+            $tipo = DB::table('tipo_salida')
                 ->where('nombre', $datos['motivo'])
                 ->lockForUpdate()
                 ->first();
@@ -203,13 +248,13 @@ class ProductoController extends Controller
             if ($tipo) {
                 $idTipo = $tipo->idTipo;
                 if ($tipo->deleted_at !== null) {
-                    DB::table('Tipo_Salida')->where('idTipo', $idTipo)->update(['deleted_at' => null]);
+                    DB::table('tipo_salida')->where('idTipo', $idTipo)->update(['deleted_at' => null]);
                 }
             } else {
-                $idTipo = DB::table('Tipo_Salida')->insertGetId(['nombre' => $datos['motivo']], 'idTipo');
+                $idTipo = DB::table('tipo_salida')->insertGetId(['nombre' => $datos['motivo']], 'idTipo');
             }
 
-            $idSalida = DB::table('Salida')->insertGetId([
+            $idSalida = DB::table('salida')->insertGetId([
                 'fecha' => now(),
                 'idTipo' => $idTipo,
                 'idUsuario' => auth()->user()->idUsuario,
@@ -217,7 +262,7 @@ class ProductoController extends Controller
                 'totalSalida' => 0,
             ], 'idSalida');
 
-            DB::table('Detalle_Salida')->insert([
+            DB::table('detalle_salida')->insert([
                 'idSalida' => $idSalida,
                 'codigoProducto' => $producto->codigo,
                 'cantidad' => $datos['cantidad'],
@@ -310,7 +355,45 @@ class ProductoController extends Controller
     {
         try {
             // El signo de interrogación inyecta la variable de forma segura
-            $resultado = Producto::conDetalle()->where('producto.codigo', $codigo)->get();
+            $resultado = Producto::select(
+                'producto.codigo',
+                'producto.nombre',
+                'categoria.nombre as categoria'
+            )
+                ->leftJoin('categoria', 'producto.idCategoria', '=', 'categoria.idCategoria')
+                ->where('producto.codigo', $codigo)
+                ->addSelect([
+                    'precio' => DB::table('lista_precio')
+                        ->select('precioVenta')
+                        ->whereColumn('codigoProducto', 'producto.codigo')
+                        ->whereNull('fechaFin')
+                        ->whereNull('deleted_at')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'costo' => DB::table('detalle_ingreso')
+                        ->select('detalle_ingreso.precioCompra')
+                        ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+                        ->whereColumn('detalle_ingreso.codigoProducto', 'producto.codigo')
+                        ->whereNull('detalle_ingreso.deleted_at')
+                        ->whereNull('ingreso.deleted_at')
+                        ->orderByDesc('ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->addSelect([
+                    'proveedor' => DB::table('detalle_ingreso')
+                        ->select('proveedor.nombre')
+                        ->join('ingreso', 'detalle_ingreso.idIngreso', '=', 'ingreso.idIngreso')
+                        ->join('proveedor', 'ingreso.idProveedor', '=', 'proveedor.idProveedor')
+                        ->whereColumn('detalle_ingreso.codigoProducto', 'producto.codigo')
+                        ->whereNull('detalle_ingreso.deleted_at')
+                        ->whereNull('ingreso.deleted_at')
+                        ->whereNull('proveedor.deleted_at')
+                        ->orderByDesc('ingreso.fecha')
+                        ->limit(1)
+                ])
+                ->selectRaw('(IFNULL((SELECT SUM(di.cantidad) FROM detalle_ingreso di INNER JOIN ingreso i ON di.idIngreso = i.idIngreso WHERE di.codigoProducto = producto.codigo AND di.deleted_at IS NULL AND i.deleted_at IS NULL), 0) - IFNULL((SELECT SUM(ds.cantidad) FROM detalle_salida ds INNER JOIN salida s ON ds.idSalida = s.idSalida WHERE ds.codigoProducto = producto.codigo AND ds.deleted_at IS NULL AND s.deleted_at IS NULL), 0)) AS stock')
+                ->get();
 
             // Como DB::select devuelve un arreglo, extraemos el primer objeto (el producto)
             $producto = !empty($resultado) ? $resultado[0] : null;

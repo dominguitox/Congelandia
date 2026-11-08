@@ -104,7 +104,7 @@ class ClienteController extends Controller
     {
         $request->validate([
 
-            'rutCliente' => 'required|string|max:15|unique:Cliente,rutCliente',
+            'rutCliente' => 'required|string|max:15|unique:cliente,rutCliente',
 
             'nombre' => 'required|string|max:100',
 

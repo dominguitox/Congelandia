@@ -68,7 +68,7 @@ class PromocionController extends Controller
             'codigoProducto' => [
                 'required',
                 'string',
-                Rule::exists('Producto', 'codigo')->whereNull('deleted_at'),
+                Rule::exists('producto', 'codigo')->whereNull('deleted_at'),
             ],
             'porcentajeDescuento' => ['required', 'numeric', 'gt:0', 'lte:100'],
             'fechaInicio' => ['required', 'date'],

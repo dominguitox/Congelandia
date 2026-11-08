@@ -1,5 +1,10 @@
 # Migraciones (rama `migracion-sql-a-laravel`)
 
+## Normalización en esta rama
+
+Esta rama sin integrar usa nombres canónicos minúsculos snake_case en migraciones, modelos y queries. La tabla histórica siguiente conserva los nombres anteriores como referencia. Una migración adicional renombra bases existentes sin borrar filas; requiere respaldo y ventana sin escrituras. Ver [procedimiento, pruebas y limitaciones](revision-tablas.md).
+
+
 > ⚠️ **Esta documentación corresponde a los cambios de la rama `migracion-sql-a-laravel`** (pendiente #61 de [pendientes.md](pendientes.md)). Todavía **no está en `main`** hasta que el equipo apruebe el merge. En `main` sigue vigente la vía SQL manual de [instalacion.md](instalacion.md).
 
 En esta rama el esquema de negocio completo pasa de los archivos SQL manuales a **migraciones Laravel**. Ahora `php artisan migrate:fresh` + `php artisan db:seed` produce una base de datos 100% usable sin importar `create table.sql` ni `inserts.sql`.

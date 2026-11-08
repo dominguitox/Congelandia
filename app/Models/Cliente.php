@@ -9,7 +9,7 @@ class Cliente extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'Cliente';
+    protected $table = 'cliente';
     protected $primaryKey = 'rutCliente';
     public $incrementing = false;
     protected $keyType = 'string';

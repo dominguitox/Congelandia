@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('Devolucion', function (Blueprint $table) {
+        Schema::create('devolucion', function (Blueprint $table) {
             $table->id('idDevolucion');
             $table->dateTime('fecha');
             $table->unsignedBigInteger('idSalida');
@@ -17,14 +17,14 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->text('comentario')->nullable();
 
-            $table->foreign('idSalida')->references('idSalida')->on('Salida');
-            $table->foreign('idTipo')->references('idTipo')->on('Tipo_Devolucion');
-            $table->foreign('codigoProducto')->references('codigo')->on('Producto');
+            $table->foreign('idSalida')->references('idSalida')->on('salida');
+            $table->foreign('idTipo')->references('idTipo')->on('tipo_devolucion');
+            $table->foreign('codigoProducto')->references('codigo')->on('producto');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('Devolucion');
+        Schema::dropIfExists('devolucion');
     }
 };

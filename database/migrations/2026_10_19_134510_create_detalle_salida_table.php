@@ -8,20 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('Detalle_Salida', function (Blueprint $table) {
+        Schema::create('detalle_salida', function (Blueprint $table) {
             $table->id('idDetalle');
             $table->unsignedBigInteger('idSalida');
             $table->string('codigoProducto', 50);
             $table->integer('cantidad');
             $table->decimal('precioCobrado', 10, 2);
 
-            $table->foreign('idSalida')->references('idSalida')->on('Salida')->cascadeOnDelete();
-            $table->foreign('codigoProducto')->references('codigo')->on('Producto');
+            $table->foreign('idSalida')->references('idSalida')->on('salida')->cascadeOnDelete();
+            $table->foreign('codigoProducto')->references('codigo')->on('producto');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('Detalle_Salida');
+        Schema::dropIfExists('detalle_salida');
     }
 };

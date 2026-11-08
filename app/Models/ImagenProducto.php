@@ -9,7 +9,7 @@ class ImagenProducto extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'IMAGEN_PRODUCTO';
+    protected $table = 'imagen_producto';
     public $timestamps = false;
     
     protected $fillable = ['rutaImagen', 'codigoProducto', 'alt', 'descripcion'];

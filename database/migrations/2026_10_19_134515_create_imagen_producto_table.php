@@ -8,19 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('IMAGEN_PRODUCTO', function (Blueprint $table) {
+        Schema::create('imagen_producto', function (Blueprint $table) {
             $table->id();
             $table->text('rutaImagen')->nullable();
             $table->string('codigoProducto', 50);
             $table->text('alt')->nullable();
             $table->text('descripcion')->nullable();
 
-            $table->foreign('codigoProducto')->references('codigo')->on('Producto')->cascadeOnDelete();
+            $table->foreign('codigoProducto')->references('codigo')->on('producto')->cascadeOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('IMAGEN_PRODUCTO');
+        Schema::dropIfExists('imagen_producto');
     }
 };

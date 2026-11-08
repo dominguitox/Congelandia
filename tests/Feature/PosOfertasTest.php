@@ -19,14 +19,14 @@ function prepararPosConOferta(float $descuento = 20): User
         'activo' => true,
     ]);
     Producto::create(['codigo' => 'POS-OFERTA-1', 'nombre' => 'Helado en oferta']);
-    DB::table('IMAGEN_PRODUCTO')->insert([
+    DB::table('imagen_producto')->insert([
         'rutaImagen' => 'images/productos/helado-oferta.jpg',
         'codigoProducto' => 'POS-OFERTA-1',
         'alt' => 'Helado en oferta',
         'descripcion' => 'Imagen del producto',
     ]);
 
-    DB::table('Lista_Precio')->insert([
+    DB::table('lista_precio')->insert([
         'codigoProducto' => 'POS-OFERTA-1',
         'precioVenta' => 1000,
         'fechaInicio' => now()->subDay(),
@@ -45,7 +45,7 @@ function prepararPosConOferta(float $descuento = 20): User
 
 test('el POS muestra precio normal y precio con oferta en el producto', function () {
     $user = prepararPosConOferta();
-    DB::table('Metodo_Pago')->insert(['nombre' => 'Efectivo']);
+    DB::table('metodo_pago')->insert(['nombre' => 'Efectivo']);
 
     $this->actingAs($user)
         ->get(route('pos.index'))
@@ -63,7 +63,7 @@ test('el POS muestra precio normal y precio con oferta en el producto', function
 test('la venta registra el precio de oferta calculado por el servidor', function () {
     $user = prepararPosConOferta();
     $tipo = TipoSalida::create(['nombre' => 'Venta']);
-    $metodo = DB::table('Metodo_Pago')->insertGetId(['nombre' => 'Efectivo']);
+    $metodo = DB::table('metodo_pago')->insertGetId(['nombre' => 'Efectivo']);
 
     $response = $this->actingAs($user)->postJson(route('venta.registrar'), [
         'idTipo' => $tipo->idTipo,
@@ -88,7 +88,7 @@ test('la venta registra el precio de oferta calculado por el servidor', function
 test('rechaza el cobro si el precio guardado en el carrito quedó desactualizado', function () {
     $user = prepararPosConOferta();
     $tipo = TipoSalida::create(['nombre' => 'Venta']);
-    $metodo = DB::table('Metodo_Pago')->insertGetId(['nombre' => 'Efectivo']);
+    $metodo = DB::table('metodo_pago')->insertGetId(['nombre' => 'Efectivo']);
 
     $this->actingAs($user)->postJson(route('venta.registrar'), [
         'idTipo' => $tipo->idTipo,
