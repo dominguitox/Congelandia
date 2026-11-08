@@ -2,7 +2,7 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
-> Correcciones de esta rama: [informe de revisión](revision-tablas.md). Los cambios siguen sin commit y no se atribuyen a main.
+> Correcciones de esta rama: [informe de revisión](revision-roles.md). Los cambios siguen sin commit y no se atribuyen a main.
 
 ## P0 — Rompe la app hoy (críticos)
 
@@ -23,9 +23,9 @@ Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene 
 
 | # | Problema | Ubicación |
 | --- | --- | --- |
-| 11 | **Sin restricción de rol en backend** para: gestión de usuarios (crear Administradores), CRUD de categorías, CRUD de proveedores, edición de productos. Cualquier usuario autenticado (ej. Cajero) puede usarlas; el sidebar solo oculta los enlaces | `routes/web.php:60-252`. Agregar `'role:Administrador'` a los grupos correspondientes |
-| 12 | `rol` se valida como `string` libre → cualquier texto se vuelve un "rol válido" (rompe `tieneRol` silenciosamente) | `UserController.php:23`. Usar lista permitida (enum/const) |
-| 13 | `CheckRole` hace `abort(404)` en vez de 403. Deliberado (oculta la ruta), pero conviene documentarlo o cambiarlo | `CheckRole.php:19` |
+| 11 | ~~**Sin restricción de rol en backend** para: gestión de usuarios (crear Administradores), CRUD de categorías, CRUD de proveedores, edición de productos. Cualquier usuario autenticado (ej. Cajero) puede usarlas; el sidebar solo oculta los enlaces~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-roles.md) | `routes/web.php:60-252`. Agregar `'role:Administrador'` a los grupos correspondientes |
+| 12 | ~~`rol` se valida como `string` libre → cualquier texto se vuelve un "rol válido" (rompe `tieneRol` silenciosamente)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-roles.md) | `UserController.php:23`. Usar lista permitida (enum/const) |
+| 13 | ~~`CheckRole` hace `abort(404)` en vez de 403. Deliberado (oculta la ruta), pero conviene documentarlo o cambiarlo~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-roles.md) | `CheckRole.php:19` |
 | 14 | ~~Contraseñas de los usuarios semilla (`inserts.sql`) están en texto plano y el comentario del propio archivo lo admite~~ ✓ **resuelto**: hashes bcrypt en `inserts.sql` (usuarios base: `1234`; `dev`/`Admin`: `12345`) y filas existentes migradas en la BD. Relacionado con #5 | `inserts.sql:4-13`, `database/seeders/UsuarioSeeder.php:22` |
 
 ## P2 — Portabilidad bloqueante (Windows → Linux)
@@ -109,7 +109,7 @@ Antes de eliminar: acordar en el equipo y hacer **un solo PR** con la limpieza, 
 | 61 | ~~**Migrar tablas de negocio a migraciones Laravel**~~ ✓ **resuelto en rama `migracion-sql-a-laravel`** (pendiente de merge a main) | Todas las tablas de negocio + secciones/`Versiones`/`IMAGEN_PRODUCTO` tienen migración; `migrate:fresh` + `db:seed` producen una BD usable (`composer run setup` ahora corre ambos). La migración `usuarios` incoherente fue reemplazada. Detalle y deltas: [migraciones.md](migraciones.md) |
 | 62 | ¿Se mantienen los stored procedures? Hoy la app no los llama | `procedimientos.sql` — si se conservan, corregir #29 y quitar los `select *` debug y los `DELIMITER //` sueltos |
 | 63 | ~~Definir suite de tests mínima para ventas/stock (regresión del cálculo ingresos-salidas)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-productos.md) | ~~Solo 2 stubs~~ se agrego `tests/Feature/MigrationsTest.php` (esquema + FK) en la rama `migracion-sql-a-laravel`; falta la regresión del cálculo de stock |
-| 64 | Definir roles canónicos y documentar en el seed | `Administrador`, `Cajero` aparecen en datos; `UserController` acepta cualquier string (ver #12) |
+| 64 | ~~Definir roles canónicos y documentar en el seed~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-roles.md) | `Administrador`, `Cajero` aparecen en datos; `UserController` acepta cualquier string (ver #12) |
 | 65 | ~~Welcome/branding: imágenes faltantes (#20), texto placeholder "Delivery? Ubicación?" sin definir~~ ✓ **resuelto**: hero con imagen existente, placeholder SVG y contacto centralizado en `config/public.php` | `public/index.blade.php` |
 
 ## Cambios resueltos en `main` (octubre 2026)
