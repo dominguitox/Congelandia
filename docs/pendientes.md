@@ -2,6 +2,8 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
+> Correcciones de esta rama: [informe de revisión](revision-seleccion.md). Los cambios siguen sin commit y no se atribuyen a main.
+
 ## P0 — Rompe la app hoy (críticos)
 
 | # | Problema | Ubicación |
@@ -60,7 +62,7 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | 32 | `spatie/laravel-permission` instalada y sin uso (los roles son columna de texto + CheckRole casero). Decidir: adoptar o eliminar la dependencia | `composer.json:15` |
 | 33 | Assets muertos: `error.js` (placeholder "nose despues lo pienso mas"), `usuarios.js` (vacío). ~~CSS vacíos (`reportes.css`, `categorias.css`, `inventario.css`, `dashboard.css`)~~ ✓ estos ya tienen contenido | `resources/js` |
 | 34 | Timezone UTC y locale `en`: cambiar a `America/Santiago` y `es` (efectos en fechas mostradas y validaciones) | `config/app.php:58-68`, `.env` (`APP_LOCALE`, `APP_TIMEZONE` no existe → agregar) |
-| 35 | `* { user-select: none; }` global evita que el usuario pueda copiar texto (también afecta inputs de búsqueda) | `resources/css/app.css:2-4` |
+| 35 | ~~`* { user-select: none; }` global evita que el usuario pueda copiar texto (también afecta inputs de búsqueda)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-seleccion.md) | `resources/css/app.css:2-4` |
 | 67 | ~~POS no aplicaba las ofertas~~ ✓ **resuelto**: muestra precio normal y precio final en catálogo/carrito, aplica el descuento vigente sobre la lista de precios activa, recalcula el total en servidor y rechaza carritos con precio obsoleto; las promociones activas solapadas del mismo producto no se permiten | `PosController.php`; `pos/index.blade.php`; `resources/js/venta.js`; `PromocionController.php` |
 
 ## P4 — Deuda técnica / refactor

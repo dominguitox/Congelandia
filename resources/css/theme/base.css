@@ -6,10 +6,6 @@
    sidebar) vive en components/layout.css.
    ========================================================= */
 
-* {
-    user-select: none;
-}
-
 html {
     width: 100%;
 }
