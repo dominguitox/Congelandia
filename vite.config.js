@@ -37,7 +37,6 @@ export default defineConfig({
                 'resources/css/categorias.css',
                 'resources/js/categorias.js',
 
-                'resources/js/usuarios.js',
 
                 'resources/css/auth.css',
 
