@@ -9,13 +9,13 @@ class ImagenProducto extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'IMAGEN_PRODUCTO';
+    protected $table = 'imagen_producto';
     public $timestamps = false;
     
     protected $fillable = ['rutaImagen', 'codigoProducto', 'alt', 'descripcion'];
 
     public function producto()
     {
-        return $this->belongsTo(Producto::class, 'codigoProducto', 'id');
+        return $this->belongsTo(Producto::class, 'codigoProducto', 'codigo');
     }
 }

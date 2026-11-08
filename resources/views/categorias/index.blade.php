@@ -149,6 +149,8 @@
 
                                             <button type="button" class="icon-btn icon-btn--info btn-editar" title="Editar categoría"
                                                 data-id="{{ $categoria->idCategoria }}"
+                                                data-update-url="{{ route('categorias.update', $categoria->idCategoria) }}"
+                                                data-delete-url="{{ route('categorias.destroy', $categoria->idCategoria) }}"
                                                 data-nombre="{{ $categoria->nombre }}"
                                                 data-bs-toggle="modal" data-bs-target="#modalEditar">
                                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -159,6 +161,8 @@
 
                                             <button type="button" class="icon-btn icon-btn--danger btn-eliminar" title="Eliminar categoría"
                                                 data-id="{{ $categoria->idCategoria }}"
+                                                data-update-url="{{ route('categorias.update', $categoria->idCategoria) }}"
+                                                data-delete-url="{{ route('categorias.destroy', $categoria->idCategoria) }}"
                                                 data-nombre="{{ $categoria->nombre }}"
                                                 data-count="{{ $categoria->productos_count }}"
                                                 data-bs-toggle="modal" data-bs-target="#modalEliminar">

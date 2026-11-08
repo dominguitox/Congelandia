@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (formEditar) {
 
                     formEditar.action =
-                        '/proveedores/' + id;
+                        boton.dataset.updateUrl;
                 }
 
 

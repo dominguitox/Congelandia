@@ -8,19 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('Producto', function (Blueprint $table) {
+        Schema::create('producto', function (Blueprint $table) {
             $table->string('codigo', 50)->primary();
             $table->string('nombre', 150);
             $table->text('descripcion')->nullable();
             $table->unsignedBigInteger('idCategoria')->nullable();
             $table->softDeletes();
 
-            $table->foreign('idCategoria')->references('idCategoria')->on('Categoria')->nullOnDelete();
+            $table->foreign('idCategoria')->references('idCategoria')->on('categoria')->nullOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('Producto');
+        Schema::dropIfExists('producto');
     }
 };

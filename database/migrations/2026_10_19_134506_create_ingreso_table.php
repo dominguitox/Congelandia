@@ -8,20 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('Ingreso', function (Blueprint $table) {
+        Schema::create('ingreso', function (Blueprint $table) {
             $table->id('idIngreso');
             $table->dateTime('fecha');
             $table->unsignedBigInteger('idProveedor');
             $table->unsignedBigInteger('idUsuario');
             $table->decimal('totalCompra', 12, 2);
 
-            $table->foreign('idProveedor')->references('idProveedor')->on('Proveedor');
-            $table->foreign('idUsuario')->references('idUsuario')->on('Usuario');
+            $table->foreign('idProveedor')->references('idProveedor')->on('proveedor');
+            $table->foreign('idUsuario')->references('idUsuario')->on('usuario');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('Ingreso');
+        Schema::dropIfExists('ingreso');
     }
 };

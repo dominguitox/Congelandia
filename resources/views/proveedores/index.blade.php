@@ -351,6 +351,7 @@
                                         title="Editar proveedor"
 
                                         data-id="{{ $proveedor->idProveedor }}"
+                                        data-update-url="{{ route('proveedores.update', $proveedor->idProveedor) }}"
                                         data-nombre="{{ $proveedor->nombre }}"
                                         data-telefono="{{ $proveedor->telefono }}"
                                         data-correo="{{ $proveedor->correo }}"
@@ -382,6 +383,7 @@
                                         title="Eliminar proveedor"
 
                                         data-id="{{ $proveedor->idProveedor }}"
+                                        data-update-url="{{ route('proveedores.update', $proveedor->idProveedor) }}"
                                         data-nombre="{{ $proveedor->nombre }}"
                                         data-productos="{{ $proveedor->productos_count }}"
                                         data-delete-url="{{ route('proveedores.destroy', $proveedor->idProveedor) }}"

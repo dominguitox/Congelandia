@@ -98,22 +98,3 @@ window.toggleDetalle = function(id, boton) {
     }
 
 }
-window.toggleFormularioCliente = function(){
-
-    const formulario = document.getElementById(
-        'formularioCliente'
-    );
-
-
-    if(formulario.style.display === "none"){
-
-        formulario.style.display = "block";
-
-    }
-    else{
-
-        formulario.style.display = "none";
-
-    }
-
-}
