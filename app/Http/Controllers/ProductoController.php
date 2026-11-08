@@ -22,19 +22,18 @@ use Illuminate\Validation\Rule;
 
 class ProductoController extends Controller
 {
-    public function index()
-    {
-        $productos = Producto::whereNull('deleted_at')->get();
-
-    }
     public function crearProducto(Request $request)
     {
         $request->validate([
-            'precioVenta' => 'nullable|numeric|min:0',
-            'idProveedor' => 'nullable|integer',
+            'codigo' => ['required', 'string', 'max:50', Rule::unique('Producto', 'codigo')],
+            'nombre' => ['required', 'string', 'max:150'],
+            'descripcion' => ['nullable', 'string'],
+            'idCategoria' => ['required', 'integer', Rule::exists('Categoria', 'idCategoria')->whereNull('deleted_at')],
+            'precioVenta' => 'required|numeric|min:0',
+            'idProveedor' => [Rule::requiredIf(fn () => $request->integer('stockInicial') > 0), 'nullable', 'integer', Rule::exists('Proveedor', 'idProveedor')->whereNull('deleted_at')],
             'stockInicial' => 'nullable|integer|min:0',
-            'precioCompra' => 'nullable|numeric|min:0',
-            'fechaVencimiento' => 'nullable|date',
+            'precioCompra' => [Rule::requiredIf(fn () => $request->integer('stockInicial') > 0), 'nullable', 'numeric', 'min:0'],
+            'fechaVencimiento' => [Rule::requiredIf(fn () => $request->integer('stockInicial') > 0), 'nullable', 'date', 'after_or_equal:today'],
             'imagen' => 'nullable|image|max:2048'
         ]);
 
@@ -279,7 +278,7 @@ class ProductoController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
-            'idCategoria' => 'required|integer',
+            'idCategoria' => ['required', 'integer', Rule::exists('Categoria', 'idCategoria')->whereNull('deleted_at')],
             'precioVenta' => 'required|numeric|min:0',
             'imagen' => 'nullable|image|max:2048' // 1. Agregada la validación de la imagen
         ]);

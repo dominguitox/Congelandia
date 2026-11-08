@@ -3,20 +3,19 @@
         @php
             // Definimos los elementos del menú de forma estructurada
             $menuItems = [
-                ['label' => 'Inicio', 'url' => url('/dashboard'), 'pattern' => 'dashboard'],
-                ['label' => 'Punto de Venta', 'url' => url('/pos'), 'pattern' => 'pos*'],
-                ['label' => 'Inventario', 'url' => url('/inventario'), 'pattern' => 'inventario*'],
-                ['label' => 'Historial', 'url' => url('/historial'), 'pattern' => 'historial*'],
-                ['label' => 'Clientes', 'url' => route('clientes.index'), 'pattern' => 'clientes.*', 'isRoute' => true],
-                ['label' => 'Proveedores', 'url' => url('/proveedores'), 'pattern' => 'proveedores*'],
-                ['label' => 'Categorías', 'url' => url('/categorias'), 'pattern' => 'categorias*'],
-                ['label' => 'Usuarios', 'url' => url('/usuarios'), 'pattern' => 'usuarios*'],
-              //      ['label' => 'Roles', 'url' => url('/Roles'), 'pattern' => 'Roles*'],
+                ['label' => 'Inicio', 'url' => route('dashboard.index'), 'pattern' => 'dashboard.*'],
+                ['label' => 'Punto de Venta', 'url' => route('pos.index'), 'pattern' => 'pos.*'],
+                ['label' => 'Inventario', 'url' => route('inventario.index'), 'pattern' => 'inventario.*'],
+                ['label' => 'Historial', 'url' => route('historial.index'), 'pattern' => 'historial.*'],
+                ['label' => 'Clientes', 'url' => route('clientes.index'), 'pattern' => 'clientes.*'],
+                ['label' => 'Proveedores', 'url' => route('proveedores.index'), 'pattern' => 'proveedores.*'],
+                ['label' => 'Categorías', 'url' => route('categorias.index'), 'pattern' => 'categorias.*'],
+                ['label' => 'Usuarios', 'url' => route('usuarios.index'), 'pattern' => 'usuarios.*'],
             ];
 
             // Agregamos reportes solo si es Administrador
             if (auth()->user()->rol === 'Administrador') {
-                $menuItems[] = ['label' => 'Reportes', 'url' => url('/reportes'), 'pattern' => 'reportes*'];
+                $menuItems[] = ['label' => 'Reportes', 'url' => route('reportes.index'), 'pattern' => 'reportes.*'];
             }
         @endphp
 
@@ -24,9 +23,7 @@
             @foreach($menuItems as $item)
                 @php
                     // Comprobamos si está activo según corresponda (ruta nombrada o patrón de URL)
-                    $isActive = isset($item['isRoute'])
-                        ? request()->routeIs($item['pattern'])
-                        : request()->is($item['pattern']);
+                    $isActive = request()->routeIs($item['pattern']);
                 @endphp
 
                 <li class="nav-item">
