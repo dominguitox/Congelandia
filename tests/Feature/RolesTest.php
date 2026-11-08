@@ -57,10 +57,12 @@ test('administrador rechaza roles no definidos', function (string $rol) {
 test('cajero conserva el flujo operativo y no ve enlaces administrativos', function () {
     $this->actingAs(usuarioConRol('Cajero'));
     foreach (['pos.index', 'inventario.index', 'clientes.index', 'historial.index'] as $route) {
-        $this->get(route($route))->assertOk();
+        $this->get(route($route))->assertOk()->assertSee('href="'.route($route).'"', false);
     }
     $this->get(route('pos.index'))->assertDontSee('href="'.route('usuarios.index').'"', false)
-        ->assertDontSee('href="'.route('proveedores.index').'"', false);
+        ->assertDontSee('href="'.route('proveedores.index').'"', false)
+        ->assertDontSee('href="'.route('categorias.index').'"', false)
+        ->assertDontSee('href="'.route('reportes.index').'"', false);
     $this->postJson(route('inventario.ingresos.store'), [])->assertUnprocessable();
     $this->postJson(route('inventario.salidas.store'), [])->assertUnprocessable();
     $this->postJson(route('venta.registrar'), [])->assertUnprocessable();
