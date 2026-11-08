@@ -2,7 +2,7 @@
 
 Backlog derivado de la auditoría del proyecto (octubre 2026). Cada ítem tiene referencias a archivo y línea para ubicarlo rápido. Al resolver un ítem: marcarlo y mover la referencia a lo resuelto en el PR correspondiente. Los ítems marcados ✓ en la rama `implementacion-estilos-css` corresponden a la unificación visual del panel (ver [estilos.md](estilos.md)). Los marcados ✓ sin rama se resolvieron en `main`.
 
-> Correcciones de esta rama: [informe de revisión](revision-limpieza.md). Los cambios siguen sin commit y no se atribuyen a main.
+> Correcciones de esta rama: [informe de revisión](revision-frontend.md). Los cambios siguen sin commit y no se atribuyen a main.
 
 ## P0 — Rompe la app hoy (críticos)
 
@@ -71,13 +71,13 @@ Todo esto **funciona en Windows por case-insensitive del filesystem** y rompe en
 | --- | --- | --- |
 | 36 | Consulta de producto con precio/costo/proveedor/stock **copiada 4 veces** → consolidar en scope `Producto::scopeConDetalle()` | `PosController.php:22-53`, `ProductoController.php:95-134,227-258`, `DashboardController.php:45-92` |
 | 37 | `listarProductos` selecciona `precio` Y `precioVenta` (dos subconsultas a la misma tabla) — redundante | `ProductoController.php:103-109,127-132` |
-| 38 | ~~CSS inline masivo en clientes~~ ✓ **CSS extraído** a `resources/css/clientes.css`; falta extraer el bloque `<script>` inline (`clientes/index.blade.php`) a `resources/js/clientes.js` (duplica el toggle de `resources/js/app.js:28-46`) | `clientes/index.blade.php` |
+| 38 | ~~CSS inline masivo en clientes ✓ **CSS extraído** a `resources/css/clientes.css`; falta extraer el bloque `<script>` inline (`clientes/index.blade.php`) a `resources/js/clientes.js` (duplica el toggle de `resources/js/app.js:28-46`)~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-frontend.md) | `clientes/index.blade.php` |
 | 39 | ~~Los modales de ingreso y salida compartían campos duplicados y apuntaban a crear producto~~ ✓ **resuelto**: cada modal tiene campos propios y endpoint separado; la salida valida stock y reutiliza o crea el motivo de merma al registrar el movimiento, sin seeder adicional | `inventario/index.blade.php`; `routes/web.php`; `ProductoController::registrarIngreso` y `registrarSalida` |
 | 40 | ~~Soft delete manual con `whereNull('deleted_at')` duplicado~~ ✓ **parcial**: `SoftDeletes` aplicado a todos los modelos de negocio y `ClienteController::destroy` usa `delete()`. Queda limpiar los `whereNull('deleted_at')` redundantes (~10 lugares) y decidir la cascada lógica de hijos | `PosController.php:58`, `ProductoController.php:24,137`, `DashboardController.php:115`, `ClienteController.php:22,146,191`, `ProveedorController.php` (varios) |
 | 41 | Dos sistemas de modales convivendo (Bootstrap en inventario/categorías/usuarios vs overlays hechos a mano en clientes/proveedores) → estandarizar componentes | vistas de ambos módulos |
 | 42 | Copia de mensajes de error: "Error al cargar el historial" dentro de DashboardController | `DashboardController.php:132` |
-| 43 | URLs hardcodeadas en JS en lugar de rutas nombradas / data-attributes | `venta.js:156`, `categorias.js:24,42`, `proveedores.js:282,359`, `producto.js:8,18`, `clientes/index.blade.php:1569,1682,2007` |
-| 44 | Sidebar mezcla `route()` y `url()` y checks de activación (`routeIs` vs `is`) con patrones inconsistentes | `partials/sidebar.blade.php` |
+| 43 | ~~URLs hardcodeadas en JS en lugar de rutas nombradas / data-attributes~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-frontend.md) | `venta.js:156`, `categorias.js:24,42`, `proveedores.js:282,359`, `producto.js:8,18`, `clientes/index.blade.php:1569,1682,2007` |
+| 44 | ~~Sidebar mezcla `route()` y `url()` y checks de activación (`routeIs` vs `is`) con patrones inconsistentes~~ ✓ **implementado en este worktree, sin integrar**; ver [alcance y verificaciones](revision-frontend.md) | `partials/sidebar.blade.php` |
 
 ## P5 — Código muerto (eliminación propuesta)
 

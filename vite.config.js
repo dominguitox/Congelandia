@@ -27,6 +27,7 @@ export default defineConfig({
                 'resources/js/historial.js',
 
                 'resources/css/clientes.css',
+                'resources/js/clientes.js',
 
                 'resources/css/pos.css',
 

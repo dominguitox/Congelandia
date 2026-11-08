@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div class="page">
+<div class="page" id="rutasPos" data-registrar-venta="{{ route('venta.registrar') }}">
 
     {{-- =====================================================
          ENCABEZADO

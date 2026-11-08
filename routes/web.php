@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::get(
         '/admin',
         [DashboardController::class, 'index']
-    )->name('dashboard.index');
+    )->name('dashboard.alias');
 
     Route::get(
         '/dashboard',
@@ -240,13 +240,6 @@ Route::middleware('auth')->group(function () {
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'destroy']
     )->name('proveedores.destroy');
-
-    // =====================================================
-    // REPORTES
-    // =====================================================
-
-    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
-
 
     // =====================================================
     // USUARIOS
