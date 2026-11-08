@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 test('migraciones y modelos usan nombres exactos en minusculas', function () {
     Artisan::call('migrate:fresh');
+    if (DB::getDriverName() === 'mysql' && PHP_OS_FAMILY === 'Linux') {
+        expect((int) DB::selectOne('SELECT @@lower_case_table_names AS value')->value)->toBe(0);
+    }
     $names = Schema::getTableListing(schemaQualified: false);
     foreach (['usuario', 'cliente', 'categoria', 'producto', 'lista_precio', 'promocion', 'proveedor',
         'ingreso', 'detalle_ingreso', 'tipo_salida', 'salida', 'detalle_salida', 'metodo_pago',

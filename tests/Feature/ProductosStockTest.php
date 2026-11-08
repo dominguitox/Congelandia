@@ -70,7 +70,7 @@ test('precio actual descarta precios futuros finalizados y borrados y no duplica
     foreach ([[100, now()->subDays(4), null, null], [200, now()->subDays(3), null, null],
         [900, now()->addDay(), null, null], [800, now()->subDays(2), now()->subDay(), null],
         [700, now()->subDay(), null, now()]] as [$precio, $inicio, $fin, $borrado]) {
-        DB::table('Lista_Precio')->insert(['codigoProducto' => 'STOCK-1', 'precioVenta' => $precio, 'fechaInicio' => $inicio, 'fechaFin' => $fin, 'deleted_at' => $borrado]);
+        DB::table('lista_precio')->insert(['codigoProducto' => 'STOCK-1', 'precioVenta' => $precio, 'fechaInicio' => $inicio, 'fechaFin' => $fin, 'deleted_at' => $borrado]);
     }
     $producto = Producto::conDetalle()->firstOrFail();
     expect((float) $producto->precio)->toBe(200.0)->and($producto->precioVenta)->toBe(200.0);
@@ -98,6 +98,37 @@ test('inventario dashboard y POS usan los datos compartidos', function () {
     }
 });
 
+test('las pantallas y el cobro eligen el mismo precio vigente incluso con fechas iguales', function () {
+    $this->freezeTime();
+    ingresoStock($this, 12);
+    salidaStock($this, 2);
+
+    foreach ([[100, now()->subDays(4), null, null], [200, now()->subDays(3), null, null],
+        [250, now()->subDays(3), null, null], [900, now()->addDay(), null, null],
+        [800, now()->subDays(2), now()->subDay(), null], [700, now()->subDay(), null, now()]] as [$precio, $inicio, $fin, $borrado]) {
+        DB::table('lista_precio')->insert(['codigoProducto' => 'STOCK-1', 'precioVenta' => $precio,
+            'fechaInicio' => $inicio, 'fechaFin' => $fin, 'deleted_at' => $borrado]);
+    }
+
+    $this->actingAs($this->user);
+    foreach (['inventario.index', 'dashboard.index', 'pos.index'] as $route) {
+        $this->get(route($route))->assertOk()->assertViewHas('productos', function ($productos) {
+            $producto = $productos->firstWhere('codigo', 'STOCK-1');
+
+            return (int) $producto->stock === 10
+                && (float) $producto->precio === 250.0
+                && $producto->precioVenta === 250.0;
+        });
+    }
+
+    $metodo = DB::table('metodo_pago')->insertGetId(['nombre' => 'Efectivo']);
+    $this->postJson(route('venta.registrar'), [
+        'idTipo' => $this->tipo->idTipo, 'metodoPago' => $metodo,
+        'productos' => [['id' => 'STOCK-1', 'cantidad' => 1, 'precio' => 250]],
+    ])->assertOk()->assertJsonPath('success', true);
+    expect((float) DetalleSalida::latest('idDetalle')->firstOrFail()->precioCobrado)->toBe(250.0);
+});
+
 test('errores de creacion conservan datos y muestran el modal correcto', function () {
     $this->actingAs($this->user)->from(route('inventario.index'))->post(route('productos.crearProducto'), [
         'codigo' => 'NUEVO', 'nombre' => 'Nombre conservado', 'precioVenta' => -1, '_modal' => 'modalCrearProducto',
@@ -107,7 +138,7 @@ test('errores de creacion conservan datos y muestran el modal correcto', functio
 });
 
 test('abastecimiento inicial incompleto se rechaza antes de crear producto', function () {
-    $categoria = DB::table('Categoria')->insertGetId(['nombre' => 'Helados']);
+    $categoria = DB::table('categoria')->insertGetId(['nombre' => 'Helados']);
     $this->actingAs($this->user)->postJson(route('productos.crearProducto'), [
         'codigo' => 'NUEVO', 'nombre' => 'Prueba', 'precioVenta' => 500, 'idCategoria' => $categoria, 'stockInicial' => 3,
     ])->assertUnprocessable()->assertJsonValidationErrors(['idProveedor', 'precioCompra', 'fechaVencimiento']);
