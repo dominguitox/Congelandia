@@ -38,6 +38,7 @@ return array(
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Models\\Version' => $baseDir . '/app/Models/Version.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
+    'App\\Services\\Reportes\\ReporteService' => $baseDir . '/app/Services/Reportes/ReporteService.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',
     'Brick\\Math\\BigInteger' => $vendorDir . '/brick/math/src/BigInteger.php',

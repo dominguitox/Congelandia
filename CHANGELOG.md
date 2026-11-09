@@ -1,5 +1,15 @@
 # Historial de publicaciones
 
+## 1.1.0 — 2026-11-09
+
+inclusión modulo reportes 2.0
+
+### Cambios del código
+
+- Implementa módulo de reportes (833b58d)
+
+Código de origen: cd67424e4973b37dcada6315b698856bf32fad04
+
 ## 1.0.0 — 2026-11-09
 
 Agrega el módulo de reportes de ventas, inventario y hábitos
@@ -108,5 +118,3 @@ Agrega el módulo de reportes de ventas, inventario y hábitos
 - implementacion ventas inicial (a56afa2)
 
 Código de origen: b202265fc98b18edfa105be9dc895fe30214f719
-
-
