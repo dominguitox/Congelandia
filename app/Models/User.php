@@ -3,16 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-    protected $table = 'Usuario';
+    use HasFactory, Notifiable, SoftDeletes;
+
+    public const ROLES = ['Administrador', 'Cajero'];
+    protected $table = 'usuario';
     protected $primaryKey = 'idUsuario';
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
     protected $fillable = [
         'nombre',
         'email',

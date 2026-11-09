@@ -22,7 +22,7 @@ class ClienteController extends Controller
         $clientes = Cliente::whereNull('deleted_at')->get();
 
         $clientesDeudores = collect();
-        $clientesPagadosRecientes = collect();
+        $clientesSinDeuda = collect();
         $deudaTotal = 0;
 
         foreach ($clientes as $cliente) {
@@ -80,15 +80,16 @@ class ClienteController extends Controller
 
                 $deudaTotal += $deuda;
 
-            } elseif ($cliente->ultimoPago) {
+            } else {
 
-                $clientesPagadosRecientes->push($cliente);
+                // También incluye clientes nuevos que aún no tienen compras ni pagos.
+                $clientesSinDeuda->push($cliente);
             }
         }
 
         return view('clientes.index', compact(
             'clientesDeudores',
-            'clientesPagadosRecientes',
+            'clientesSinDeuda',
             'deudaTotal'
         ));
     }
@@ -102,14 +103,24 @@ class ClienteController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validateWithBag('crearCliente', [
 
-            'rutCliente' => 'required|string|max:15|unique:Cliente,rutCliente',
+            'rutCliente' => 'required|string|max:15|unique:cliente,rutCliente',
 
             'nombre' => 'required|string|max:100',
 
             'telefono' => 'nullable|string|max:20'
 
+        ], [
+            'rutCliente.required' => 'Ingresa el RUT del cliente.',
+            'rutCliente.string' => 'El RUT debe ser texto.',
+            'rutCliente.max' => 'El RUT no puede superar los 15 caracteres.',
+            'rutCliente.unique' => 'Ya existe un cliente con este RUT.',
+            'nombre.required' => 'Ingresa el nombre del cliente.',
+            'nombre.string' => 'El nombre debe ser texto.',
+            'nombre.max' => 'El nombre no puede superar los 100 caracteres.',
+            'telefono.string' => 'El teléfono debe ser texto.',
+            'telefono.max' => 'El teléfono no puede superar los 20 caracteres.',
         ]);
 
         Cliente::create([
@@ -358,21 +369,16 @@ class ClienteController extends Controller
 
     public function destroy($rutCliente)
     {
-        // Buscar solamente clientes activos
-        $cliente = Cliente::where('rutCliente', $rutCliente)
-            ->whereNull('deleted_at')
-            ->firstOrFail();
+        $cliente = Cliente::where('rutCliente', $rutCliente)->firstOrFail();
 
         /*
-         * Eliminación lógica.
+         * Eliminación lógica mediante SoftDeletes.
          *
          * No se elimina físicamente el cliente.
          * Se conserva su historial y sus ventas.
          */
 
-        $cliente->deleted_at = now();
-
-        $cliente->save();
+        $cliente->delete();
 
         return redirect()
             ->route('clientes.index')

@@ -1,0 +1,299 @@
+{
+  "_anton-400-normal-AUNGEG_V.woff": {
+    "file": "assets/anton-400-normal-AUNGEG_V.woff",
+    "src": "_anton-400-normal-AUNGEG_V.woff"
+  },
+  "_anton-400-normal-Byf51wtH.woff2": {
+    "file": "assets/anton-400-normal-Byf51wtH.woff2",
+    "src": "_anton-400-normal-Byf51wtH.woff2"
+  },
+  "_baloo-2-500-normal-BSdEhq8m.woff": {
+    "file": "assets/baloo-2-500-normal-BSdEhq8m.woff",
+    "src": "_baloo-2-500-normal-BSdEhq8m.woff"
+  },
+  "_baloo-2-500-normal-CmLZ27r7.woff2": {
+    "file": "assets/baloo-2-500-normal-CmLZ27r7.woff2",
+    "src": "_baloo-2-500-normal-CmLZ27r7.woff2"
+  },
+  "_baloo-2-600-normal-B4tNaogw.woff": {
+    "file": "assets/baloo-2-600-normal-B4tNaogw.woff",
+    "src": "_baloo-2-600-normal-B4tNaogw.woff"
+  },
+  "_baloo-2-600-normal-tIfxVoAe.woff2": {
+    "file": "assets/baloo-2-600-normal-tIfxVoAe.woff2",
+    "src": "_baloo-2-600-normal-tIfxVoAe.woff2"
+  },
+  "_baloo-2-700-normal-CqTg7A15.woff2": {
+    "file": "assets/baloo-2-700-normal-CqTg7A15.woff2",
+    "src": "_baloo-2-700-normal-CqTg7A15.woff2"
+  },
+  "_baloo-2-700-normal-Ld3Zm3l2.woff": {
+    "file": "assets/baloo-2-700-normal-Ld3Zm3l2.woff",
+    "src": "_baloo-2-700-normal-Ld3Zm3l2.woff"
+  },
+  "_bootstrap.esm-DvX0PPE-.js": {
+    "file": "assets/bootstrap.esm-DvX0PPE-.js",
+    "name": "bootstrap.esm"
+  },
+  "_fonts-B1nIbyAQ.css": {
+    "file": "assets/fonts-B1nIbyAQ.css",
+    "src": "_fonts-B1nIbyAQ.css"
+  },
+  "_fraunces-500-normal-BTR4KCeb.woff": {
+    "file": "assets/fraunces-500-normal-BTR4KCeb.woff",
+    "src": "_fraunces-500-normal-BTR4KCeb.woff"
+  },
+  "_fraunces-500-normal-DnGCNyPD.woff2": {
+    "file": "assets/fraunces-500-normal-DnGCNyPD.woff2",
+    "src": "_fraunces-500-normal-DnGCNyPD.woff2"
+  },
+  "_fraunces-600-normal-BFCDtZfi.woff2": {
+    "file": "assets/fraunces-600-normal-BFCDtZfi.woff2",
+    "src": "_fraunces-600-normal-BFCDtZfi.woff2"
+  },
+  "_fraunces-600-normal-DL5QCzvS.woff": {
+    "file": "assets/fraunces-600-normal-DL5QCzvS.woff",
+    "src": "_fraunces-600-normal-DL5QCzvS.woff"
+  },
+  "_fraunces-700-normal-CEOla-zY.woff2": {
+    "file": "assets/fraunces-700-normal-CEOla-zY.woff2",
+    "src": "_fraunces-700-normal-CEOla-zY.woff2"
+  },
+  "_fraunces-700-normal-DTjk5d1Q.woff": {
+    "file": "assets/fraunces-700-normal-DTjk5d1Q.woff",
+    "src": "_fraunces-700-normal-DTjk5d1Q.woff"
+  },
+  "_instrument-sans-400-normal-D1W7dsQl.woff": {
+    "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
+    "src": "_instrument-sans-400-normal-D1W7dsQl.woff"
+  },
+  "_instrument-sans-400-normal-DRC__1Mx.woff2": {
+    "file": "assets/instrument-sans-400-normal-DRC__1Mx.woff2",
+    "src": "_instrument-sans-400-normal-DRC__1Mx.woff2"
+  },
+  "_instrument-sans-500-normal-Dk9ku72i.woff2": {
+    "file": "assets/instrument-sans-500-normal-Dk9ku72i.woff2",
+    "src": "_instrument-sans-500-normal-Dk9ku72i.woff2"
+  },
+  "_instrument-sans-500-normal-Z6ESRlEs.woff": {
+    "file": "assets/instrument-sans-500-normal-Z6ESRlEs.woff",
+    "src": "_instrument-sans-500-normal-Z6ESRlEs.woff"
+  },
+  "_instrument-sans-600-normal-B7fBEWYG.woff2": {
+    "file": "assets/instrument-sans-600-normal-B7fBEWYG.woff2",
+    "src": "_instrument-sans-600-normal-B7fBEWYG.woff2"
+  },
+  "_instrument-sans-600-normal-B9e8oLYv.woff": {
+    "file": "assets/instrument-sans-600-normal-B9e8oLYv.woff",
+    "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
+  },
+  "_instrument-sans-700-normal-CYfAanHo.woff2": {
+    "file": "assets/instrument-sans-700-normal-CYfAanHo.woff2",
+    "src": "_instrument-sans-700-normal-CYfAanHo.woff2"
+  },
+  "_instrument-sans-700-normal-DfAjL1vF.woff": {
+    "file": "assets/instrument-sans-700-normal-DfAjL1vF.woff",
+    "src": "_instrument-sans-700-normal-DfAjL1vF.woff"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-C7VSUPHR.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/auth.css": {
+    "file": "assets/auth-DUY1YEkB.css",
+    "name": "auth",
+    "names": [
+      "auth.css"
+    ],
+    "src": "resources/css/auth.css",
+    "isEntry": true
+  },
+  "resources/css/categorias.css": {
+    "file": "assets/categorias-CiK429ar.css",
+    "name": "categorias",
+    "names": [
+      "categorias.css"
+    ],
+    "src": "resources/css/categorias.css",
+    "isEntry": true
+  },
+  "resources/css/clientes.css": {
+    "file": "assets/clientes-QoF_BAb-.css",
+    "name": "clientes",
+    "names": [
+      "clientes.css"
+    ],
+    "src": "resources/css/clientes.css",
+    "isEntry": true
+  },
+  "resources/css/dashboard.css": {
+    "file": "assets/dashboard-UVEOSrM5.css",
+    "name": "dashboard",
+    "names": [
+      "dashboard.css"
+    ],
+    "src": "resources/css/dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/historial.css": {
+    "file": "assets/historial-C7ggmUv9.css",
+    "name": "historial",
+    "names": [
+      "historial.css"
+    ],
+    "src": "resources/css/historial.css",
+    "isEntry": true
+  },
+  "resources/css/inventario.css": {
+    "file": "assets/inventario-D3xY8kIg.css",
+    "name": "inventario",
+    "names": [
+      "inventario.css"
+    ],
+    "src": "resources/css/inventario.css",
+    "isEntry": true
+  },
+  "resources/css/pos.css": {
+    "file": "assets/pos-DxnYZCbk.css",
+    "name": "pos",
+    "names": [
+      "pos.css"
+    ],
+    "src": "resources/css/pos.css",
+    "isEntry": true
+  },
+  "resources/css/proveedores.css": {
+    "file": "assets/proveedores-DQLpE6Jk.css",
+    "name": "proveedores",
+    "names": [
+      "proveedores.css"
+    ],
+    "src": "resources/css/proveedores.css",
+    "isEntry": true
+  },
+  "resources/css/public-temas/feria.css": {
+    "file": "assets/feria-BuwTP_WK.css",
+    "name": "feria",
+    "names": [
+      "feria.css"
+    ],
+    "src": "resources/css/public-temas/feria.css",
+    "isEntry": true
+  },
+  "resources/css/public-temas/fresco.css": {
+    "file": "assets/fresco-XldDJ1Km.css",
+    "name": "fresco",
+    "names": [
+      "fresco.css"
+    ],
+    "src": "resources/css/public-temas/fresco.css",
+    "isEntry": true
+  },
+  "resources/css/public-temas/hielo.css": {
+    "file": "assets/hielo-DNxpaPVv.css",
+    "name": "hielo",
+    "names": [
+      "hielo.css"
+    ],
+    "src": "resources/css/public-temas/hielo.css",
+    "isEntry": true
+  },
+  "resources/css/public.css": {
+    "file": "assets/public-C7n82Mqa.css",
+    "name": "public",
+    "names": [
+      "public.css"
+    ],
+    "src": "resources/css/public.css",
+    "isEntry": true
+  },
+  "resources/css/reportes.css": {
+    "file": "assets/reportes-DfEwrQ1D.css",
+    "name": "reportes",
+    "names": [
+      "reportes.css"
+    ],
+    "src": "resources/css/reportes.css",
+    "isEntry": true
+  },
+  "resources/css/theme/themes/aurora.css": {
+    "file": "assets/aurora-BLdQgJbE.css",
+    "name": "aurora",
+    "names": [
+      "aurora.css"
+    ],
+    "src": "resources/css/theme/themes/aurora.css",
+    "isEntry": true
+  },
+  "resources/css/theme/themes/coral.css": {
+    "file": "assets/coral-Ch7maGwX.css",
+    "name": "coral",
+    "names": [
+      "coral.css"
+    ],
+    "src": "resources/css/theme/themes/coral.css",
+    "isEntry": true
+  },
+  "resources/css/theme/themes/esmeralda.css": {
+    "file": "assets/esmeralda-SPE2Tqes.css",
+    "name": "esmeralda",
+    "names": [
+      "esmeralda.css"
+    ],
+    "src": "resources/css/theme/themes/esmeralda.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-Cx2qflNY.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap.esm-DvX0PPE-.js"
+    ]
+  },
+  "resources/js/categorias.js": {
+    "file": "assets/categorias-BMtdvUlI.js",
+    "name": "categorias",
+    "src": "resources/js/categorias.js",
+    "isEntry": true
+  },
+  "resources/js/clientes.js": {
+    "file": "assets/clientes-BO0EMJK-.js",
+    "name": "clientes",
+    "src": "resources/js/clientes.js",
+    "isEntry": true
+  },
+  "resources/js/historial.js": {
+    "file": "assets/historial-DkCjQVcb.js",
+    "name": "historial",
+    "src": "resources/js/historial.js",
+    "isEntry": true
+  },
+  "resources/js/producto.js": {
+    "file": "assets/producto-DpSXBira.js",
+    "name": "producto",
+    "src": "resources/js/producto.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap.esm-DvX0PPE-.js"
+    ]
+  },
+  "resources/js/proveedores.js": {
+    "file": "assets/proveedores-CR7jAblW.js",
+    "name": "proveedores",
+    "src": "resources/js/proveedores.js",
+    "isEntry": true
+  },
+  "resources/js/venta.js": {
+    "file": "assets/venta-CGVUROlu.js",
+    "name": "venta",
+    "src": "resources/js/venta.js",
+    "isEntry": true
+  }
+}

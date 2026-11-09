@@ -1,0 +1,95 @@
+/* =========================================================
+   COMPONENTE - TABLAS
+   =========================================================
+   Contenedor con esquinas redondeadas, cabecera y celdas
+   compartidas por todos los modulos.
+   ========================================================= */
+
+/* =========================================================
+   CONTENEDOR
+   ========================================================= */
+
+.clientes-table,
+.proveedores-table-container {
+    width: 100%;
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+/* =========================================================
+   TABLA
+   ========================================================= */
+
+.clientes-table table,
+.proveedores-table,
+.historial-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.clientes-table thead,
+.proveedores-table thead,
+.historial-table thead {
+    background: var(--color-table-header);
+}
+
+.clientes-table th,
+.proveedores-table th,
+.historial-table th {
+    text-align: left;
+    padding: var(--space-md) 18px;
+    color: var(--color-text-heading);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* =========================================================
+   CELDAS
+   ========================================================= */
+
+.clientes-table td,
+.proveedor-row td,
+.historial-table td {
+    padding: var(--space-md) 18px;
+    border-bottom: 1px solid var(--color-border-soft);
+    color: var(--color-text-muted);
+    font-size: var(--fs-base);
+    vertical-align: middle;
+}
+
+/* =========================================================
+   FILAS
+   ========================================================= */
+
+.clientes-table tbody tr,
+.historial-table tbody tr.movimiento-row {
+    transition: background 0.15s ease;
+}
+
+.clientes-table tbody tr:hover,
+.historial-table tbody tr.movimiento-row:hover {
+    background: var(--color-surface-alt);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .clientes-table th,
+    .proveedores-table th,
+    .historial-table th,
+    .clientes-table td,
+    .proveedor-row td,
+    .historial-table td {
+        padding: 12px 14px;
+    }
+}

@@ -21,6 +21,10 @@ class DashboardController extends Controller
     {
         try {
             $salidas = Salida::with('detalles.producto')->get();
+            $salidasRecientes = Salida::with('detalles.producto')
+                ->orderBy('fecha', 'desc')
+                ->get();
+
 
             // 1. Cálculos exclusivos para HOY
             $hoy = Carbon::now()->toDateString();
@@ -31,8 +35,8 @@ class DashboardController extends Controller
             $totalVentasHoy = $salidasHoy->sum('totalSalida');
             $ordenesHoy = $salidasHoy->count();
 
-            $promocionesActivas = Promocion::whereDate('fechaInicio', '<=', $hoy)
-                ->whereDate('fechaFin', '>=', $hoy)
+            $promocionesActivas = Promocion::vigentes()
+                ->with('producto')
                 ->orderBy('porcentajeDescuento', 'desc')
                 ->get();
             $cantidadPromocionesActivas = $promocionesActivas->count();
@@ -42,54 +46,7 @@ class DashboardController extends Controller
                 return $salida->detalles->sum('cantidad');
             });
 
-            $productos = Producto::select(
-                'Producto.codigo',
-                'Producto.nombre',
-                'Producto.idCategoria',
-                'Producto.descripcion',
-                'Categoria.nombre as categoria'
-            )
-                ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
-                ->addSelect([
-                    'precio' => DB::table('Lista_Precio')
-                        ->select('precioVenta')
-                        ->whereColumn('codigoProducto', 'Producto.codigo')
-                        ->whereNull('fechaFin')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'costo' => DB::table('Detalle_Ingreso')
-                        ->select('Detalle_Ingreso.precioCompra')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'proveedor' => DB::table('Detalle_Ingreso')
-                        ->select('Proveedor.nombre')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'precioVenta' => ListaPrecio::select('precioVenta')
-                        ->whereColumn('codigoProducto', 'producto.codigo')
-                        ->orderByDesc('fechaInicio')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'fechaVencimiento' => DB::table('Detalle_Ingreso')
-                        ->select('Detalle_Ingreso.fechaVencimiento')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->selectRaw('(IFNULL((SELECT SUM(cantidad) FROM Detalle_Ingreso WHERE codigoProducto = Producto.codigo), 0) - IFNULL((SELECT SUM(cantidad) FROM Detalle_Salida WHERE codigoProducto = Producto.codigo), 0)) AS stock')
-                ->get();
+            $productos = Producto::conDetalle()->get();
             $alertasActivas = 0;
             $fechaHoyCarbon = Carbon::now()->startOfDay();
             $listaAlertas = [];
@@ -112,11 +69,15 @@ class DashboardController extends Controller
 
             // Descomentar para debug
             // dd($productos);
+            // dd($salidasHoy);
+
             $proveedores = Proveedor::whereNull('deleted_at')->get();
             $categorias = Categoria::whereNull('deleted_at')->get();
 
             return view('dashboard.index', compact(
                 'salidas',
+                'salidasHoy',
+                'salidasRecientes',
                 'totalVentasHoy',
                 'proveedores',
                 'categorias',
@@ -129,7 +90,8 @@ class DashboardController extends Controller
                 'cantidadPromocionesActivas',
             ));
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error al cargar el historial: ' . $e->getMessage());
+            report($e);
+            abort(500, 'Error al cargar el dashboard.');
         }
 
 

@@ -1,0 +1,67 @@
+/* =========================================================
+   MODULO - REPORTES
+   ========================================================= */
+
+/* =========================================================
+   FILTROS
+   ========================================================= */
+
+.reportes-filtros {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 2fr) auto;
+    gap: var(--space-md);
+    align-items: end;
+}
+
+.reportes-filtros .campo {
+    min-width: 0;
+}
+
+.reportes-filtros .campo--boton .btn-solid {
+    width: 100%;
+}
+
+/* =========================================================
+   RESULTADO NUMERICO UNICO
+   ========================================================= */
+
+.reporte-valor {
+    text-align: center;
+    padding: var(--space-3xl) var(--space-lg);
+}
+
+.reporte-valor-label {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: var(--fs-md);
+    margin-bottom: 8px;
+}
+
+.reporte-valor-numero {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .reportes-filtros {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .reporte-valor {
+        padding: var(--space-2xl) var(--space-md);
+    }
+
+    .reporte-valor-numero {
+        font-size: 36px;
+    }
+}

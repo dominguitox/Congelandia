@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ListaPrecio extends Model
 {
-    protected $table = 'Lista_Precio';
+    use SoftDeletes;
+
+    protected $table = 'lista_precio';
     protected $primaryKey = 'idPrecio';
     protected $keyType = 'integer';
     public $incrementing = true;

@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetalleIngreso extends Model
 {
-    protected $table = 'Detalle_Ingreso';
+    use SoftDeletes;
+
+    protected $table = 'detalle_ingreso';
     protected $primaryKey = 'idDetalle';
     protected $keyType = 'integer';
     public $incrementing = true;

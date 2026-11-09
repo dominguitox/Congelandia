@@ -1,0 +1,43 @@
+/* =========================================================
+   COMPONENTE - ESTADOS VACIOS / SIN RESULTADOS
+   ========================================================= */
+
+.clientes-table td[colspan],
+.tabla-vacia,
+.empty-message,
+.sin-resultados td,
+.detalle-vacio {
+    text-align: center;
+    padding: var(--space-3xl) var(--space-lg);
+    color: var(--color-text-faint);
+    font-size: var(--fs-base);
+}
+
+.tabla-vacia-icon {
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.tabla-vacia strong {
+    display: block;
+    color: var(--color-text-heading);
+    font-size: var(--fs-base);
+}
+
+.tabla-vacia p {
+    margin: 6px 0 0;
+    color: var(--color-text-faint);
+    font-size: var(--fs-xs);
+}
+
+/* =========================================================
+   OCULTAR FILAS / MENSAJES
+   ========================================================= */
+
+.fila-oculta {
+    display: none !important;
+}
+
+.sin-resultados {
+    display: none;
+}

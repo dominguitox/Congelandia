@@ -1,0 +1,85 @@
+/* =========================================================
+   CONGELANDIA - TEMA: CORAL (rosa / rojo calido)
+   =========================================================
+   Tema de prueba. Solo redefine los tokens de color; hereda
+   radios, sombras y tipografia de theme/tokens.css.
+   Activar con APP_TEMA=coral en el .env
+   ========================================================= */
+
+:root {
+
+    /* -----------------------------------------------------
+       MARCA / COLORES BASE
+    ----------------------------------------------------- */
+    --color-primary:          #e2447a;
+    --color-primary-hover:    #cf3568;
+    --color-primary-active:   #b82b5a;
+    --color-primary-soft:     #fcdbe7;
+    --color-primary-softer:   #fff2f6;
+
+    /* -----------------------------------------------------
+       TEXTO
+    ----------------------------------------------------- */
+    --color-text:             #3b1524;
+    --color-text-heading:     #4a1b2e;
+    --color-text-muted:       #8a5468;
+    --color-text-soft:        #a06f80;
+    --color-text-faint:       #b58a99;
+
+    /* -----------------------------------------------------
+       SUPERFICIES
+    ----------------------------------------------------- */
+    --color-surface:          #ffffff;
+    --color-surface-alt:      #fff7fa;
+    --color-surface-input:    #fff1f5;
+    --color-page-bg:          #fff2f6;
+
+    /* -----------------------------------------------------
+       BORDES
+    ----------------------------------------------------- */
+    --color-border:           #f5c9d9;
+    --color-border-soft:      #fadfe9;
+    --color-table-header:     #fcdbe7;
+
+    /* -----------------------------------------------------
+       ESTADOS
+    ----------------------------------------------------- */
+    --color-success:          #0f9d63;
+    --color-success-bg:       #d8f7e8;
+    --color-warning:          #c47f00;
+    --color-warning-bg:       #fff1d6;
+    --color-danger:           #c62b2b;
+    --color-danger-bg:        #ffdede;
+    --color-info:             #2f6bff;
+    --color-info-bg:          #e0e9ff;
+    --color-purple:           #8b3ff0;
+    --color-purple-bg:        #f0e2ff;
+    --color-danger-strong:    #d13a3a;
+
+    /* Botones neutros / suaves */
+    --color-btn-muted-bg:       #fadfe9;
+    --color-btn-muted-bg-hover: #f5cbdb;
+    --color-btn-muted-text:     #8a4a63;
+    --color-btn-neutral-bg:     #fdf0f4;
+    --color-btn-neutral-text:   #925f70;
+    --color-btn-expand-bg:      #fce8ef;
+    --color-btn-expand-bg-hover:#f8d6e2;
+    --color-btn-expand-text:    #b23e68;
+
+    /* -----------------------------------------------------
+       SHELL DE LA APP (header / sidebar)
+    ----------------------------------------------------- */
+    --color-navy-dark:        #2b0d18;
+    --color-navy-mid:         #401525;
+    --color-ice:              #ffb3cd;
+    --color-ice-hover:        #ffb3cd;
+
+    /* -----------------------------------------------------
+       SITIO PUBLICO (tienda)
+    ----------------------------------------------------- */
+    --color-public-celeste:   #e2447a;
+    --color-public-teal-top:  #7a1f42;
+    --color-public-teal:      #cf3568;
+    --color-public-orange:    #fd7e14;
+    --color-public-yellow:    #ffc107;
+}

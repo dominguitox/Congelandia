@@ -1,172 +1,279 @@
-<!DOCTYPE html>
-<html lang="es">
+@extends('layouts.public')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Congelandia - El mundo de los congelados</title>
+@section('title', 'Inicio')
+@section('descripcion', 'Congelados de calidad para tu mesa: empanadas, carnes, verduras y más. Revisa el catálogo y coordina tu pedido por WhatsApp.')
 
-    {{-- Estilos y scripts generales --}} @vite(['resources/css/app.css', 'resources/js/app.js'])
-    {{-- CSS específico de cada módulo --}} @stack('css')
+@section('content')
+    @php
+        $contacto = config('public.contacto');
+        $waNumero = preg_replace('/\D+/', '', (string) $contacto['whatsapp']);
+        $waUrl = $waNumero
+            ? 'https://wa.me/' . $waNumero . '?text=' . urlencode('Hola Congelandia, quiero hacer un pedido.')
+            : null;
+    @endphp
 
-    <style>
-        .bg-teal-top {
-            background-color: #008b9c;
-        }
+    <section class="pub-hero">
+        <div class="pub-container pub-hero__grid">
+            <div class="pub-hero__copy">
+                <span class="pub-eyebrow">El mundo de los congelados</span>
 
-        .bg-teal-main {
-            background-color: #00a2b8;
-        }
+                <h1 class="pub-hero__title">
+                    Comida real, <em>lista</em> en minutos.
+                </h1>
 
-        .text-teal {
-            color: #00a2b8;
-        }
+                <p class="pub-hero__lead">
+                    Empanadas, carnes, verduras y más, conservados en cadena de frío
+                    para que solo tengas que calentar y disfrutar.
+                </p>
 
-        .bg-orange {
-            background-color: #fd7e14;
-        }
-
-        .text-orange {
-            color: #fd7e14;
-        }
-
-        .text-yellow {
-            color: #ffc107;
-        }
-
-        .bg-yellow {
-            background-color: #ffc107;
-        }
-
-        .search-bar {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-        }
-    </style>
-</head>
-
-{{-- Agregamos padding-top para que el contenido nunca quede oculto bajo la barra fija --}}
-
-<body class="bg-white text-dark d-flex flex-column min-vh-100" style="padding-top: 45px;">
-
-    {{-- Barra superior de sesión activa (SIEMPRE VISIBLE Y FIJA) --}}
-    @if(auth()->check() || session()->has('usuario') || session()->has('user') || session()->has('idUsuario'))
-        <div class="bg-dark text-white py-2 shadow-sm"
-            style="font-size: 0.85rem; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050;">
-            <div class="container d-flex justify-content-between align-items-center">
-                <span>
-                    <a class="btn bg-orange text-white rounded-pill fw-bold px-3 py-1" href="{{ route('dashboard.index') }}"
-                        style="font-size: 0.85rem;">
-                        ⚙️ Ir al Panel
+                <div class="pub-hero__actions">
+                    <a class="pub-btn pub-btn--primary" href="{{ route('public.catalogo') }}">
+                        Ver catálogo
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
                     </a>
-                </span>
-                <span>
-                    versión:
-                </span>
-                <span>Sesión iniciada como
-                    <strong>{{ auth()->user()->nombre ?? session('usuario')->nombre ?? 'Usuario' }}</strong></span>
+
+                    @if($waUrl)
+                        <a class="pub-btn pub-btn--accent" href="{{ $waUrl }}" target="_blank" rel="noopener">
+                            Pedir por WhatsApp
+                        </a>
+                    @endif
+                </div>
+
+                <ul class="pub-hero__trust">
+                    <li>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                            <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
+                        </svg>
+                        Cadena de frío
+                    </li>
+                    <li>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
+                        </svg>
+                        Pedidos por WhatsApp
+                    </li>
+                    <li>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z" />
+                            <circle cx="7" cy="18" r="1.6" />
+                            <circle cx="18" cy="18" r="1.6" />
+                        </svg>
+                        Retiro y despacho
+                    </li>
+                </ul>
+
+                <div class="pub-hero__stats">
+                    <div>
+                        <strong>{{ $totalProductos }}</strong>
+                        <span>productos</span>
+                    </div>
+                    <div>
+                        <strong>{{ $categorias->count() }}</strong>
+                        <span>categorías</span>
+                    </div>
+                    <div>
+                        <strong>100%</strong>
+                        <span>cadena de frío</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pub-hero__media">
+                <div class="pub-hero__photo">
+                    <img src="{{ asset('images/hero/tomates.webp') }}" alt="Tomates frescos de Congelandia"
+                        width="1000" height="1250">
+                </div>
+
+                <div class="pub-hero__float">
+                    <img src="{{ asset('images/hero/empanadas.webp') }}" alt="Empanadas de queso listas para freír"
+                        width="860" height="1120">
+                    <strong>Empanadas de queso</strong>
+                    <span>Listas para freír</span>
+                </div>
+
+                <div class="pub-sticker" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round">
+                        <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
+                    </svg>
+                    <span>Cadena<br>de frío</span>
+                </div>
             </div>
         </div>
-    @endif
-    <!-- Top Bar[cite: 2] -->
-    <div class="bg-teal-top text-white py-2" style="font-size: 0.85rem;">
-        <div class="container d-flex justify-content-between align-items-center">
-            <span>🚚 Delivery gratis en compras sobre $25.000 — Santiago RM</span>
-            <span>🕒 Lun-Sáb 9–20h &nbsp;&nbsp; 📞 +56 9 1234 5678</span>
-        </div>
-    </div>
+    </section>
 
-    <!-- Navegación Principal[cite: 2] -->
-    <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center">
-            <!-- Logo -->
-            <a class="navbar-brand text-dark d-flex align-items-center" href="/">
-                <div class="bg-orange text-white rounded-circle d-flex justify-content-center align-items-center me-2"
-                    style="width: 40px; height: 40px;">
-                    ❄️
-                </div>
-                <div class="lh-1">
-                    <span class="d-block fw-bold fs-5">CONGELANDIA</span>
-                    <span class="text-teal fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">MINI
-                        SUPERMERCADO</span>
-                </div>
-            </a>
-
-            <!-- Buscador -->
-            <form class="d-flex w-50 px-4">
-                <input class="form-control rounded-pill search-bar px-4 py-2" type="search"
-                    placeholder="🔍 ¿Qué estás buscando?">
-            </form>
-
-            <!-- Botón Carrito -->
-            <button class="btn bg-orange text-white rounded-pill fw-bold px-4 py-2 border-0">
-                🛒 Carrito
-            </button>
-        </div>
-    </nav>
-
-    <!-- === SECCIÓN HERO (Mantén la imagen publicitaria estática aquí) === -->
-    <div class="container-fluid bg-teal-main py-5 d-flex align-items-center">
-        <div class="container">
-            <div class="row align-items-center">
-
-                <!-- Columna Izquierda (Textos) -->
-                <div class="col-md-6 text-white pe-5">
-                    <!-- ... tus textos promocionales ... -->
-                </div>
-
-                <!-- Columna Derecha (Imagen Promocional Fija) -->
-                <div class="col-md-6 position-relative mt-5 mt-md-0">
-                    <div class="rounded-4 overflow-hidden shadow-lg" style="height: 500px;">
-                        <!-- Usa una imagen genérica atractiva de tu carpeta public/images para la portada -->
-                        <img src="{{ asset('images/portada-mariscos.jpg') }}" alt="Promoción"
-                            style="width: 100%; height: 100%; object-fit: cover;">
+    <section class="pub-benefits">
+        <div class="pub-container">
+            <div class="pub-benefits__grid">
+                <div class="pub-benefit">
+                    <span class="pub-benefit__icon">
+                        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                            <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
+                            <path d="M12 5.5 9.8 3.8M12 5.5l2.2-1.7M12 18.5l-2.2 1.7M12 18.5l2.2 1.7" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h3>Del congelador a tu mesa</h3>
+                        <p>Productos conservados en cadena de frío hasta el momento de la entrega.</p>
                     </div>
                 </div>
 
+                <div class="pub-benefit">
+                    <span class="pub-benefit__icon">
+                        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 0 0 0-7.8Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h3>Selección para todos los días</h3>
+                        <p>Opciones para compartir en casa, preparar algo rápido o abastecer tu negocio.</p>
+                    </div>
+                </div>
+
+                <div class="pub-benefit">
+                    <span class="pub-benefit__icon">
+                        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h3>Compra simple y directa</h3>
+                        <p>Escríbenos por WhatsApp y coordinamos retiro o entrega según tu ubicación.</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
+    <section class="pub-section">
+        <div class="pub-container">
+            <div class="pub-section-head">
+                <div>
+                    <span class="pub-eyebrow">Categorías</span>
+                    <h2>Explora por categoría</h2>
+                    <p>Encuentra más rápido eso que necesitas para esta semana.</p>
+                </div>
+                <a class="pub-link-arrow" href="{{ route('public.catalogo') }}">
+                    Ver catálogo completo
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </a>
+            </div>
 
-    <!-- === NUEVA SECCIÓN: GRILLA DE PRODUCTOS DINÁMICOS === -->
-    <div class="container my-5">
-        <h2 class="fw-bold mb-4">Productos Destacados</h2>
+            <div class="pub-cats">
+                @foreach($categorias as $categoria)
+                    <a class="pub-cat"
+                        href="{{ route('public.catalogo', ['categoria' => $categoria->idCategoria]) }}">
+                        <span class="pub-cat__icon">
+                            @include('public.partials.categoria-icono', ['nombre' => $categoria->nombre])
+                        </span>
+                        <span class="pub-cat__name">{{ $categoria->nombre }}</span>
+                        <span class="pub-cat__count">{{ $categoria->productos_count }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
-        <!-- row crea la fila, y col-md-4 hace que quepan 3 tarjetas por fila en pantallas medianas/grandes -->
-        <div class="row">
-            @foreach($productos as $producto)
+    <section class="pub-section pub-section--alt">
+        <div class="pub-container">
+            <div class="pub-section-head">
+                <div>
+                    <span class="pub-eyebrow pub-eyebrow--accent">Selección</span>
+                    <h2>Para llenar tu congelador</h2>
+                    <p>Una muestra de lo que puedes encontrar en el catálogo.</p>
+                </div>
+                <a class="pub-link-arrow" href="{{ route('public.catalogo') }}">
+                    Ver todo
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </a>
+            </div>
 
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
-
-                        <!-- Lógica de las imágenes -->
-                        @if($producto->imagenes->count() > 0)
-                            <img src="{{ asset($producto->imagenes->first()->rutaImagen) }}"
-                                alt="{{ $producto->imagenes->first()->alt }}" class="card-img-top"
-                                style="height: 250px; object-fit: cover;">
-                        @else
-                            <img src="{{ asset('images/default.png') }}" alt="Sin imagen" class="card-img-top"
-                                style="height: 250px; object-fit: cover;">
-                        @endif
-
-                        <!-- Datos del producto -->
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold text-dark">{{ $producto->nombre }}</h5>
-                            <p class="text-teal fw-bold fs-4 mb-0">${{ $producto->precioActual->precioVenta ?? 0 }}</p>
-                            <p class="text-muted small">Stock: {{ $producto->stock }}</p>
-
-                            <button class="btn bg-orange text-white rounded-pill fw-bold w-100 mt-2">
-                                Añadir al carrito
-                            </button>
+            <div class="pub-products-grid">
+                @forelse($productos as $producto)
+                    @include('public.partials.producto-card', ['producto' => $producto])
+                @empty
+                    <div class="pub-empty" style="grid-column: 1 / -1;">
+                        <div class="pub-empty__icon">
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                                <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
+                            </svg>
                         </div>
-
+                        <h2>Todavía no hay productos publicados</h2>
+                        <p>Estamos preparando el catálogo. Vuelve pronto o escríbenos para consultar disponibilidad.</p>
+                        @if($waUrl)
+                            <a class="pub-btn pub-btn--primary" href="{{ $waUrl }}" target="_blank" rel="noopener">
+                                Consultar por WhatsApp
+                            </a>
+                        @endif
                     </div>
-                </div>
-            @endforeach
+                @endforelse
+            </div>
         </div>
-    </div>
+    </section>
 
-</body>
+    <section class="pub-section">
+        <div class="pub-container">
+            <div class="pub-section-head">
+                <div>
+                    <span class="pub-eyebrow">Así de simple</span>
+                    <h2>Comprar es cosa de tres pasos</h2>
+                    <p>Sin carritos ni registros: tú eliges, nosotros coordinamos.</p>
+                </div>
+            </div>
 
-</html>
+            <div class="pub-steps">
+                <div class="pub-step">
+                    <span class="pub-step__num">01</span>
+                    <h3>Revisa el catálogo</h3>
+                    <p>Encuentra los productos que necesitas y consulta precios y disponibilidad.</p>
+                </div>
+                <div class="pub-step">
+                    <span class="pub-step__num">02</span>
+                    <h3>Escríbenos</h3>
+                    <p>Envíanos tu pedido por WhatsApp o correo. Te confirmamos stock y total.</p>
+                </div>
+                <div class="pub-step">
+                    <span class="pub-step__num">03</span>
+                    <h3>Coordina la entrega</h3>
+                    <p>Acordamos retiro en tienda o despacho según tu ubicación.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pub-cta">
+        <div class="pub-container">
+            <div>
+                <h2>¿Hacemos tu pedido?</h2>
+                <p>Escríbenos y te ayudamos a elegir, confirmar stock y coordinar la entrega.</p>
+            </div>
+
+            <div class="pub-cta__actions">
+                @if($waUrl)
+                    <a class="pub-btn pub-btn--accent" href="{{ $waUrl }}" target="_blank" rel="noopener">
+                        Hablar por WhatsApp
+                    </a>
+                @endif
+                <a class="pub-btn pub-btn--ghost" href="{{ route('public.contacto') }}">
+                    Ver contacto
+                </a>
+            </div>
+        </div>
+    </section>
+@endsection

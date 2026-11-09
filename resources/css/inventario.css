@@ -1,0 +1,81 @@
+/* =========================================================
+   MODULO - INVENTARIO
+   =========================================================
+   La pagina usa los componentes globales (page, stats-grid,
+   panel, data-table). Aqui van solo los ajustes propios.
+   ========================================================= */
+
+.inventario-ofertas-trigger--active {
+    border-color: var(--color-primary-soft);
+}
+
+.inventario-ofertas-trigger--active:hover {
+    border-color: var(--color-primary);
+}
+
+.inventario-ofertas-contador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--color-btn-muted-bg);
+    color: var(--color-btn-muted-text);
+    font-size: var(--fs-sm);
+}
+
+.inventario-ofertas-trigger--active .inventario-ofertas-contador {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.inventario-ofertas-intro {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+}
+
+.inventario-ofertas-lista {
+    display: grid;
+    gap: var(--space-sm);
+}
+
+.inventario-oferta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-alt);
+}
+
+.inventario-oferta strong,
+.inventario-oferta-codigo,
+.inventario-oferta-vigencia {
+    display: block;
+}
+
+.inventario-oferta-codigo,
+.inventario-oferta-vigencia {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}
+
+.inventario-oferta-descuento {
+    flex: none;
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+@media (max-width: 480px) {
+    .inventario-oferta {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

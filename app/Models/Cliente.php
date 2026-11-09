@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
-    protected $table = 'Cliente';
+    use SoftDeletes;
+
+    protected $table = 'cliente';
     protected $primaryKey = 'rutCliente';
     public $incrementing = false;
     protected $keyType = 'string';

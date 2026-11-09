@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TipoSalida extends Model
 {
+    use SoftDeletes;
 
-    protected $table = 'Tipo_Salida';
+    protected $table = 'tipo_salida';
 
     protected $primaryKey = 'idTipo';
 

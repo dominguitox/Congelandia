@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\historialController;
+use App\Http\Controllers\HistorialController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
@@ -8,31 +8,53 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\ReporteController;
 
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\PromocionController;
 
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\Logout;
 
-use App\Http\Middleware\CheckRole;
+
 
 // =========================================================
-// SITIO PÚBLICOD
+// SITIO PÚBLICO
 // =========================================================
 
-Route::get('/', [PublicController::class, 'index'])->name('public.index');
-Route::get('/catalogo', [PublicController::class, 'catalogo'])->name('public.catalogo');
+Route::get(
+    '/',
+    [PublicController::class, 'index']
+)->name('public.index');
+
+Route::get(
+    '/catalogo',
+    [PublicController::class, 'catalogo']
+)->name('public.catalogo');
+
+Route::get(
+    '/contacto',
+    [PublicController::class, 'contacto']
+)->name('public.contacto');
+
 
 // =========================================================
 // RUTAS DE ACCESO
 // =========================================================
 
-// Login
-Route::view('/login', 'auth.login')
+Route::view(
+    '/login',
+    'auth.login'
+)
     ->middleware('guest')
     ->name('login');
 
-Route::post('/login', Login::class)
+Route::post(
+    '/login',
+    Login::class
+)
     ->middleware('guest');
 
 
@@ -44,12 +66,23 @@ Route::middleware('auth')->group(function () {
 
 
     // =====================================================
+    // INFORMACIÓN DE VERSIÓN
+    // =====================================================
+
+    Route::get(
+        '/version-info',
+        [PublicController::class, 'versionInfo']
+    );
+
+
+    // =====================================================
     // DASHBOARD
     // =====================================================
 
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    });
+    Route::get(
+        '/admin',
+        [DashboardController::class, 'index']
+    )->name('dashboard.alias');
 
     Route::get(
         '/dashboard',
@@ -61,9 +94,10 @@ Route::middleware('auth')->group(function () {
     // REPORTES
     // =====================================================
 
-    Route::get('/reportes', function () {
-        return view('reportes.index');
-    });
+    Route::get(
+        '/reportes',
+        [ReporteController::class, 'index']
+    )->middleware('role:Administrador')->name('reportes.index');
 
 
     // =====================================================
@@ -74,16 +108,27 @@ Route::middleware('auth')->group(function () {
         '/inventario',
         [ProductoController::class, 'listarProductos']
     )->name('inventario.index');
-
-    Route::get(
-        '/inventario/{codigo}',
-        [ProductoController::class, 'show']
-    )->name('inventario.show');
-
+    /*
+    No se implementó, guardar por si acaso
+        Route::get(
+            '/inventario/{codigo}',
+            [ProductoController::class, 'show']
+        )->name('inventario.show');
+    */
     Route::put(
         '/productos/{codigo}',
         [ProductoController::class, 'editarProducto']
-    )->name('inventario.editarProducto');
+    )->middleware('role:Administrador')->name('inventario.editarProducto');
+
+    Route::post(
+        '/inventario/ingresos',
+        [ProductoController::class, 'registrarIngreso']
+    )->name('inventario.ingresos.store');
+
+    Route::post(
+        '/inventario/salidas',
+        [ProductoController::class, 'registrarSalida']
+    )->name('inventario.salidas.store');
 
 
     // =====================================================
@@ -102,55 +147,69 @@ Route::middleware('auth')->group(function () {
 
 
     // =====================================================
-    // HISTORIAL GENERAL
+    // HISTORIAL
     // =====================================================
 
     Route::get(
         '/historial',
-        [historialController::class, 'index']
+        [HistorialController::class, 'index']
     )->name('historial.index');
+
+
+    // =====================================================
+    // CATEGORÍAS
+    // =====================================================
+
+    Route::get(
+        '/categorias',
+        [CategoriaController::class, 'index']
+    )->middleware('role:Administrador')->name('categorias.index');
+
+    Route::post(
+        '/categorias',
+        [CategoriaController::class, 'store']
+    )->middleware('role:Administrador')->name('categorias.store');
+
+    Route::put(
+        '/categorias/{idCategoria}',
+        [CategoriaController::class, 'update']
+    )->middleware('role:Administrador')->name('categorias.update');
+
+    Route::delete(
+        '/categorias/{idCategoria}',
+        [CategoriaController::class, 'destroy']
+    )->middleware('role:Administrador')->name('categorias.destroy');
 
 
     // =====================================================
     // CLIENTES
     // =====================================================
 
-    // Página principal
     Route::get(
         '/clientes',
         [ClienteController::class, 'index']
     )->name('clientes.index');
 
-
-    // Crear cliente
     Route::post(
         '/clientes',
         [ClienteController::class, 'store']
     )->name('clientes.store');
 
-
-    // Historial de un cliente
     Route::get(
         '/clientes/{rutCliente}/historial',
         [ClienteController::class, 'historial']
     )->name('clientes.historial');
 
-
-    // Registrar pago de una venta
     Route::post(
         '/clientes/venta/{idSalida}/pago',
         [ClienteController::class, 'registrarPago']
     )->name('clientes.registrarPago');
 
-
-    // Editar cliente
     Route::put(
         '/clientes/{rutCliente}',
         [ClienteController::class, 'update']
     )->name('clientes.update');
 
-
-    // Eliminar cliente
     Route::delete(
         '/clientes/{rutCliente}',
         [ClienteController::class, 'destroy']
@@ -161,39 +220,39 @@ Route::middleware('auth')->group(function () {
     // PROVEEDORES
     // =====================================================
 
-    // Página principal de proveedores
     Route::get(
         '/proveedores',
         [ProveedorController::class, 'listarProveedores']
-    )->name('proveedores.index');
+    )->middleware('role:Administrador')->name('proveedores.index');
 
-
-    // Crear proveedor
     Route::post(
         '/proveedores',
         [ProveedorController::class, 'store']
-    )->name('proveedores.store');
+    )->middleware('role:Administrador')->name('proveedores.store');
 
-
-    // Mostrar productos asociados a un proveedor
-    Route::get(
-        '/proveedores/{idProveedor}/productos',
-        [ProveedorController::class, 'productos']
-    )->name('proveedores.productos');
-
-
-    // Editar proveedor
     Route::put(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'update']
-    )->name('proveedores.update');
+    )->middleware('role:Administrador')->name('proveedores.update');
 
-
-    // Eliminar proveedor
     Route::delete(
         '/proveedores/{idProveedor}',
         [ProveedorController::class, 'destroy']
-    )->name('proveedores.destroy');
+    )->middleware('role:Administrador')->name('proveedores.destroy');
+
+    // =====================================================
+    // USUARIOS
+    // =====================================================
+
+    Route::get(
+        '/usuarios',
+        [UserController::class, 'index']
+    )->middleware('role:Administrador')->name('usuarios.index');
+
+    Route::post(
+        '/usuarios',
+        [UserController::class, 'store']
+    )->middleware('role:Administrador')->name('usuarios.store');
 
 
     // =====================================================
@@ -204,6 +263,7 @@ Route::middleware('auth')->group(function () {
         '/logout',
         Logout::class
     )->name('logout');
+
 });
 
 
@@ -213,8 +273,28 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware([
     'auth',
-    CheckRole::class . ':Administrador'
+    'role:Administrador'
 ])->group(function () {
+
+    Route::post(
+        '/ofertas',
+        [PromocionController::class, 'store']
+    )->name('ofertas.store');
+
+    Route::put(
+        '/ofertas/{idPromocion}',
+        [PromocionController::class, 'update']
+    )->name('ofertas.update');
+
+    Route::patch(
+        '/ofertas/{idPromocion}/estado',
+        [PromocionController::class, 'toggle']
+    )->name('ofertas.toggle');
+
+    Route::delete(
+        '/ofertas/{idPromocion}',
+        [PromocionController::class, 'destroy']
+    )->name('ofertas.destroy');
 
     Route::post(
         '/productos/guardar',
