@@ -7,6 +7,7 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 | Documento | Contenido |
 | --- | --- |
 | [instalacion.md](instalacion.md) | Requisitos, instalación completa, carga de SQL y solución de problemas |
+| [despliegue-directadmin.md](despliegue-directadmin.md) | Publicar versiones compiladas y changelog en deploy, instalar desde DirectAdmin sin consola y restaurar entregas |
 | [arquitectura.md](arquitectura.md) | Stack tecnológico, estructura de carpetas, flujo de una petición y manejo de errores |
 | [rutas.md](rutas.md) | Referencia completa de todas las rutas del sistema (método, URL, nombre, controlador, roles) |
 | [modelos-datos.md](modelos-datos.md) | Esquema de base de datos, modelos Eloquent, relaciones y procedimientos almacenados |

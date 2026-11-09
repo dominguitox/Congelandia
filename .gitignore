@@ -34,3 +34,6 @@ Thumbs.db
 # Generated local artifacts
 /tmp/
 /output/
+
+# Metadatos generados exclusivamente en la rama deploy
+/release.json

@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Archivo generado con la entrega; nunca contiene credenciales.
+    'release_file' => base_path('release.json'),
+
     /*
     |--------------------------------------------------------------------------
     | Tema visual
