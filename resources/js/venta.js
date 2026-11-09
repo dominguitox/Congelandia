@@ -1,3 +1,6 @@
+import { Modal } from 'bootstrap';
+import { calcularCobro } from './cobro.js';
+
 // 1. Cargamos el carrito desde localStorage al iniciar, o iniciamos un arreglo vacío
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 const productosFijadosKey = 'pos:productos-fijados';
@@ -42,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tarjetas.forEach((card) => actualizarControlFijado(card, productosFijados.includes(card.dataset.id)));
     guardarProductosFijados();
     ordenarProductosFijados();
+    iniciarCobro();
 });
 
 function guardarProductosFijados() {
@@ -131,6 +135,7 @@ function sincronizarPreciosDelCatalogo() {
 }
 
 window.agregarAlCarrito = function (card) {
+    if (cobroPendiente) return;
     const idProducto = card.dataset.id;
     const nombre = card.dataset.nombre;
     const precioNormal = Number(card.dataset.precioNormal) || 0;
@@ -256,11 +261,13 @@ function actualizarTicketVenta() {
 
 
 window.eliminarDelCarrito = function (indice) {
+    if (cobroPendiente) return;
     carrito.splice(indice, 1);
     guardarYActualizar();
 }
 
 window.sumarAlCarrito = function (indice) {
+    if (cobroPendiente) return;
     if (carrito[indice].cantidad < carrito[indice].stock) {
         carrito[indice].cantidad++;
         guardarYActualizar();
@@ -270,6 +277,7 @@ window.sumarAlCarrito = function (indice) {
 }
 
 window.restarAlCarrito = function (indice) {
+    if (cobroPendiente) return;
     if (carrito[indice].cantidad > 1) {
         carrito[indice].cantidad--;
         guardarYActualizar();
@@ -277,98 +285,208 @@ window.restarAlCarrito = function (indice) {
         eliminarDelCarrito(indice);
     }
 }
-window.registrarVenta = function (e) {
-    // 1. Prevenir la recarga de la página si el botón está en un formulario
-    if (e) e.preventDefault();
+let cobroPendiente = null;
+let enviandoCobro = false;
+let numeroPago = 0;
+let modalCobro;
+let clavePendiente;
+let errorServidorCobro = '';
 
-    // 2. Validar que el carrito exista globalmente y tenga productos
-    if (typeof carrito === 'undefined' || carrito.length === 0) {
-        alert("El ticket está vacío. Agrega productos antes de cobrar.");
+function totalCarrito() {
+    return carrito.reduce((total, item) => total + item.cantidad * item.precio, 0);
+}
+
+function filasPago() {
+    return [...document.querySelectorAll('#pagos-cobro .cobro-pago')];
+}
+
+function leerPagos() {
+    return filasPago().map(fila => {
+        const metodo = fila.querySelector('[data-metodo]');
+        return {
+            idMetodo: Number(metodo.value),
+            monto: Number(fila.querySelector('[data-monto]').value),
+            esEfectivo: metodo.selectedOptions[0]?.dataset.efectivo === '1',
+        };
+    });
+}
+
+function mostrarResumenCobro() {
+    const resumen = calcularCobro(totalCarrito(), leerPagos(), Number(document.getElementById('efectivo-recibido').value));
+    document.getElementById('efectivo-panel').hidden = resumen.efectivo <= 0;
+    for (const [id, valor] of Object.entries({asignado: resumen.asignado, restante: resumen.restante, efectivo: resumen.efectivo, vuelto: resumen.vuelto})) {
+        document.getElementById('cobro-' + id).textContent = '$' + formatoCLP(valor);
+    }
+    if (!enviandoCobro && !cobroPendiente) document.getElementById('error-cobro').textContent = errorServidorCobro || resumen.error;
+    document.getElementById('confirmar-cobro').disabled = enviandoCobro || (!cobroPendiente && !resumen.valido);
+    document.getElementById('agregar-pago').disabled = filasPago().length >= document.querySelector('#plantilla-pago').content.querySelectorAll('option').length;
+    filasPago().forEach(fila => fila.querySelector('[data-quitar]').hidden = filasPago().length === 1);
+    return resumen;
+}
+
+function agregarFilaPago(idMetodo, monto = 0) {
+    const fila = document.querySelector('#plantilla-pago').content.firstElementChild.cloneNode(true);
+    const metodo = fila.querySelector('[data-metodo]');
+    const importe = fila.querySelector('[data-monto]');
+    numeroPago++;
+    metodo.id = 'cobro-metodo-' + numeroPago;
+    importe.id = 'cobro-monto-' + numeroPago;
+    fila.querySelector('[data-label-metodo]').htmlFor = metodo.id;
+    fila.querySelector('[data-label-monto]').htmlFor = importe.id;
+    if (idMetodo) metodo.value = String(idMetodo);
+    importe.value = monto;
+    fila.querySelector('[data-quitar]').addEventListener('click', () => {
+        fila.remove();
+        mostrarResumenCobro();
+    });
+    fila.querySelector('[data-restante]').addEventListener('click', () => {
+        const otros = filasPago().filter(f => f !== fila).reduce((suma, f) => suma + Number(f.querySelector('[data-monto]').value), 0);
+        importe.value = Math.max(0, totalCarrito() - otros);
+        mostrarResumenCobro();
+    });
+    document.getElementById('pagos-cobro').append(fila);
+}
+
+function bloquearCobro() {
+    document.getElementById('datos-cobro').disabled = !!cobroPendiente || enviandoCobro;
+    document.getElementById('btn-cobrar').disabled = enviandoCobro;
+    document.querySelectorAll('#ticket-items button').forEach(boton => boton.disabled = !!cobroPendiente);
+    document.querySelectorAll('.producto-card').forEach(card => card.setAttribute('aria-disabled', String(!!cobroPendiente)));
+    const confirmar = document.getElementById('confirmar-cobro');
+    confirmar.textContent = enviandoCobro ? 'Registrando…' : (cobroPendiente ? 'Reintentar el mismo cobro' : 'Confirmar y registrar venta');
+    mostrarResumenCobro();
+}
+
+function abrirConfirmacion() {
+    if (!carrito.length) {
+        document.getElementById('resultado-venta').textContent = 'Agrega productos antes de cobrar.';
         return;
     }
-
-    // 3. Extracción segura del token CSRF para Laravel
-    let metaCsrf = document.querySelector('meta[name="csrf-token"]');
-    if (!metaCsrf) {
-        console.error("Error: Falta la etiqueta <meta name='csrf-token'> en el HTML (Blade).");
-        alert("Error de configuración del sistema (Token CSRF faltante).");
-        return;
+    document.getElementById('resumen-productos').innerHTML = carrito.map(item =>
+        '<li>' + item.cantidad + ' × ' + escaparHTML(item.nombre) + ' — $' + formatoCLP(item.cantidad * item.precio) + '</li>'
+    ).join('');
+    document.getElementById('confirmacion-total').textContent = '$' + formatoCLP(totalCarrito());
+    if (!cobroPendiente) {
+        errorServidorCobro = '';
+        document.getElementById('pagos-cobro').replaceChildren();
+        agregarFilaPago(null, totalCarrito());
+        document.getElementById('efectivo-recibido').value = '';
+        document.getElementById('error-cobro').textContent = '';
     }
-    let tokenCsrf = metaCsrf.getAttribute('content');
+    bloquearCobro();
+    modalCobro.show();
+}
 
-    // 4. Capturar el cliente (opcional)
-    let selectCliente = document.getElementById('cliente_select');
-    let rutClienteSeleccionado = selectCliente ? selectCliente.value : null;
-
-    if (rutClienteSeleccionado === "Ninguno" || rutClienteSeleccionado === "") {
-        rutClienteSeleccionado = null;
+async function confirmarVenta(event) {
+    event.preventDefault();
+    if (enviandoCobro) return;
+    const form = document.getElementById('form-confirmar-venta');
+    if (!cobroPendiente && (!form.reportValidity() || !mostrarResumenCobro().valido)) return;
+    if (!cobroPendiente) {
+        const resumen = mostrarResumenCobro();
+        cobroPendiente = {
+            carrito: structuredClone(carrito),
+            solicitud: {
+                idTipo: Number(document.getElementById('rutasPos').dataset.tipoVenta),
+                rutCliente: document.getElementById('cliente_select').value || null,
+                productos: carrito.map(({id, cantidad, precio}) => ({id, cantidad, precio})),
+                pagos: leerPagos().map(({idMetodo, monto}) => ({idMetodo, monto})),
+                efectivoRecibido: resumen.efectivo > 0 ? Number(document.getElementById('efectivo-recibido').value) : null,
+                claveOperacion: crypto.randomUUID(),
+            },
+        };
+        localStorage.setItem(clavePendiente, JSON.stringify(cobroPendiente));
     }
-
-    // 5. Capturar el método de pago seleccionado
-    let selectMetodo = document.getElementById('metodo_pago_select');
-    let metodoPagoSeleccionado = selectMetodo ? selectMetodo.value : null;
-
-    if (!metodoPagoSeleccionado) {
-        alert("Selecciona un método de pago.");
-        return;
-    }
-
-    // 6. Calcular el total
-    let totalCalculado = carrito.reduce((acumulador, item) => {
-        return acumulador + (item.cantidad * item.precio);
-    }, 0);
-
-    // 7. Enviar la petición al backend en Laravel
-    fetch(document.getElementById('rutasPos').dataset.registrarVenta, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': tokenCsrf,
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            idTipo: Number(document.getElementById('rutasPos').dataset.tipoVenta),
-            rutCliente: rutClienteSeleccionado,
-            totalVenta: totalCalculado,
-            metodoPago: metodoPagoSeleccionado,
-            productos: carrito
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if (data.success || data.ok) {
-                alert("Venta registrada exitosamente.");
-
-                carrito.forEach(item => {
-                    let badgeStock = document.getElementById('badge-stock-' + item.id);
-                    if (badgeStock) {
-                        let stockInicial = parseInt(badgeStock.getAttribute('data-stock-inicial'));
-                        // Restamos lo vendido al stock base del HTML
-                        let nuevoStockBase = stockInicial - item.cantidad;
-                        badgeStock.setAttribute('data-stock-inicial', nuevoStockBase);
-                    }
-                });
-                
-                // Limpiar carrito
-                carrito = [];
-                localStorage.removeItem('carrito');
-
-                if (typeof actualizarTicketVenta === 'function') {
-                    actualizarTicketVenta();
-                }
-
-                // Limpiar interfaz
-                if (selectCliente) selectCliente.value = "Ninguno";
-                let inputMonto = document.getElementById('monto_recibido');
-                if (inputMonto) inputMonto.value = "";
-
-            } else {
-                alert("Error al registrar: " + (data.error || data.message || "Datos inválidos."));
-            }
-        })
-        .catch(error => {
-            console.error('Error en la petición AJAX:', error);
-            alert("Ocurrió un error de conexión al intentar guardar la venta en el sistema.");
+    enviandoCobro = true;
+    errorServidorCobro = '';
+    document.getElementById('error-cobro').textContent = '';
+    bloquearCobro();
+    try {
+        const response = await fetch(document.getElementById('rutasPos').dataset.registrarVenta, {
+            method: 'POST',
+            signal: AbortSignal.timeout(30000),
+            headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content},
+            body: JSON.stringify(cobroPendiente.solicitud),
         });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            if (response.status >= 400 && response.status < 500 && data.codigo !== 'operacion_utilizada') {
+                cobroPendiente = null;
+                localStorage.removeItem(clavePendiente);
+            }
+            throw new Error(Object.values(data.errors || {}).flat().join(' ') || data.error || data.message || 'No se pudo confirmar el cobro.');
+        }
+        carrito.forEach(item => {
+            const card = [...document.querySelectorAll('.producto-card')].find(c => c.dataset.id === item.id);
+            const badge = document.getElementById('badge-stock-' + item.id);
+            if (card && badge) {
+                const stock = Number(badge.dataset.stockInicial) - item.cantidad;
+                badge.dataset.stockInicial = String(stock);
+                card.dataset.stock = String(stock);
+            }
+        });
+        cobroPendiente = null;
+        localStorage.removeItem(clavePendiente);
+        carrito = [];
+        localStorage.removeItem('carrito');
+        actualizarTicketVenta();
+        document.getElementById('cliente_select').value = '';
+        enviandoCobro = false;
+        modalCobro.hide();
+        document.getElementById('resultado-venta').textContent = 'Venta #' + data.idSalida + ' registrada. Vuelto a entregar: $' + formatoCLP(data.vuelto) + '.';
+    } catch (error) {
+        errorServidorCobro = cobroPendiente
+            ? error.message + ' Reintenta el mismo cobro para comprobar su resultado; los datos quedan conservados.'
+            : error.message;
+        document.getElementById('error-cobro').textContent = errorServidorCobro;
+    } finally {
+        enviandoCobro = false;
+        bloquearCobro();
+    }
+}
+
+function iniciarCobro() {
+    const elemento = document.getElementById('modalConfirmarVenta');
+    modalCobro = Modal.getOrCreateInstance(elemento);
+    clavePendiente = 'cobroPendiente:' + document.getElementById('rutasPos').dataset.usuario;
+    elemento.addEventListener('hide.bs.modal', event => { if (enviandoCobro) event.preventDefault(); });
+    document.getElementById('btn-cobrar').addEventListener('click', abrirConfirmacion);
+    document.getElementById('form-confirmar-venta').addEventListener('submit', confirmarVenta);
+    const actualizar = () => { errorServidorCobro = ''; mostrarResumenCobro(); };
+    document.getElementById('datos-cobro').addEventListener('input', actualizar);
+    document.getElementById('datos-cobro').addEventListener('change', actualizar);
+    document.getElementById('agregar-pago').addEventListener('click', () => {
+        const usados = leerPagos().map(p => String(p.idMetodo));
+        const opcion = [...document.querySelector('#plantilla-pago').content.querySelectorAll('option')].find(o => !usados.includes(o.value));
+        if (opcion) agregarFilaPago(opcion.value, Math.max(0, mostrarResumenCobro().restante));
+        mostrarResumenCobro();
+    });
+    document.querySelectorAll('[data-billete]').forEach(boton => boton.addEventListener('click', () => {
+        const input = document.getElementById('efectivo-recibido');
+        input.value = Number(input.value) + Number(boton.dataset.billete);
+        mostrarResumenCobro();
+    }));
+    document.getElementById('efectivo-exacto').addEventListener('click', () => {
+        document.getElementById('efectivo-recibido').value = mostrarResumenCobro().efectivo;
+        mostrarResumenCobro();
+    });
+    document.getElementById('limpiar-efectivo').addEventListener('click', () => {
+        document.getElementById('efectivo-recibido').value = '';
+        mostrarResumenCobro();
+    });
+    try {
+        const guardado = JSON.parse(localStorage.getItem(clavePendiente));
+        if (guardado?.solicitud?.claveOperacion && Array.isArray(guardado.carrito)) {
+            cobroPendiente = guardado;
+            carrito = guardado.carrito;
+            guardarYActualizar();
+            document.getElementById('cliente_select').value = guardado.solicitud.rutCliente || '';
+            guardado.solicitud.pagos.forEach(p => agregarFilaPago(p.idMetodo, p.monto));
+            document.getElementById('efectivo-recibido').value = guardado.solicitud.efectivoRecibido ?? '';
+            abrirConfirmacion();
+            document.getElementById('error-cobro').textContent = 'Hay un cobro cuyo resultado no se confirmó. Reintenta para consultar o registrar esa misma operación.';
+        }
+    } catch {
+        localStorage.removeItem(clavePendiente);
+    }
 }

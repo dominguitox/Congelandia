@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -8,28 +10,39 @@ class Salida extends Model
     use SoftDeletes;
 
     protected $table = 'salida';
+
     protected $primaryKey = 'idSalida';
+
     public $timestamps = false;
+
     protected $fillable = [
         'fecha',
         'idTipo',
         'idUsuario',
         'rutCliente',
-        'totalSalida'
+        'totalSalida',
+        'claveOperacion',
+        'firmaCobro',
+        'efectivoRecibido',
+        'vuelto',
     ];
+
     public function usuario()
     {
         return $this->belongsTo(User::class, 'idUsuario', 'idUsuario');
     }
+
     // Relación correcta hacia los detalles
     public function detalles()
     {
         return $this->hasMany(DetalleSalida::class, 'idSalida', 'idSalida');
     }
+
     public function tipo()
     {
         return $this->belongsTo(TipoSalida::class, 'idTipo', 'idTipo');
     }
+
     public function pagos()
     {
         // El primer parámetro es el modelo de los pagos.

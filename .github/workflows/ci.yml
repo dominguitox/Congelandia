@@ -84,6 +84,9 @@ jobs:
       - name: Comprobar empaquetado de producción
         run: node --test tools/deploy/build.test.mjs tools/deploy/pipeline.test.mjs
 
+      - name: Comprobar calculo del cobro
+        run: node --test tools/pos/cobro.test.mjs
+
       - name: Comprobar vistas y rutas
         run: |
           php artisan view:cache
