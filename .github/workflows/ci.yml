@@ -81,6 +81,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Comprobar empaquetado de producción
+        run: node --test tools/deploy/build.test.mjs tools/deploy/pipeline.test.mjs
+
       - name: Comprobar vistas y rutas
         run: |
           php artisan view:cache

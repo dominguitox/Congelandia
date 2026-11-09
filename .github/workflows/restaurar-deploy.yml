@@ -1,0 +1,49 @@
+name: Restaurar entrega DirectAdmin
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión preparada que quieres restaurar (ejemplo: 1.2.1)'
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: directadmin-deploy
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Definir directorio temporal
+        run: echo "PACKAGE_DIR=$RUNNER_TEMP/restored-package" >> "$GITHUB_ENV"
+      - name: Recuperar entrega exacta
+        id: release
+        run: |
+          VERSION=$(node --input-type=module -e "import {normalizeVersion} from './tools/deploy/build.mjs'; process.stdout.write(normalizeVersion(process.env.VERSION));")
+          git show "deploy-v$VERSION:release.json" > "$RUNNER_TEMP/restored-release.json"
+          mkdir "$PACKAGE_DIR"
+          git archive "deploy-v$VERSION" | tar -x -C "$PACKAGE_DIR"
+          node tools/deploy/check-restore.mjs
+      - name: Actualizar rama deploy con la entrega anterior
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          SOURCE_COMMIT: ${{ steps.release.outputs.commit }}
+          RESTORE: 'true'
+        run: |
+          bash tools/deploy/publish.sh
+          echo "Entrega v$VERSION restaurada en deploy. Falta Fetch y Deploy en DirectAdmin y comprobar compatibilidad de la base de datos." >> "$GITHUB_STEP_SUMMARY"
