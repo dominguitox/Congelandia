@@ -121,6 +121,8 @@ Git despliega archivos; no crea ni actualiza tablas. Crear una base MySQL y su u
 
 La preparación de esa base se hace en una instalación local separada, nunca apuntando a la base real del negocio. El seeder actual crea un administrador con una contraseña de ejemplo; sustituirla por una contraseña propia antes de publicar. No cargar datos de ventas de prueba al sitio real.
 
+La exportación inicial debe incluir los métodos Efectivo, Débito y Crédito y los tipos de salida Venta, Merma por Vencimiento y Merma por Daño. Se preparan con `php artisan db:seed` en la base local de instalación; los seeds se pueden repetir sin duplicar registros ni restablecer la cuenta administradora existente. Ver [catálogos iniciales](catalogos-iniciales.md). En una instalación existente, subir código con Git no ejecuta estos seeds: respaldar y agregar mediante phpMyAdmin únicamente los datos que falten, conservando sus IDs.
+
 ## 5. Actualizaciones habituales
 
 1. Preparar una publicación desde GitHub como en el paso 3.

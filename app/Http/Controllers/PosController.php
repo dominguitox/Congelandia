@@ -7,6 +7,7 @@ use App\Models\PagoSalida;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Exception;
 
 use App\Models\Cliente;
@@ -54,7 +55,12 @@ class PosController extends Controller
                 ->orderBy('idMetodo')
                 ->get();
 
-            return view('pos.index', compact('productos', 'categorias', 'clientes', 'metodosPago'));
+            $idTipoVenta = DB::table('tipo_salida')
+                ->where('nombre', 'Venta')
+                ->whereNull('deleted_at')
+                ->value('idTipo');
+
+            return view('pos.index', compact('productos', 'categorias', 'clientes', 'metodosPago', 'idTipoVenta'));
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al cargar el POS: ' . $e->getMessage());
@@ -65,7 +71,7 @@ class PosController extends Controller
     public function registrarVenta(Request $request)
     {
         $datos = $request->validate([
-            'idTipo' => 'required|integer',
+            'idTipo' => ['required', 'integer', Rule::exists('tipo_salida', 'idTipo')->where('nombre', 'Venta')->whereNull('deleted_at')],
             'rutCliente' => 'nullable|string',
             'metodoPago' => 'required|integer|exists:metodo_pago,idMetodo',
             'productos' => 'required|array|min:1',

@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div class="page" id="rutasPos" data-registrar-venta="{{ route('venta.registrar') }}">
+<div class="page" id="rutasPos" data-registrar-venta="{{ route('venta.registrar') }}" data-tipo-venta="{{ $idTipoVenta }}">
 
     {{-- =====================================================
          ENCABEZADO
