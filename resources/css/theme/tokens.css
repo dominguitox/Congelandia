@@ -1,11 +1,10 @@
 /* =========================================================
    CONGELANDIA - TOKENS DEL TEMA
    =========================================================
-   Unico lugar donde viven los colores, radios, sombras,
-   tipografias y medidas. Para crear un tema nuevo:
-     1. Copiar este archivo a theme/themes/<tema>.css
-     2. Cambiar los valores de :root
-     3. Importarlo despues de este (app.css)
+   Valores base del diseno Congelandia. APP_COLOR selecciona
+   una paleta en theme/themes/ y APP_TEMA el sistema visual.
+   Material Design 3 adapta estos tokens en theme/md3.css.
+   Ver docs/temas.md para registrar y generar nuevas paletas.
    Los modulos y componentes solo deben usar var(--...).
    ========================================================= */
 

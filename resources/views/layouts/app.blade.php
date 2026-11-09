@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="{{ config('theme.style') }}" data-color="{{ config('theme.color') }}">
 
 <head>
 
@@ -17,14 +17,13 @@
         'resources/js/app.js'
     ])
 
-    {{-- Tema visual opcional (APP_TEMA en .env; "base" = por defecto) --}}
-    @php($temaActivo = config('app.tema'))
-    @if($temaActivo && $temaActivo !== 'base' && file_exists(resource_path("css/theme/themes/{$temaActivo}.css")))
-        @vite(["resources/css/theme/themes/{$temaActivo}.css"])
+    @if(config('theme.style') === 'md3')
+        @fonts('roboto')
     @endif
 
     {{-- CSS específico de cada módulo --}}
     @stack('css')
+    @include('partials.theme')
 
 </head>
 

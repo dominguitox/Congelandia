@@ -20,19 +20,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Tema visual
-    |--------------------------------------------------------------------------
-    |
-    | Nombre del tema CSS a aplicar. Debe existir el archivo
-    | resources/css/theme/themes/<tema>.css (y estar registrado en
-    | vite.config.js). Usar "base" para el tema por defecto.
-    |
-    */
-
-    'tema' => env('APP_TEMA', 'base'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

@@ -152,11 +152,11 @@ Los módulos que todavía usan clases Bootstrap (POS, dashboard, modales) se ali
 
 ## Sistema de temas
 
-Un tema es un archivo que **solo redefine variables** de `:root`; todos los componentes heredan el cambio automáticamente.
+El panel separa el **sistema visual** (`APP_TEMA=congelandia|md3`) de la **paleta** (`APP_COLOR=base|aurora|esmeralda|coral`). El sitio público conserva su configuración propia e independiente. Ver [Configuración de temas](temas.md) para ejemplos y compatibilidad.
 
 ### Temas incluidos
 
-| `APP_TEMA` | Apariencia |
+| `APP_COLOR` | Apariencia |
 | --- | --- |
 | `base` (por defecto) | Cian/celeste original |
 | `aurora` | Violeta |
@@ -165,13 +165,13 @@ Un tema es un archivo que **solo redefine variables** de `:root`; todos los comp
 
 ### Cómo se activa
 
-1. En `.env`: `APP_TEMA=aurora` (`base` deja el tema por defecto).
+1. En `.env`: `APP_TEMA=congelandia` o `md3`, y `APP_COLOR=aurora` (`base` conserva el color celeste).
 2. Limpiar caché de config si está activa: `php artisan config:clear`.
-3. El layout `resources/views/layouts/app.blade.php` (y `layouts/public.blade.php`) lee `config('app.tema')` y, si no es `base` y el archivo existe, hace `@vite([...])` del tema **después** de `app.css`.
+3. El layout `resources/views/layouts/app.blade.php` carga la paleta y el sistema visual mediante `partials/theme.blade.php`, **después** de los estilos globales y de módulo. El layout público no carga estos temas.
 
-La clave `app.tema` se define en `config/app.php` (`'tema' => env('APP_TEMA', 'base')`).
+La selección se valida contra los archivos registrados en `config/theme.php` y funciona con configuración cacheada. Los antiguos valores de paleta en `APP_TEMA` siguen siendo compatibles si no se define `APP_COLOR`.
 
-### Cómo crear un tema nuevo
+### Cómo crear una paleta nueva
 
 1. Copia `resources/css/theme/themes/aurora.css` a `resources/css/theme/themes/<nombre>.css`.
 2. Cambia los valores de `:root` (solo los que quieras sobrescribir; hereda el resto).
@@ -179,7 +179,8 @@ La clave `app.tema` se define en `config/app.php` (`'tema' => env('APP_TEMA', 'b
    ```js
    'resources/css/theme/themes/<nombre>.css',
    ```
-4. `npm run build` (o `npm run dev`) y activa con `APP_TEMA=<nombre>`.
+4. Registra la paleta en `config/theme.php` y en `tools/theme/generate-md3.mjs` para generar también sus roles Material a partir de `--color-primary`.
+5. `npm run build` (o `npm run dev`) y activa con `APP_COLOR=<nombre>`.
 
 > Al desplegar: `public/build` es una salida generada; hay que volver a compilar (`npm run build`) para que el tema exista en el manifest.
 

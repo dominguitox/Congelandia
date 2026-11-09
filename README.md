@@ -66,6 +66,8 @@ Otros scripts:
 
 ## Estructura del proyecto
 
+El panel admite los temas `congelandia` y `md3`, con paletas independientes mediante `APP_TEMA` y `APP_COLOR`. El sitio público mantiene sus temas propios. Ver [Configuración de temas](docs/temas.md).
+
 ```
 app/Http/Controllers   # Controladores (lógica de cada módulo)
 app/Http/Middleware    # CheckRole (roles caseros sobre Usuario.rol)

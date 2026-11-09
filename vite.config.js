@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/producto.js',
 
                 'resources/css/app.css',
+                'resources/css/theme/md3.css',
                 'resources/css/reportes.css',
 
                 'resources/css/theme/themes/aurora.css',
@@ -49,6 +50,9 @@ export default defineConfig({
             refresh: true,
 
             fonts: [
+                bunny('Roboto', {
+                    weights: [400, 500, 700],
+                }),
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600, 700],
                 }),

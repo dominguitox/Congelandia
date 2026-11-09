@@ -13,7 +13,8 @@ Sistema de gestión para Congelandia: catálogo público, ventas en punto de ven
 | [modelos-datos.md](modelos-datos.md) | Esquema de base de datos, modelos Eloquent, relaciones y procedimientos almacenados |
 | [migraciones.md](migraciones.md) | Migraciones Laravel del esquema completo (rama `migracion-sql-a-laravel`, pendiente de merge) |
 | [modulos.md](modulos.md) | Funcionalidad de cada módulo del sistema, vista por vista |
-| [estilos.md](estilos.md) | Arquitectura CSS, componentes compartidos y sistema de temas (APP_TEMA) |
+| [estilos.md](estilos.md) | Arquitectura CSS, componentes compartidos y sistema de temas |
+| [temas.md](temas.md) | Congelandia y Material Design 3: selección independiente de tema y color mediante APP_TEMA y APP_COLOR |
 | [responsividad.md](responsividad.md) | Alcance, breakpoints y cambios para que la app interna se vea bien en celular (rama `responsividad-movil`) |
 | [convenciones.md](convenciones.md) | Convenciones de código vigentes y recomendadas para el equipo |
 | [pendientes.md](pendientes.md) | Backlog de bugs y deuda técnica identificados en la auditoría, por prioridad |

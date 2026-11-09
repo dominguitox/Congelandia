@@ -24,7 +24,8 @@
 
                 <li class="nav-item">
                     <a href="{{ $item['url'] }}"
-                        class="nav-link text-white fw-bold {{ $isActive ? 'link-sidebar-seleccionado' : '' }}">
+                        class="nav-link text-white fw-bold {{ $isActive ? 'link-sidebar-seleccionado' : '' }}"
+                        @if($isActive) aria-current="page" @endif>
                         {{ $item['label'] }}
                     </a>
                 </li>
