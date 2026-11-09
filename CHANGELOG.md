@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+## 1.3.0 — 2026-11-09
+
+### Cambios del código
+
+- Sin cambios de código respecto de la entrega anterior.
+
+Código de origen: cd67424e4973b37dcada6315b698856bf32fad04
+
 ## 1.1.0 — 2026-11-09
 
 inclusión modulo reportes 2.0
