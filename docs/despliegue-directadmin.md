@@ -123,6 +123,8 @@ La preparación de esa base se hace en una instalación local separada, nunca ap
 
 ## 5. Actualizaciones habituales
 
+Para la opción **Sin proveedor** en ingresos, aplicar antes de los formularios el [SQL incremental de ingresos sin proveedor](../database/sql/2026_11_09_020000_ingresos_sin_proveedor.sql). Ver [comportamiento y migración](./relaciones-inventario.md).
+
 1. Preparar una publicación desde GitHub como en el paso 3.
 2. Respaldar la base y las fotos/archivos del hosting desde DirectAdmin o phpMyAdmin.
 3. Revisar si la versión incluye migraciones nuevas. Si las incluye, preparar y probar un SQL incremental equivalente para phpMyAdmin. Planificar el orden entre SQL y archivos; detener temporalmente las operaciones de venta si el cambio no permite convivencia entre ambas versiones.
