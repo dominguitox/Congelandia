@@ -234,10 +234,13 @@
             </div>
 
             <div class="pub-footer__bottom">
-                <span>&copy; {{ date('Y') }} Congelandia. Todos los derechos reservados.</span>
-                @if(isset($version) && $version)
-                    <span>Versión {{ $version->numero }}</span>
-                @endif
+                <div class="pub-footer__legal">
+                    <span>&copy; {{ date('Y') }} Congelandia. Todos los derechos reservados.</span>
+                    @if(isset($version) && $version)
+                        <span>Versión {{ $version->numero }}</span>
+                    @endif
+                </div>
+                <span>Desarrollado por <a href="https://www.paginaswebtalca.com/" target="_blank" rel="noopener noreferrer">PaginasWebTalca</a></span>
             </div>
         </div>
     </footer>

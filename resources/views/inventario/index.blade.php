@@ -460,13 +460,9 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label for="idCategoria" class="form-label">Categoría *</label>
-                            <select class="form-select" name="idCategoria" id="idCategoria" required>
-                                <option value="">Seleccione una categoría...</option>
-                                @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->idCategoria }}" @selected(old('_modal') === 'modalCrearProducto' && old('idCategoria') == $categoria->idCategoria)>{{ $categoria->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <x-relacion-inventario id="idCategoria" field="idCategoria" name-field="nuevaCategoria"
+                                label="Categoría" none-label="Sin categoría" new-label="Crear nueva categoría…"
+                                new-name-label="Nombre de la nueva categoría" :items="$categorias" modal="modalCrearProducto" />
                         </div>
 
                         <div class="col-md-4">
@@ -489,23 +485,19 @@
 
                     <div class="d-grid gap-2 mb-3">
                         <button class="btn btn-outline-secondary text-start" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseAbastecimiento" aria-expanded="false" aria-controls="collapseAbastecimiento">
+                            data-bs-target="#collapseAbastecimiento" aria-expanded="{{ old('_modal') === 'modalCrearProducto' && old('stockInicial', 0) > 0 ? 'true' : 'false' }}" aria-controls="collapseAbastecimiento">
                             + Añadir Abastecimiento Inicial (Opcional)
                         </button>
                     </div>
 
-                    <div class="collapse" id="collapseAbastecimiento">
+                    <div class="collapse {{ old('_modal') === 'modalCrearProducto' && old('stockInicial', 0) > 0 ? 'show' : '' }}" id="collapseAbastecimiento">
                         <div class="card card-body border-secondary mb-3">
                             <h6 class="text-primary fw-bold mb-3">Datos de Abastecimiento</h6>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="idProveedor" class="form-label">Proveedor</label>
-                                    <select class="form-select" name="idProveedor" id="idProveedor">
-                                        <option value="">Seleccione proveedor...</option>
-                                        @foreach ($proveedores as $proveedor)
-                                            <option value="{{ $proveedor->idProveedor }}" @selected(old('_modal') === 'modalCrearProducto' && old('idProveedor') == $proveedor->idProveedor)>{{ $proveedor->nombre }}</option>
-                                        @endforeach
-                                    </select>
+                                    <x-relacion-inventario id="idProveedor" field="idProveedor" name-field="nuevoProveedor"
+                                        label="Proveedor" none-label="Sin proveedor" new-label="Crear nuevo proveedor…"
+                                        new-name-label="Nombre del nuevo proveedor" :items="$proveedores" modal="modalCrearProducto" stock-input="stockInicial" />
                                 </div>
                                 <div class="col-md-6">
                                     <label for="stockInicial" class="form-label">Stock Inicial</label>
@@ -569,13 +561,9 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label for="edit_idCategoria" class="form-label">Categoría *</label>
-                            <select class="form-select" name="idCategoria" id="edit_idCategoria" required>
-                                <option value="">Seleccione categoría...</option>
-                                @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->idCategoria }}" @selected(old('_modal') === 'modalEditarProducto' && old('idCategoria') == $categoria->idCategoria)>{{ $categoria->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <x-relacion-inventario id="edit_idCategoria" field="idCategoria" name-field="nuevaCategoria"
+                                label="Categoría" none-label="Sin categoría" new-label="Crear nueva categoría…"
+                                new-name-label="Nombre de la nueva categoría" :items="$categorias" modal="modalEditarProducto" />
                         </div>
 
                         <div class="col-md-4">
@@ -634,14 +622,10 @@
                             @error('codigoProducto') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="ingreso_idProveedor" class="form-label">Proveedor *</label>
-                            <select class="form-select @error('idProveedor') is-invalid @enderror" name="idProveedor" id="ingreso_idProveedor" required>
-                                <option value="">Seleccione proveedor...</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->idProveedor }}" @selected((string) old('idProveedor') === (string) $proveedor->idProveedor)>{{ $proveedor->nombre }}</option>
-                                @endforeach
-                            </select>
-                            @error('idProveedor') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <x-relacion-inventario id="ingreso_idProveedor" field="idProveedor" name-field="nuevoProveedor"
+                                label="Proveedor" none-label="Sin proveedor" new-label="Crear nuevo proveedor…"
+                                new-name-label="Nombre del nuevo proveedor" :items="$proveedores" modal="modalRegistrarIngreso"
+                                :can-create="auth()->user()->tieneRol('Administrador')" />
                         </div>
                         <div class="col-md-6">
                             <label for="ingreso_cantidad" class="form-label">Cantidad *</label>

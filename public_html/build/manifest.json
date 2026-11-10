@@ -31,8 +31,8 @@
     "file": "assets/baloo-2-700-normal-Ld3Zm3l2.woff",
     "src": "_baloo-2-700-normal-Ld3Zm3l2.woff"
   },
-  "_bootstrap.esm-DvX0PPE-.js": {
-    "file": "assets/bootstrap.esm-DvX0PPE-.js",
+  "_bootstrap.esm-DM7gpgIx.js": {
+    "file": "assets/bootstrap.esm-DM7gpgIx.js",
     "name": "bootstrap.esm"
   },
   "_fonts-B1nIbyAQ.css": {
@@ -204,7 +204,7 @@
     "isEntry": true
   },
   "resources/css/public.css": {
-    "file": "assets/public-C7n82Mqa.css",
+    "file": "assets/public-D9q2kfq9.css",
     "name": "public",
     "names": [
       "public.css"
@@ -249,12 +249,12 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Cx2qflNY.js",
+    "file": "assets/app-CjwszKyR.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap.esm-DvX0PPE-.js"
+      "_bootstrap.esm-DM7gpgIx.js"
     ]
   },
   "resources/js/categorias.js": {
@@ -276,12 +276,12 @@
     "isEntry": true
   },
   "resources/js/producto.js": {
-    "file": "assets/producto-DpSXBira.js",
+    "file": "assets/producto-sn2_ljoH.js",
     "name": "producto",
     "src": "resources/js/producto.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap.esm-DvX0PPE-.js"
+      "_bootstrap.esm-DM7gpgIx.js"
     ]
   },
   "resources/js/proveedores.js": {
@@ -291,7 +291,7 @@
     "isEntry": true
   },
   "resources/js/venta.js": {
-    "file": "assets/venta-CGVUROlu.js",
+    "file": "assets/venta-D-y8Inzy.js",
     "name": "venta",
     "src": "resources/js/venta.js",
     "isEntry": true

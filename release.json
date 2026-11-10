@@ -1,7 +1,7 @@
 {
-  "numero": "1.3.1",
-  "comentarios": "### Cambios del código\n\n- Habilita estados de usuarios e historial de acciones (b7f3180)\n\nCódigo de origen: b643d5926848d31c73f889a30217a845c36dddcc",
-  "fecha_creacion": "2026-11-10T00:29:12.941Z",
-  "commit": "b643d5926848d31c73f889a30217a845c36dddcc",
+  "numero": "1.4.0",
+  "comentarios": "### Cambios del código\n\n- footer (6fc7242)\n- Permite crear categorias y proveedores desde inventario (da93198)\n- Agrega tipos de salida y permite repetir los seeders (6421ab0)\n\nCódigo de origen: 982bba6381da9b5219117b34d9bffcd70c32487c",
+  "fecha_creacion": "2026-11-10T18:56:53.694Z",
+  "commit": "982bba6381da9b5219117b34d9bffcd70c32487c",
   "public_directory": "public_html"
 }

@@ -655,6 +655,7 @@ class ComposerStaticInit18a67455c438e79ec8a3d61f66287e7f
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\MetodoPagoSeeder' => __DIR__ . '/../..' . '/database/seeders/MetodoPagoSeeder.php',
+        'Database\\Seeders\\TipoSalidaSeeder' => __DIR__ . '/../..' . '/database/seeders/TipoSalidaSeeder.php',
         'Database\\Seeders\\UsuarioSeeder' => __DIR__ . '/../..' . '/database/seeders/UsuarioSeeder.php',
         'DelayedTargetValidation' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/DelayedTargetValidation.php',
         'Deprecated' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Deprecated.php',

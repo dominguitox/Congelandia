@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Producto extends Model
 {
     use SoftDeletes;
 
     protected $table = 'producto';
+
     protected $primaryKey = 'codigo';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -51,7 +55,7 @@ class Producto extends Model
                     ->orderByDesc('fechaInicio')->orderByDesc('idPrecio')->limit(1),
                 'costo' => (clone $ultimoIngreso)->select('di.precioCompra')->limit(1),
                 'fechaVencimiento' => (clone $ultimoIngreso)->select('di.fechaVencimiento')->limit(1),
-                'proveedor' => (clone $ultimoIngreso)->join($proveedor.' as prov', 'i.idProveedor', '=', 'prov.idProveedor')
+                'proveedor' => (clone $ultimoIngreso)->leftJoin($proveedor.' as prov', 'i.idProveedor', '=', 'prov.idProveedor')
                     ->select('prov.nombre')->whereNull('prov.deleted_at')->limit(1),
             ])
             ->selectRaw("(COALESCE((SELECT SUM(di.cantidad) FROM {$detalleIngreso} di INNER JOIN {$ingreso} i ON di.idIngreso = i.idIngreso WHERE di.codigoProducto = {$tabla}.codigo AND di.deleted_at IS NULL AND i.deleted_at IS NULL), 0) - COALESCE((SELECT SUM(ds.cantidad) FROM {$detalleSalida} ds INNER JOIN {$salida} s ON ds.idSalida = s.idSalida WHERE ds.codigoProducto = {$tabla}.codigo AND ds.deleted_at IS NULL AND s.deleted_at IS NULL), 0)) AS stock");
@@ -74,6 +78,7 @@ class Producto extends Model
             'idCategoria'
         );
     }
+
     public function imagenes()
     {
         return $this->hasMany(ImagenProducto::class, 'codigoProducto', 'codigo');

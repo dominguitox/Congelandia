@@ -1,5 +1,15 @@
 # Historial de publicaciones
 
+## 1.4.0 — 2026-11-10
+
+### Cambios del código
+
+- footer (6fc7242)
+- Permite crear categorias y proveedores desde inventario (da93198)
+- Agrega tipos de salida y permite repetir los seeders (6421ab0)
+
+Código de origen: 982bba6381da9b5219117b34d9bffcd70c32487c
+
 ## 1.3.1 — 2026-11-10
 
 ### Cambios del código

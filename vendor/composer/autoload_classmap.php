@@ -175,6 +175,7 @@ return array(
     'Database\\Factories\\UserFactory' => $baseDir . '/database/factories/UserFactory.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
     'Database\\Seeders\\MetodoPagoSeeder' => $baseDir . '/database/seeders/MetodoPagoSeeder.php',
+    'Database\\Seeders\\TipoSalidaSeeder' => $baseDir . '/database/seeders/TipoSalidaSeeder.php',
     'Database\\Seeders\\UsuarioSeeder' => $baseDir . '/database/seeders/UsuarioSeeder.php',
     'DelayedTargetValidation' => $vendorDir . '/symfony/polyfill-php85/Resources/stubs/DelayedTargetValidation.php',
     'Deprecated' => $vendorDir . '/symfony/polyfill-php84/Resources/stubs/Deprecated.php',

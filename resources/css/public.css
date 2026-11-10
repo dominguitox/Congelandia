@@ -1835,6 +1835,12 @@ a:hover {
     color: #b9d0e0;
 }
 
+.pub-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+}
+
 /* =========================================================
    SELECTOR DE ESTILOS (vista previa para el cliente)
    ========================================================= */
