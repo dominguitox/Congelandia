@@ -1,7 +1,7 @@
 {
-  "numero": "1.3.0",
-  "comentarios": "### Cambios del código\n\n- Sin cambios de código respecto de la entrega anterior.\n\nCódigo de origen: cd67424e4973b37dcada6315b698856bf32fad04",
-  "fecha_creacion": "2026-11-09T19:28:11.763Z",
-  "commit": "cd67424e4973b37dcada6315b698856bf32fad04",
+  "numero": "1.3.1",
+  "comentarios": "### Cambios del código\n\n- Habilita estados de usuarios e historial de acciones (b7f3180)\n\nCódigo de origen: b643d5926848d31c73f889a30217a845c36dddcc",
+  "fecha_creacion": "2026-11-10T00:29:12.941Z",
+  "commit": "b643d5926848d31c73f889a30217a845c36dddcc",
   "public_directory": "public_html"
 }

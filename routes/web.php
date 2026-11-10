@@ -254,6 +254,12 @@ Route::middleware('auth')->group(function () {
         [UserController::class, 'store']
     )->middleware('role:Administrador')->name('usuarios.store');
 
+    Route::patch('/usuarios/{idUsuario}/estado', [UserController::class, 'estado'])
+        ->whereNumber('idUsuario')->middleware('role:Administrador')->name('usuarios.estado');
+
+    Route::get('/acciones', [\App\Http\Controllers\RegistroAccionController::class, 'index'])
+        ->middleware('role:Administrador')->name('acciones.index');
+
 
     // =====================================================
     // CIERRE DE SESIÓN

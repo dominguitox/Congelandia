@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+## 1.3.1 — 2026-11-10
+
+### Cambios del código
+
+- Habilita estados de usuarios e historial de acciones (b7f3180)
+
+Código de origen: b643d5926848d31c73f889a30217a845c36dddcc
+
 ## 1.3.0 — 2026-11-09
 
 ### Cambios del código
