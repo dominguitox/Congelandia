@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Exception;
 
 class HistorialController extends Controller
 {
@@ -31,7 +31,7 @@ class HistorialController extends Controller
              */
 
             $ingresos = DB::table('ingreso')
-                ->join(
+                ->leftJoin(
                     'proveedor',
                     'ingreso.idProveedor',
                     '=',
@@ -77,7 +77,6 @@ class HistorialController extends Controller
                 ->whereNull('detalle_ingreso.deleted_at')
                 ->get()
                 ->groupBy('idIngreso');
-
 
             /*
              * =====================================================
@@ -139,7 +138,6 @@ class HistorialController extends Controller
                 ->get()
                 ->groupBy('idSalida');
 
-
             /*
              * =====================================================
              * CONSTRUIR MOVIMIENTOS
@@ -147,7 +145,6 @@ class HistorialController extends Controller
              */
 
             $movimientos = collect();
-
 
             /*
              * Agregar ingresos.
@@ -162,7 +159,7 @@ class HistorialController extends Controller
                     'fecha' => $ingreso->fecha,
                     'tipo' => 'Ingreso',
                     'tipo_clase' => 'ingreso',
-                    'referencia' => 'Ingreso #' . $ingreso->idIngreso,
+                    'referencia' => 'Ingreso #'.$ingreso->idIngreso,
                     'usuario' => $ingreso->usuario ?? 'Sin usuario',
                     'proveedor' => $ingreso->proveedor ?? 'Sin proveedor',
                     'cantidad' => $detalles->sum('cantidad'),
@@ -181,7 +178,6 @@ class HistorialController extends Controller
                 ]);
             }
 
-
             /*
              * Agregar salidas.
              */
@@ -195,7 +191,7 @@ class HistorialController extends Controller
                     'fecha' => $salida->fecha,
                     'tipo' => $salida->tipoSalida,
                     'tipo_clase' => 'salida',
-                    'referencia' => 'Salida #' . $salida->idSalida,
+                    'referencia' => 'Salida #'.$salida->idSalida,
                     'usuario' => $salida->usuario ?? 'Sin usuario',
                     'proveedor' => null,
                     'cantidad' => $detalles->sum('cantidad'),
@@ -214,14 +210,12 @@ class HistorialController extends Controller
                 ]);
             }
 
-
             /*
              * Ordenar todos los movimientos por fecha.
              */
             $movimientos = $movimientos
                 ->sortByDesc('fecha')
                 ->values();
-
 
             /*
              * Obtener los tipos de salida disponibles.
@@ -235,7 +229,6 @@ class HistorialController extends Controller
                 ->orderBy('nombre')
                 ->pluck('nombre');
 
-
             /*
              * Estadísticas.
              */
@@ -248,7 +241,6 @@ class HistorialController extends Controller
             $totalSalidas = $movimientos
                 ->where('tipo_clase', 'salida')
                 ->count();
-
 
             return view(
                 'historial.index',
@@ -267,7 +259,7 @@ class HistorialController extends Controller
                 ->back()
                 ->with(
                     'error',
-                    'Error al cargar el historial: ' . $e->getMessage()
+                    'Error al cargar el historial: '.$e->getMessage()
                 );
         }
     }

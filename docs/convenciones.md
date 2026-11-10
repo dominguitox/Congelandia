@@ -1,5 +1,10 @@
 # Convenciones de código
 
+## Scripts y rutas corregidos en esta rama
+
+Clientes carga resources/js/clientes.js con Vite y ya no duplica el toggle de app.js. Las acciones dinámicas se obtienen de route() mediante data-attributes; el sidebar usa routeIs; /admin tiene el alias dashboard.alias y se retira la ruta duplicada de reportes para permitir route:cache. Se conservan los modales actuales. Ver [pruebas y alcance](revision-frontend.md); las notas históricas posteriores sobre JS inline y URLs describen la base anterior.
+
+
 Reglas que el equipo debe seguir en el código nuevo y en los ajustes a código existente. Varias "vigentes" aún no se cumplen en todo el proyecto: esas están anotadas en [pendientes.md](pendientes.md) como deuda a normalizar.
 
 ## Nombres

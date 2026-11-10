@@ -30,3 +30,10 @@ Thumbs.db
 !/public/images/hero/
 /storage/framework/sessions/*
 !/storage/framework/sessions/.gitignore
+
+# Generated local artifacts
+/tmp/
+/output/
+
+# Metadatos generados exclusivamente en la rama deploy
+/release.json

@@ -13,6 +13,12 @@
 @endphp
 
 <div class="page">
+    @if(session('success'))
+        <div class="alert alert-success" role="status">{{ session('success') }}</div>
+    @endif
+    @if($errors->any())
+        <div class="alert alert-danger" role="alert">{{ $errors->first() }}</div>
+    @endif
 
     {{-- =====================================================
          ENCABEZADO
@@ -178,20 +184,28 @@
                                 <td class="col-acciones">
                                     <div class="acciones">
 
-                                        <button type="button" class="icon-btn icon-btn--warn" title="Desactivar usuario">
+                                        <form method="POST" action="{{ route('usuarios.estado', $usuario->idUsuario) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="activo" value="{{ $usuario->activo ? '0' : '1' }}">
+                                        <button type="submit" class="icon-btn icon-btn--warn"
+                                            title="{{ $usuario->idUsuario === auth()->id() ? 'No puedes desactivar tu propia cuenta' : ($usuario->activo ? 'Desactivar usuario' : 'Activar usuario') }}"
+                                            aria-label="{{ $usuario->activo ? 'Desactivar a ' : 'Activar a ' }}{{ $usuario->nombre }}"
+                                            @disabled($usuario->idUsuario === auth()->id())>
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <circle cx="12" cy="12" r="9"/>
                                                 <path d="M5.5 5.5 18.5 18.5"/>
                                             </svg>
                                         </button>
+                                        </form>
 
-                                        <button type="button" class="icon-btn icon-btn--info" title="Ver historial de acciones">
+                                        <a href="{{ route('acciones.index', ['usuario' => $usuario->idUsuario]) }}" class="icon-btn icon-btn--info" title="Ver historial de acciones" aria-label="Ver historial de acciones de {{ $usuario->nombre }}">
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M3 3v5h5"/>
                                                 <path d="M3.05 13a9 9 0 1 0 .5-4.5"/>
                                                 <path d="M12 7v5l4 2"/>
                                             </svg>
-                                        </button>
+                                        </a>
 
                                     </div>
                                 </td>
@@ -251,9 +265,9 @@
                         <label for="rol" class="form-label">Rol *</label>
                         <select class="form-select" id="rol" name="rol" required>
                             <option value="" selected disabled>Selecciona un rol</option>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Jefe">Jefe</option>
-                            <option value="Cajero">Cajero</option>
+                            @foreach (\App\Models\User::ROLES as $rol)
+                                <option value="{{ $rol }}" @selected(old('rol') === $rol)>{{ $rol }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -267,5 +281,3 @@
 </div>
 
 @endsection
-
-@vite(['resources/js/usuarios.js'])

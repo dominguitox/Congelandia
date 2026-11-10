@@ -27,6 +27,7 @@ export default defineConfig({
                 'resources/js/historial.js',
 
                 'resources/css/clientes.css',
+                'resources/js/clientes.js',
 
                 'resources/css/pos.css',
 
@@ -36,7 +37,6 @@ export default defineConfig({
                 'resources/css/categorias.css',
                 'resources/js/categorias.js',
 
-                'resources/js/usuarios.js',
 
                 'resources/css/auth.css',
 

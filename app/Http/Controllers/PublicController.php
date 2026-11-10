@@ -13,7 +13,7 @@ class PublicController extends Controller
 {
     public function index()
     {
-        $version = Version::where('activa', 1)->latest('id')->first();
+        $version = Version::actual();
 
         $productos = Producto::with(['imagenes', 'precioActual', 'categoria'])
             ->withMax(['promociones as mayor_descuento' => fn ($query) => $query->vigentes()], 'porcentajeDescuento')
@@ -35,7 +35,7 @@ class PublicController extends Controller
 
     public function catalogo(Request $request)
     {
-        $version = Version::where('activa', 1)->latest('id')->first();
+        $version = Version::actual();
         $categorias = $this->categoriasConProductos();
         $totalProductos = $categorias->sum('productos_count');
 
@@ -80,7 +80,7 @@ class PublicController extends Controller
 
     public function contacto()
     {
-        $version = Version::where('activa', 1)->latest('id')->first();
+        $version = Version::actual();
         $totalProductos = Producto::count();
 
         return view('public.contacto', compact('version', 'totalProductos'));
@@ -102,7 +102,7 @@ class PublicController extends Controller
 
     public function versionInfo()
     {
-        $version = Version::where('activa', 1)->latest('id')->first();
+        $version = Version::actual();
 
         if (!$version) {
             return response('No hay datos de versión.', 200)->header('Content-Type', 'text/plain');
@@ -116,6 +116,9 @@ class PublicController extends Controller
         $texto = "APLICACIÓN: Congelandia\n";
         $texto .= "DESARROLLADORES: Domingo Herrera y Elías Pérez\n";
         $texto .= "VERSION: " . $version->numero . "\n";
+        if ($version->commit) {
+            $texto .= "COMMIT: " . $version->commit . "\n";
+        }
         $texto .= "FECHA: " . ($version->fecha_creacion ?? 'No registrada') . " (" . $diasDiferencia . " días)\n";
         $texto .= "DETALLES: \n" . $version->comentarios . "\n";
 

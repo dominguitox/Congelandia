@@ -236,7 +236,7 @@ window.registrarVenta = function (e) {
     }, 0);
 
     // 7. Enviar la petición al backend en Laravel
-    fetch('/venta/registrar', {
+    fetch(document.getElementById('rutasPos').dataset.registrarVenta, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ window.registrarVenta = function (e) {
             'Accept': 'application/json'
         },
         body: JSON.stringify({
-            idTipo: 1, // ID fijo configurado para identificar "Venta" vs "Merma"
+            idTipo: Number(document.getElementById('rutasPos').dataset.tipoVenta),
             rutCliente: rutClienteSeleccionado,
             totalVenta: totalCalculado,
             metodoPago: metodoPagoSeleccionado,

@@ -212,6 +212,7 @@
                                             data-categoria="{{ $producto->idCategoria }}"
                                             data-precio="{{ $producto->precioVenta }}"
                                             data-descripcion="{{ $producto->descripcion }}"
+                                            data-update-url="{{ route('inventario.editarProducto', $producto->codigo) }}"
                                             onclick="editarProducto(this)">
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M12 20h9"/>
@@ -303,7 +304,7 @@
                                             <td class="text-end text-nowrap">
                                                 <button type="button" class="btn btn-sm btn-outline-primary js-editar-oferta"
                                                     data-bs-toggle="modal" data-bs-target="#modalEditarOferta"
-                                                    data-id="{{ $oferta->idPromocion }}" data-codigo="{{ $oferta->codigoProducto }}"
+                                                    data-id="{{ $oferta->idPromocion }}" data-update-url="{{ route('ofertas.update', $oferta->idPromocion) }}" data-codigo="{{ $oferta->codigoProducto }}"
                                                     data-descuento="{{ $oferta->porcentajeDescuento }}"
                                                     data-inicio="{{ $inicioOferta->format('Y-m-d\\TH:i') }}"
                                                     data-fin="{{ $finOferta->format('Y-m-d\\TH:i') }}">Editar</button>
@@ -436,40 +437,42 @@
 
             <form action="{{ route('productos.crearProducto') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_modal" value="modalCrearProducto">
                 <div class="modal-body">
+                    @if ($errors->any() && old('_modal') === 'modalCrearProducto')
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
                     <h6 class="text-primary fw-bold mb-3">Datos del Catálogo</h6>
                     <div class="row g-3 mb-3">
                         <div class="col-md-5">
                             <label for="codigo" class="form-label">Código de Barras *</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Haz clic aquí para escanear" required>
+                                <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Haz clic aquí para escanear" required value="{{ old('_modal') === 'modalCrearProducto' ? old('codigo') : '' }}">
                                 <button class="btn btn-primary fw-bold" type="button" id="btnEscanear">Escanear</button>
                             </div>
                         </div>
 
                         <div class="col-md-7">
                             <label for="nombre" class="form-label">Nombre del Producto *</label>
-                            <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ej. Hamburguesa de Res" required>
+                            <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ej. Hamburguesa de Res" required value="{{ old('_modal') === 'modalCrearProducto' ? old('nombre') : '' }}">
                         </div>
 
                         <div class="col-md-4">
-                            <label for="idCategoria" class="form-label">Categoría *</label>
-                            <select class="form-select" name="idCategoria" id="idCategoria" required>
-                                <option value="">Seleccione una categoría...</option>
-                                @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->idCategoria }}">{{ $categoria->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <x-relacion-inventario id="idCategoria" field="idCategoria" name-field="nuevaCategoria"
+                                label="Categoría" none-label="Sin categoría" new-label="Crear nueva categoría…"
+                                new-name-label="Nombre de la nueva categoría" :items="$categorias" modal="modalCrearProducto" />
                         </div>
 
                         <div class="col-md-4">
                             <label for="precioVenta" class="form-label">Precio de Venta ($) *</label>
-                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta" required>
+                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="precioVenta" required value="{{ old('_modal') === 'modalCrearProducto' ? old('precioVenta') : '' }}">
                         </div>
 
                         <div class="col-md-4">
                             <label for="descripcion" class="form-label">Descripción</label>
-                            <input type="text" class="form-control" name="descripcion" id="descripcion">
+                            <input type="text" class="form-control" name="descripcion" id="descripcion" value="{{ old('_modal') === 'modalCrearProducto' ? old('descripcion') : '' }}">
                         </div>
 
                         <div class="col-12">
@@ -482,35 +485,31 @@
 
                     <div class="d-grid gap-2 mb-3">
                         <button class="btn btn-outline-secondary text-start" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseAbastecimiento" aria-expanded="false" aria-controls="collapseAbastecimiento">
+                            data-bs-target="#collapseAbastecimiento" aria-expanded="{{ old('_modal') === 'modalCrearProducto' && old('stockInicial', 0) > 0 ? 'true' : 'false' }}" aria-controls="collapseAbastecimiento">
                             + Añadir Abastecimiento Inicial (Opcional)
                         </button>
                     </div>
 
-                    <div class="collapse" id="collapseAbastecimiento">
+                    <div class="collapse {{ old('_modal') === 'modalCrearProducto' && old('stockInicial', 0) > 0 ? 'show' : '' }}" id="collapseAbastecimiento">
                         <div class="card card-body border-secondary mb-3">
                             <h6 class="text-primary fw-bold mb-3">Datos de Abastecimiento</h6>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="idProveedor" class="form-label">Proveedor</label>
-                                    <select class="form-select" name="idProveedor" id="idProveedor">
-                                        <option value="">Seleccione proveedor...</option>
-                                        @foreach ($proveedores as $proveedor)
-                                            <option value="{{ $proveedor->idProveedor }}">{{ $proveedor->nombre }}</option>
-                                        @endforeach
-                                    </select>
+                                    <x-relacion-inventario id="idProveedor" field="idProveedor" name-field="nuevoProveedor"
+                                        label="Proveedor" none-label="Sin proveedor" new-label="Crear nuevo proveedor…"
+                                        new-name-label="Nombre del nuevo proveedor" :items="$proveedores" modal="modalCrearProducto" stock-input="stockInicial" />
                                 </div>
                                 <div class="col-md-6">
                                     <label for="stockInicial" class="form-label">Stock Inicial</label>
-                                    <input type="number" class="form-control" name="stockInicial" id="stockInicial" value="0" min="0">
+                                    <input type="number" class="form-control" name="stockInicial" id="stockInicial" min="0" value="{{ old('_modal') === 'modalCrearProducto' ? old('stockInicial') : '0' }}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
-                                    <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra">
+                                    <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra" value="{{ old('_modal') === 'modalCrearProducto' ? old('precioCompra') : '' }}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
-                                    <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento">
+                                    <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento" value="{{ old('_modal') === 'modalCrearProducto' ? old('fechaVencimiento') : '' }}">
                                 </div>
                             </div>
                         </div>
@@ -539,40 +538,42 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="" method="POST" id="formEditarProducto" enctype="multipart/form-data">
+            <form action="" method="POST" id="formEditarProducto" data-old-action="{{ old('_modal') === 'modalEditarProducto' && old('codigo') ? route('inventario.editarProducto', old('codigo')) : '' }}" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_modal" value="modalEditarProducto">
                 @method('PUT')
                 <div class="modal-body">
+                    @if ($errors->any() && old('_modal') === 'modalEditarProducto')
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
                     <h6 class="text-primary fw-bold mb-3">Datos del Catálogo</h6>
                     <div class="row g-3 mb-3">
                         <div class="col-md-5">
                             <label for="edit_codigo" class="form-label">Código de Barras *</label>
-                            <input type="text" class="form-control bg-light" name="codigo" id="edit_codigo" readonly required>
+                            <input type="text" class="form-control bg-light" name="codigo" id="edit_codigo" readonly required value="{{ old('_modal') === 'modalEditarProducto' ? old('codigo') : '' }}">
                         </div>
 
                         <div class="col-md-7">
                             <label for="edit_nombre" class="form-label">Nombre del Producto *</label>
-                            <input type="text" class="form-control" name="nombre" id="edit_nombre" required>
+                            <input type="text" class="form-control" name="nombre" id="edit_nombre" required value="{{ old('_modal') === 'modalEditarProducto' ? old('nombre') : '' }}">
                         </div>
 
                         <div class="col-md-4">
-                            <label for="edit_idCategoria" class="form-label">Categoría *</label>
-                            <select class="form-select" name="idCategoria" id="edit_idCategoria" required>
-                                <option value="">Seleccione categoría...</option>
-                                @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->idCategoria }}">{{ $categoria->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <x-relacion-inventario id="edit_idCategoria" field="idCategoria" name-field="nuevaCategoria"
+                                label="Categoría" none-label="Sin categoría" new-label="Crear nueva categoría…"
+                                new-name-label="Nombre de la nueva categoría" :items="$categorias" modal="modalEditarProducto" />
                         </div>
 
                         <div class="col-md-4">
                             <label for="edit_precioVenta" class="form-label">Precio de Venta ($) *</label>
-                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="edit_precioVenta" required>
+                            <input type="number" step="0.01" class="form-control" name="precioVenta" id="edit_precioVenta" required value="{{ old('_modal') === 'modalEditarProducto' ? old('precioVenta') : '' }}">
                         </div>
 
                         <div class="col-md-4">
                             <label for="edit_descripcion" class="form-label">Descripción</label>
-                            <input type="text" class="form-control" name="descripcion" id="edit_descripcion">
+                            <input type="text" class="form-control" name="descripcion" id="edit_descripcion" value="{{ old('_modal') === 'modalEditarProducto' ? old('descripcion') : '' }}">
                         </div>
 
                         <div class="col-md-12">
@@ -621,14 +622,10 @@
                             @error('codigoProducto') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="ingreso_idProveedor" class="form-label">Proveedor *</label>
-                            <select class="form-select @error('idProveedor') is-invalid @enderror" name="idProveedor" id="ingreso_idProveedor" required>
-                                <option value="">Seleccione proveedor...</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->idProveedor }}" @selected((string) old('idProveedor') === (string) $proveedor->idProveedor)>{{ $proveedor->nombre }}</option>
-                                @endforeach
-                            </select>
-                            @error('idProveedor') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <x-relacion-inventario id="ingreso_idProveedor" field="idProveedor" name-field="nuevoProveedor"
+                                label="Proveedor" none-label="Sin proveedor" new-label="Crear nuevo proveedor…"
+                                new-name-label="Nombre del nuevo proveedor" :items="$proveedores" modal="modalRegistrarIngreso"
+                                :can-create="auth()->user()->tieneRol('Administrador')" />
                         </div>
                         <div class="col-md-6">
                             <label for="ingreso_cantidad" class="form-label">Cantidad *</label>

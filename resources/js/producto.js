@@ -1,16 +1,48 @@
-import { Modal } from 'bootstrap';
+import { Modal, Collapse } from 'bootstrap';
 
 window.editarProducto = function (boton) {
     document.getElementById('edit_codigo').value = boton.dataset.codigo;
     document.getElementById('edit_nombre').value = boton.dataset.nombre;
     document.getElementById('edit_idCategoria').value = boton.dataset.categoria;
+    const categoria = document.getElementById('edit_idCategoria');
+    const nombreCategoria = categoria.closest('[data-relacion-inventario]').querySelector('[data-relacion-nombre]');
+    if (nombreCategoria) nombreCategoria.value = '';
+    categoria.dispatchEvent(new Event('change'));
     document.getElementById('edit_precioVenta').value = boton.dataset.precio;
     document.getElementById('edit_descripcion').value = boton.dataset.descripcion;
 
-    document.getElementById('formEditarProducto').action = '/productos/' + boton.dataset.codigo;
+    document.getElementById('formEditarProducto').action = boton.dataset.updateUrl;
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-relacion-inventario]').forEach((relacion) => {
+        const select = relacion.querySelector('[data-relacion-select]');
+        const nombre = relacion.querySelector('[data-relacion-nombre]');
+        const detalle = document.getElementById(select.getAttribute('aria-controls'));
+        const stock = relacion.dataset.stockInput ? document.getElementById(relacion.dataset.stockInput) : null;
+        const actualizar = () => {
+            const crear = select.value === 'nuevo';
+            const habilitado = crear && (!stock || Number(stock.value) > 0);
+            if (detalle) detalle.hidden = !crear;
+            if (nombre) {
+                nombre.disabled = !habilitado;
+                nombre.required = habilitado;
+            }
+        };
+        select.addEventListener('change', actualizar);
+        stock?.addEventListener('input', actualizar);
+        actualizar();
+    });
+
+    const abastecimiento = document.getElementById('collapseAbastecimiento');
+    abastecimiento?.closest('form').addEventListener('invalid', (event) => {
+        if (abastecimiento.contains(event.target) && !abastecimiento.classList.contains('show')) {
+            event.preventDefault();
+            abastecimiento.addEventListener('shown.bs.collapse', () => event.target.focus(), { once: true });
+            Collapse.getOrCreateInstance(abastecimiento, { toggle: false }).show();
+        }
+    }, true);
+
     const modalIngreso = document.getElementById('modalRegistrarIngreso');
     const modalSalida = document.getElementById('modalRegistrarSalida');
     const productoSalida = document.getElementById('salida_codigoProducto');
@@ -34,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     productoSalida?.addEventListener('change', actualizarLimiteSalida);
     modalSalida?.addEventListener('show.bs.modal', actualizarLimiteSalida);
+
+    const formEditar = document.getElementById('formEditarProducto');
+    if (formEditar && document.querySelector('[data-modal-error]')?.dataset.modalError === 'modalEditarProducto') {
+        formEditar.action = formEditar.dataset.oldAction;
+    }
 
     const modalConErrores = document.querySelector('[data-modal-error]')?.dataset.modalError;
     const modal = modalConErrores ? document.getElementById(modalConErrores) : null;
@@ -67,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         boton.removeAttribute('data-bs-target');
         boton.addEventListener('click', () => {
             const form = document.getElementById('formEditarOferta');
-            form.action = `/ofertas/${boton.dataset.id}`;
+            form.action = boton.dataset.updateUrl;
             document.getElementById('editarOfertaId').value = boton.dataset.id;
             document.getElementById('editarOfertaProducto').value = boton.dataset.codigo;
             document.getElementById('editarOfertaDescuento').value = boton.dataset.descuento;

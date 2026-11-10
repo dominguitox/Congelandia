@@ -106,25 +106,16 @@ Listado de ventas (salidas + detalles + cliente + método de pago) con filtros p
 | | |
 | --- | --- |
 | **Rutas** | `GET /reportes` (`reportes.index`) |
-| **Controlador** | `ReporteController` |
+| **Controlador** | `ReporteController`; consultas y cálculos en `App\Services\Reportes\ReporteService` |
 | **Vista** | `reportes/index.blade.php` |
-| **Estado** | ⚠️ Parcialmente roto: consultas a tablas que no existen (`inventario`, `lote`) — bajo stock y próximos a vencer fallan. Faltan por agregar: clientes con deuda, deuda total, ganancia estimada, ventas por festividad (TODO en el código) |
+| **Estado** | Versión provisional funcional en `feat/reportes-provisorios`, sin integrar. Acceso exclusivo de administradores, incluida la exportación CSV. |
 
-Reportes implementados (numeración del código):
-1. Ventas por tipo en un rango — ✅
-2. Productos más vendidos — ✅
-3. Clientes frecuentes — ✅
-4. Inventario total — ✅
-5. Historial de ingresos — ✅
-6. Historial de ventas por rango — ✅
-7. Ventas anuales — ✅
-8. Ventas mensuales — ✅
-9. Productos con bajo stock — ❌ rompe
-10. Productos próximos a vencer — ❌ rompe
-11. Clientes con deuda — 🔜 pendiente
-12. Deuda total — 🔜 pendiente
-13. Ganancia estimada — 🔜 pendiente
-14. Ventas por festividad — 🔜 pendiente
+- **Ventas:** monto vendido, transacciones, unidades, ticket promedio, evolución diaria, categorías y productos más vendidos. Período inclusivo de hasta 366 días.
+- **Inventario y riesgo:** stock actual, reposición sugerida, vencimientos estimados y valor en riesgo. Las cantidades por lote son una estimación FEFO porque las salidas no identifican su lote real.
+- **Hábitos:** transacciones por día y hora y venta media por día de la semana.
+- **Exportación:** CSV de la sección seleccionada con los filtros aplicados.
+
+Clientes con deuda, deuda total, ganancia estimada y ventas por festividad quedan fuera de esta versión. Ver [reportes.md](reportes.md) para criterios, límites y verificación.
 
 ## 11. Usuarios
 

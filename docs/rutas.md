@@ -32,7 +32,7 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | PUT | `/productos/{codigo}` | `inventario.editarProducto` | `ProductoController@editarProducto` | Editar producto |
 | POST | `/inventario/ingresos` | `inventario.ingresos.store` | `ProductoController@registrarIngreso` | Registrar ingreso con proveedor, cantidad, costo y vencimiento |
 | POST | `/inventario/salidas` | `inventario.salidas.store` | `ProductoController@registrarSalida` | Registrar merma por vencimiento o daño; valida stock disponible |
-| POST | `/productos/guardar` | `productos.crearProducto` | `ProductoController@crearProducto` | Crear producto (con ingreso inicial) — **única ruta admin** |
+| POST | `/productos/guardar` | `productos.crearProducto` | `ProductoController@crearProducto` | Crear producto (con ingreso inicial) — Administrador |
 
 ### POS / Ventas
 
@@ -75,7 +75,7 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 
 | Método | URL | Nombre | Controller@method | Descripción |
 | --- | --- | --- | --- | --- |
-| GET | `/usuarios` | `usuarios.index` | `UserController@index` | Listado ⚠️ sin restricción de rol (ver pendientes) |
+| GET | `/usuarios` | `usuarios.index` | `UserController@index` | Listado — Administrador en esta rama |
 | POST | `/usuarios` | `usuarios.store` | `UserController@store` | Crear usuario (hashea con bcrypt; ver pendientes por incompatibilidad con login) |
 
 ### Sesión
@@ -84,12 +84,11 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | --- | --- | --- | --- | --- |
 | POST | `/logout` | `logout` | `Auth\Logout` | Cerrar sesión |
 
-## Control de roles
+## Control de roles en esta rama (sin integrar)
 
-- **Único lugar con restricción server-side:** el grupo final de `routes/web.php` usa `CheckRole::class . ':Administrador'` para la ruta `productos.crearProducto`.
-- Todo lo demás solo exige `auth`. Las secciones de administración (usuarios, categorías, proveedores, edición de productos) son alcanzables por cualquier usuario autenticado — el sidebar simplemente oculta los enlaces a no-admins. Ver [pendientes.md](pendientes.md), sección **Seguridad**.
-- El middleware está registrado como alias `role` en `bootstrap/app.php`, pero las rutas lo aplican con el FQCN `CheckRole::class . ':...'` (funciona igual; conviene normalizar — ver [convenciones.md](convenciones.md)).
-- Si el rol no coincide, `CheckRole` hace `abort(404)` (no 403): las rutas admin "no existen" para el usuario sin permiso.
+Usuarios, categorías, proveedores, edición de productos y reportes requieren auth + role:Administrador. Creación de productos y gestión de ofertas conservan la misma restricción, ahora con el alias role. POS, clientes, historial, consulta de inventario e ingresos/salidas operativas mantienen auth. El middleware deniega con 404 deliberadamente.
+
+User::ROLES define Administrador y Cajero. Ver [pruebas y alcance](revision-roles.md). Las tablas de arriba describen la base: su nota histórica «sin restricción de rol» queda corregida por esta sección.
 
 ## Convenciones actuales de nombres de rutas (inconsistencias a normalizar)
 

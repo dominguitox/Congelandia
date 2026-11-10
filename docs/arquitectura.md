@@ -1,5 +1,10 @@
 # Arquitectura
 
+## Limpieza en esta rama
+
+Se retiran controladores/modelos/vistas sin consumidor y JS vacío, con sus imports/entradas Vite. El inventario histórico de archivos siguiente describe la base anterior. Se conservan footer e ImagenProducto por sus consumidores activos, además de SQL y dependencias pendientes de decisión. Ver [lista y verificaciones](revision-limpieza.md).
+
+
 ## Stack tecnológico
 
 | Capa | Tecnología | Versión / nota |

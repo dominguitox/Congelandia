@@ -1,0 +1,151 @@
+name: Preparar despliegue DirectAdmin
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Nueva versión (ejemplo: 1.3.0)'
+        required: true
+        type: string
+      comentarios:
+        description: 'Resumen de cambios (opcional; también se genera la lista de commits)'
+        type: string
+        default: ''
+      carpeta_publica:
+        description: 'Carpeta que sirve el dominio. Mantener la misma en futuras publicaciones.'
+        type: choice
+        options: [public_html, public]
+        default: public_html
+
+permissions:
+  contents: write
+
+concurrency:
+  group: directadmin-deploy
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: congelandia_test
+          MYSQL_USER: congelandia_test
+          MYSQL_PASSWORD: testing_only
+          MYSQL_ROOT_PASSWORD: testing_root_only
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1 --silent"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      APP_ENV: testing
+      APP_URL: http://localhost
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
+      DB_URL: ''
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+      VERSION: ${{ inputs.version }}
+      COMMENTS: ${{ inputs.comentarios }}
+      PUBLIC_DIRECTORY: ${{ inputs.carpeta_publica }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Definir directorios temporales
+        run: |
+          echo "PACKAGE_DIR=$RUNNER_TEMP/directadmin-package" >> "$GITHUB_ENV"
+          echo "NOTES_FILE=$RUNNER_TEMP/release-notes.md" >> "$GITHUB_ENV"
+          echo "PREVIOUS_CHANGELOG_FILE=$RUNNER_TEMP/previous-changelog.md" >> "$GITHUB_ENV"
+
+      - name: Validar versión y generar notas
+        id: release
+        run: node tools/deploy/prepare-release.mjs
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, pdo_mysql, mbstring, intl, bcmath, gd, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Instalar y compilar
+        run: |
+          cp .env.example .env
+          composer install --no-interaction --prefer-dist --no-progress
+          php artisan key:generate --force
+          npm ci
+          npm run build
+
+      - name: Probar el empaquetado y Laravel con SQLite
+        run: |
+          node --test tools/deploy/build.test.mjs tools/deploy/pipeline.test.mjs
+          php artisan view:cache
+          php artisan route:cache
+          php artisan route:clear
+          php artisan test
+
+      - name: Probar Laravel con MySQL Linux
+        env:
+          DB_CONNECTION: mysql
+          DB_DATABASE: congelandia_test
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USERNAME: congelandia_test
+          DB_PASSWORD: testing_only
+        run: php artisan test
+
+      - name: Preparar dependencias de producción y paquete
+        env:
+          APP_ENV: production
+          VERSION: ${{ steps.release.outputs.version }}
+          SOURCE_COMMIT: ${{ steps.release.outputs.commit }}
+        run: |
+          php artisan view:clear
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress
+          node tools/deploy/build.mjs
+          php -l "$PACKAGE_DIR/bootstrap/app.php"
+          php -l "$PACKAGE_DIR/$PUBLIC_DIRECTORY/index.php"
+
+      - name: Comprobar la entrega sin herramientas de desarrollo
+        env:
+          APP_ENV: production
+          DB_DATABASE: ${{ runner.temp }}/deploy-smoke.sqlite
+        run: |
+          touch "$DB_DATABASE"
+          export APP_KEY="base64:$(openssl rand -base64 32)"
+          cp -a "$PACKAGE_DIR" "$RUNNER_TEMP/deploy-smoke"
+          if [[ "$PUBLIC_DIRECTORY" == 'public_html' ]]; then
+            mkdir -p "$RUNNER_TEMP/deploy-smoke/public"
+          fi
+          php "$RUNNER_TEMP/deploy-smoke/artisan" migrate --force
+          php tools/deploy/check-package.php "$RUNNER_TEMP/deploy-smoke"
+
+      - name: Archivar entrega y publicar rama deploy
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          SOURCE_COMMIT: ${{ steps.release.outputs.commit }}
+        run: |
+          (cd "$PACKAGE_DIR" && zip -qr "$RUNNER_TEMP/congelandia-deploy-v$VERSION.zip" .)
+          bash tools/deploy/publish.sh
+
+      - name: Crear Release de GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          gh release create "v$VERSION" "$RUNNER_TEMP/congelandia-deploy-v$VERSION.zip" \
+            --verify-tag --title "Congelandia $VERSION" --notes-file "$NOTES_FILE"
+          echo "Entrega v$VERSION preparada en deploy. En DirectAdmin: Fetch y Deploy. La base de datos se actualiza aparte." >> "$GITHUB_STEP_SUMMARY"

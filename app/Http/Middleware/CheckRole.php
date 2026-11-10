@@ -16,7 +16,8 @@ class CheckRole
     public function handle(Request $request, Closure $next, $role): Response
     {
 
-        if (!$request->user()->tieneRol($role)) {
+        // Política deliberada: ocultar rutas administrativas a usuarios sin permiso.
+        if (! $request->user()?->tieneRol($role)) {
             abort(404);
         } else {
             return $next($request);

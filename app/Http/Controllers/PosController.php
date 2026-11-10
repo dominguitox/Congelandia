@@ -7,6 +7,7 @@ use App\Models\PagoSalida;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Exception;
 
 use App\Models\Cliente;
@@ -21,26 +22,11 @@ class PosController extends Controller
     {
         try {
             // Traer todos los productos disponibles
-            $productos = Producto::select(
-                'Producto.codigo',
-                'Producto.nombre',
-                'Categoria.nombre as categoria'
-            )
-                ->leftJoin('Categoria', 'Producto.idCategoria', '=', 'Categoria.idCategoria')
+            $productos = Producto::conDetalle()
                 ->addSelect([
-                    'precio' => DB::table('Lista_Precio')
-                        ->select('precioVenta')
-                        ->whereColumn('codigoProducto', 'Producto.codigo')
-                        ->where('fechaInicio', '<=', now())
-                        ->whereNull('fechaFin')
-                        ->whereNull('deleted_at')
-                        ->orderByDesc('fechaInicio')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'descuentoOferta' => DB::table('Promocion')
+                    'descuentoOferta' => DB::table('promocion')
                         ->select('porcentajeDescuento')
-                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->whereColumn('codigoProducto', 'producto.codigo')
                         ->where('activa', true)
                         ->where('porcentajeDescuento', '>', 0)
                         ->where('fechaInicio', '<=', now())
@@ -50,36 +36,13 @@ class PosController extends Controller
                         ->limit(1)
                 ])
                 ->addSelect([
-                    'imagenProducto' => DB::table('IMAGEN_PRODUCTO')
+                    'imagenProducto' => DB::table('imagen_producto')
                         ->select('rutaImagen')
-                        ->whereColumn('codigoProducto', 'Producto.codigo')
+                        ->whereColumn('codigoProducto', 'producto.codigo')
                         ->whereNull('deleted_at')
                         ->orderByDesc('id')
                         ->limit(1)
                 ])
-                ->addSelect([
-                    'costo' => DB::table('Detalle_Ingreso')
-                        ->select('Detalle_Ingreso.precioCompra')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->whereNull('Detalle_Ingreso.deleted_at')
-                        ->whereNull('Ingreso.deleted_at')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->addSelect([
-                    'proveedor' => DB::table('Detalle_Ingreso')
-                        ->select('Proveedor.nombre')
-                        ->join('Ingreso', 'Detalle_Ingreso.idIngreso', '=', 'Ingreso.idIngreso')
-                        ->join('Proveedor', 'Ingreso.idProveedor', '=', 'Proveedor.idProveedor')
-                        ->whereColumn('Detalle_Ingreso.codigoProducto', 'Producto.codigo')
-                        ->whereNull('Detalle_Ingreso.deleted_at')
-                        ->whereNull('Ingreso.deleted_at')
-                        ->whereNull('Proveedor.deleted_at')
-                        ->orderByDesc('Ingreso.fecha')
-                        ->limit(1)
-                ])
-                ->selectRaw('(IFNULL((SELECT SUM(di.cantidad) FROM Detalle_Ingreso di INNER JOIN Ingreso i ON di.idIngreso = i.idIngreso WHERE di.codigoProducto = Producto.codigo AND di.deleted_at IS NULL AND i.deleted_at IS NULL), 0) - IFNULL((SELECT SUM(ds.cantidad) FROM Detalle_Salida ds INNER JOIN Salida s ON ds.idSalida = s.idSalida WHERE ds.codigoProducto = Producto.codigo AND ds.deleted_at IS NULL AND s.deleted_at IS NULL), 0)) AS stock')
                 ->get();
 
             // activar para debug
@@ -87,12 +50,17 @@ class PosController extends Controller
 
             $categorias = Categoria::whereNull('deleted_at')->get();
             $clientes = Cliente::whereNull('deleted_at')->get();
-            $metodosPago = DB::table('Metodo_Pago')
+            $metodosPago = DB::table('metodo_pago')
                 ->whereNull('deleted_at')
                 ->orderBy('idMetodo')
                 ->get();
 
-            return view('pos.index', compact('productos', 'categorias', 'clientes', 'metodosPago'));
+            $idTipoVenta = DB::table('tipo_salida')
+                ->where('nombre', 'Venta')
+                ->whereNull('deleted_at')
+                ->value('idTipo');
+
+            return view('pos.index', compact('productos', 'categorias', 'clientes', 'metodosPago', 'idTipoVenta'));
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al cargar el POS: ' . $e->getMessage());
@@ -103,9 +71,9 @@ class PosController extends Controller
     public function registrarVenta(Request $request)
     {
         $datos = $request->validate([
-            'idTipo' => 'required|integer',
+            'idTipo' => ['required', 'integer', Rule::exists('tipo_salida', 'idTipo')->where('nombre', 'Venta')->whereNull('deleted_at')],
             'rutCliente' => 'nullable|string',
-            'metodoPago' => 'required|integer|exists:Metodo_Pago,idMetodo',
+            'metodoPago' => 'required|integer|exists:metodo_pago,idMetodo',
             'productos' => 'required|array|min:1',
             'productos.*.id' => 'required|string',
             'productos.*.cantidad' => 'required|integer|min:1',
@@ -129,12 +97,13 @@ class PosController extends Controller
                     return response()->json(['success' => false, 'error' => 'Uno de los productos ya no está disponible. Recarga el POS.'], 422);
                 }
 
-                $precioNormal = DB::table('Lista_Precio')
+                $precioNormal = DB::table('lista_precio')
                     ->where('codigoProducto', $producto->codigo)
                     ->where('fechaInicio', '<=', now())
                     ->whereNull('fechaFin')
                     ->whereNull('deleted_at')
                     ->orderByDesc('fechaInicio')
+                    ->orderByDesc('idPrecio')
                     ->value('precioVenta');
 
                 if ($precioNormal === null) {
@@ -181,7 +150,7 @@ class PosController extends Controller
                 ]);
             }
 
-            $metodoPago = DB::table('Metodo_Pago')
+            $metodoPago = DB::table('metodo_pago')
                 ->where('idMetodo', $request->metodoPago)
                 ->whereNull('deleted_at')
                 ->first();
