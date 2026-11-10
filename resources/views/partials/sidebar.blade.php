@@ -10,6 +10,7 @@
                 ['label' => 'Proveedores', 'url' => route('proveedores.index'), 'pattern' => 'proveedores.*', 'admin' => true],
                 ['label' => 'Categorías', 'url' => route('categorias.index'), 'pattern' => 'categorias.*', 'admin' => true],
                 ['label' => 'Usuarios', 'url' => route('usuarios.index'), 'pattern' => 'usuarios.*', 'admin' => true],
+                ['label' => 'Historial de acciones', 'url' => route('acciones.index'), 'pattern' => 'acciones.*', 'admin' => true],
                 ['label' => 'Reportes', 'url' => route('reportes.index'), 'pattern' => 'reportes.*', 'admin' => true],
             ];
         @endphp
