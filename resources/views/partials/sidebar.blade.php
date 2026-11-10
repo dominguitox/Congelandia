@@ -12,6 +12,7 @@
                 ['label' => 'Usuarios', 'url' => route('usuarios.index'), 'pattern' => 'usuarios.*', 'admin' => true],
                 ['label' => 'Historial de acciones', 'url' => route('acciones.index'), 'pattern' => 'acciones.*', 'admin' => true],
                 ['label' => 'Reportes', 'url' => route('reportes.index'), 'pattern' => 'reportes.*', 'admin' => true],
+                ['label' => 'Ajustes', 'url' => route('ajustes.index'), 'pattern' => 'ajustes.*', 'admin' => true],
             ];
         @endphp
 
@@ -25,7 +26,8 @@
 
                 <li class="nav-item">
                     <a href="{{ $item['url'] }}"
-                        class="nav-link text-white fw-bold {{ $isActive ? 'link-sidebar-seleccionado' : '' }}">
+                        class="nav-link text-white fw-bold {{ $isActive ? 'link-sidebar-seleccionado' : '' }}"
+                        @if($isActive) aria-current="page" @endif>
                         {{ $item['label'] }}
                     </a>
                 </li>

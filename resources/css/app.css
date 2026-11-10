@@ -8,8 +8,8 @@
      3. Base global      (resources/css/theme/base.css)
      4. Componentes      (resources/css/components/*.css)
 
-   Para cambiar de tema: reemplazar el archivo de tokens
-   importado por otro (ver theme/tokens.css).
+   APP_TEMA selecciona el sistema visual y APP_COLOR la paleta.
+   El layout carga las variantes despues de los estilos de modulo.
    ========================================================= */
 
 @import 'bootstrap/dist/css/bootstrap.min.css';

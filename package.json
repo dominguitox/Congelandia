@@ -3,10 +3,13 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "theme:generate": "node tools/theme/generate-md3.mjs",
+        "theme:test": "node --test tools/theme/*.test.mjs",
+        "build": "node tools/theme/generate-md3.mjs && vite build",
+        "dev": "node tools/theme/generate-md3.mjs && vite"
     },
     "devDependencies": {
+        "@material/material-color-utilities": "0.3.0",
         "@tailwindcss/vite": "^4.0.0",
         "concurrently": "^10.0.3",
         "laravel-vite-plugin": "^3.1",
@@ -18,6 +21,7 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
+        "7.css": "0.21.1",
         "bootstrap": "^5.3.8"
     }
 }

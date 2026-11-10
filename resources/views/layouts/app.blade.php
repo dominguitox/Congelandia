@@ -1,5 +1,6 @@
+@php($appTheme = app(\App\Support\DeviceTheme::class)->resolve(request()))
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="{{ $appTheme['style'] }}" data-color="{{ $appTheme['color'] }}">
 
 <head>
 
@@ -17,18 +18,17 @@
         'resources/js/app.js'
     ])
 
-    {{-- Tema visual opcional (APP_TEMA en .env; "base" = por defecto) --}}
-    @php($temaActivo = config('app.tema'))
-    @if($temaActivo && $temaActivo !== 'base' && file_exists(resource_path("css/theme/themes/{$temaActivo}.css")))
-        @vite(["resources/css/theme/themes/{$temaActivo}.css"])
+    @if($appTheme['style'] === 'md3')
+        @fonts('roboto')
     @endif
 
     {{-- CSS específico de cada módulo --}}
     @stack('css')
+    @include('partials.theme')
 
 </head>
 
-<body class="bg-light">
+<body @class(['bg-light', 'win7' => $appTheme['style'] === 'win7'])>
 
     {{-- Mensajes de error --}}
     @if(session('error'))

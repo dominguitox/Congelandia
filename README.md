@@ -66,6 +66,8 @@ Otros scripts:
 
 ## Estructura del proyecto
 
+El panel admite los temas `congelandia`, `md3` y `win7` (Windows 7 / Aero con 7.css), con paletas independientes. Los administradores eligen tema y color por dispositivo/navegador en **Ajustes**; `APP_TEMA` y `APP_COLOR` solo definen los valores iniciales. El sitio público mantiene sus temas propios. Ver [Configuración de temas](docs/temas.md).
+
 ```
 app/Http/Controllers   # Controladores (lógica de cada módulo)
 app/Http/Middleware    # CheckRole (roles caseros sobre Usuario.rol)
