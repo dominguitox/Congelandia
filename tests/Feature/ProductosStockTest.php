@@ -132,7 +132,7 @@ test('las pantallas y el cobro eligen el mismo precio vigente incluso con fechas
 test('errores de creacion conservan datos y muestran el modal correcto', function () {
     $this->actingAs($this->user)->from(route('inventario.index'))->post(route('productos.crearProducto'), [
         'codigo' => 'NUEVO', 'nombre' => 'Nombre conservado', 'precioVenta' => -1, '_modal' => 'modalCrearProducto',
-    ])->assertRedirect(route('inventario.index'))->assertSessionHasErrors(['precioVenta', 'idCategoria']);
+    ])->assertRedirect(route('inventario.index'))->assertSessionHasErrors(['precioVenta'])->assertSessionDoesntHaveErrors('idCategoria');
     $this->get(route('inventario.index'))->assertOk()->assertSee('data-modal-error="modalCrearProducto"', false)->assertSee('Nombre conservado');
     expect(Producto::count())->toBe(1);
 });
@@ -141,7 +141,7 @@ test('abastecimiento inicial incompleto se rechaza antes de crear producto', fun
     $categoria = DB::table('categoria')->insertGetId(['nombre' => 'Helados']);
     $this->actingAs($this->user)->postJson(route('productos.crearProducto'), [
         'codigo' => 'NUEVO', 'nombre' => 'Prueba', 'precioVenta' => 500, 'idCategoria' => $categoria, 'stockInicial' => 3,
-    ])->assertUnprocessable()->assertJsonValidationErrors(['idProveedor', 'precioCompra', 'fechaVencimiento']);
+    ])->assertUnprocessable()->assertJsonValidationErrors(['precioCompra', 'fechaVencimiento'])->assertJsonMissingValidationErrors('idProveedor');
     expect(Producto::count())->toBe(1);
 });
 
