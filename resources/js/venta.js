@@ -244,7 +244,7 @@ window.registrarVenta = function (e) {
             'Accept': 'application/json'
         },
         body: JSON.stringify({
-            idTipo: 1, // ID fijo configurado para identificar "Venta" vs "Merma"
+            idTipo: Number(document.getElementById('rutasPos').dataset.tipoVenta),
             rutCliente: rutClienteSeleccionado,
             totalVenta: totalCalculado,
             metodoPago: metodoPagoSeleccionado,

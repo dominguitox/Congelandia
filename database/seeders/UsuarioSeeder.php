@@ -13,9 +13,8 @@ class UsuarioSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        User::withTrashed()->firstOrCreate(['email' => 'admin@congelandia.cl'], [
             'nombre' => 'Admin principal',
-            'email' => 'admin@congelandia.cl',
             // Roles canónicos: User::ROLES (Administrador, Cajero).
             'rol' => User::ROLES[0],
             'contrasena' => Hash::make('1234'),
