@@ -486,6 +486,7 @@ class ComposerStaticInit18a67455c438e79ec8a3d61f66287e7f
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\AjustesController' => __DIR__ . '/../..' . '/app/Http/Controllers/AjustesController.php',
         'App\\Http\\Controllers\\Auth\\Login' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/Login.php',
         'App\\Http\\Controllers\\Auth\\Logout' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/Logout.php',
         'App\\Http\\Controllers\\CategoriaController' => __DIR__ . '/../..' . '/app/Http/Controllers/CategoriaController.php',
@@ -523,6 +524,7 @@ class ComposerStaticInit18a67455c438e79ec8a3d61f66287e7f
         'App\\Models\\Version' => __DIR__ . '/../..' . '/app/Models/Version.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Services\\Reportes\\ReporteService' => __DIR__ . '/../..' . '/app/Services/Reportes/ReporteService.php',
+        'App\\Support\\DeviceTheme' => __DIR__ . '/../..' . '/app/Support/DeviceTheme.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',

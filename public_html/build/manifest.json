@@ -35,9 +35,9 @@
     "file": "assets/bootstrap.esm-DM7gpgIx.js",
     "name": "bootstrap.esm"
   },
-  "_fonts-B1nIbyAQ.css": {
-    "file": "assets/fonts-B1nIbyAQ.css",
-    "src": "_fonts-B1nIbyAQ.css"
+  "_fonts-5oMh9F6J.css": {
+    "file": "assets/fonts-5oMh9F6J.css",
+    "src": "_fonts-5oMh9F6J.css"
   },
   "_fraunces-500-normal-BTR4KCeb.woff": {
     "file": "assets/fraunces-500-normal-BTR4KCeb.woff",
@@ -94,6 +94,30 @@
   "_instrument-sans-700-normal-DfAjL1vF.woff": {
     "file": "assets/instrument-sans-700-normal-DfAjL1vF.woff",
     "src": "_instrument-sans-700-normal-DfAjL1vF.woff"
+  },
+  "_roboto-400-normal-BqEyEoaF.woff2": {
+    "file": "assets/roboto-400-normal-BqEyEoaF.woff2",
+    "src": "_roboto-400-normal-BqEyEoaF.woff2"
+  },
+  "_roboto-400-normal-D27F5sTu.woff": {
+    "file": "assets/roboto-400-normal-D27F5sTu.woff",
+    "src": "_roboto-400-normal-D27F5sTu.woff"
+  },
+  "_roboto-500-normal-7RbcRiD8.woff2": {
+    "file": "assets/roboto-500-normal-7RbcRiD8.woff2",
+    "src": "_roboto-500-normal-7RbcRiD8.woff2"
+  },
+  "_roboto-500-normal-fsTFPL3E.woff": {
+    "file": "assets/roboto-500-normal-fsTFPL3E.woff",
+    "src": "_roboto-500-normal-fsTFPL3E.woff"
+  },
+  "_roboto-700-normal-BZpUvMxY.woff2": {
+    "file": "assets/roboto-700-normal-BZpUvMxY.woff2",
+    "src": "_roboto-700-normal-BZpUvMxY.woff2"
+  },
+  "_roboto-700-normal-YuyVweIx.woff": {
+    "file": "assets/roboto-700-normal-YuyVweIx.woff",
+    "src": "_roboto-700-normal-YuyVweIx.woff"
   },
   "resources/css/app.css": {
     "file": "assets/app-C7VSUPHR.css",
@@ -221,6 +245,15 @@
     "src": "resources/css/reportes.css",
     "isEntry": true
   },
+  "resources/css/theme/md3.css": {
+    "file": "assets/md3-BwGUXnl0.css",
+    "name": "md3",
+    "names": [
+      "md3.css"
+    ],
+    "src": "resources/css/theme/md3.css",
+    "isEntry": true
+  },
   "resources/css/theme/themes/aurora.css": {
     "file": "assets/aurora-BLdQgJbE.css",
     "name": "aurora",
@@ -246,6 +279,15 @@
       "esmeralda.css"
     ],
     "src": "resources/css/theme/themes/esmeralda.css",
+    "isEntry": true
+  },
+  "resources/css/theme/win7.css": {
+    "file": "assets/win7-C5CNskHQ.css",
+    "name": "win7",
+    "names": [
+      "win7.css"
+    ],
+    "src": "resources/css/theme/win7.css",
     "isEntry": true
   },
   "resources/js/app.js": {

@@ -3,7 +3,7 @@
    =========================================================
    Tema de prueba. Solo redefine los tokens de color; hereda
    radios, sombras y tipografia de theme/tokens.css.
-   Activar con APP_TEMA=esmeralda en el .env
+   Activar con APP_COLOR=esmeralda en el .env (congelandia o md3).
    ========================================================= */
 
 :root {

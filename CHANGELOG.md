@@ -1,5 +1,16 @@
 # Historial de publicaciones
 
+## 1.5.0 — 2026-11-10
+
+### Cambios del código
+
+- win7 y ajustes. temas locales (768288a)
+- md3 listo (04e5752)
+- Documenta flujo de despliegue para agentes (5200f6a)
+- fix pendiente #34 fecha idioma chile (38343df)
+
+Código de origen: 4e950283f2bcbc3dc0df8074f67ce2964c27f03c
+
 ## 1.4.0 — 2026-11-10
 
 ### Cambios del código

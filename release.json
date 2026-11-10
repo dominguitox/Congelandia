@@ -1,7 +1,7 @@
 {
-  "numero": "1.4.0",
-  "comentarios": "### Cambios del código\n\n- footer (6fc7242)\n- Permite crear categorias y proveedores desde inventario (da93198)\n- Agrega tipos de salida y permite repetir los seeders (6421ab0)\n\nCódigo de origen: 982bba6381da9b5219117b34d9bffcd70c32487c",
-  "fecha_creacion": "2026-11-10T18:56:53.694Z",
-  "commit": "982bba6381da9b5219117b34d9bffcd70c32487c",
+  "numero": "1.5.0",
+  "comentarios": "### Cambios del código\n\n- win7 y ajustes. temas locales (768288a)\n- md3 listo (04e5752)\n- Documenta flujo de despliegue para agentes (5200f6a)\n- fix pendiente #34 fecha idioma chile (38343df)\n\nCódigo de origen: 4e950283f2bcbc3dc0df8074f67ce2964c27f03c",
+  "fecha_creacion": "2026-11-10T19:12:06.119Z",
+  "commit": "4e950283f2bcbc3dc0df8074f67ce2964c27f03c",
   "public_directory": "public_html"
 }

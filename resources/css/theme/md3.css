@@ -1,0 +1,413 @@
+@import './md3-colors.css';
+
+/* MD3 light. Existing templates keep their behavior; this adapter maps every
+   shared token and component to Material color, shape, type and state roles. */
+:root[data-theme="md3"] {
+    color-scheme: light;
+    --color-primary: var(--md-sys-color-primary);
+    --color-primary-hover: var(--md-sys-color-primary);
+    --color-primary-active: var(--md-sys-color-primary);
+    --color-primary-soft: var(--md-sys-color-primary-container);
+    --color-primary-softer: var(--md-sys-color-surface-container-low);
+    --color-text: var(--md-sys-color-on-surface);
+    --color-text-heading: var(--md-sys-color-on-surface);
+    --color-text-muted: var(--md-sys-color-on-surface-variant);
+    --color-text-soft: var(--md-sys-color-on-surface-variant);
+    --color-text-faint: var(--md-sys-color-on-surface-variant);
+    --color-text-light: var(--md-sys-color-on-primary);
+    --color-surface: var(--md-sys-color-surface-container-lowest);
+    --color-surface-alt: var(--md-sys-color-surface-container-low);
+    --color-surface-input: var(--md-sys-color-surface-container-highest);
+    --color-page-bg: var(--md-sys-color-surface);
+    --color-border: var(--md-sys-color-outline-variant);
+    --color-border-soft: var(--md-sys-color-outline-variant);
+    --color-table-header: var(--md-sys-color-surface-container);
+    --color-success: var(--md-sys-color-success);
+    --color-success-bg: var(--md-sys-color-success-container);
+    --color-warning: var(--md-sys-color-warning);
+    --color-warning-bg: var(--md-sys-color-warning-container);
+    --color-danger: var(--md-sys-color-error);
+    --color-danger-strong: var(--md-sys-color-error);
+    --color-danger-bg: var(--md-sys-color-error-container);
+    --color-info: var(--md-sys-color-primary);
+    --color-info-bg: var(--md-sys-color-primary-container);
+    --color-purple: var(--md-sys-color-tertiary);
+    --color-purple-bg: var(--md-sys-color-tertiary-container);
+    --color-btn-muted-bg: var(--md-sys-color-secondary-container);
+    --color-btn-muted-bg-hover: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+    --color-btn-muted-text: var(--md-sys-color-on-secondary-container);
+    --color-btn-neutral-bg: var(--md-sys-color-surface-container-high);
+    --color-btn-neutral-text: var(--md-sys-color-on-surface-variant);
+    --color-btn-expand-bg: var(--md-sys-color-secondary-container);
+    --color-btn-expand-bg-hover: var(--color-btn-muted-bg-hover);
+    --color-btn-expand-text: var(--md-sys-color-on-secondary-container);
+    --color-navy-dark: var(--md-sys-color-primary);
+    --color-navy-mid: var(--md-sys-color-secondary);
+    --color-ice: var(--md-sys-color-on-primary);
+    --color-ice-hover: var(--md-sys-color-primary-container);
+
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-extra-large: 28px;
+    --radius-2xs: var(--md-sys-shape-corner-extra-small);
+    --radius-xs: var(--md-sys-shape-corner-small);
+    --radius-sm: var(--md-sys-shape-corner-small);
+    --radius-md: var(--md-sys-shape-corner-medium);
+    --radius-lg: var(--md-sys-shape-corner-large);
+    --radius-xl: var(--md-sys-shape-corner-large);
+    --radius-2xl: var(--md-sys-shape-corner-large);
+    --radius-3xl: var(--md-sys-shape-corner-extra-large);
+    --md-sys-elevation-1: 0 1px 2px rgb(var(--md-sys-color-shadow-rgb), 0.3), 0 1px 3px 1px rgb(var(--md-sys-color-shadow-rgb), 0.15);
+    --md-sys-elevation-2: 0 1px 2px rgb(var(--md-sys-color-shadow-rgb), 0.3), 0 2px 6px 2px rgb(var(--md-sys-color-shadow-rgb), 0.15);
+    --md-sys-elevation-3: 0 4px 8px 3px rgb(var(--md-sys-color-shadow-rgb), 0.15), 0 1px 3px rgb(var(--md-sys-color-shadow-rgb), 0.3);
+    --shadow-card: none;
+    --shadow-card-soft: none;
+    --shadow-card-md: var(--md-sys-elevation-1);
+    --shadow-modal: var(--md-sys-elevation-3);
+    --shadow-modal-lg: var(--md-sys-elevation-3);
+    --font-family: 'Roboto', system-ui, 'Segoe UI', sans-serif;
+    --md-sys-typescale-body-large: 400 16px / 24px var(--font-family);
+    --md-sys-typescale-body-medium: 400 14px / 20px var(--font-family);
+    --md-sys-typescale-label-large: 500 14px / 20px var(--font-family);
+    --md-sys-typescale-title-large: 400 22px / 28px var(--font-family);
+    --md-sys-typescale-headline-large: 400 32px / 40px var(--font-family);
+    --fs-base: 14px;
+    --fs-md: 16px;
+    --fs-lg: 16px;
+    --fs-xl: 22px;
+    --fs-2xl: 24px;
+    --fs-3xl: 32px;
+    --space-xl: 24px;
+    --space-3xl: 32px;
+    --module-padding: 24px;
+    --control-height: 48px;
+    --control-height-sm: 40px;
+    --header-height: 64px;
+    --sidebar-width: 280px;
+
+    /* Bootstrap utilities read RGB variables, while components use role pairs. */
+    --bs-body-font-family: var(--font-family);
+    --bs-body-color: var(--md-sys-color-on-surface);
+    --bs-body-bg: var(--md-sys-color-surface);
+    --bs-primary: var(--md-sys-color-primary);
+    --bs-primary-rgb: var(--md-sys-color-primary-rgb);
+    --bs-secondary-rgb: var(--md-sys-color-secondary-rgb);
+    --bs-success-rgb: var(--md-sys-color-success-rgb);
+    --bs-warning-rgb: var(--md-sys-color-warning-rgb);
+    --bs-danger-rgb: var(--md-sys-color-error-rgb);
+    --bs-info-rgb: var(--md-sys-color-primary-rgb);
+    --bs-light-rgb: var(--md-sys-color-surface-container-low-rgb);
+    --bs-dark-rgb: var(--md-sys-color-on-surface-rgb);
+    --bs-border-color: var(--md-sys-color-outline-variant);
+    --bs-secondary-color: var(--md-sys-color-on-surface-variant);
+    --bs-tertiary-bg: var(--md-sys-color-surface-container);
+    --bs-link-color: var(--md-sys-color-primary);
+    --bs-link-hover-color: var(--md-sys-color-primary);
+    --bs-emphasis-color: var(--md-sys-color-on-surface);
+}
+
+html[data-theme="md3"] body {
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    font: var(--md-sys-typescale-body-large);
+    letter-spacing: 0.15px;
+}
+
+/* Top app bar and navigation drawer. */
+html[data-theme="md3"] .app-header {
+    background: var(--md-sys-color-surface-container);
+    box-shadow: none !important;
+}
+html[data-theme="md3"] .app-header :is(.navbar-brand, .app-user, .app-menu-btn) {
+    color: var(--md-sys-color-on-surface) !important;
+}
+html[data-theme="md3"] .app-header .navbar-brand { font: var(--md-sys-typescale-title-large); }
+html[data-theme="md3"] .sidebar { background: var(--md-sys-color-surface-container-low); }
+html[data-theme="md3"] .sidebar ul { gap: 4px; }
+html[data-theme="md3"] .sidebar ul li a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 12px 24px;
+    border: 0 !important;
+    border-radius: var(--radius-pill);
+    color: var(--md-sys-color-on-surface-variant) !important;
+    font: var(--md-sys-typescale-label-large);
+    font-weight: 500 !important;
+}
+html[data-theme="md3"] .sidebar ul li a:hover {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+}
+html[data-theme="md3"] .sidebar ul li a[aria-current="page"] {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container) !important;
+}
+html[data-theme="md3"] .sidebar-logout {
+    color: var(--md-sys-color-error);
+    border-color: var(--md-sys-color-outline);
+    border-radius: var(--radius-pill);
+    min-height: 40px;
+}
+html[data-theme="md3"] .sidebar-logout:hover {
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+}
+
+/* Type and cards: a tonal hierarchy replaces the original heavy shadows. */
+html[data-theme="md3"] :is(.page-title h1, .page-title h2, .clientes-header h2, .proveedores-title h2, .historial-header h2) {
+    font: var(--md-sys-typescale-headline-large);
+    letter-spacing: 0;
+}
+html[data-theme="md3"] :is(.panel-head h2, .panel-head h3, .section-head h2, .section-head h3) {
+    font: var(--md-sys-typescale-title-large);
+}
+html[data-theme="md3"] :is(.card, .panel, .stat-tile, .cliente-card, .proveedor-card, .stat-card, .historial-card, .clientes-table, .proveedores-table-container, .auth-card) {
+    background-color: var(--md-sys-color-surface-container-low);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    box-shadow: none;
+}
+html[data-theme="md3"] :is(.card.shadow, .card.shadow-sm, .card.shadow-lg) { box-shadow: none !important; }
+html[data-theme="md3"] :is(.card-header, .panel-head) { background: transparent; }
+html[data-theme="md3"] .panel-head--accent { background: var(--md-sys-color-secondary-container); }
+html[data-theme="md3"] .panel-head--accent :is(h2, h3, p) { color: var(--md-sys-color-on-secondary-container); }
+html[data-theme="md3"] .card-icon { border-radius: var(--md-sys-shape-corner-large); }
+html[data-theme="md3"] .stat-tile-info strong { font-weight: 400; line-height: 1.2; }
+html[data-theme="md3"] :is(.cliente-card, .proveedor-card, .stat-card) strong { font-weight: 400; }
+
+/* Filled, tonal, outlined, text and icon buttons. State layers work for both
+   Bootstrap and the custom controls without replacing their event handlers. */
+html[data-theme="md3"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal, .btn-agregar, .btn-nuevo-proveedor,
+    .btn-cancelar, .btn-pago-confirmar, .btn-pago-cancelar, .btn-editar-guardar, .btn-editar-cancelar, .clientes-actions button) {
+    min-height: 40px;
+    height: auto;
+    padding: 10px 24px;
+    border-radius: var(--radius-pill);
+    font: var(--md-sys-typescale-label-large);
+    letter-spacing: 0.1px;
+    box-shadow: none;
+    transform: none;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+html[data-theme="md3"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal, .sidebar-logout,
+    .icon-btn, .btn-accion, .btn-accion-proveedor, .btn-expand, .btn-expandir, .app-menu-btn):hover {
+    background-image: linear-gradient(rgb(from currentColor r g b / 8%), rgb(from currentColor r g b / 8%));
+    transform: none;
+    filter: none;
+}
+html[data-theme="md3"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal, .icon-btn, .btn-accion):active {
+    background-image: linear-gradient(rgb(from currentColor r g b / 12%), rgb(from currentColor r g b / 12%));
+    transform: none;
+}
+html[data-theme="md3"] .btn {
+    --bs-btn-color: var(--md-sys-color-on-primary);
+    --bs-btn-hover-color: var(--bs-btn-color);
+    --bs-btn-active-color: var(--bs-btn-color);
+    --bs-btn-disabled-color: var(--bs-btn-color);
+    --bs-btn-border-radius: var(--radius-pill);
+    --bs-btn-focus-box-shadow: none;
+}
+html[data-theme="md3"] :is(.btn-secondary, .btn-light) {
+    --bs-btn-bg: var(--md-sys-color-secondary-container);
+    --bs-btn-color: var(--md-sys-color-on-secondary-container);
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: var(--md-sys-color-secondary-container);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: var(--md-sys-color-secondary-container);
+    --bs-btn-active-border-color: transparent;
+}
+html[data-theme="md3"] [class*="btn-outline-"] {
+    --bs-btn-color: var(--md-sys-color-primary);
+    --bs-btn-border-color: var(--md-sys-color-outline);
+    --bs-btn-hover-color: var(--md-sys-color-primary);
+    --bs-btn-hover-bg: transparent;
+    --bs-btn-hover-border-color: var(--md-sys-color-outline);
+    --bs-btn-active-bg: transparent;
+    --bs-btn-active-color: var(--md-sys-color-primary);
+}
+html[data-theme="md3"] .btn-outline-danger {
+    --bs-btn-color: var(--md-sys-color-error);
+    --bs-btn-hover-color: var(--md-sys-color-error);
+    --bs-btn-active-color: var(--md-sys-color-error);
+}
+html[data-theme="md3"] .btn-link {
+    --bs-btn-color: var(--md-sys-color-primary);
+    --bs-btn-bg: transparent;
+}
+html[data-theme="md3"] :is(.btn-outline, .btn-cancelar, .btn-pago-cancelar, .btn-editar-cancelar, .btn-modal.cancelar) {
+    background-color: transparent;
+    color: var(--md-sys-color-primary);
+}
+html[data-theme="md3"] .btn-outline { border-color: var(--md-sys-color-outline); }
+html[data-theme="md3"] :is(.icon-btn, .btn-accion, .btn-accion-proveedor, .btn-expand, .btn-expandir,
+    .btn-cerrar-modal, .cerrar-historial, .cerrar-pago, .cerrar-editar, .app-menu-btn) {
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: var(--radius-pill);
+}
+html[data-theme="md3"] :is(button, .btn, .btn-solid, .btn-soft, .btn-outline):is(:disabled, .disabled, [aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+    border-color: transparent;
+    box-shadow: none;
+    opacity: 1;
+    cursor: default;
+}
+
+/* Outlined fields with visible focus and validation. Preserve search icons,
+   file controls and input-group seams instead of altering their structure. */
+html[data-theme="md3"] :is(.form-control, .form-select, .form-grid input, .campo-proveedor input,
+    .pago-form-group input, .pago-form-group select, .editar-form-group input, .clientes-actions input,
+    .historial-search input, .historial-select, .proveedores-search input) {
+    min-height: 56px;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    background-color: transparent;
+    color: var(--md-sys-color-on-surface);
+    font: var(--md-sys-typescale-body-large);
+}
+html[data-theme="md3"] :is(.form-control.bg-light, .form-select.bg-light) {
+    background-color: var(--md-sys-color-surface-container-highest) !important;
+    border-color: var(--md-sys-color-outline);
+}
+html[data-theme="md3"] :is(input, select, textarea):focus {
+    border-color: var(--md-sys-color-primary);
+    box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+    outline: 0;
+}
+html[data-theme="md3"] :is(input, select, textarea):is(.is-invalid, [aria-invalid="true"]) {
+    border-color: var(--md-sys-color-error);
+}
+html[data-theme="md3"] :is(input, select, textarea):is(.is-invalid, [aria-invalid="true"]):focus {
+    box-shadow: inset 0 0 0 1px var(--md-sys-color-error);
+}
+html[data-theme="md3"] :is(input, select, textarea):disabled {
+    color: var(--md-sys-color-on-surface-variant);
+    background-color: var(--md-sys-color-surface-container);
+    border-color: var(--md-sys-color-outline-variant);
+}
+html[data-theme="md3"] textarea.form-control { min-height: 100px; }
+html[data-theme="md3"] .form-label { font: var(--md-sys-typescale-label-large); }
+html[data-theme="md3"] .input-group > .form-control { border-radius: 4px 0 0 4px; }
+html[data-theme="md3"] .input-group > .btn { border-radius: 0 4px 4px 0; }
+html[data-theme="md3"] :is(input[type="checkbox"], input[type="radio"]) { accent-color: var(--md-sys-color-primary); }
+html[data-theme="md3"] .form-check-input:checked { background-color: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); }
+html[data-theme="md3"] .form-check-input:focus { box-shadow: 0 0 0 4px var(--md-sys-color-primary-container); }
+html[data-theme="md3"] .form-switch .form-check-input { width: 52px; height: 32px; border-radius: var(--radius-pill); margin-top: 0; }
+html[data-theme="md3"] .form-switch { padding-left: 3.5em; }
+
+/* Keyboard focus is also visible on custom buttons and navigation links. */
+html[data-theme="md3"] :is(a, button, input[type="checkbox"], input[type="radio"], summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 3px;
+}
+
+/* Tables, chips and tabs. */
+html[data-theme="md3"] table {
+    --bs-table-bg: var(--md-sys-color-surface-container-low);
+    --bs-table-color: var(--md-sys-color-on-surface);
+    --bs-table-border-color: var(--md-sys-color-outline-variant);
+    --bs-table-hover-bg: var(--md-sys-color-surface-container-high);
+    --bs-table-hover-color: var(--md-sys-color-on-surface);
+}
+html[data-theme="md3"] :is(.data-table, .clientes-table table, .proveedores-table, .historial-table) th {
+    font: var(--md-sys-typescale-label-large);
+    color: var(--md-sys-color-on-surface);
+}
+html[data-theme="md3"] :is(.data-table, .clientes-table table, .proveedores-table, .historial-table) td {
+    font-size: 14px;
+    line-height: 20px;
+}
+html[data-theme="md3"] :is(.pill, .badge, .estado-badge) { border-radius: var(--md-sys-shape-corner-small); font-weight: 500; }
+html[data-theme="md3"] .reportes-tabs { border-bottom: 1px solid var(--md-sys-color-outline-variant); gap: 0; }
+html[data-theme="md3"] .reportes-tab {
+    background: transparent;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    min-height: 48px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+html[data-theme="md3"] .reportes-tab--active { color: var(--md-sys-color-primary); border-bottom-color: var(--md-sys-color-primary); }
+html[data-theme="md3"] .reportes-tab:hover { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-primary); }
+html[data-theme="md3"] .reportes-calor--4 {
+    background: var(--md-sys-color-on-primary-container);
+    color: var(--md-sys-color-primary-container);
+}
+html[data-theme="md3"] :is(.buscador-producto, .buscador-proveedor) {
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--md-sys-color-surface-container-high);
+}
+html[data-theme="md3"] :is(.buscador-producto, .buscador-proveedor):focus-within {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+}
+html[data-theme="md3"] :is(.buscador-producto, .buscador-proveedor) input:focus { box-shadow: none; }
+html[data-theme="md3"] .page-link {
+    --bs-pagination-color: var(--md-sys-color-primary);
+    --bs-pagination-bg: transparent;
+    --bs-pagination-active-bg: var(--md-sys-color-primary);
+    --bs-pagination-active-border-color: var(--md-sys-color-primary);
+    --bs-pagination-focus-box-shadow: none;
+}
+
+/* Standard and custom dialogs share surface-container-high and 28dp corners. */
+html[data-theme="md3"] :is(.modal-content, .modal-proveedor, .modal-confirmacion, .modal-historial-contenido, .modal-pago-contenido, .modal-editar-contenido) {
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    border: 0;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    box-shadow: var(--md-sys-elevation-3);
+}
+html[data-theme="md3"] :is(.modal-header, .modal-footer) {
+    background: transparent !important;
+    color: var(--md-sys-color-on-surface) !important;
+    border: 0;
+}
+html[data-theme="md3"] .modal-header :is(.modal-title, .text-white) { color: var(--md-sys-color-on-surface) !important; }
+html[data-theme="md3"] :is(.modal-title, .modal-header h3) { font: 400 24px / 32px var(--font-family); }
+html[data-theme="md3"] .btn-close-white { filter: none; }
+html[data-theme="md3"] .modal-backdrop { --bs-backdrop-bg: var(--md-sys-color-scrim); --bs-backdrop-opacity: 0.32; }
+html[data-theme="md3"] :is(.modal-overlay, .modal-historial, .modal-pago, .modal-editar, .sidebar-overlay) {
+    background: rgb(var(--md-sys-color-scrim-rgb), 0.32);
+}
+html[data-theme="md3"] :is(.historial-info > div, .productos-detalle-row > td, .editar-rut) { background: var(--md-sys-color-surface-container); }
+html[data-theme="md3"] .historial-error { background: var(--md-sys-color-error-container); }
+
+/* Semantic feedback uses paired foreground/background roles. */
+html[data-theme="md3"] :is(.alert-danger, .flash-error) { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
+html[data-theme="md3"] .alert-success { background: var(--md-sys-color-success-container); color: var(--md-sys-color-on-success-container); }
+html[data-theme="md3"] .alert-warning { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-on-warning-container); }
+html[data-theme="md3"] :is(.alert-info, .alert-primary) { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+html[data-theme="md3"] .alert-secondary { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+html[data-theme="md3"] .alert { border-radius: 12px; }
+html[data-theme="md3"] .flash-error { border-radius: 4px; box-shadow: var(--md-sys-elevation-3); }
+html[data-theme="md3"] .badge:is(.bg-info, .bg-warning, .bg-success, .bg-primary, .bg-danger) { color: var(--md-sys-color-on-primary) !important; }
+
+/* Login is a standalone surface in MD3, including at desktop widths. */
+html[data-theme="md3"] body:has(.auth-page) .sidebar { display: none; }
+html[data-theme="md3"] body:has(.auth-page) .app-main { margin-left: 0; }
+html[data-theme="md3"] body:has(.auth-page) .app-user { display: none; }
+html[data-theme="md3"] .auth-card { max-width: 448px; border-radius: 28px; padding: 32px; }
+html[data-theme="md3"] .auth-brand h1 { font: var(--md-sys-typescale-headline-large); }
+
+@media (max-width: 767.98px) {
+    html[data-theme="md3"] :is(.page-title h1, .page-title h2, .clientes-header h2, .proveedores-title h2, .historial-header h2) {
+        font: 400 24px / 32px var(--font-family);
+    }
+    html[data-theme="md3"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal) { min-height: 48px; }
+    html[data-theme="md3"] .auth-card { padding: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme="md3"] *, html[data-theme="md3"] *::before, html[data-theme="md3"] *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
