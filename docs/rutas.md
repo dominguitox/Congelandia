@@ -78,6 +78,13 @@ Referencia completa de `routes/web.php`. Es la única fuente de rutas (no hay `r
 | GET | `/usuarios` | `usuarios.index` | `UserController@index` | Listado — Administrador en esta rama |
 | POST | `/usuarios` | `usuarios.store` | `UserController@store` | Crear usuario (hashea con bcrypt; ver pendientes por incompatibilidad con login) |
 
+### Ajustes (solo Administrador)
+
+| Método | URL | Nombre | Controller@method | Descripción |
+| --- | --- | --- | --- | --- |
+| GET | `/ajustes` | `ajustes.index` | `AjustesController@index` | Elegir tema y color del dispositivo |
+| PUT | `/ajustes` | `ajustes.update` | `AjustesController@update` | Guardar la preferencia en una cookie persistente del navegador |
+
 ### Sesión
 
 | Método | URL | Nombre | Controller@method | Descripción |

@@ -152,7 +152,7 @@ Los módulos que todavía usan clases Bootstrap (POS, dashboard, modales) se ali
 
 ## Sistema de temas
 
-El panel separa el **sistema visual** (`APP_TEMA=congelandia|md3`) de la **paleta** (`APP_COLOR=base|aurora|esmeralda|coral`). El sitio público conserva su configuración propia e independiente. Ver [Configuración de temas](temas.md) para ejemplos y compatibilidad.
+El panel separa el **sistema visual** (Congelandia, Material Design 3 o Windows 7) de la **paleta** (base, aurora, esmeralda o coral). Los administradores eligen ambos en **Ajustes**, con persistencia por dispositivo/navegador. El sitio público conserva su configuración propia e independiente. Ver [Configuración de temas](temas.md) para ejemplos y compatibilidad.
 
 ### Temas incluidos
 
@@ -165,11 +165,11 @@ El panel separa el **sistema visual** (`APP_TEMA=congelandia|md3`) de la **palet
 
 ### Cómo se activa
 
-1. En `.env`: `APP_TEMA=congelandia` o `md3`, y `APP_COLOR=aurora` (`base` conserva el color celeste).
-2. Limpiar caché de config si está activa: `php artisan config:clear`.
+1. Entrar como administrador y abrir **Ajustes → Apariencia**.
+2. Elegir tema y color y pulsar **Guardar en este dispositivo**. La cookie persistente mantiene la elección incluso después de cerrar sesión.
 3. El layout `resources/views/layouts/app.blade.php` carga la paleta y el sistema visual mediante `partials/theme.blade.php`, **después** de los estilos globales y de módulo. El layout público no carga estos temas.
 
-La selección se valida contra los archivos registrados en `config/theme.php` y funciona con configuración cacheada. Los antiguos valores de paleta en `APP_TEMA` siguen siendo compatibles si no se define `APP_COLOR`.
+La selección se valida contra los archivos registrados en `config/theme.php` y funciona con configuración cacheada. `APP_TEMA` y `APP_COLOR` solo establecen los valores iniciales para navegadores sin preferencia; si se cambian, hay que actualizar la caché de configuración. Los antiguos valores de paleta en `APP_TEMA` siguen siendo compatibles si no se define `APP_COLOR`.
 
 ### Cómo crear una paleta nueva
 
@@ -179,8 +179,8 @@ La selección se valida contra los archivos registrados en `config/theme.php` y 
    ```js
    'resources/css/theme/themes/<nombre>.css',
    ```
-4. Registra la paleta en `config/theme.php` y en `tools/theme/generate-md3.mjs` para generar también sus roles Material a partir de `--color-primary`.
-5. `npm run build` (o `npm run dev`) y activa con `APP_COLOR=<nombre>`.
+4. Registra la paleta en `config/theme.php`, en las opciones de `resources/views/ajustes/index.blade.php` y en `tools/theme/generate-md3.mjs` para generar también sus roles Material a partir de `--color-primary`.
+5. `npm run build` (o `npm run dev`) y activa la paleta desde Ajustes. Para el valor inicial, usa `APP_COLOR=<nombre>`.
 
 > Al desplegar: `public/build` es una salida generada; hay que volver a compilar (`npm run build`) para que el tema exista en el manifest.
 
@@ -202,6 +202,7 @@ La selección se valida contra los archivos registrados en `config/theme.php` y 
 | inventario | `inventario.css` (vacío, usa genéricos) | `.page` + `.data-table` |
 | categorias | `categorias.css` | `.page` + `.data-table` + panel de detalle |
 | usuarios | — (usa genéricos) | `.page` + `.data-table` |
+| ajustes | — (usa genéricos) | `.page` + `.panel` + formulario; preferencia por dispositivo |
 | dashboard | `dashboard.css` | `.page` + `.stats-grid` + paneles |
 | reportes | `reportes.css` | `.page` + paneles + `.data-table` |
 | POS | `pos.css` | `.page` + `.pos-grid` |

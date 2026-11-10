@@ -1,4 +1,4 @@
-<header class="navbar navbar-dark fixed-top shadow-sm app-header">
+<header @class(['navbar navbar-dark fixed-top shadow-sm app-header', 'title-bar active' => $appTheme['style'] === 'win7'])>
     <div class="container-fluid p-0 d-flex align-items-center">
 
         @if(auth()->check())
@@ -14,7 +14,7 @@
             </button>
         @endif
 
-        <a class="navbar-brand fw-bold mb-0 h1" href="/">Congelandia</a>
+        <a @class(['navbar-brand fw-bold mb-0 h1', 'title-bar-text' => $appTheme['style'] === 'win7']) href="/">Congelandia</a>
 
         <div class="ms-auto text-white app-user">
             <span class="app-user-name me-2">{{ auth()->user()->nombre ?? 'Nombre del usuario' }}</span>

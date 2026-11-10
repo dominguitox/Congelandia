@@ -4,6 +4,7 @@
 $styles = [
     'congelandia' => null,
     'md3' => 'resources/css/theme/md3.css',
+    'win7' => 'resources/css/theme/win7.css',
 ];
 $colors = [
     'base' => null,
@@ -20,6 +21,8 @@ $style = array_key_exists($requestedTheme, $styles) ? $requestedTheme : 'congela
 $color = array_key_exists($requestedColor, $colors) ? $requestedColor : 'base';
 
 return [
+    'styles' => $styles,
+    'colors' => $colors,
     'style' => $style,
     'color' => $color,
     'style_asset' => $styles[$style],

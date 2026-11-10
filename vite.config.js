@@ -12,6 +12,7 @@ export default defineConfig({
 
                 'resources/css/app.css',
                 'resources/css/theme/md3.css',
+                'resources/css/theme/win7.css',
                 'resources/css/reportes.css',
 
                 'resources/css/theme/themes/aurora.css',

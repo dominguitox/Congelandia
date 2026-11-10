@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HistorialController;
+use App\Http\Controllers\AjustesController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
@@ -63,6 +64,11 @@ Route::post(
 // =========================================================
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/ajustes', [AjustesController::class, 'index'])
+        ->middleware('role:Administrador')->name('ajustes.index');
+    Route::put('/ajustes', [AjustesController::class, 'update'])
+        ->middleware('role:Administrador')->name('ajustes.update');
 
 
     // =====================================================

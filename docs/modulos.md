@@ -138,6 +138,10 @@ Gestión de usuarios del sistema sin update ni delete (mejoras pendientes).
 
 Permite mostrar la versión de la app en el sistema (sidebar).
 
+## 13. Ajustes del dispositivo
+
+Disponible únicamente para administradores en `GET /ajustes`; guarda con `PUT /ajustes`. [AjustesController](../app/Http/Controllers/AjustesController.php) muestra [la vista de apariencia](../resources/views/ajustes/index.blade.php) y valida tema y color. La elección permanece en una cookie cifrada de este navegador durante un año, incluso al cerrar sesión o cambiar de cuenta; no se almacena en la base de datos ni modifica otros dispositivos. El sitio público conserva sus estilos. Ver [temas](temas.md).
+
 ## Módulos huérfanos (código sin ruta ni vista)
 
 - `PromocionController` (CRUD completo) — vistas `promociones.*` inexistentes y sin rutas.

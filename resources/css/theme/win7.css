@@ -1,0 +1,446 @@
+@import '7.css/dist/7.scoped.css';
+
+/* 7.css is scoped to body.win7. The adapter retains Bootstrap behavior and
+   the app's responsive layout, while APP_COLOR supplies the Aero accent. */
+:root[data-theme="win7"] {
+    color-scheme: light;
+    --win7-accent: var(--color-primary);
+    --win7-accent-dark: color-mix(in srgb, var(--win7-accent) 45%, #122031);
+    --win7-glass: color-mix(in srgb, var(--win7-accent) 28%, #d9edf7);
+    --win7-selection: color-mix(in srgb, var(--win7-accent) 16%, #ffffff);
+    --win7-selection-border: color-mix(in srgb, var(--win7-accent) 45%, #9cb3c7);
+    --color-text: #1e1e1e;
+    --color-text-heading: #1e1e1e;
+    --color-text-muted: #4a4a4a;
+    --color-text-soft: #595959;
+    --color-text-faint: #626262;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f5f7fa;
+    --color-surface-input: #ffffff;
+    --color-page-bg: #f0f3f7;
+    --color-border: #b5bdc5;
+    --color-border-soft: #d6dce2;
+    --color-table-header: #f5f5f5;
+    --color-btn-muted-bg: #f0f0f0;
+    --color-btn-muted-bg-hover: var(--win7-selection);
+    --color-btn-muted-text: #222222;
+    --color-btn-neutral-bg: #f0f0f0;
+    --color-btn-neutral-text: #404040;
+    --color-btn-expand-bg: #f1f5f9;
+    --color-btn-expand-bg-hover: var(--win7-selection);
+    --color-btn-expand-text: var(--win7-accent-dark);
+    --radius-2xs: 2px;
+    --radius-xs: 3px;
+    --radius-sm: 3px;
+    --radius-md: 3px;
+    --radius-lg: 4px;
+    --radius-xl: 5px;
+    --radius-2xl: 5px;
+    --radius-3xl: 6px;
+    --radius-pill: 3px;
+    --shadow-card: 0 1px 3px #00000014;
+    --shadow-card-soft: 0 1px 2px #00000014;
+    --shadow-card-md: 0 2px 6px #00000022;
+    --shadow-modal: 0 8px 28px #00000066, inset 0 0 0 1px #ffffffcc;
+    --shadow-modal-lg: var(--shadow-modal);
+    --font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    --fs-xs: 12px;
+    --fs-sm: 13px;
+    --fs-base: 14px;
+    --fs-md: 14px;
+    --fs-lg: 16px;
+    --fs-xl: 18px;
+    --fs-2xl: 22px;
+    --fs-3xl: 28px;
+    --space-xl: 24px;
+    --space-3xl: 32px;
+    --control-height: 36px;
+    --control-height-sm: 32px;
+    --module-padding: 24px;
+    --header-height: 56px;
+    --sidebar-width: 248px;
+    --bs-body-font-family: var(--font-family);
+    --bs-body-color: var(--color-text);
+    --bs-body-bg: var(--color-page-bg);
+    --bs-border-color: var(--color-border);
+    --bs-secondary-color: var(--color-text-muted);
+    --bs-link-color: var(--win7-accent-dark);
+}
+
+/* Override the library variables on its actual scope, where they are declared. */
+html[data-theme="win7"] body.win7 {
+    --w7-font: 14px / 1.4 var(--font-family);
+    --w7-el-bd-h: var(--win7-selection-border);
+    --w7-el-bd-a: var(--win7-accent-dark);
+    --w7-el-grad-h: linear-gradient(#ffffff 45%, var(--win7-selection) 45%, color-mix(in srgb, var(--win7-accent) 26%, #ffffff));
+    --w7-el-grad-a: linear-gradient(var(--win7-selection), color-mix(in srgb, var(--win7-accent) 32%, #ffffff));
+    --w7-w-bg: var(--win7-glass);
+    --w7-w-bd: var(--win7-accent-dark);
+    color: var(--color-text);
+    font: var(--w7-font);
+    background: var(--color-page-bg);
+}
+
+/* Aero title bar and an Explorer-style navigation pane. */
+html[data-theme="win7"] .app-header {
+    height: var(--header-height);
+    padding: 0 20px;
+    background: linear-gradient(115deg, #ffffffbb, transparent 25%, #ffffff77 42%, transparent 65%),
+        linear-gradient(#ffffffaa 0 45%, #ffffff33 46%, #ffffff88), var(--win7-glass);
+    border-bottom: 1px solid var(--win7-selection-border);
+    box-shadow: inset 0 1px 0 #ffffff, 0 1px 5px #00000022 !important;
+    backdrop-filter: blur(16px);
+}
+html[data-theme="win7"] .app-header :is(.navbar-brand, .app-user, .app-menu-btn) { color: #182632 !important; }
+html[data-theme="win7"] .app-header .navbar-brand { font: 600 20px / 1.2 var(--font-family); text-shadow: 0 0 8px #ffffff, 0 1px #ffffff; }
+html[data-theme="win7"] .app-user .badge { background: #ffffffbb !important; color: var(--win7-accent-dark) !important; border: 1px solid #ffffff; }
+html[data-theme="win7"] .sidebar {
+    background: linear-gradient(90deg, #edf3f9, #ffffff 85%);
+    border-right: 1px solid #bec9d5;
+    box-shadow: inset -1px 0 #ffffff;
+}
+html[data-theme="win7"] .sidebar ul { gap: 3px; }
+html[data-theme="win7"] .sidebar ul li a {
+    padding: 10px 14px;
+    border: 1px solid transparent !important;
+    border-radius: 3px;
+    font: 400 14px / 20px var(--font-family);
+    font-weight: 400 !important;
+    color: #243746 !important;
+}
+html[data-theme="win7"] .sidebar ul li a:hover {
+    background: linear-gradient(#ffffff, var(--win7-selection));
+    border-color: var(--win7-selection-border) !important;
+}
+html[data-theme="win7"] .sidebar ul li a[aria-current="page"] {
+    background: linear-gradient(#ffffffcc, transparent), var(--win7-selection);
+    border-color: var(--win7-selection-border) !important;
+    box-shadow: inset 0 0 0 1px #ffffffcc;
+}
+html[data-theme="win7"] .sidebar-logout { color: #8d2424; font-weight: 400; }
+html[data-theme="win7"] .app-main {
+    background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--win7-accent) 8%, transparent), transparent 60%), #f3f6fa;
+}
+
+/* Explorer content, group boxes and toolbars. */
+html[data-theme="win7"] :is(.page-title h1, .page-title h2, .clientes-header h2, .proveedores-title h2, .historial-header h2) {
+    font: 400 28px / 1.25 var(--font-family);
+    letter-spacing: 0;
+    color: var(--win7-accent-dark);
+}
+html[data-theme="win7"] :is(.panel, .card, .stat-tile, .cliente-card, .proveedor-card, .stat-card, .historial-card, .clientes-table, .proveedores-table-container) {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="win7"] :is(.panel-head, .card-header) {
+    background: linear-gradient(#fbfcfd 45%, #edf1f5 45%, #e7edf3);
+    border-bottom: 1px solid #c3cbd4;
+    box-shadow: inset 0 1px #ffffff;
+    padding: 14px 18px;
+}
+html[data-theme="win7"] :is(.panel-head, .card-header) :is(h2, h3, p) { color: #263d50; }
+html[data-theme="win7"] :is(.panel-head h2, .panel-head h3, .section-head h2, .section-head h3) { font-weight: 400; }
+html[data-theme="win7"] .panel-head--accent { background: linear-gradient(#ffffff, var(--win7-selection)); }
+html[data-theme="win7"] .panel-head--accent :is(h2, h3, p) { color: var(--win7-accent-dark); }
+html[data-theme="win7"] .card-icon { border: 1px solid #ffffff; box-shadow: inset 0 1px #ffffffbb; border-radius: 5px; }
+html[data-theme="win7"] :is(.stat-tile-info, .cliente-card, .proveedor-card, .stat-card) strong { font-weight: 400; }
+
+/* 7.css provides real button bevels, hover and pressed layers. Apply the same
+   variables to link buttons, and retain appropriate sizes for touch devices. */
+html[data-theme="win7"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal, .btn-agregar, .btn-nuevo-proveedor,
+    .btn-cancelar, .btn-pago-confirmar, .btn-pago-cancelar, .btn-editar-guardar, .btn-editar-cancelar, .clientes-actions button, .sidebar-logout) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    height: auto;
+    padding: 6px 16px;
+    background: var(--w7-el-grad);
+    border: 1px solid var(--w7-el-bd);
+    border-radius: var(--w7-el-bdr);
+    box-shadow: var(--w7-el-sd);
+    color: var(--win7-button-text, #222222);
+    font: var(--w7-font);
+    font-weight: 400;
+    text-decoration: none;
+    transform: none;
+    filter: none;
+}
+html[data-theme="win7"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal):hover {
+    background: var(--w7-el-grad-h);
+    border-color: var(--w7-el-bd-h);
+    color: var(--win7-button-text, #222222);
+    transform: none;
+    filter: none;
+}
+html[data-theme="win7"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal):active { background: var(--w7-el-grad-a); transform: none; }
+html[data-theme="win7"] :is(.btn-solid, .btn-primary, .btn-pago-confirmar, .btn-editar-guardar, .btn-modal.guardar, .clientes-actions button) {
+    border-color: var(--win7-accent-dark);
+    background: var(--w7-el-grad-h);
+    box-shadow: inset 0 0 0 1px #ffffff, 0 0 0 1px var(--win7-selection);
+}
+/* Set the library's state-layer variables on the destructive control itself.
+   This also colors its ::before/::after hover and pressed layers, including
+   icon buttons, custom dialogs and buttons created by the POS at runtime. */
+html[data-theme="win7"] :is(.btn-danger, .btn-outline-danger, .btn-solid--danger, .icon-btn--danger,
+    .btn-accion.eliminar, .btn-accion-proveedor.btn-eliminar, .btn-modal.eliminar-confirmar, .sidebar-logout) {
+    --w7-el-bd: #b67974;
+    --w7-el-bd-h: #aa3d37;
+    --w7-el-bd-a: #8c2b25;
+    --w7-el-grad: linear-gradient(#fffafa 45%, #f7e7e6 45%, #edcaca);
+    --w7-el-grad-h: linear-gradient(#fff4f2 45%, #f7c5c1 45%, #e9aaa4);
+    --w7-el-grad-a: linear-gradient(#f5d3cf, #e3a19b 30% 50%, #d2837d 50%, #c8746e);
+    --win7-button-text: #651b16;
+    --win7-focus-color: #a52f2f;
+    color: var(--win7-button-text);
+    border-color: var(--w7-el-bd);
+    box-shadow: var(--w7-el-sd);
+    animation: none;
+}
+html[data-theme="win7"] :is(.btn-success, .btn-solid--success) { color: #185b2c; }
+html[data-theme="win7"] :is(.icon-btn, .btn-accion, .btn-accion-proveedor, .btn-expand, .btn-expandir, .app-menu-btn) {
+    min-width: 32px;
+    width: 32px;
+    min-height: 32px;
+    height: 32px;
+    padding: 3px;
+    border: 1px solid var(--w7-el-bd);
+    border-radius: 3px;
+    box-shadow: var(--w7-el-sd);
+    transform: none;
+    filter: none;
+}
+html[data-theme="win7"] .app-menu-btn { display: none; font-size: 20px; }
+html[data-theme="win7"] .ticket-linea .btn { min-width: 28px; min-height: 28px; padding: 2px 8px; }
+html[data-theme="win7"] :is(button, .btn, .btn-solid, .btn-soft, .btn-outline):is(:disabled, .disabled, [aria-disabled="true"]) {
+    color: #777777;
+    background: #f4f4f4;
+    border-color: #b9bec3;
+    box-shadow: none;
+    opacity: 1;
+    cursor: default;
+    animation: none;
+}
+html[data-theme="win7"] :is(button, [role="button"]):is(:disabled, .disabled, [aria-disabled="true"])::before,
+html[data-theme="win7"] :is(button, [role="button"]):is(:disabled, .disabled, [aria-disabled="true"])::after { display: none; }
+html[data-theme="win7"] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--win7-focus-color, var(--win7-accent-dark));
+    outline-offset: 2px;
+}
+
+/* Product cards are interactive content, not native command buttons. */
+html[data-theme="win7"] .producto-card {
+    min-width: 0;
+    min-height: 0;
+    padding: 10px;
+    text-align: left;
+    font: inherit;
+    background: #ffffff;
+    border: 1px solid #c3cbd4;
+    border-radius: 3px;
+    box-shadow: inset 0 1px #ffffff;
+    transform: none;
+}
+html[data-theme="win7"] .producto-card:hover { background: var(--win7-selection); border-color: var(--win7-selection-border); }
+html[data-theme="win7"] .producto-card::before, html[data-theme="win7"] .producto-card::after { content: none; }
+
+/* Sunken text boxes. Bootstrap retains its select arrow and validation icons. */
+html[data-theme="win7"] :is(.form-control, .form-select, .form-grid input, .campo-proveedor input,
+    .pago-form-group input, .pago-form-group select, .editar-form-group input, .clientes-actions input,
+    .historial-search input, .historial-select) {
+    min-height: 36px;
+    height: auto;
+    padding: 7px 10px;
+    border: 1px solid #8f9ba6;
+    border-radius: 2px;
+    background-color: #ffffff;
+    color: #1e1e1e;
+    box-shadow: inset 1px 1px 2px #0000001a;
+    font: var(--w7-font);
+}
+html[data-theme="win7"] :is(input, select, textarea):focus {
+    border-color: var(--win7-accent-dark);
+    box-shadow: inset 1px 1px 2px #0000001a, 0 0 0 1px var(--win7-selection-border);
+    outline: 0;
+}
+html[data-theme="win7"] :is(input, select, textarea):is(.is-invalid, [aria-invalid="true"]) { border-color: #a12622; }
+html[data-theme="win7"] :is(.form-control.bg-light, .form-select.bg-light) { background-color: #ffffff !important; border-color: #8f9ba6; }
+html[data-theme="win7"] :is(input, select, textarea):is(:disabled, [readonly]) { background-color: #f0f0f0; color: #626262; }
+html[data-theme="win7"] textarea.form-control { min-height: 90px; }
+html[data-theme="win7"] .form-label { font: 400 14px / 20px var(--font-family); }
+html[data-theme="win7"] .form-select { padding-right: 32px; }
+html[data-theme="win7"] .input-group > .form-control { border-radius: 2px 0 0 2px; }
+html[data-theme="win7"] .input-group > .btn { border-radius: 0 3px 3px 0; }
+html[data-theme="win7"] :is(.buscador-producto, .buscador-proveedor) {
+    background: #ffffff;
+    border: 1px solid #8f9ba6;
+    border-radius: 2px;
+    box-shadow: inset 1px 1px 2px #0000001a;
+}
+html[data-theme="win7"] :is(.buscador-producto, .buscador-proveedor) input {
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+html[data-theme="win7"] :is(.buscador-producto, .buscador-proveedor):focus-within { outline: 2px solid var(--win7-selection-border); }
+
+/* 7.css requires adjacent labels for its replacement checkbox/radio. Existing
+   templates also wrap their labels, so use visible native controls for both. */
+html[data-theme="win7"] .win7 input:is([type="checkbox"], [type="radio"]) {
+    appearance: auto;
+    position: static;
+    opacity: 1;
+    min-width: 16px;
+    width: 16px;
+    min-height: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    background: initial;
+    border: initial;
+    box-shadow: none;
+    accent-color: var(--win7-accent-dark);
+    flex: none;
+}
+html[data-theme="win7"] .win7 input:is([type="checkbox"], [type="radio"]) + label::before,
+html[data-theme="win7"] .win7 input:is([type="checkbox"], [type="radio"]) + label::after { content: none; }
+html[data-theme="win7"] .form-check { display: flex; align-items: center; gap: 8px; padding-left: 0; }
+
+/* List view headers and selection keep the table's existing overflow wrapper. */
+html[data-theme="win7"] table {
+    --bs-table-bg: #ffffff;
+    --bs-table-color: #222222;
+    --bs-table-border-color: #dde3e8;
+    --bs-table-hover-bg: var(--win7-selection);
+    --bs-table-hover-color: #222222;
+    font: var(--w7-font);
+    table-layout: auto;
+    white-space: normal;
+}
+html[data-theme="win7"] :is(.data-table, .clientes-table table, .proveedores-table, .historial-table) th {
+    height: auto;
+    padding: 10px 14px;
+    background: linear-gradient(#ffffff, #f5f5f5 50%, #e9edf1);
+    border-right: 1px solid #d6dce2;
+    border-bottom: 1px solid #bac4ce;
+    color: #333333;
+    font-weight: 400;
+}
+html[data-theme="win7"] :is(.data-table, .clientes-table table, .proveedores-table, .historial-table) td {
+    height: auto;
+    padding: 10px 14px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+html[data-theme="win7"] :is(.data-table, .clientes-table table, .proveedores-table, .historial-table) tbody tr:hover { background: var(--win7-selection); }
+html[data-theme="win7"] :is(.pill, .badge, .estado-badge) { border-radius: 3px; font-weight: 400; }
+html[data-theme="win7"] .reportes-tabs { gap: 3px; padding-bottom: 0; border-color: var(--color-border); }
+html[data-theme="win7"] .reportes-tab {
+    background: linear-gradient(#ffffff, #e5eaf0);
+    border: 1px solid var(--color-border);
+    border-bottom: 0;
+    border-radius: 4px 4px 0 0;
+    color: #333333;
+}
+html[data-theme="win7"] .reportes-tab--active { background: #ffffff; box-shadow: inset 0 3px var(--win7-accent); color: var(--win7-accent-dark); }
+html[data-theme="win7"] .reportes-tab:hover { background: var(--win7-selection); color: var(--win7-accent-dark); }
+
+/* Real application dialogs adopt the Aero frame without adding fake window
+   controls or changing Bootstrap/custom modal open and close behavior. */
+html[data-theme="win7"] :is(.modal-content, .modal-proveedor, .modal-confirmacion, .modal-historial-contenido, .modal-pago-contenido, .modal-editar-contenido) {
+    background: #f0f0f0;
+    border: 5px solid var(--win7-glass);
+    border-radius: 6px;
+    box-shadow: var(--shadow-modal);
+    color: #222222;
+}
+html[data-theme="win7"] .modal-header {
+    background: linear-gradient(#ffffffaa, transparent), var(--win7-glass) !important;
+    border-bottom: 1px solid #a9b7c6;
+    padding: 10px 14px;
+    color: #182632 !important;
+}
+html[data-theme="win7"] .modal-header :is(.modal-title, .text-white, h3) {
+    color: #182632 !important;
+    font: 400 18px / 26px var(--font-family);
+    text-shadow: 0 0 6px #ffffff, 0 1px #ffffff;
+}
+html[data-theme="win7"] .modal-footer { background: #e7eaf0 !important; border-top: 1px solid #c7cdd6; }
+html[data-theme="win7"] :is(.btn-close, .btn-cerrar-modal, .cerrar-historial, .cerrar-pago, .cerrar-editar) {
+    min-width: 38px;
+    width: 38px;
+    min-height: 26px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid #7e2922;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(#eeaca2 45%, #bd5848 46%, #a93625);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px #ffffff66;
+    font: 22px / 22px var(--font-family);
+    opacity: 1;
+    filter: none;
+}
+html[data-theme="win7"] .btn-close::before {
+    content: '\00d7';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 1;
+    background: none;
+    color: #ffffff;
+    box-shadow: none;
+    line-height: 22px;
+}
+html[data-theme="win7"] .btn-close::after { display: none; }
+html[data-theme="win7"] :is(.btn-cerrar-modal, .cerrar-historial, .cerrar-pago, .cerrar-editar)::before,
+html[data-theme="win7"] :is(.btn-cerrar-modal, .cerrar-historial, .cerrar-pago, .cerrar-editar)::after { display: none; }
+html[data-theme="win7"] :is(.btn-close, .btn-cerrar-modal, .cerrar-historial, .cerrar-pago, .cerrar-editar):hover {
+    background: linear-gradient(#f1aa7b 45%, #db5839 46%, #ac291c);
+    border-color: #7e2922;
+    color: #ffffff;
+}
+html[data-theme="win7"] :is(.historial-info > div, .productos-detalle-row > td, .editar-rut) { background: #edf1f6; }
+html[data-theme="win7"] .alert { border: 1px solid currentColor; border-radius: 3px; font-weight: 400; }
+html[data-theme="win7"] .flash-error { border: 1px solid #b05a50; border-radius: 3px; box-shadow: 2px 3px 7px #00000033; }
+
+/* Login window, centered independently of the authenticated navigation. */
+html[data-theme="win7"] body:has(.auth-page) .sidebar { display: none; }
+html[data-theme="win7"] body:has(.auth-page) .app-main { margin-left: 0; }
+html[data-theme="win7"] body:has(.auth-page) .app-user { display: none; }
+html[data-theme="win7"] .auth-card {
+    max-width: 420px;
+    background: #f0f0f0;
+    border: 6px solid var(--win7-glass);
+    border-radius: 7px;
+    box-shadow: var(--shadow-modal);
+}
+html[data-theme="win7"] .auth-brand h1 { font-weight: 400; color: var(--win7-accent-dark); }
+html[data-theme="win7"] .auth-logo { background: linear-gradient(#ffffff, var(--win7-selection)); border: 1px solid var(--win7-selection-border); }
+
+@media (max-width: 991.98px) {
+    html[data-theme="win7"] .app-menu-btn { display: inline-flex; }
+    html[data-theme="win7"] .sidebar { width: min(280px, 82vw); }
+}
+@media (max-width: 767.98px) {
+    html[data-theme="win7"] :is(.btn, .btn-solid, .btn-soft, .btn-outline, .btn-modal, .sidebar-logout) { min-height: 44px; }
+    html[data-theme="win7"] :is(.icon-btn, .btn-accion, .btn-accion-proveedor, .btn-expand, .btn-expandir, .app-menu-btn) { min-width: 40px; width: 40px; min-height: 40px; height: 40px; }
+    html[data-theme="win7"] :is(.form-control, .form-select, .form-grid input, .campo-proveedor input, .pago-form-group input, .pago-form-group select, .editar-form-group input, .clientes-actions input, .historial-search input, .historial-select) { min-height: 44px; font-size: 16px; }
+    html[data-theme="win7"] :is(.page-title h1, .page-title h2, .clientes-header h2, .proveedores-title h2, .historial-header h2) { font-size: 24px; }
+    html[data-theme="win7"] .app-header { padding: 0 12px; }
+    html[data-theme="win7"] .app-header .container-fluid { min-width: 0; }
+    html[data-theme="win7"] .auth-card { padding: 24px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme="win7"] *, html[data-theme="win7"] *::before, html[data-theme="win7"] *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

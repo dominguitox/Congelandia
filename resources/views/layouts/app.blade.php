@@ -1,5 +1,6 @@
+@php($appTheme = app(\App\Support\DeviceTheme::class)->resolve(request()))
 <!DOCTYPE html>
-<html lang="es" data-theme="{{ config('theme.style') }}" data-color="{{ config('theme.color') }}">
+<html lang="es" data-theme="{{ $appTheme['style'] }}" data-color="{{ $appTheme['color'] }}">
 
 <head>
 
@@ -17,7 +18,7 @@
         'resources/js/app.js'
     ])
 
-    @if(config('theme.style') === 'md3')
+    @if($appTheme['style'] === 'md3')
         @fonts('roboto')
     @endif
 
@@ -27,7 +28,7 @@
 
 </head>
 
-<body class="bg-light">
+<body @class(['bg-light', 'win7' => $appTheme['style'] === 'win7'])>
 
     {{-- Mensajes de error --}}
     @if(session('error'))

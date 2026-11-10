@@ -11,6 +11,7 @@
                 ['label' => 'Categorías', 'url' => route('categorias.index'), 'pattern' => 'categorias.*', 'admin' => true],
                 ['label' => 'Usuarios', 'url' => route('usuarios.index'), 'pattern' => 'usuarios.*', 'admin' => true],
                 ['label' => 'Reportes', 'url' => route('reportes.index'), 'pattern' => 'reportes.*', 'admin' => true],
+                ['label' => 'Ajustes', 'url' => route('ajustes.index'), 'pattern' => 'ajustes.*', 'admin' => true],
             ];
         @endphp
 
