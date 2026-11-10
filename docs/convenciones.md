@@ -82,6 +82,12 @@ Route::middleware(['auth', 'role:Administrador'])->group(...);
 - Rama por feature desde `main` + Pull Request (flujo actual del equipo: `cambios-elias`, `recuperacion-categorias-domingo`).
 - No commitear `.env`, `node_modules` ni dumps grandes de BD ya cubiertos por `.gitignore`.
 
+## Despliegues DirectAdmin
+
+El código fuente se fusiona en `main` mediante Pull Request. La rama `deploy` se genera exclusivamente con GitHub Actions y contiene una distribución lista para DirectAdmin, con `vendor/`, `public_html/build/`, `release.json` y `CHANGELOG.md`.
+
+Los agentes no deben desarrollar, corregir archivos ni hacer commits directamente en `deploy`. Después de fusionar una funcionalidad, el desarrollador ejecuta **Preparar despliegue DirectAdmin** desde `main`, revisa la Release y realiza manualmente **Fetch → Deploy** en DirectAdmin. Los cambios de base de datos, `.env`, `APP_KEY`, respaldos, permisos y pruebas posteriores se deben comunicar de forma explícita; Git no sustituye esos pasos. Ver [despliegue-directadmin.md](despliegue-directadmin.md) y las instrucciones para agentes en [../AGENTS.md](../AGENTS.md).
+
 ## Estilo / formato
 
 - Pint disponible (`composer.json` requiere `laravel/pint`): correr `vendor/bin/pint` sobre archivos propios antes de PR.

@@ -47,6 +47,8 @@ mysql -u root -p < "procedimientos.sql"    # stored procedures (opcional)
 
 Guía completa y solución de problemas: [docs/instalacion.md](docs/instalacion.md)
 
+Publicación sin SSH en DirectAdmin: [docs/despliegue-directadmin.md](docs/despliegue-directadmin.md). Las reglas que deben seguir agentes y desarrolladores están en [AGENTS.md](AGENTS.md).
+
 ## Desarrollo
 
 ```bash
