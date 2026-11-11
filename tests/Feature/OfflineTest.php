@@ -92,7 +92,8 @@ test('discrepancias de stock o precio guardan el original sin aplicar ni resolve
         ->assertJsonPath('conflictos.0.campo', $campo);
     $this->assertDatabaseCount('salida', 0);
     $stored = DB::table('operaciones_offline')->first();
-    expect(json_decode($stored->datos, true))->toBe($op);
+    // MySQL normaliza el orden de las claves de los objetos JSON.
+    expect(json_decode($stored->datos, true))->toEqual($op);
     $this->postJson(route('offline.sync'), $op)->assertConflict()->assertJsonPath('repetida', true);
     expect((int) Producto::conDetalle()->firstOrFail()->stock)->toBe(10);
 })->with(['stock', 'precio']);
