@@ -59,6 +59,7 @@
 }
 
 .producto-card {
+    position: relative;
     display: grid;
     grid-template-columns: 52px minmax(0, 1fr);
     align-items: center;
@@ -71,6 +72,59 @@
     cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease,
                 border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.producto-card-fijar {
+    position: absolute;
+    z-index: 1;
+    top: 6px;
+    right: 6px;
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid #159b83;
+    border-radius: 50%;
+    background: #fff;
+    color: #087f70;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.92);
+    transition: opacity .15s ease, transform .15s ease, background .15s ease, color .15s ease;
+}
+
+.producto-card:hover .producto-card-fijar,
+.producto-card:focus-within .producto-card-fijar,
+.producto-card-fijar:focus-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.producto-card-fijar:hover {
+    background: #e1f7f2;
+}
+
+.producto-card-fijar[aria-pressed="true"] {
+    border-color: #087f70;
+    background: #0d9d86;
+    color: #fff;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.producto-card-fijar:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.producto-card-top {
+    padding-right: 28px;
 }
 
 .producto-card-imagen {
@@ -292,6 +346,65 @@
    RESPONSIVE
    ========================================================= */
 
+.cobro-productos {
+    padding-left: 20px;
+    overflow-wrap: anywhere;
+}
+
+.cobro-total,
+.cobro-resumen > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cobro-total strong {
+    font-size: var(--fs-xl);
+}
+
+.cobro-pago {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.cobro-pago-acciones {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cobro-billetes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.cobro-resumen {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+.cobro-vuelto {
+    color: var(--color-success);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+}
+
+@media (max-width: 480px) {
+    .cobro-pago {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 @media (max-width: 1000px) {
 
     .pos-grid {
@@ -343,5 +456,19 @@
 
     .producto-card-pie {
         flex-wrap: wrap;
+    }
+}
+
+@media (hover: none) {
+    .producto-card-fijar {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .producto-card-fijar {
+        transition: none;
     }
 }

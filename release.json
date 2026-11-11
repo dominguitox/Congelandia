@@ -1,7 +1,7 @@
 {
-  "numero": "1.5.0",
-  "comentarios": "### Cambios del código\n\n- win7 y ajustes. temas locales (768288a)\n- md3 listo (04e5752)\n- Documenta flujo de despliegue para agentes (5200f6a)\n- fix pendiente #34 fecha idioma chile (38343df)\n\nCódigo de origen: 4e950283f2bcbc3dc0df8074f67ce2964c27f03c",
-  "fecha_creacion": "2026-11-10T19:12:06.119Z",
-  "commit": "4e950283f2bcbc3dc0df8074f67ce2964c27f03c",
+  "numero": "1.6.0",
+  "comentarios": "### Cambios del código\n\n- test: compara contenido JSON offline sin depender del orden de claves (ffb3710)\n- feat: agrega POS e inventario offline con sincronizacion idempotente (1237660)\n- Agrega confirmacion de venta, vuelto y pagos mixtos (79ef1df)\n- feat(pos): allow pinning products in catalog (e6c19e1)\n\nCódigo de origen: b4685e647bbc389e15303104887eb9efc84d7e8e",
+  "fecha_creacion": "2026-11-11T14:22:10.909Z",
+  "commit": "b4685e647bbc389e15303104887eb9efc84d7e8e",
   "public_directory": "public_html"
 }

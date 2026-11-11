@@ -35,6 +35,10 @@
     "file": "assets/bootstrap.esm-DM7gpgIx.js",
     "name": "bootstrap.esm"
   },
+  "_cobro-CQDX0o90.js": {
+    "file": "assets/cobro-CQDX0o90.js",
+    "name": "cobro"
+  },
   "_fonts-5oMh9F6J.css": {
     "file": "assets/fonts-5oMh9F6J.css",
     "src": "_fonts-5oMh9F6J.css"
@@ -95,6 +99,10 @@
     "file": "assets/instrument-sans-700-normal-DfAjL1vF.woff",
     "src": "_instrument-sans-700-normal-DfAjL1vF.woff"
   },
+  "_register-B9CeC-AK.js": {
+    "file": "assets/register-B9CeC-AK.js",
+    "name": "register"
+  },
   "_roboto-400-normal-BqEyEoaF.woff2": {
     "file": "assets/roboto-400-normal-BqEyEoaF.woff2",
     "src": "_roboto-400-normal-BqEyEoaF.woff2"
@@ -118,6 +126,10 @@
   "_roboto-700-normal-YuyVweIx.woff": {
     "file": "assets/roboto-700-normal-YuyVweIx.woff",
     "src": "_roboto-700-normal-YuyVweIx.woff"
+  },
+  "_sync-CxAohSr7.js": {
+    "file": "assets/sync-CxAohSr7.js",
+    "name": "sync"
   },
   "resources/css/app.css": {
     "file": "assets/app-C7VSUPHR.css",
@@ -183,7 +195,7 @@
     "isEntry": true
   },
   "resources/css/pos.css": {
-    "file": "assets/pos-DxnYZCbk.css",
+    "file": "assets/pos-Bxe1wCaS.css",
     "name": "pos",
     "names": [
       "pos.css"
@@ -317,6 +329,30 @@
     "src": "resources/js/historial.js",
     "isEntry": true
   },
+  "resources/js/offline/bridge.js": {
+    "file": "assets/bridge-CIUWh66Y.js",
+    "name": "bridge",
+    "src": "resources/js/offline/bridge.js",
+    "isEntry": true,
+    "imports": [
+      "_sync-CxAohSr7.js",
+      "_register-B9CeC-AK.js"
+    ]
+  },
+  "resources/js/offline/index.js": {
+    "file": "assets/index-dZbmbOO9.js",
+    "name": "index",
+    "src": "resources/js/offline/index.js",
+    "isEntry": true,
+    "imports": [
+      "_cobro-CQDX0o90.js",
+      "_sync-CxAohSr7.js",
+      "_register-B9CeC-AK.js"
+    ],
+    "css": [
+      "assets/index-CC8lAmYN.css"
+    ]
+  },
   "resources/js/producto.js": {
     "file": "assets/producto-sn2_ljoH.js",
     "name": "producto",
@@ -333,9 +369,14 @@
     "isEntry": true
   },
   "resources/js/venta.js": {
-    "file": "assets/venta-D-y8Inzy.js",
+    "file": "assets/venta-7ax8VFz6.js",
     "name": "venta",
     "src": "resources/js/venta.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_bootstrap.esm-DM7gpgIx.js",
+      "_cobro-CQDX0o90.js",
+      "_sync-CxAohSr7.js"
+    ]
   }
 }

@@ -1,5 +1,16 @@
 # Historial de publicaciones
 
+## 1.6.0 — 2026-11-11
+
+### Cambios del código
+
+- test: compara contenido JSON offline sin depender del orden de claves (ffb3710)
+- feat: agrega POS e inventario offline con sincronizacion idempotente (1237660)
+- Agrega confirmacion de venta, vuelto y pagos mixtos (79ef1df)
+- feat(pos): allow pinning products in catalog (e6c19e1)
+
+Código de origen: b4685e647bbc389e15303104887eb9efc84d7e8e
+
 ## 1.5.0 — 2026-11-10
 
 ### Cambios del código

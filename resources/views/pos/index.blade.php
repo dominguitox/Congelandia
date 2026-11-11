@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div class="page" id="rutasPos" data-registrar-venta="{{ route('venta.registrar') }}" data-tipo-venta="{{ $idTipoVenta }}">
+<div class="page" id="rutasPos" data-registrar-venta="{{ route('venta.registrar') }}" data-tipo-venta="{{ $idTipoVenta }}" data-usuario="{{ auth()->id() }}">
 
     {{-- =====================================================
          ENCABEZADO
@@ -68,7 +68,13 @@
                             data-precio-normal="{{ $precioNormal }}"
                             data-precio-oferta="{{ $precioOferta }}"
                             data-descuento="{{ $descuentoOferta }}"
-                            data-stock="{{ $producto->stock }}" role="button" tabindex="0">
+                            data-stock="{{ $producto->stock }}" role="group" tabindex="0">
+
+                            <button type="button" class="producto-card-fijar" aria-pressed="false"
+                                aria-label="Fijar {{ $producto->nombre }} al inicio del listado"
+                                title="Fijar producto" data-nombre-producto="{{ $producto->nombre }}">
+                                <span aria-hidden="true">★</span>
+                            </button>
 
                             <div class="producto-card-imagen" aria-hidden="true">
                                 @if ($producto->imagenProducto)
@@ -152,26 +158,8 @@
                     </div>
                 </div>
 
-                <div class="ticket-cliente">
-                    <label for="cliente_select">Cliente</label>
-                    <select id="cliente_select" class="form-control">
-                        <option value="Ninguno">Ninguno</option>
-                        @foreach($clientes as $cliente)
-                            <option value="{{ $cliente->rutCliente }}">{{ $cliente->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="ticket-cliente">
-                    <label for="metodo_pago_select">Método de pago</label>
-                    <select id="metodo_pago_select" class="form-control">
-                        @foreach($metodosPago as $metodo)
-                            <option value="{{ $metodo->idMetodo }}">{{ $metodo->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <button class="btn-solid btn-solid--success ticket-cobrar" onclick="registrarVenta()">Cobrar</button>
+                <p id="resultado-venta" role="status" aria-live="polite"></p>
+                <button type="button" id="btn-cobrar" class="btn-solid btn-solid--success ticket-cobrar">Cobrar</button>
 
             </div>
 
@@ -181,6 +169,81 @@
 
 </div>
 
+<div class="modal fade" id="modalConfirmarVenta" tabindex="-1" aria-labelledby="tituloConfirmarVenta" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <form class="modal-content" id="form-confirmar-venta">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="tituloConfirmarVenta">Confirmar venta</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Revisa los productos, el cliente y los pagos antes de registrar la venta.</p>
+                <ul class="cobro-productos" id="resumen-productos"></ul>
+                <p class="cobro-total">Total de la venta <strong id="confirmacion-total">$0</strong></p>
+                <fieldset id="datos-cobro">
+                    <legend class="visually-hidden">Datos del cobro</legend>
+                    <label for="cliente_select" class="form-label">Cliente</label>
+                    <select id="cliente_select" class="form-select mb-3">
+                        <option value="">Sin cliente</option>
+                        @foreach($clientes as $cliente)
+                            <option value="{{ $cliente->rutCliente }}">{{ $cliente->nombre }}</option>
+                        @endforeach
+                    </select>
+                    <h3 class="fs-6">Métodos de pago</h3>
+                    <p class="text-muted">Asigna cuánto de la venta se paga con cada método.</p>
+                    <div id="pagos-cobro"></div>
+                    <button type="button" class="btn btn-outline-primary mb-3" id="agregar-pago">Agregar otro método</button>
+                    <section id="efectivo-panel" hidden aria-labelledby="tituloEfectivo">
+                        <h3 class="fs-6" id="tituloEfectivo">Calcular vuelto</h3>
+                        <label for="efectivo-recibido" class="form-label">Efectivo recibido del cliente</label>
+                        <input type="number" id="efectivo-recibido" class="form-control" min="0" max="9999999999" step="1" inputmode="numeric" aria-describedby="ayudaBilletes">
+                        <p class="form-text" id="ayudaBilletes">Ingresa el monto o suma los billetes recibidos con estos botones.</p>
+                        <div class="cobro-billetes" role="group" aria-label="Sumar billetes al efectivo recibido">
+                            @foreach([1000, 2000, 5000, 10000, 20000] as $billete)
+                                <button type="button" class="btn btn-outline-secondary" data-billete="{{ $billete }}" aria-label="Sumar billete de {{ number_format($billete, 0, ',', '.') }} pesos">+${{ number_format($billete, 0, ',', '.') }}</button>
+                            @endforeach
+                            <button type="button" class="btn btn-outline-secondary" id="efectivo-exacto">Monto exacto</button>
+                            <button type="button" class="btn btn-outline-secondary" id="limpiar-efectivo">Limpiar</button>
+                        </div>
+                    </section>
+                </fieldset>
+                <dl class="cobro-resumen" aria-live="polite" aria-atomic="true">
+                    <div><dt>Aplicado a la venta</dt><dd id="cobro-asignado">$0</dd></div>
+                    <div><dt>Por asignar</dt><dd id="cobro-restante">$0</dd></div>
+                    <div><dt>Parte en efectivo</dt><dd id="cobro-efectivo">$0</dd></div>
+                    <div class="cobro-vuelto"><dt>Vuelto a entregar</dt><dd id="cobro-vuelto">$0</dd></div>
+                </dl>
+                <p id="error-cobro" class="text-danger" role="alert"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Volver</button>
+                <button type="submit" class="btn btn-success" id="confirmar-cobro">Confirmar y registrar venta</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<template id="plantilla-pago">
+    <div class="cobro-pago">
+        <div><label class="form-label" data-label-metodo>Método</label>
+            <select class="form-select" data-metodo required>
+                @foreach($metodosPago as $metodo)
+                    <option value="{{ $metodo->idMetodo }}" data-efectivo="{{ mb_strtolower(trim($metodo->nombre)) === 'efectivo' ? '1' : '0' }}">{{ $metodo->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div><label class="form-label" data-label-monto>Importe aplicado</label>
+            <input type="number" class="form-control" data-monto min="0" max="9999999999" step="1" inputmode="numeric" required>
+        </div>
+        <div class="cobro-pago-acciones">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-restante>Asignar restante</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" data-quitar>Quitar método</button>
+        </div>
+    </div>
+</template>
+
 @endsection
 
-@vite(['resources/js/venta.js'])
+@push('scripts')
+    @vite(['resources/js/venta.js'])
+@endpush
