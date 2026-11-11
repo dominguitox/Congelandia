@@ -87,6 +87,9 @@ jobs:
       - name: Comprobar calculo del cobro
         run: node --test tools/pos/cobro.test.mjs
 
+      - name: Comprobar cola offline
+        run: node --test tools/offline/*.test.mjs
+
       - name: Comprobar vistas y rutas
         run: |
           php artisan view:cache

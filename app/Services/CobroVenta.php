@@ -33,7 +33,7 @@ class CobroVenta
                 $lineas = [];
                 $total = 0;
                 foreach ($datos['productos'] as $linea) {
-                    $producto = Producto::where('codigo', $linea['id'])->first();
+                    $producto = Producto::where('codigo', $linea['id'])->lockForUpdate()->first();
                     if (! $producto) {
                         throw ValidationException::withMessages(['productos' => 'Uno de los productos ya no está disponible. Recarga el POS.']);
                     }
@@ -68,6 +68,9 @@ class CobroVenta
                     $nombre = DB::table('metodo_pago')->where('idMetodo', $pago['idMetodo'])->whereNull('deleted_at')->value('nombre');
                     if ($nombre === null) {
                         throw ValidationException::withMessages(['pagos' => 'Uno de los métodos de pago ya no está disponible.']);
+                    }
+                    if (str_contains(mb_strtolower($nombre), 'fiado')) {
+                        throw ValidationException::withMessages(['pagos' => 'El POS solo admite pagos completos; este método no está permitido.']);
                     }
                     if (mb_strtolower(trim($nombre)) === 'efectivo') {
                         $efectivo += (int) $pago['monto'];

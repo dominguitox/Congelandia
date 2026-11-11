@@ -28,7 +28,7 @@ class PosController extends Controller
             ])->get();
         $categorias = Categoria::all();
         $clientes = Cliente::all();
-        $metodosPago = DB::table('metodo_pago')->whereNull('deleted_at')->orderBy('idMetodo')->get();
+        $metodosPago = DB::table('metodo_pago')->whereNull('deleted_at')->whereRaw('LOWER(nombre) NOT LIKE ?', ['%fiado%'])->orderBy('idMetodo')->get();
         $idTipoVenta = DB::table('tipo_salida')->where('nombre', 'Venta')->whereNull('deleted_at')->value('idTipo');
 
         return view('pos.index', compact('productos', 'categorias', 'clientes', 'metodosPago', 'idTipoVenta'));

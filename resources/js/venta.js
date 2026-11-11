@@ -1,14 +1,34 @@
 import { Modal } from 'bootstrap';
 import { calcularCobro } from './cobro.js';
+import { localStore } from './offline/store.js';
+import { syncQueue } from './offline/sync.js';
 
-// 1. Cargamos el carrito desde localStorage al iniciar, o iniciamos un arreglo vacío
-let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+// Borradores y cobros se guardan por usuario en IndexedDB.
+let carrito = [];
+const almacenamiento = localStore();
+const usuarioLocal = Number(document.getElementById('rutasPos').dataset.usuario);
+let escriturasCarrito = Promise.resolve();
 const productosFijadosKey = 'pos:productos-fijados';
 let productosFijados = [];
 let ordenOriginalProductos = new Map();
 
 // Al cargar la página, dibujamos inmediatamente los productos si existen en caché
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        await almacenamiento.bind(usuarioLocal);
+        const cuenta = await almacenamiento.account(usuarioLocal);
+        carrito = cuenta?.draft?.pending?.carrito || cuenta?.draft?.carrito || [];
+        // Migrar el antiguo borrador solo después de guardarlo en IndexedDB.
+        if (!cuenta && localStorage.getItem('carrito')) {
+            carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            await almacenamiento.saveDraft(usuarioLocal, { carrito });
+            localStorage.removeItem('carrito');
+        }
+    } catch (error) {
+        document.getElementById('resultado-venta').textContent = 'No se pudo abrir el almacenamiento local: ' + error.message;
+        document.getElementById('btn-cobrar').disabled = true;
+        return;
+    }
     sincronizarPreciosDelCatalogo();
     actualizarTicketVenta();
 
@@ -45,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tarjetas.forEach((card) => actualizarControlFijado(card, productosFijados.includes(card.dataset.id)));
     guardarProductosFijados();
     ordenarProductosFijados();
-    iniciarCobro();
+    await iniciarCobro();
 });
 
 function guardarProductosFijados() {
@@ -104,9 +124,13 @@ function actualizarControlFijado(card, fijado) {
     card.classList.toggle('producto-card--fijado', fijado);
 }
 
-// Función auxiliar para guardar el estado actual en localStorage y actualizar la vista
+// Guardar el borrador en IndexedDB y actualizar la vista.
 function guardarYActualizar() {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
+    const copia = structuredClone(carrito);
+    escriturasCarrito = escriturasCarrito.catch(() => {}).then(() => almacenamiento.mutate(usuarioLocal, cuenta => {
+        cuenta.draft.carrito = copia;
+    }));
+    escriturasCarrito.catch(error => { document.getElementById('resultado-venta').textContent = 'No se pudo guardar el carrito: ' + error.message; });
     actualizarTicketVenta();
 }
 
@@ -126,12 +150,10 @@ function sincronizarPreciosDelCatalogo() {
         if (!item) return;
 
         item.nombre = card.dataset.nombre;
-        item.precioNormal = Number(card.dataset.precioNormal) || 0;
-        item.descuento = Number(card.dataset.descuento) || 0;
-        item.precio = Number(card.dataset.precioOferta) || 0;
+        // Conservar el precio elegido en el borrador. El servidor detecta
+        // discrepancias antes de aceptar el cobro.
         item.stock = Number(card.dataset.stock) || 0;
     });
-    localStorage.setItem('carrito', JSON.stringify(carrito));
 }
 
 window.agregarAlCarrito = function (card) {
@@ -289,7 +311,6 @@ let cobroPendiente = null;
 let enviandoCobro = false;
 let numeroPago = 0;
 let modalCobro;
-let clavePendiente;
 let errorServidorCobro = '';
 
 function totalCarrito() {
@@ -395,13 +416,51 @@ async function confirmarVenta(event) {
                 claveOperacion: crypto.randomUUID(),
             },
         };
-        localStorage.setItem(clavePendiente, JSON.stringify(cobroPendiente));
     }
     enviandoCobro = true;
     errorServidorCobro = '';
     document.getElementById('error-cobro').textContent = '';
     bloquearCobro();
     try {
+        await escriturasCarrito;
+        const cuenta = await almacenamiento.account(usuarioLocal);
+        if (cuenta?.snapshot && !cuenta.draft?.pending) {
+            const solicitud = cobroPendiente.solicitud;
+            const row = await almacenamiento.enqueue(usuarioLocal, {
+                id: solicitud.claveOperacion, usuario: usuarioLocal, fechaLocal: new Date().toISOString(), tipo: 'venta',
+                datos: { idTipo: solicitud.idTipo, rutCliente: solicitud.rutCliente, productos: solicitud.productos,
+                    pagos: solicitud.pagos, efectivoRecibido: solicitud.efectivoRecibido },
+            });
+            // La cola, el descuento provisional y la limpieza del borrador
+            // ya se confirmaron atómicamente antes de tocar la interfaz.
+            const local = await almacenamiento.account(usuarioLocal);
+            document.querySelectorAll('.producto-card').forEach(card => {
+                const producto = local.snapshot.productos.find(p => p.codigo === card.dataset.id);
+                if (!producto) return;
+                card.dataset.stock = producto.stock;
+                const badge = document.getElementById('badge-stock-' + producto.codigo);
+                if (badge) badge.dataset.stockInicial = producto.stock;
+            });
+            const efectivo = solicitud.pagos.filter(p => {
+                const metodo = local.snapshot.metodos.find(m => Number(m.idMetodo) === Number(p.idMetodo));
+                return metodo?.nombre.trim().toLowerCase() === 'efectivo';
+            }).reduce((suma, p) => suma + p.monto, 0);
+            const vuelto = efectivo ? Number(solicitud.efectivoRecibido) - efectivo : 0;
+            cobroPendiente = null; carrito = [];
+            actualizarTicketVenta();
+            enviandoCobro = false; modalCobro.hide();
+            document.getElementById('resultado-venta').textContent = 'Venta guardada en este equipo y pendiente de sincronización. Vuelto: $' + formatoCLP(vuelto) + '.';
+            if (navigator.onLine) {
+                try {
+                    await syncQueue(almacenamiento, usuarioLocal);
+                    document.getElementById('resultado-venta').textContent = 'Venta sincronizada. Vuelto: $' + formatoCLP(vuelto) + '.';
+                } catch (error) {
+                    document.getElementById('resultado-venta').textContent += ' ' + error.message + ' Revisa los movimientos en Trabajo offline.';
+                }
+            }
+            return row;
+        }
+        await almacenamiento.mutate(usuarioLocal, cuenta => { cuenta.draft.pending = structuredClone(cobroPendiente); });
         const response = await fetch(document.getElementById('rutasPos').dataset.registrarVenta, {
             method: 'POST',
             signal: AbortSignal.timeout(30000),
@@ -410,10 +469,6 @@ async function confirmarVenta(event) {
         });
         const data = await response.json();
         if (!response.ok || !data.success) {
-            if (response.status >= 400 && response.status < 500 && data.codigo !== 'operacion_utilizada') {
-                cobroPendiente = null;
-                localStorage.removeItem(clavePendiente);
-            }
             throw new Error(Object.values(data.errors || {}).flat().join(' ') || data.error || data.message || 'No se pudo confirmar el cobro.');
         }
         carrito.forEach(item => {
@@ -426,9 +481,8 @@ async function confirmarVenta(event) {
             }
         });
         cobroPendiente = null;
-        localStorage.removeItem(clavePendiente);
         carrito = [];
-        localStorage.removeItem('carrito');
+        await almacenamiento.mutate(usuarioLocal, cuenta => { cuenta.draft = { carrito: [] }; });
         actualizarTicketVenta();
         document.getElementById('cliente_select').value = '';
         enviandoCobro = false;
@@ -445,10 +499,9 @@ async function confirmarVenta(event) {
     }
 }
 
-function iniciarCobro() {
+async function iniciarCobro() {
     const elemento = document.getElementById('modalConfirmarVenta');
     modalCobro = Modal.getOrCreateInstance(elemento);
-    clavePendiente = 'cobroPendiente:' + document.getElementById('rutasPos').dataset.usuario;
     elemento.addEventListener('hide.bs.modal', event => { if (enviandoCobro) event.preventDefault(); });
     document.getElementById('btn-cobrar').addEventListener('click', abrirConfirmacion);
     document.getElementById('form-confirmar-venta').addEventListener('submit', confirmarVenta);
@@ -475,7 +528,7 @@ function iniciarCobro() {
         mostrarResumenCobro();
     });
     try {
-        const guardado = JSON.parse(localStorage.getItem(clavePendiente));
+        const guardado = (await almacenamiento.account(usuarioLocal))?.draft?.pending;
         if (guardado?.solicitud?.claveOperacion && Array.isArray(guardado.carrito)) {
             cobroPendiente = guardado;
             carrito = guardado.carrito;
@@ -486,7 +539,7 @@ function iniciarCobro() {
             abrirConfirmacion();
             document.getElementById('error-cobro').textContent = 'Hay un cobro cuyo resultado no se confirmó. Reintenta para consultar o registrar esa misma operación.';
         }
-    } catch {
-        localStorage.removeItem(clavePendiente);
+    } catch (error) {
+        document.getElementById('resultado-venta').textContent = 'No se pudo recuperar el cobro pendiente: ' + error.message;
     }
 }

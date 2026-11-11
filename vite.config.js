@@ -7,6 +7,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                'resources/js/offline/index.js',
+                'resources/js/offline/bridge.js',
                 'resources/js/venta.js',
                 'resources/js/producto.js',
 
