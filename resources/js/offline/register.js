@@ -14,3 +14,13 @@ export async function registerShell() {
     });
     return registration;
 }
+
+export function onShellUpdate(callback) {
+    if (!navigator.serviceWorker) return;
+    let controlled = Boolean(navigator.serviceWorker.controller);
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (controlled) callback();
+        controlled = true;
+    });
+    if (navigator.onLine) navigator.serviceWorker.getRegistration('/').then(registration => registration?.update()).catch(() => {});
+}

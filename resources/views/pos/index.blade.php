@@ -196,15 +196,8 @@
                     <section id="efectivo-panel" hidden aria-labelledby="tituloEfectivo">
                         <h3 class="fs-6" id="tituloEfectivo">Calcular vuelto</h3>
                         <label for="efectivo-recibido" class="form-label">Efectivo recibido del cliente</label>
-                        <input type="number" id="efectivo-recibido" class="form-control" min="0" max="9999999999" step="1" inputmode="numeric" aria-describedby="ayudaBilletes">
-                        <p class="form-text" id="ayudaBilletes">Ingresa el monto o suma los billetes recibidos con estos botones.</p>
-                        <div class="cobro-billetes" role="group" aria-label="Sumar billetes al efectivo recibido">
-                            @foreach([1000, 2000, 5000, 10000, 20000] as $billete)
-                                <button type="button" class="btn btn-outline-secondary" data-billete="{{ $billete }}" aria-label="Sumar billete de {{ number_format($billete, 0, ',', '.') }} pesos">+${{ number_format($billete, 0, ',', '.') }}</button>
-                            @endforeach
-                            <button type="button" class="btn btn-outline-secondary" id="efectivo-exacto">Monto exacto</button>
-                            <button type="button" class="btn btn-outline-secondary" id="limpiar-efectivo">Limpiar</button>
-                        </div>
+                        <input type="number" id="efectivo-recibido" class="form-control" min="0" max="9999999999" step="1" inputmode="numeric" placeholder="Si paga justo, déjalo vacío" aria-describedby="ayudaEfectivo">
+                        <p class="form-text" id="ayudaEfectivo">Escribe el total que te entregan. Si paga justo, puedes dejarlo vacío.</p>
                     </section>
                 </fieldset>
                 <dl class="cobro-resumen" aria-live="polite" aria-atomic="true">

@@ -4,7 +4,7 @@ Rama: `feat/cobro-confirmado-pagos-mixtos`, basada en `feat/seeders-tipos-movimi
 
 Al pulsar Cobrar se abre un modal para revisar productos, total, cliente y métodos. La venta se registra al confirmar. El cliente es opcional. Los pagos deben cubrir el total completo: no se agregan ventas fiadas ni pagos pendientes.
 
-Cada método se usa una vez por venta y guarda su importe aplicado. En efectivo se ingresa por separado el dinero recibido. Los botones suman billetes de $1.000, $2.000, $5.000, $10.000 y $20.000; también se admite un importe manual o el monto exacto. Denominaciones de la [familia actual del Banco Central](https://www.billetesymonedas.cl/Billetes/FamiliaBilletesActuales).
+Cada método se usa una vez por venta y guarda su importe aplicado. En efectivo hay un único campo para escribir el total recibido. Dejarlo vacío significa pago exacto; si se escribe un importe mayor, se calcula el vuelto. Se eliminaron los controles por denominaciones tanto del POS como de la pantalla offline.
 
 Ejemplo: total $6.500, débito $4.000 y efectivo $2.500. Si se reciben $5.000 en efectivo, el vuelto es $2.500. Los pagos guardados suman $6.500, nunca el importe recibido antes de devolver el vuelto. Los importes se ingresan en pesos enteros.
 

@@ -10,19 +10,35 @@
     @vite('resources/js/offline/index.js')
 </head>
 <body>
-<header><strong>Congelandia</strong><span>Trabajo offline provisional</span><a href="/pos">Volver al POS</a></header>
+<header><strong>Congelandia</strong><span>Trabajar sin internet</span><a href="/pos">Volver al POS</a></header>
 <main>
     <section class="notice" aria-label="Estado de conexión">
         <p id="connection" role="status">Comprobando almacenamiento local…</p>
         <p id="copy-info"></p>
-        <p>El stock local es provisional y no reserva existencias. Otros equipos pueden haber registrado movimientos. Los cambios de permisos se comprueban al reconectar.</p>
-        <div class="actions"><button id="prepare" type="button">Preparar / actualizar copia local</button><button id="sync" type="button">Sincronizar / reintentar</button><button id="install" type="button" hidden>Instalar aplicación</button><a href="/login">Iniciar sesión</a></div>
+        <div class="transfer-actions">
+            <article class="transfer-card transfer-card--download">
+                <span class="transfer-direction">Servidor → Este equipo</span>
+                <h2>Descargar datos</h2>
+                <p>Trae los productos, precios y stock para usarlos cuando no tengas internet.</p>
+                <button id="prepare" type="button">Descargar datos</button>
+                <p id="download-help" class="transfer-help">Hazlo antes de desconectarte.</p>
+            </article>
+            <article class="transfer-card transfer-card--upload">
+                <span class="transfer-direction">Este equipo → Servidor</span>
+                <h2>Enviar pendientes</h2>
+                <p>Envía las ventas, ingresos y salidas guardados en este equipo para registrarlos en el sistema.</p>
+                <button id="sync" type="button" class="primary" disabled>Enviar pendientes</button>
+                <p id="upload-help" class="transfer-help">Todavía no hay movimientos por enviar.</p>
+            </article>
+        </div>
+        <div class="actions secondary-actions"><button id="install" type="button" hidden>Instalar aplicación</button><button id="update-app" type="button" hidden>Actualizar pantalla</button><a id="login-link" href="/login">Iniciar sesión</a></div>
         <p id="message" role="status" aria-live="polite"></p>
+        <details class="offline-help"><summary>¿Cómo trabajo sin internet?</summary><ol><li>Con internet, descarga los datos una vez en este equipo.</li><li>Registra ventas, ingresos o mermas. Quedan guardados aquí aunque recargues.</li><li>Al volver internet, los movimientos se envían automáticamente. También puedes pulsar Enviar pendientes.</li></ol><p>El stock descargado es provisional: otros equipos pueden registrar movimientos. El servidor comprueba los precios, el stock y los permisos al recibirlos.</p></details>
     </section>
-    <p id="first-use">El primer uso requiere conexión: inicia sesión, abre el POS y prepara la copia local en este navegador. No guardamos contraseñas ni credenciales.</p>
+    <p id="first-use">Para empezar, inicia sesión con internet y pulsa <strong>Descargar datos</strong>. Después podrás trabajar sin conexión en este mismo navegador.</p>
     <section id="online-pending" class="notice" hidden><h2>Cobro online sin confirmar</h2><p>Los datos están guardados en este equipo. <a href="/pos">Vuelve al POS</a> para reintentar ese mismo cobro con conexión.</p><details><summary>Ver los datos conservados</summary><pre id="online-pending-data"></pre></details></section>
     <div id="workspace" hidden>
-        <nav aria-label="Operación"><button type="button" data-tab="sale" aria-pressed="true">Venta POS</button><button type="button" data-tab="movement" aria-pressed="false">Ingresos y mermas</button><button type="button" data-tab="queue" aria-pressed="false">Movimientos guardados</button></nav>
+        <nav aria-label="Operación"><button type="button" data-tab="sale" aria-pressed="true">Vender</button><button type="button" data-tab="movement" aria-pressed="false">Ingresos y salidas</button><button id="queue-tab" type="button" data-tab="queue" aria-pressed="false">Movimientos guardados</button></nav>
         <section id="sale" class="tab">
             <h1>Venta POS</h1>
             <div class="columns">
@@ -30,16 +46,15 @@
                 <section class="panel"><h2>Carrito</h2><ul id="cart"></ul><p class="total">Total <strong id="total">$0</strong></p>
                     <form id="sale-form">
                         <label for="client">Cliente existente (opcional)</label><select id="client"></select>
-                        <h3>Pagos</h3><div id="payments"></div><button type="button" id="add-payment">Agregar método</button>
-                        <label for="cash">Efectivo recibido del cliente</label><input id="cash" type="number" min="0" max="9999999999" step="1" inputmode="numeric">
-                        <div class="actions" id="bills"><button type="button" data-bill="1000">+$1.000</button><button type="button" data-bill="2000">+$2.000</button><button type="button" data-bill="5000">+$5.000</button><button type="button" data-bill="10000">+$10.000</button><button type="button" data-bill="20000">+$20.000</button><button type="button" id="exact-cash">Efectivo exacto</button></div>
+                        <h3>Forma de pago</h3><div id="payments"></div><button type="button" id="add-payment">Dividir entre dos medios de pago</button>
+                        <section id="cash-fields" hidden><label for="cash">Efectivo recibido</label><input id="cash" type="number" min="0" max="9999999999" step="1" inputmode="numeric" placeholder="Si paga justo, déjalo vacío" aria-describedby="cash-help"><p id="cash-help" class="transfer-help">Escribe el total que te entregan. Si paga justo, puedes dejarlo vacío.</p></section>
                         <p id="payment-summary" aria-live="polite"></p><button type="submit" class="primary">Revisar venta</button>
                     </form>
                 </section>
             </div>
         </section>
         <section id="movement" class="tab" hidden>
-            <h1>Ingresos y mermas</h1>
+            <h1>Ingresos y salidas de inventario</h1>
             <form id="movement-form" class="panel">
                 <label for="kind">Movimiento</label><select id="kind"><option value="ingreso">Ingreso de mercadería</option><option value="merma">Salida por merma</option></select>
                 <label for="product">Producto existente</label><select id="product" required></select>
@@ -54,9 +69,9 @@
                 <button type="submit" class="primary">Revisar movimiento</button>
             </form>
         </section>
-        <section id="queue" class="tab" hidden><h1>Movimientos guardados</h1><p>Se envían en orden. Un conflicto detiene la cola y conserva todos sus datos. No se cambian automáticamente precios, cantidades ni pagos.</p><button type="button" id="export">Descargar copia de los movimientos</button><div id="operations"></div></section>
+        <section id="queue" class="tab" hidden><h1>Movimientos guardados</h1><p>Los movimientos por enviar siguen guardados en este equipo. Si alguno necesita revisión, los siguientes esperan su turno.</p><button type="button" id="export">Exportar movimientos para revisión</button><div id="operations"></div></section>
     </div>
-    <dialog id="confirm-dialog"><form method="dialog"><h2>Confirmar operación</h2><pre id="confirm-details"></pre><p>Se guardará en este equipo como pendiente hasta recibir confirmación del servidor.</p><button value="cancel">Volver</button><button value="confirm" class="primary">Confirmar y guardar</button></form></dialog>
+    <dialog id="confirm-dialog"><form method="dialog"><h2>Revisar antes de guardar</h2><pre id="confirm-details"></pre><p>El movimiento quedará guardado en este equipo. Se enviará al servidor cuando haya conexión.</p><button value="cancel">Volver</button><button value="confirm" class="primary">Guardar movimiento</button></form></dialog>
 </main>
 </body>
 </html>

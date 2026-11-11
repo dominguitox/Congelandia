@@ -73,6 +73,34 @@ test('un fallo al descontar varias líneas revierte la transacción local comple
     db.close();
 });
 
+test('sin pendientes no consulta la sesión ni anuncia un envío inexistente', async () => {
+    const { store, db } = await fixture();
+    const result = await syncQueue(store, 1, async () => { throw new Error('No debe consultar la red'); });
+    assert.deepEqual(result, { sent: 0 });
+    db.close();
+});
+
+test('una base pendiente de actualizar conserva los originales y permite enviarlos después', async () => {
+    const { store, db } = await fixture();
+    await store.enqueue(1, operation('ingreso', 5));
+    const original = structuredClone((await store.account(1)).operations[0].operation);
+    await assert.rejects(syncQueue(store, 1, sessionOr(async () => response(503, {
+        code: 'offline_schema_missing', message: 'SQLSTATE table private is missing',
+    }))), /actualizar su base de datos/);
+    const saved = (await store.account(1)).operations[0];
+    assert.equal(saved.status, 'pendiente');
+    assert.deepEqual(saved.operation, original);
+    assert.doesNotMatch(JSON.stringify(saved.response), /SQLSTATE|private/);
+    const result = await syncQueue(store, 1, sessionOr(async (_, options) => {
+        const op = JSON.parse(options.body);
+        assert.deepEqual(op, original);
+        return response(200, { id: op.id, success: true, estado: 'sincronizada' });
+    }));
+    assert.deepEqual(result, { sent: 1 });
+    assert.equal((await store.account(1)).snapshot.productos[0].stock, 15);
+    db.close();
+});
+
 test('respuesta perdida y reintento conservan exactamente UUID y datos sin descontar otra vez', async () => {
     const { store, db } = await fixture();
     await store.enqueue(1, operation());
