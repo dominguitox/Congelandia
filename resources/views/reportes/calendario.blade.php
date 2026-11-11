@@ -38,7 +38,7 @@
                                 @endforeach
                                 @foreach($celda['ofertas'] as $oferta)
                                     <details data-oferta-id="{{ $oferta->idPromocion }}" style="--oferta-tono: {{ $oferta->tono }}" @class(['reportes-evento', 'reportes-evento--oferta', 'reportes-evento--pausado' => ! $oferta->activa || $oferta->productoEliminado !== null])>
-                                        <summary>Oferta #{{ $oferta->idPromocion }} · {{ $oferta->nombre }} · {{ $numero($oferta->porcentajeDescuento) }}% · {{ $oferta->estado }}<span class="reportes-oferta-tramo">{{ $oferta->tramo }}</span></summary>
+                                        <summary>Oferta #{{ $oferta->idPromocion }} · {{ $oferta->nombre }} · {{ $numero($oferta->porcentajeDescuento) }}% · {{ $oferta->estado }}@if($oferta->tramo)<span class="reportes-oferta-tramo">{{ $oferta->tramo }}</span>@endif</summary>
                                         <p>{{ $oferta->codigoProducto }} · Descuento {{ number_format($oferta->porcentajeDescuento, 2, ',', '.') }}%<br>{{ \Carbon\CarbonImmutable::parse($oferta->fechaInicio)->format('d/m/Y H:i') }} al {{ \Carbon\CarbonImmutable::parse($oferta->fechaFin)->format('d/m/Y H:i') }}</p>
                                         <a href="{{ $urlDia($fecha) }}">Consultar ventas de esta fecha</a>
                                     </details>

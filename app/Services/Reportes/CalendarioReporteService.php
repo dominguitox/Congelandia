@@ -49,7 +49,7 @@ class CalendarioReporteService extends ReporteService
                             $comienza && $termina => 'Comienza y termina hoy',
                             $comienza => 'Comienza hoy',
                             $termina => 'Termina hoy',
-                            default => 'Continúa',
+                            default => null,
                         };
 
                         return $evento;

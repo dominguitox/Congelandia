@@ -106,26 +106,31 @@ test('ofertas identifican inicio continuacion termino y oferta del mismo dia sin
     $corta = DB::table('promocion')->insertGetId(['codigoProducto' => 'B', 'porcentajeDescuento' => 20, 'fechaInicio' => '2026-11-01 09:00:00', 'fechaFin' => '2026-11-01 10:00:00', 'activa' => true], 'idPromocion');
     $dias = collect(calendarioPeriodo('2026-11-01')['dias'])->keyBy(fn ($dia) => $dia['fecha']->toDateString());
     expect($dias['2026-10-31']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Comienza hoy')
-        ->and($dias['2026-11-01']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Continúa')
-        ->and($dias['2026-11-02']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Continúa')
+        ->and($dias['2026-11-01']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBeNull()
+        ->and($dias['2026-11-02']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBeNull()
         ->and($dias['2026-11-03']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Termina hoy')
         ->and($dias['2026-11-01']['ofertas']->firstWhere('idPromocion', $corta)->tramo)->toBe('Comienza y termina hoy')
         ->and($dias['2026-11-04']['ofertas'])->toBeEmpty();
     $semana = collect(calendarioPeriodo('2026-11-02', 'semana')['dias']);
-    expect($semana->first()['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Continúa');
+    expect($semana->first()['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBeNull();
     $respuesta = $this->actingAs($this->admin)->get('/reportes?seccion=calendario&fecha_calendario=2026-11-01')->assertOk();
     $documento = new DOMDocument;
     $documento->loadHTML('<?xml encoding="utf-8" ?>'.$respuesta->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
     $xpath = new DOMXPath($documento);
     $estilos = [];
-    foreach (['2026-10-31' => 'Comienza hoy', '2026-11-01' => 'Continúa', '2026-11-03' => 'Termina hoy'] as $fecha => $tramo) {
+    foreach (['2026-10-31' => 'Comienza hoy', '2026-11-01' => null, '2026-11-03' => 'Termina hoy'] as $fecha => $tramo) {
         $evento = $xpath->query('//td[.//time[@datetime="'.$fecha.'"]]//details[@data-oferta-id="'.$id.'"]')->item(0);
         expect($evento)->not->toBeNull();
-        expect($evento->textContent)->toContain($tramo, 'Oferta #'.$id);
+        expect($evento->textContent)->toContain('Oferta #'.$id);
+        if ($tramo !== null) {
+            expect($evento->textContent)->toContain($tramo);
+        } else {
+            expect($xpath->query('.//span[@class="reportes-oferta-tramo"]', $evento)->length)->toBe(0);
+        }
         $estilos[] = $evento->getAttribute('style');
     }
     expect(array_unique($estilos))->toHaveCount(1);
-    $respuesta->assertSee('Comienza y termina hoy');
+    $respuesta->assertSee('Comienza y termina hoy')->assertDontSee('Continúa');
 });
 
 test('feriados nacionales locales incluyen variables y extraordinarios sin regionales ni comerciales', function () {
