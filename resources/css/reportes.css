@@ -87,7 +87,15 @@
 .reportes-evento a { color: var(--color-primary-hover); text-decoration: underline; }
 .reportes-evento--feriado { background: var(--color-surface-alt); border-color: var(--color-text-muted); }
 .reportes-evento--stock { background: var(--color-surface-alt); border-color: var(--color-danger); }
-.reportes-evento--pausado { background: var(--color-surface-alt); border-style: dashed; border-color: var(--color-text-muted); }
+.reportes-evento--pausado { border-left-style: dashed; }
+/* Colores propios del evento: idénticos entre temas, estados y días de la oferta. */
+.reportes-evento--oferta {
+    background: hsl(var(--oferta-tono) 72% 92%);
+    color: hsl(var(--oferta-tono) 65% 24%);
+    border-color: hsl(var(--oferta-tono) 65% 24%);
+}
+.reportes-evento--oferta :is(summary, a) { color: inherit; }
+.reportes-oferta-tramo { display: block; font-weight: 700; margin-top: var(--space-xs); }
 .reportes-tabla-larga { max-height: 420px; overflow: auto; }
 .reportes-tabla-larga thead th { position: sticky; top: 0; z-index: 1; background: var(--color-surface-alt); }
 .reportes-page #detalle-fecha, .reportes-page #pronostico-stock { scroll-margin-top: var(--space-xl); }

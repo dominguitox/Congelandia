@@ -31,14 +31,14 @@
                             <a class="reportes-cal-dia" href="{{ $urlDia($fecha) }}" aria-label="Consultar ventas del {{ $celda['fecha']->format('d/m/Y') }}" @if($celda['fecha']->isToday()) aria-current="date" @endif>
                                 <time datetime="{{ $fecha }}">{{ $celda['fecha']->format('d/m') }}</time>{{ $celda['fecha']->isToday() ? ' · Hoy' : '' }}{{ $dia === $fecha ? ' · Seleccionado' : '' }}
                             </a>
-                            <small class="reportes-cal-resumen">{{ $moneda($celda['ventas']?->ingresos ?? 0) }} · {{ $numero($celda['ventas']?->ventas ?? 0) }} tickets</small>
+                            <small class="reportes-cal-resumen">{{ $moneda($celda['ventas']?->ingresos ?? 0) }} · {{ $numero($celda['ventas']?->ventas ?? 0) }} salidas</small>
                             <div class="reportes-cal-eventos">
                                 @foreach($celda['feriados'] as $feriado)
                                     <details class="reportes-evento reportes-evento--feriado"><summary>Feriado · {{ $feriado['nombre'] }}</summary><p>Nacional · {{ $celda['fecha']->format('d/m/Y') }}</p><a href="{{ $urlDia($fecha) }}">Consultar ventas de esta fecha</a></details>
                                 @endforeach
                                 @foreach($celda['ofertas'] as $oferta)
-                                    <details @class(['reportes-evento', 'reportes-evento--pausado' => ! $oferta->activa || $oferta->productoEliminado !== null])>
-                                        <summary>Oferta · {{ $oferta->nombre }} · {{ $numero($oferta->porcentajeDescuento) }}% · {{ $oferta->estado }}</summary>
+                                    <details data-oferta-id="{{ $oferta->idPromocion }}" style="--oferta-tono: {{ $oferta->tono }}" @class(['reportes-evento', 'reportes-evento--oferta', 'reportes-evento--pausado' => ! $oferta->activa || $oferta->productoEliminado !== null])>
+                                        <summary>Oferta #{{ $oferta->idPromocion }} · {{ $oferta->nombre }} · {{ $numero($oferta->porcentajeDescuento) }}% · {{ $oferta->estado }}<span class="reportes-oferta-tramo">{{ $oferta->tramo }}</span></summary>
                                         <p>{{ $oferta->codigoProducto }} · Descuento {{ number_format($oferta->porcentajeDescuento, 2, ',', '.') }}%<br>{{ \Carbon\CarbonImmutable::parse($oferta->fechaInicio)->format('d/m/Y H:i') }} al {{ \Carbon\CarbonImmutable::parse($oferta->fechaFin)->format('d/m/Y H:i') }}</p>
                                         <a href="{{ $urlDia($fecha) }}">Consultar ventas de esta fecha</a>
                                     </details>

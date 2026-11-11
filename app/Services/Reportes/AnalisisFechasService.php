@@ -11,7 +11,7 @@ class AnalisisFechasService extends ReporteService
 {
     private function historial(): Builder
     {
-        // El rango amplio solo se agrega en SQL; nunca se descargan los tickets del historial.
+        // El rango amplio solo se agrega en SQL; nunca se descargan los salidas del historial.
         return $this->ventasBase(CarbonImmutable::parse('1000-01-01'), CarbonImmutable::parse('9999-12-31'));
     }
 

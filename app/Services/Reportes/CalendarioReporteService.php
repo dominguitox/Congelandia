@@ -19,6 +19,8 @@ class CalendarioReporteService extends ReporteService
             ->whereNull('o.deleted_at')->where('o.porcentajeDescuento', '>', 0)
             ->where('o.fechaInicio', '<=', $hasta->endOfDay())->where('o.fechaFin', '>=', $desde->startOfDay())
             ->select('o.*', 'p.nombre', 'p.deleted_at as productoEliminado')->orderBy('o.fechaInicio')->get()->map(function ($oferta) {
+                // Ángulo áureo: separa identificadores consecutivos sin depender del orden o período consultado.
+                $oferta->tono = number_format(fmod((int) $oferta->idPromocion * 137.50776405003785, 360), 6, '.', '');
                 $oferta->estado = match (true) {
                     ! $oferta->activa => 'Pausada (no válida)',
                     $oferta->productoEliminado !== null => 'Producto retirado (no válida)',
@@ -38,7 +40,20 @@ class CalendarioReporteService extends ReporteService
             $dias[] = [
                 'fecha' => $dia, 'adyacente' => $dia->lessThan($inicio) || $dia->greaterThan($fin),
                 'ventas' => $ventas->get($clave), 'feriados' => $festivos->get($clave, collect()),
-                'ofertas' => $ofertas->filter(fn ($o) => substr($o->fechaInicio, 0, 10) <= $clave && substr($o->fechaFin, 0, 10) >= $clave),
+                'ofertas' => $ofertas->filter(fn ($o) => substr($o->fechaInicio, 0, 10) <= $clave && substr($o->fechaFin, 0, 10) >= $clave)
+                    ->map(function ($oferta) use ($clave) {
+                        $evento = clone $oferta;
+                        $comienza = substr($oferta->fechaInicio, 0, 10) === $clave;
+                        $termina = substr($oferta->fechaFin, 0, 10) === $clave;
+                        $evento->tramo = match (true) {
+                            $comienza && $termina => 'Comienza y termina hoy',
+                            $comienza => 'Comienza hoy',
+                            $termina => 'Termina hoy',
+                            default => 'Continúa',
+                        };
+
+                        return $evento;
+                    }),
                 'avisos' => $avisos->get($clave, collect()),
             ];
         }

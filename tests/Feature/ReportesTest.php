@@ -47,7 +47,7 @@ test('reportes y su exportacion respetan el acceso exclusivo de administradores'
     $this->actingAs($this->usuario)->get($url)->assertNotFound();
 })->with(['/reportes', '/reportes?exportar=csv']);
 
-test('ventas usa precios cobrados y cuenta tickets sin duplicar lineas ni incluir mermas o eliminados', function () {
+test('ventas usa precios cobrados y cuenta salidas sin duplicar lineas ni incluir mermas o eliminados', function () {
     salidaReporte($this->usuario->idUsuario, $this->venta, '2026-11-01 00:00:00', [[2, 800, false], [1, 500, false], [9, 9000, true]]);
     salidaReporte($this->usuario->idUsuario, $this->venta, '2026-11-06 23:59:59', [[1, 400, false]]);
     salidaReporte($this->usuario->idUsuario, $this->merma, '2026-11-03 10:00:00', [[5, 1000, false]]);
@@ -58,7 +58,7 @@ test('ventas usa precios cobrados y cuenta tickets sin duplicar lineas ni inclui
         ->assertOk()->assertSee('Helado de prueba')->assertSee('Sin categoría')
         ->assertViewHas('datos', fn ($datos) => $datos['ingresos'] === 2500.0
             && $datos['ventas'] === 2 && (int) $datos['unidades'] === 4
-            && $datos['ticket'] === 1250.0 && $datos['dias']->count() === 6);
+            && $datos['ingresoPromedioPorSalida'] === 1250.0 && $datos['dias']->count() === 6);
 });
 
 test('habitos incluye ceros y compara el promedio por ocurrencias de cada dia', function () {
@@ -128,11 +128,33 @@ test('inventario conserva alertas vencidas y avisa cuando no hay precio vigente'
     expect($csv->streamedContent())->toContain('FEFO', '2026-11-05', 'HELADO');
 });
 
-test('exportacion de habitos conserva cada ticket una sola vez', function () {
+test('exportacion de habitos conserva cada salida una sola vez', function () {
     salidaReporte($this->usuario->idUsuario, $this->venta, '2026-11-02 18:30:00', [[1, 800, false], [2, 800, false]]);
     $csv = $this->actingAs($this->usuario)->get('/reportes?seccion=habitos&fecha_inicio=2026-11-02&fecha_fin=2026-11-02&exportar=csv')->assertOk();
     expect($csv->streamedContent())->toContain('Lunes;18:00;1', 'Lunes;17:00;0');
 });
+
+test('pantallas y exportaciones de reportes cuentan salidas con vocabulario uniforme', function (string $seccion) {
+    salidaReporte($this->usuario->idUsuario, $this->venta, '2026-11-02 18:30:00', [[1, 800, false], [2, 800, false]]);
+    $consulta = http_build_query(['seccion' => $seccion, 'fecha_inicio' => '2026-11-02', 'fecha_fin' => '2026-11-02', 'dia' => '2026-11-02']);
+    $pantalla = $this->actingAs($this->usuario)->get('/reportes?'.$consulta)->assertOk();
+    $csv = $this->get('/reportes?'.$consulta.'&exportar=csv')->assertOk()->streamedContent();
+    foreach ([$pantalla->getContent(), $csv] as $contenido) {
+        expect($contenido)->not->toMatch('/\b(?:tickets?|transacci(?:ón|ones))\b/iu');
+    }
+    if ($seccion !== 'inventario') {
+        $pantalla->assertSee('Salidas');
+        expect($csv)->toContain('Salidas');
+    }
+    if (in_array($seccion, ['ventas', 'calendario', 'fechas'], true)) {
+        $pantalla->assertSee('Ingreso promedio por salida')
+            ->assertViewHas('datos', fn ($datos) => $datos['ventas'] === 1 && $datos['ingresoPromedioPorSalida'] === 2400.0);
+        expect($csv)->toContain('Ingreso promedio por salida CLP');
+    }
+    if (in_array($seccion, ['calendario', 'fechas'], true)) {
+        $pantalla->assertSee('<th scope="col">Salida</th>', false);
+    }
+})->with(['ventas', 'inventario', 'habitos', 'calendario', 'fechas']);
 
 test('rechaza fechas invalidas rangos invertidos demasiado largos y secciones desconocidas', function (array $filtros) {
     $this->actingAs($this->usuario)->getJson('/reportes?'.http_build_query($filtros))->assertUnprocessable();

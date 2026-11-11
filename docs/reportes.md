@@ -4,9 +4,9 @@ Disponible en `/reportes` para administradores autenticados, de acuerdo con el c
 
 ## Vistas
 
-- **Resumen de ventas:** monto vendido, transacciones, unidades, ticket promedio, evolución diaria, categorías y productos más vendidos.
+- **Resumen de ventas:** monto vendido, salidas, unidades, ingreso promedio por salida, evolución diaria, categorías y productos más vendidos.
 - **Inventario y riesgo:** stock actual, reposición sugerida, vencimientos y valor en riesgo estimado.
-- **Hábitos de compra:** transacciones por día y hora, hora punta y comparación de venta media diaria por día de la semana.
+- **Hábitos de compra:** salidas por día y hora, hora punta y comparación de venta media diaria por día de la semana.
 - **Calendario:** mes o semana desde el lunes, ofertas, feriados nacionales y estimaciones de agotamiento; selección de fecha con ventas y rankings.
 - **Fechas de mayor venta:** fechas exactas de un año y patrones de día/mes en todo el historial, con desglose anual y rankings ponderados.
 
@@ -14,7 +14,7 @@ Las vistas de ventas y hábitos comparten un período inclusivo de hasta 366 dí
 
 ## Criterios de cálculo
 
-- Se consideran ventas las salidas cuyo tipo se llama `Venta`, sin distinguir mayúsculas ni espacios externos. Se excluyen cabeceras y detalles eliminados. Una transacción se cuenta una vez aunque tenga varios detalles.
+- Se consideran ventas las salidas cuyo tipo se llama `Venta`, sin distinguir mayúsculas ni espacios externos. Se excluyen cabeceras y detalles eliminados. Una salida se cuenta una vez aunque tenga varios detalles.
 - El monto vendido usa `cantidad × precioCobrado`, conservando descuentos históricos. Incluye fiado: no equivale a dinero recaudado ni a utilidad.
 - Los productos eliminados conservan su participación en ventas históricas. Los productos sin categoría se agrupan en «Sin categoría».
 - El stock suma ingresos y resta todas las salidas, incluidas mermas, excluyendo movimientos eliminados o futuros. Solo se muestran productos activos.
@@ -87,6 +87,10 @@ Se consulta intersección inclusiva entre inicio/término y todo el período vis
 
 El modelo no conserva intervalos históricos de pausa/reactivación ni versiones de promociones editadas. Se informa el estado actualmente registrado; no se afirma reconstruir descuentos que estuvieron vigentes en cada instante pasado. Los precios históricos cobrados provienen siempre de las ventas.
 
+Cada oferta conserva un tono calculado únicamente desde `idPromocion` mediante el ángulo áureo, independiente del orden, del período consultado y del estado. Se mantiene el mismo fondo claro y texto/borde oscuros en todos los temas; una pausa añade un borde discontinuo sin sustituir ese color. El número de oferta, producto, descuento y estado identifican el evento también sin color. Cada día lleva un marcador textual: «Comienza hoy», «Continúa», «Termina hoy» o «Comienza y termina hoy», según las fechas reales, no los límites de la cuadrícula. «Continúa» describe el tramo del período programado; el estado de pausa o vencimiento se informa por separado.
+
+Todo el módulo, incluidas etiquetas accesibles y CSV, cuenta **salidas**. El ingreso promedio por salida mantiene la misma fórmula y usa la clave interna `ingresoPromedioPorSalida`. Se conservan las interfaces de otros módulos y el esquema de la base de datos.
+
 ### Feriados sin red y ampliación de años
 
 El [servicio de feriados](../app/Services/Reportes/FeriadosChile.php) calcula feriados fijos, Pascua gregoriana (Viernes y Sábado Santo), traslados de junio/octubre y feriados condicionales de enero/septiembre. El [catálogo local](../config/feriados.php) habilita **2025–2027** mediante las fechas verificadas del solsticio e incluye los extraordinarios nacionales electorales de 2025. Una fecha puede tener dos conmemoraciones (29 de junio de 2025). No se incluyen feriados regionales, bancarios, domingos ordinarios ni fechas comerciales.
@@ -130,7 +134,7 @@ Para cada producto/ocurrencia:
 - Categorías se calculan con las filas agregadas de sus productos, usando las mismas ponderaciones; no se promedian promedios.
 - Una compra registrada a costo cero es válida. La ausencia de costo anterior es `null`, nunca cero. Si faltan costos para parte de las unidades, se informa cuántas y no se muestra un costo/margen completo. Cada fila indica cuántas ocurrencias contribuyen.
 
-Costo y margen son **estimados**: promedio de compras acumuladas por fecha, sin vínculo venta-lote; no son costo exacto, FIFO, FEFO ni utilidad contable. Las consultas obtienen agregados por producto/ocurrencia y costo mediante subconsulta, sin consultas por cada fila ni descarga del historial de tickets al navegador. Calendario filtra por cuadrícula, pronóstico por ventanas acotadas y análisis exacto por año; solo el ranking recurrente agrega deliberadamente todo el historial.
+Costo y margen son **estimados**: promedio de compras acumuladas por fecha, sin vínculo venta-lote; no son costo exacto, FIFO, FEFO ni utilidad contable. Las consultas obtienen agregados por producto/ocurrencia y costo mediante subconsulta, sin consultas por cada fila ni descarga del historial de salidas al navegador. Calendario filtra por cuadrícula, pronóstico por ventanas acotadas y análisis exacto por año; solo el ranking recurrente agrega deliberadamente todo el historial.
 
 ### Verificación local
 
@@ -145,3 +149,9 @@ Resultados finales de esta implementación (Windows, PHP 8.4.23):
 - Laravel Pint en los PHP modificados: correcto; compilación de vistas Blade y `git diff --check`: correctos.
 - `npm run build`: correcto. Permanece el aviso previo de `fontaine` opcional; no impide compilar. El primer recorrido de la suite encontró dos fallos por un manifiesto Vite local desactualizado; después de compilar assets, esos casos y la suite completa pasan.
 - Navegador: HTML renderizado, cuadrícula mensual de 42 días, contención del desplazamiento a 390 y 1440 px y apertura de un evento con teclado (Enter sobre `summary`).
+
+### Ajuste incremental de colores y vocabulario
+
+Verificación posterior: Reportes + Calendario, **46 pruebas y 230 aserciones**; suite completa SQLite, **205 pruebas y 1.365 aserciones**, todas correctas. Pint, compilación Vite, compilación Blade y revisión de diff correctos. Continúa el aviso opcional previo de `fontaine` al compilar.
+
+En navegador se verificaron las 12 combinaciones de estilos (`congelandia`, `md3`, `win7`) y paletas (`base`, `esmeralda`, `aurora`, `coral`) con ofertas superpuestas, una pausada y una de un solo día. Los colores calculados fueron idénticos entre días y temas; contraste mínimo observado para esas ofertas: 6,29:1. La oferta pausada conservó fondo/texto/borde, con línea discontinua; apertura mediante Enter y foco visible correctos. Las pruebas también comparan meses, semanas, nuevas consultas y cambio de orden de eventos, y comprueban ausencia del vocabulario anterior en HTML/CSV de todas las secciones.

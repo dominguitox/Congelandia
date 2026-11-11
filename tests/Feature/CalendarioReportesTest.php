@@ -77,6 +77,57 @@ test('ofertas se expanden inclusivamente por periodo y distinguen vencidas progr
     $this->actingAs($this->admin)->get('/reportes?seccion=calendario&fecha_calendario=2026-11-01')->assertOk()->assertSee('12,50%')->assertSee('Pausada (no válida)');
 });
 
+test('oferta conserva tono por identificador entre dias meses semanas nuevas consultas y pausa', function () {
+    $id = DB::table('promocion')->insertGetId(['codigoProducto' => 'A', 'porcentajeDescuento' => 15, 'fechaInicio' => '2026-10-30 12:00:00', 'fechaFin' => '2026-12-02 18:00:00', 'activa' => true], 'idPromocion');
+    $tono = null;
+    foreach ([['2026-10-30', 'mes'], ['2026-11-15', 'mes'], ['2026-12-01', 'mes'], ['2026-11-30', 'semana'], ['2026-11-15', 'mes']] as [$fecha, $vista]) {
+        $eventos = collect(calendarioPeriodo($fecha, $vista)['dias'])->flatMap(fn ($dia) => $dia['ofertas']);
+        $tono ??= $eventos->first()->tono;
+        expect($eventos->pluck('tono')->unique()->all())->toBe([$tono]);
+    }
+    // Otro evento con fecha anterior cambia el orden de consulta, sin cambiar la identidad visual.
+    DB::table('promocion')->insert(['codigoProducto' => 'B', 'porcentajeDescuento' => 20, 'fechaInicio' => '2026-10-29 12:00:00', 'fechaFin' => '2026-12-03 18:00:00', 'activa' => true]);
+    $celda = collect(calendarioPeriodo('2026-11-01')['dias'])->first(fn ($dia) => $dia['fecha']->toDateString() === '2026-11-01');
+    expect($celda['ofertas']->pluck('tono')->unique())->toHaveCount(2)
+        ->and($celda['ofertas']->firstWhere('idPromocion', $id)->tono)->toBe($tono);
+    DB::table('promocion')->where('idPromocion', $id)->update(['activa' => false]);
+    $this->actingAs($this->admin)->get('/reportes?seccion=calendario&fecha_calendario=2026-11-01')
+        ->assertOk()->assertSee('Pausada (no válida)')
+        ->assertSee('data-oferta-id="'.$id.'" style="--oferta-tono: '.$tono.'"', false)
+        ->assertViewHas('calendario', function ($calendario) use ($id, $tono) {
+            $eventos = collect($calendario['dias'])->flatMap(fn ($dia) => $dia['ofertas'])->where('idPromocion', $id);
+
+            return $eventos->isNotEmpty() && $eventos->every(fn ($oferta) => $oferta->tono === $tono && $oferta->estado === 'Pausada (no válida)');
+        });
+});
+
+test('ofertas identifican inicio continuacion termino y oferta del mismo dia sin confundir limites de vista', function () {
+    $id = DB::table('promocion')->insertGetId(['codigoProducto' => 'A', 'porcentajeDescuento' => 15, 'fechaInicio' => '2026-10-31 12:00:00', 'fechaFin' => '2026-11-03 18:00:00', 'activa' => true], 'idPromocion');
+    $corta = DB::table('promocion')->insertGetId(['codigoProducto' => 'B', 'porcentajeDescuento' => 20, 'fechaInicio' => '2026-11-01 09:00:00', 'fechaFin' => '2026-11-01 10:00:00', 'activa' => true], 'idPromocion');
+    $dias = collect(calendarioPeriodo('2026-11-01')['dias'])->keyBy(fn ($dia) => $dia['fecha']->toDateString());
+    expect($dias['2026-10-31']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Comienza hoy')
+        ->and($dias['2026-11-01']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Continúa')
+        ->and($dias['2026-11-02']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Continúa')
+        ->and($dias['2026-11-03']['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Termina hoy')
+        ->and($dias['2026-11-01']['ofertas']->firstWhere('idPromocion', $corta)->tramo)->toBe('Comienza y termina hoy')
+        ->and($dias['2026-11-04']['ofertas'])->toBeEmpty();
+    $semana = collect(calendarioPeriodo('2026-11-02', 'semana')['dias']);
+    expect($semana->first()['ofertas']->firstWhere('idPromocion', $id)->tramo)->toBe('Continúa');
+    $respuesta = $this->actingAs($this->admin)->get('/reportes?seccion=calendario&fecha_calendario=2026-11-01')->assertOk();
+    $documento = new DOMDocument;
+    $documento->loadHTML('<?xml encoding="utf-8" ?>'.$respuesta->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $xpath = new DOMXPath($documento);
+    $estilos = [];
+    foreach (['2026-10-31' => 'Comienza hoy', '2026-11-01' => 'Continúa', '2026-11-03' => 'Termina hoy'] as $fecha => $tramo) {
+        $evento = $xpath->query('//td[.//time[@datetime="'.$fecha.'"]]//details[@data-oferta-id="'.$id.'"]')->item(0);
+        expect($evento)->not->toBeNull();
+        expect($evento->textContent)->toContain($tramo, 'Oferta #'.$id);
+        $estilos[] = $evento->getAttribute('style');
+    }
+    expect(array_unique($estilos))->toHaveCount(1);
+    $respuesta->assertSee('Comienza y termina hoy');
+});
+
 test('feriados nacionales locales incluyen variables y extraordinarios sin regionales ni comerciales', function () {
     $servicio = app(FeriadosChile::class);
     $fechas = fn ($anio) => collect($servicio->entre(CarbonImmutable::parse("$anio-01-01"), CarbonImmutable::parse("$anio-12-31")));
