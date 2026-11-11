@@ -151,11 +151,6 @@ body.pub-body {
     font-size: .86rem;
 }
 
-.pub-btn:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 var(--pub-ink);
-}
-
 .pub-btn--primary {
     background: var(--pub-primary);
     color: #fff;
@@ -333,7 +328,7 @@ body.pub-body {
 
 /* Foto con marco duro */
 .pub-hero__media {
-    min-height: 530px;
+    min-height: 0;
 }
 
 .pub-hero__photo {
@@ -540,10 +535,8 @@ body.pub-body {
 }
 
 .pub-cat:hover {
-    transform: none;
     border-color: var(--pub-primary);
     background: var(--pub-primary);
-    box-shadow: 4px 4px 0 var(--pub-ink);
     color: #fff;
 }
 
@@ -577,9 +570,8 @@ body.pub-body {
 }
 
 .pub-product:hover {
-    transform: translate(-4px, -4px);
     border-color: var(--pub-ink);
-    box-shadow: 9px 9px 0 var(--pub-primary);
+    background: var(--pub-primary-soft);
 }
 
 .pub-product__media {

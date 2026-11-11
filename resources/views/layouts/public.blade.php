@@ -53,7 +53,7 @@
     <meta property="og:site_name" content="Congelandia">
     <meta property="og:title" content="Congelandia - @yield('title', 'El mundo de los congelados')">
     <meta property="og:description" content="@yield('descripcion', 'Congelados de calidad para tu mesa. Revisa el catálogo y coordina tu pedido.')">
-    <meta property="og:image" content="{{ asset('images/hero/tomates.webp') }}">
+    <meta property="og:image" content="{{ asset('images/brand/logo-marca.webp') }}">
     <meta property="og:url" content="{{ url()->current() }}">
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
