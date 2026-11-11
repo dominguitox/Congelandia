@@ -2,7 +2,7 @@
 const CACHE = __CACHE_NAME__;
 const ASSETS = __ASSETS__;
 self.addEventListener('install', event => {
-    event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+    event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
     event.waitUntil(caches.keys().then(keys => Promise.all(keys

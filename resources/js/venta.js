@@ -332,8 +332,13 @@ function leerPagos() {
     });
 }
 
+function efectivoRecibido() {
+    const valor = document.getElementById('efectivo-recibido').value.trim();
+    return valor === '' ? leerPagos().filter(pago => pago.esEfectivo).reduce((total, pago) => total + pago.monto, 0) : Number(valor);
+}
+
 function mostrarResumenCobro() {
-    const resumen = calcularCobro(totalCarrito(), leerPagos(), Number(document.getElementById('efectivo-recibido').value));
+    const resumen = calcularCobro(totalCarrito(), leerPagos(), efectivoRecibido());
     document.getElementById('efectivo-panel').hidden = resumen.efectivo <= 0;
     for (const [id, valor] of Object.entries({asignado: resumen.asignado, restante: resumen.restante, efectivo: resumen.efectivo, vuelto: resumen.vuelto})) {
         document.getElementById('cobro-' + id).textContent = '$' + formatoCLP(valor);
@@ -412,7 +417,7 @@ async function confirmarVenta(event) {
                 rutCliente: document.getElementById('cliente_select').value || null,
                 productos: carrito.map(({id, cantidad, precio}) => ({id, cantidad, precio})),
                 pagos: leerPagos().map(({idMetodo, monto}) => ({idMetodo, monto})),
-                efectivoRecibido: resumen.efectivo > 0 ? Number(document.getElementById('efectivo-recibido').value) : null,
+                efectivoRecibido: resumen.efectivo > 0 ? efectivoRecibido() : null,
                 claveOperacion: crypto.randomUUID(),
             },
         };
@@ -512,19 +517,6 @@ async function iniciarCobro() {
         const usados = leerPagos().map(p => String(p.idMetodo));
         const opcion = [...document.querySelector('#plantilla-pago').content.querySelectorAll('option')].find(o => !usados.includes(o.value));
         if (opcion) agregarFilaPago(opcion.value, Math.max(0, mostrarResumenCobro().restante));
-        mostrarResumenCobro();
-    });
-    document.querySelectorAll('[data-billete]').forEach(boton => boton.addEventListener('click', () => {
-        const input = document.getElementById('efectivo-recibido');
-        input.value = Number(input.value) + Number(boton.dataset.billete);
-        mostrarResumenCobro();
-    }));
-    document.getElementById('efectivo-exacto').addEventListener('click', () => {
-        document.getElementById('efectivo-recibido').value = mostrarResumenCobro().efectivo;
-        mostrarResumenCobro();
-    });
-    document.getElementById('limpiar-efectivo').addEventListener('click', () => {
-        document.getElementById('efectivo-recibido').value = '';
         mostrarResumenCobro();
     });
     try {

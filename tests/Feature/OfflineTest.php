@@ -7,6 +7,7 @@ use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
@@ -44,6 +45,14 @@ test('la copia usa datos mínimos y no expone contraseñas ni métodos fiados', 
         ->assertJsonPath('usuario.id', $this->user->idUsuario)->assertJsonPath('productos.0.stock', 10)->assertJsonPath('productos.0.precio', 500);
     expect($response->getContent())->not->toContain('contrasena', 'password', 'Fiado', 'csrf');
     $this->get(route('offline.index'))->assertOk()->assertDontSee($this->user->email)->assertDontSee('csrf-token');
+});
+
+test('una migracion pendiente devuelve un mensaje comprensible sin aplicar movimientos', function () {
+    Schema::drop('operaciones_offline');
+    $this->postJson(route('offline.sync'), operacionOffline($this))->assertStatus(503)
+        ->assertJsonPath('code', 'offline_schema_missing')->assertDontSee('SQLSTATE');
+    $this->getJson(route('offline.datos'))->assertStatus(503)->assertJsonPath('code', 'offline_schema_missing');
+    $this->assertDatabaseCount('salida', 0);
 });
 
 test('sincroniza ingreso venta y merma en orden sin alterar las reglas de stock', function () {

@@ -5,6 +5,7 @@ import { runInNewContext } from 'node:vm';
 
 function worker(fetcher = async () => ({ status: 200, body: 'network' }), failInstall = false) {
     const handlers = {}, writes = [], removed = [];
+    let activated = false;
     const allowed = ['/offline', '/offline.webmanifest', '/build/assets/offline.js'];
     const shell = { body: 'generic offline shell' };
     const source = readFileSync(new URL('../../resources/js/offline/worker.js', import.meta.url), 'utf8')
@@ -12,7 +13,7 @@ function worker(fetcher = async () => ({ status: 200, body: 'network' }), failIn
         .replace('__ASSETS__', JSON.stringify(allowed));
     runInNewContext(source, {
         URL, Promise,
-        self: { location: { origin: 'https://demo.test' }, addEventListener: (name, handler) => { handlers[name] = handler; }, clients: { claim: async () => {} } },
+        self: { location: { origin: 'https://demo.test' }, addEventListener: (name, handler) => { handlers[name] = handler; }, clients: { claim: async () => {} }, skipWaiting: async () => { activated = true; } },
         caches: {
             keys: async () => ['congelandia-shell-old', 'another-application'],
             delete: async key => { removed.push(key); },
@@ -25,7 +26,7 @@ function worker(fetcher = async () => ({ status: 200, body: 'network' }), failIn
         handlers.fetch({ request: { url: 'https://demo.test' + path, method, mode }, respondWith: promise => { response = promise; } });
         return response;
     }
-    return { handlers, writes, removed, request, allowed, shell };
+    return { handlers, writes, removed, request, allowed, shell, get activated() { return activated; } };
 }
 
 test('la instalación solo precarga la pantalla genérica y los estáticos explícitos', async () => {
@@ -33,12 +34,14 @@ test('la instalación solo precarga la pantalla genérica y los estáticos expl�
     let done; item.handlers.install({ waitUntil: promise => { done = promise; } }); await done;
     assert.deepEqual(item.writes, item.allowed);
     assert.equal(item.writes.includes('/pos'), false);
+    assert.equal(item.activated, true);
 });
 
 test('si falta un recurso la instalación falla en vez de prometer disponibilidad parcial', async () => {
     const item = worker(undefined, true);
     let done; item.handlers.install({ waitUntil: promise => { done = promise; } });
     await assert.rejects(done);
+    assert.equal(item.activated, false);
 });
 
 test('no intercepta ni cachea datos privados, sesión, reportes o escrituras', () => {

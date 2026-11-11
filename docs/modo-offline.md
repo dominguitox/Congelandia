@@ -6,16 +6,16 @@ Permite ventas POS, ingresos para productos existentes y salidas por **Merma por
 
 1. Publicar los recursos compilados con Vite y acceder mediante HTTPS (localhost también funciona para desarrollo).
 2. Iniciar sesión con conexión en el navegador y computador que se utilizarán durante el corte.
-3. En el panel **Trabajo offline provisional**, pulsar **Preparar / actualizar copia** y esperar la confirmación de recursos preparados.
-4. Abrir **Trabajo offline**. El navegador puede ofrecer **Instalar aplicación**; también se puede abrir `/offline` sin instalarla.
+3. En el panel **Trabajar sin internet**, pulsar **Descargar datos** y esperar la confirmación. La dirección **Servidor → Este equipo** indica que se descargan productos, precios y stock.
+4. Abrir **Abrir ventas e inventario sin internet**. El navegador puede ofrecer **Instalar aplicación**; también se puede abrir `/offline` sin instalarla.
 
 El primer inicio no funciona sin internet. El navegador necesita descargar tanto los recursos como una copia de datos. Se solicita almacenamiento persistente cuando la API está disponible; el navegador puede rechazar la solicitud. No borrar los datos del sitio ni utilizar una sesión privada para conservar movimientos a largo plazo.
 
 ## Durante el corte
 
 - Abrir `/offline`. Si falla la carga de `/pos` o `/inventario`, el Service Worker muestra la misma pantalla mínima. También se usa ante respuestas 5xx en esas navegaciones.
-- En **Venta POS**, seleccionar productos, cantidades, cliente existente opcional y métodos de pago. Revisar el resumen antes de confirmar. Los pagos suman el total; el efectivo recibido se ingresa aparte para calcular el vuelto.
-- En **Ingresos y mermas**, seleccionar el movimiento y un producto existente. Los ingresos conservan cantidad, precio unitario de compra, vencimiento y proveedor opcional. Las mermas conservan cantidad y uno de los dos motivos existentes.
+- En **Vender**, seleccionar productos, cantidades, cliente existente opcional y método de pago. El pago único toma el total automáticamente; **Dividir entre dos medios de pago** permite repartirlo. El efectivo recibido es un solo campo: vacío significa pago exacto y un importe mayor calcula el vuelto. Revisar antes de guardar.
+- En **Ingresos y salidas**, seleccionar el movimiento y un producto existente. Los ingresos conservan cantidad, precio unitario de compra, vencimiento y proveedor opcional. Las mermas conservan cantidad y uno de los dos motivos existentes. Al guardar se limpia el formulario y se muestra la confirmación con el stock actualizado.
 - La confirmación guarda en IndexedDB el movimiento y el stock provisional en una sola transacción. El carrito, los pagos y el formulario de movimientos se conservan como borradores tras recargar.
 - Un movimiento de inventario conserva el carrito de una venta en preparación. Solo confirmar la venta limpia ese carrito.
 - El estado muestra la disponibilidad de red/servidor, la fecha de la copia y los movimientos pendientes. **Movimientos guardados** permite ver los datos originales y descargar una copia JSON, incluidos los borradores. La descarga es para revisión; no existe una función de importación o aplicación manual automática.
@@ -24,7 +24,7 @@ El stock local **no reserva existencias**. Otros computadores pueden registrar m
 
 ## Reconexión, reintentos y conflictos
 
-Al abrir el módulo o detectarse la reconexión se intenta sincronizar. También está disponible **Sincronizar / reintentar**. No depende de Background Sync.
+Al abrir el módulo o detectarse la reconexión se intenta enviar los pendientes. También está disponible **Enviar pendientes (cantidad)**, con la dirección **Este equipo → Servidor**. Este botón registra los movimientos locales en el sistema; **Descargar datos** solo actualiza la copia de productos, precios y stock. Sin pendientes, el envío queda deshabilitado. Con pendientes, la descarga queda bloqueada para conservarlos. No depende de Background Sync.
 
 Las operaciones se envían una a una, en orden de guardado. Cada una conserva UUID, usuario, fecha local y datos originales. La fecha local se registra para revisión; los movimientos oficiales usan la fecha del servidor al sincronizar. El vencimiento de un ingreso se valida contra la fecha local de su captura, para permitir sincronizarlo días después.
 
@@ -41,6 +41,10 @@ El servidor compara el stock anterior a cada operación con su stock oficial. Si
 **No se implementa resolución de conflictos**. Conservar el equipo y la copia descargada para revisar el movimiento y definir la decisión de negocio antes de intervenir. No volver a registrar la misma venta como una venta nueva para intentar superar el conflicto.
 
 La cola bloqueada impide actualizar la copia local. Una vez sincronizados todos los movimientos se puede actualizar el catálogo. Las operaciones confirmadas conservan su historial local.
+
+Si faltan las tablas o columnas requeridas, el servidor responde con un aviso de actualización de base de datos pendiente y conserva la cola. La pantalla no muestra el SQL interno. Se aplican los SQL incrementales indicados más abajo antes de reintentar.
+
+Los datos locales aparecen antes de consultar la sesión del servidor. Los cambios de conexión y las confirmaciones de envío no reconstruyen el formulario en edición. Una nueva versión descarga sus recursos completos antes de activarse y ofrece **Actualizar pantalla**; recargar conserva IndexedDB, borradores e historial.
 
 ## Usuario, sesión y almacenamiento
 
@@ -88,3 +92,14 @@ Ejecutar Laravel únicamente con la base de pruebas configurada: las pruebas exi
 Las pruebas cubren persistencia al cerrar/reabrir IndexedDB, orden ingreso/venta/merma, escrituras concurrentes, rollback local, respuesta perdida, 401/403/419/422/5xx, cola bloqueada, aislamiento por usuario, reintentos idempotentes, pagos mixtos, conflictos de stock/precio y reglas de caché del Service Worker. Las pruebas de stock existentes se conservan.
 
 Comprobación en navegador: preparar desde el POS online, desconectar la red, recargar con carrito/pagos, confirmar venta con vuelto, ingresar mercadería y registrar merma, recargar conservando tres operaciones pendientes, reconectar y comprobar las tres confirmadas en el orden original. Comprobar también que CacheStorage contiene solo la pantalla genérica, manifiesto, iconos y estáticos declarados.
+
+### Revisión manual del flujo simplificado (11 de noviembre de 2026)
+
+Realizada mediante los botones y formularios del navegador sobre SQLite de demostración, separada de la base del usuario:
+
+- Con stock inicial 26, desconectar, ingresar 5 unidades sin proveedor y retirar 2 por daño: stock local 29 y dos pendientes. Los campos del ingreso quedan vacíos al guardar.
+- Recargar sin red: siguen los dos movimientos, el stock 29 y la pestaña de inventario. Reconectar y pulsar **Enviar pendientes**: ambos quedan **Enviado**; el inventario oficial muestra 29.
+- Desde el inventario online, ingresar 3 y retirar 1 por vencimiento: stock oficial 31. Descargar de nuevo antes del siguiente corte.
+- Sin red, intentar retirar 999: se rechaza sin crear movimiento. Retirar 1 por vencimiento y vender 1 por $1.500, recibiendo $2.000: vuelto $500 y stock local 29. Reconectar: envío automático de ambos.
+- En el POS online, vender 1 por $1.500 con $500 en efectivo y $1.000 en débito, recibiendo $1.000: vuelto $500. Otra venta con el efectivo recibido vacío confirma el pago exacto con vuelto cero. Ambas aparecen una sola vez en el historial.
+- Una actualización de recursos ofrece **Actualizar pantalla** y conserva el historial local al recargar.
