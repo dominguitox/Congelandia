@@ -1,21 +1,104 @@
 // 1. Cargamos el carrito desde localStorage al iniciar, o iniciamos un arreglo vacío
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+const productosFijadosKey = 'pos:productos-fijados';
+let productosFijados = [];
+let ordenOriginalProductos = new Map();
 
 // Al cargar la página, dibujamos inmediatamente los productos si existen en caché
 document.addEventListener("DOMContentLoaded", () => {
     sincronizarPreciosDelCatalogo();
     actualizarTicketVenta();
 
-    document.querySelectorAll('.producto-card').forEach((card) => {
+    const tarjetas = [...document.querySelectorAll('.producto-card')];
+    const codigosDisponibles = new Set(tarjetas.map((card) => card.dataset.id));
+    ordenOriginalProductos = new Map(tarjetas.map((card, indice) => [card.dataset.id, indice]));
+
+    try {
+        const guardados = JSON.parse(localStorage.getItem(productosFijadosKey) || '[]');
+        productosFijados = Array.isArray(guardados)
+            ? guardados.filter((codigo, indice) => codigosDisponibles.has(codigo) && guardados.indexOf(codigo) === indice)
+            : [];
+    } catch (error) {
+        productosFijados = [];
+    }
+
+    tarjetas.forEach((card) => {
         card.addEventListener('click', () => agregarAlCarrito(card));
         card.addEventListener('keydown', (event) => {
+            if (event.target !== card) return;
             if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 agregarAlCarrito(card);
             }
         });
+
+        const botonFijar = card.querySelector('.producto-card-fijar');
+        botonFijar?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            alternarProductoFijado(card);
+        });
     });
+
+    tarjetas.forEach((card) => actualizarControlFijado(card, productosFijados.includes(card.dataset.id)));
+    guardarProductosFijados();
+    ordenarProductosFijados();
 });
+
+function guardarProductosFijados() {
+    try {
+        localStorage.setItem(productosFijadosKey, JSON.stringify(productosFijados));
+    } catch (error) {
+        console.warn('No fue posible guardar los productos fijados en este navegador.', error);
+    }
+}
+
+function ordenarProductosFijados() {
+    const grilla = document.getElementById('grillaProductos');
+    if (!grilla) return;
+
+    const tarjetas = [...grilla.querySelectorAll('.producto-card')];
+    const posicionesFijadas = new Map(productosFijados.map((codigo, indice) => [codigo, indice]));
+
+    tarjetas.sort((a, b) => {
+        const posicionA = posicionesFijadas.get(a.dataset.id);
+        const posicionB = posicionesFijadas.get(b.dataset.id);
+        if (posicionA !== undefined && posicionB !== undefined) return posicionA - posicionB;
+        if (posicionA !== undefined) return -1;
+        if (posicionB !== undefined) return 1;
+        return ordenOriginalProductos.get(a.dataset.id) - ordenOriginalProductos.get(b.dataset.id);
+    });
+
+    tarjetas.forEach((card) => grilla.appendChild(card));
+}
+
+function alternarProductoFijado(card) {
+    const codigo = card.dataset.id;
+    const boton = card.querySelector('.producto-card-fijar');
+    const indice = productosFijados.indexOf(codigo);
+    const fijado = indice === -1;
+
+    if (fijado) {
+        productosFijados.push(codigo);
+    } else {
+        productosFijados.splice(indice, 1);
+    }
+
+    actualizarControlFijado(card, fijado);
+    guardarProductosFijados();
+    ordenarProductosFijados();
+    boton?.focus();
+}
+
+function actualizarControlFijado(card, fijado) {
+    const boton = card.querySelector('.producto-card-fijar');
+    if (!boton) return;
+
+    const nombre = boton.dataset.nombreProducto || card.dataset.nombre;
+    boton.setAttribute('aria-pressed', String(fijado));
+    boton.setAttribute('aria-label', `${fijado ? 'Desfijar' : 'Fijar'} ${nombre} ${fijado ? 'del' : 'al'} inicio del listado`);
+    boton.title = fijado ? 'Desfijar producto' : 'Fijar producto';
+    card.classList.toggle('producto-card--fijado', fijado);
+}
 
 // Función auxiliar para guardar el estado actual en localStorage y actualizar la vista
 function guardarYActualizar() {
