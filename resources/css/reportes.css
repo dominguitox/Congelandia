@@ -69,6 +69,28 @@
 .reportes-calor--4 { background: var(--color-primary-active); color: var(--color-text-light); font-weight: 700; }
 .reportes-leyenda { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md); font-size: var(--fs-xs); color: var(--color-text-muted); }
 .reportes-leyenda i { width: var(--space-lg); height: var(--space-sm); border-radius: var(--radius-2xs); border: 1px solid var(--color-border-soft); }
+.reportes-cal-controles { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); margin: var(--space-md) 0; }
+.reportes-cal-controles .form-control { width: auto; max-width: 100%; }
+.reportes-cal-scroll { overflow-x: auto; margin-top: var(--space-md); }
+.reportes-calendario { width: 100%; min-width: 980px; table-layout: fixed; border-collapse: collapse; }
+.reportes-calendario th, .reportes-calendario td { border: 1px solid var(--color-border); padding: var(--space-sm); vertical-align: top; }
+.reportes-calendario th { background: var(--color-surface-alt); color: var(--color-text); text-align: center; }
+.reportes-calendario td { height: 160px; background: var(--color-surface); }
+.reportes-calendario .reportes-cal-adyacente { background: var(--color-surface-alt); }
+.reportes-calendario .reportes-cal-seleccion { box-shadow: inset 0 0 0 3px var(--color-primary); }
+.reportes-cal-dia { display: block; padding: var(--space-xs) 0; font-weight: 700; color: var(--color-primary-hover); }
+.reportes-cal-resumen { display: block; color: var(--color-text); font-size: var(--fs-xs); margin-bottom: var(--space-sm); }
+.reportes-cal-eventos { max-height: 260px; overflow-y: auto; }
+.reportes-evento { background: var(--color-primary-soft); border-left: 3px solid var(--color-primary); margin-top: var(--space-xs); padding: var(--space-xs); font-size: var(--fs-xs); color: var(--color-text); overflow-wrap: anywhere; }
+.reportes-evento summary { cursor: pointer; font-weight: 600; }
+.reportes-evento p { margin: var(--space-xs) 0; }
+.reportes-evento a { color: var(--color-primary-hover); text-decoration: underline; }
+.reportes-evento--feriado { background: var(--color-surface-alt); border-color: var(--color-text-muted); }
+.reportes-evento--stock { background: var(--color-surface-alt); border-color: var(--color-danger); }
+.reportes-evento--pausado { background: var(--color-surface-alt); border-style: dashed; border-color: var(--color-text-muted); }
+.reportes-tabla-larga { max-height: 420px; overflow: auto; }
+.reportes-tabla-larga thead th { position: sticky; top: 0; z-index: 1; background: var(--color-surface-alt); }
+.reportes-page #detalle-fecha, .reportes-page #pronostico-stock { scroll-margin-top: var(--space-xl); }
 @media (max-width: 1100px) {
     .reportes-columnas { grid-template-columns: minmax(0, 1fr); }
     .reportes-filtros { grid-template-columns: repeat(2, minmax(0, 1fr)); }

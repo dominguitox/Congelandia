@@ -11,7 +11,7 @@ class ReporteService
     private array $tablas = [];
 
     // Compatibilidad con los nombres de los dumps y de las migraciones en Linux.
-    private function tabla(string $nombre): string
+    protected function tabla(string $nombre): string
     {
         if ($this->tablas === []) {
             foreach (DB::getSchemaBuilder()->getTableListing(null, false) as $tabla) {
@@ -22,12 +22,12 @@ class ReporteService
         return $this->tablas[strtolower($nombre)] ?? $nombre;
     }
 
-    private function salidas(): Builder
+    protected function salidas(): Builder
     {
         return DB::table($this->tabla('Salida').' as s')->whereNull('s.deleted_at');
     }
 
-    private function ventasBase(CarbonImmutable $desde, CarbonImmutable $hasta): Builder
+    protected function ventasBase(CarbonImmutable $desde, CarbonImmutable $hasta): Builder
     {
         return $this->salidas()
             ->join($this->tabla('Tipo_Salida').' as t', 's.idTipo', '=', 't.idTipo')
