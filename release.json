@@ -1,7 +1,7 @@
 {
-  "numero": "1.6.0",
-  "comentarios": "### Cambios del código\n\n- test: compara contenido JSON offline sin depender del orden de claves (ffb3710)\n- feat: agrega POS e inventario offline con sincronizacion idempotente (1237660)\n- Agrega confirmacion de venta, vuelto y pagos mixtos (79ef1df)\n- feat(pos): allow pinning products in catalog (e6c19e1)\n\nCódigo de origen: b4685e647bbc389e15303104887eb9efc84d7e8e",
-  "fecha_creacion": "2026-11-11T14:22:10.909Z",
-  "commit": "b4685e647bbc389e15303104887eb9efc84d7e8e",
+  "numero": "1.6.1",
+  "comentarios": "fix 1.6.0\n\n### Cambios del código\n\n- Simplificar flujo offline y cobro en efectivo (ebc0b9b)\n\nCódigo de origen: a92537c1b4261af56c8f13716c057dd85e51e06d",
+  "fecha_creacion": "2026-11-11T15:31:57.255Z",
+  "commit": "a92537c1b4261af56c8f13716c057dd85e51e06d",
   "public_directory": "public_html"
 }

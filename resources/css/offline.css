@@ -95,7 +95,7 @@ button:hover {
 
 button:disabled {
     opacity:.6;
-    cursor:wait
+    cursor:not-allowed
 }
 
 button.primary,nav [aria-pressed=true] {
@@ -178,13 +178,36 @@ fieldset {
     margin-bottom:.5rem
 }
 
-#bills {
-    margin-top:.6rem
+#message {
+    white-space:pre-line;
+    font-weight:600;
+    border-radius:8px;
+    padding:.75rem;
+    background:#e8f3ed;
+    color:#145334
 }
 
-#message {
-    white-space:pre-line
-}
+#message:empty { display:none; }
+#message[data-kind=error] { background:#fff0e8; color:#823b21; }
+.transfer-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin:1rem 0; }
+.transfer-card { padding:1rem; border:1px solid #bfd0db; border-radius:10px; }
+.transfer-card--download { background:#f0f6fc; border-top:4px solid #3971ac; }
+.transfer-card--upload { background:#f0f8f3; border-top:4px solid #25834d; }
+.transfer-card h2 { margin:.7rem 0 .4rem; }
+.transfer-card p { margin:.5rem 0 .8rem; line-height:1.45; }
+.transfer-direction { display:inline-block; font-size:.85rem; font-weight:700; color:#436070; }
+.transfer-help { color:#49636f; font-size:.9rem; line-height:1.45; }
+.secondary-actions { margin:1rem 0; }
+.offline-help { border-top:1px solid #dbe5eb; padding-top:.8rem; }
+.offline-help summary { cursor:pointer; }
+.offline-help li { margin:.5rem 0; }
+.payment-row--single { grid-template-columns:1fr; }
+.operation-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.6rem; }
+.operation-status { border-radius:20px; padding:.3rem .6rem; background:#edf2f6; font-size:.85rem; }
+.operation[data-state=sincronizada] .operation-status { background:#e2f2e8; color:#145334; }
+.operation[data-state=conflicto] .operation-status,.operation[data-state=rechazada] .operation-status { background:#fff0e8; color:#823b21; }
+.operation h3 { margin:.2rem 0; }
+.operation details { margin-top:1rem; }
 
 .operation pre,dialog pre {
     white-space:pre-wrap;
@@ -217,6 +240,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 @media(max-width:800px) {
+    .transfer-actions { grid-template-columns:1fr; }
     header {
         padding:1rem;
         flex-wrap:wrap
@@ -229,6 +253,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
     }
     .payment-row {
         grid-template-columns:1fr 1fr
+    }
+    .payment-row--single {
+        grid-template-columns:1fr
     }
     .payment-row button {
         grid-column:1/-1

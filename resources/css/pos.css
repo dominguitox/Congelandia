@@ -380,13 +380,6 @@
     gap: 8px;
 }
 
-.cobro-billetes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
 .cobro-resumen {
     margin-top: 16px;
     padding-top: 12px;

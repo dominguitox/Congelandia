@@ -99,8 +99,8 @@
     "file": "assets/instrument-sans-700-normal-DfAjL1vF.woff",
     "src": "_instrument-sans-700-normal-DfAjL1vF.woff"
   },
-  "_register-B9CeC-AK.js": {
-    "file": "assets/register-B9CeC-AK.js",
+  "_register-B6Lo0EtQ.js": {
+    "file": "assets/register-B6Lo0EtQ.js",
     "name": "register"
   },
   "_roboto-400-normal-BqEyEoaF.woff2": {
@@ -127,8 +127,8 @@
     "file": "assets/roboto-700-normal-YuyVweIx.woff",
     "src": "_roboto-700-normal-YuyVweIx.woff"
   },
-  "_sync-CxAohSr7.js": {
-    "file": "assets/sync-CxAohSr7.js",
+  "_sync-DIW1_JKv.js": {
+    "file": "assets/sync-DIW1_JKv.js",
     "name": "sync"
   },
   "resources/css/app.css": {
@@ -195,7 +195,7 @@
     "isEntry": true
   },
   "resources/css/pos.css": {
-    "file": "assets/pos-Bxe1wCaS.css",
+    "file": "assets/pos-CABnD0sT.css",
     "name": "pos",
     "names": [
       "pos.css"
@@ -330,27 +330,27 @@
     "isEntry": true
   },
   "resources/js/offline/bridge.js": {
-    "file": "assets/bridge-CIUWh66Y.js",
+    "file": "assets/bridge-D5i0f4I-.js",
     "name": "bridge",
     "src": "resources/js/offline/bridge.js",
     "isEntry": true,
     "imports": [
-      "_sync-CxAohSr7.js",
-      "_register-B9CeC-AK.js"
+      "_sync-DIW1_JKv.js",
+      "_register-B6Lo0EtQ.js"
     ]
   },
   "resources/js/offline/index.js": {
-    "file": "assets/index-dZbmbOO9.js",
+    "file": "assets/index-DKvD_YLR.js",
     "name": "index",
     "src": "resources/js/offline/index.js",
     "isEntry": true,
     "imports": [
       "_cobro-CQDX0o90.js",
-      "_sync-CxAohSr7.js",
-      "_register-B9CeC-AK.js"
+      "_sync-DIW1_JKv.js",
+      "_register-B6Lo0EtQ.js"
     ],
     "css": [
-      "assets/index-CC8lAmYN.css"
+      "assets/index-Ck0rwS4d.css"
     ]
   },
   "resources/js/producto.js": {
@@ -369,14 +369,14 @@
     "isEntry": true
   },
   "resources/js/venta.js": {
-    "file": "assets/venta-7ax8VFz6.js",
+    "file": "assets/venta-Cudtht7C.js",
     "name": "venta",
     "src": "resources/js/venta.js",
     "isEntry": true,
     "imports": [
       "_bootstrap.esm-DM7gpgIx.js",
       "_cobro-CQDX0o90.js",
-      "_sync-CxAohSr7.js"
+      "_sync-DIW1_JKv.js"
     ]
   }
 }

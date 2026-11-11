@@ -1,5 +1,15 @@
 # Historial de publicaciones
 
+## 1.6.1 — 2026-11-11
+
+fix 1.6.0
+
+### Cambios del código
+
+- Simplificar flujo offline y cobro en efectivo (ebc0b9b)
+
+Código de origen: a92537c1b4261af56c8f13716c057dd85e51e06d
+
 ## 1.6.0 — 2026-11-11
 
 ### Cambios del código
