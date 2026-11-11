@@ -9,7 +9,10 @@
     $numero = fn ($valor) => number_format($valor, 0, ',', '.');
     $moneda = fn ($valor) => '$'.number_format($valor, 0, ',', '.');
     $filtros = ['seccion' => $seccion, 'fecha_inicio' => $fechaInicio, 'fecha_fin' => $fechaFin];
-    $secciones = ['ventas' => 'Resumen de ventas', 'inventario' => 'Inventario y riesgo', 'habitos' => 'Hábitos de compra'];
+    $secciones = ['ventas' => 'Resumen de ventas', 'inventario' => 'Inventario y riesgo', 'habitos' => 'Hábitos de compra', 'calendario' => 'Calendario', 'fechas' => 'Fechas de mayor venta'];
+    $contexto = $filtros + ['vista' => $vista, 'fecha_calendario' => $fechaCalendario->toDateString(), 'dia' => $dia, 'patron' => $patron, 'anio' => $anio];
+    $urlReporte = fn (array $cambios = []) => route('reportes.index', array_replace($contexto, $cambios));
+    $urlDia = fn (string $fecha) => $urlReporte(['dia' => $fecha, 'patron' => null, 'fecha_calendario' => $fecha, 'anio' => substr($fecha, 0, 4)]).'#detalle-fecha';
 @endphp
 <div class="page reportes-page">
     <div class="page-header">
@@ -20,7 +23,7 @@
         <div class="page-actions">
             <a class="btn-outline" href="{{ route('reportes.index', $filtros + ['exportar' => 'csv']) }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"/></svg>
-                Exportar CSV
+                {{ in_array($seccion, ['calendario', 'fechas']) ? 'Exportar ventas del rango CSV' : 'Exportar CSV' }}
             </a>
         </div>
     </div>

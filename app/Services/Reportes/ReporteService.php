@@ -11,7 +11,7 @@ class ReporteService
     private array $tablas = [];
 
     // Compatibilidad con los nombres de los dumps y de las migraciones en Linux.
-    private function tabla(string $nombre): string
+    protected function tabla(string $nombre): string
     {
         if ($this->tablas === []) {
             foreach (DB::getSchemaBuilder()->getTableListing(null, false) as $tabla) {
@@ -22,12 +22,12 @@ class ReporteService
         return $this->tablas[strtolower($nombre)] ?? $nombre;
     }
 
-    private function salidas(): Builder
+    protected function salidas(): Builder
     {
         return DB::table($this->tabla('Salida').' as s')->whereNull('s.deleted_at');
     }
 
-    private function ventasBase(CarbonImmutable $desde, CarbonImmutable $hasta): Builder
+    protected function ventasBase(CarbonImmutable $desde, CarbonImmutable $hasta): Builder
     {
         return $this->salidas()
             ->join($this->tabla('Tipo_Salida').' as t', 's.idTipo', '=', 't.idTipo')
@@ -40,10 +40,10 @@ class ReporteService
     public function ventas(CarbonImmutable $desde, CarbonImmutable $hasta): array
     {
         $base = $this->ventasBase($desde, $hasta);
-        $tickets = (clone $base)->select('s.idSalida', 's.fecha')
+        $salidasPeriodo = (clone $base)->select('s.idSalida', 's.fecha')
             ->selectRaw('SUM(d.cantidad * d.precioCobrado) as ingresos, SUM(d.cantidad) as unidades')
             ->groupBy('s.idSalida', 's.fecha')->orderBy('s.fecha')->get();
-        $ingresos = (float) $tickets->sum('ingresos');
+        $ingresos = (float) $salidasPeriodo->sum('ingresos');
         $dias = [];
         for ($dia = $desde; $dia->lessThanOrEqualTo($hasta); $dia = $dia->addDay()) {
             $dias[$dia->toDateString()] = ['fecha' => $dia->toDateString(), 'ingresos' => 0, 'ventas' => 0];
@@ -55,11 +55,11 @@ class ReporteService
         }
         $mapa = array_fill(0, 7, array_fill(0, 24, 0));
         $horas = array_fill(0, 24, 0);
-        foreach ($tickets as $ticket) {
-            $fecha = CarbonImmutable::parse($ticket->fecha);
-            $dias[$fecha->toDateString()]['ingresos'] += (float) $ticket->ingresos;
+        foreach ($salidasPeriodo as $salidaPeriodo) {
+            $fecha = CarbonImmutable::parse($salidaPeriodo->fecha);
+            $dias[$fecha->toDateString()]['ingresos'] += (float) $salidaPeriodo->ingresos;
             $dias[$fecha->toDateString()]['ventas']++;
-            $semana[$fecha->dayOfWeekIso - 1]['ingresos'] += (float) $ticket->ingresos;
+            $semana[$fecha->dayOfWeekIso - 1]['ingresos'] += (float) $salidaPeriodo->ingresos;
             $semana[$fecha->dayOfWeekIso - 1]['ventas']++;
             $mapa[$fecha->dayOfWeekIso - 1][$fecha->hour]++;
             $horas[$fecha->hour]++;
@@ -78,12 +78,12 @@ class ReporteService
             ->groupBy('c.idCategoria', 'c.nombre')->orderByDesc('ingresos')->get();
 
         return [
-            'ingresos' => $ingresos, 'ventas' => $tickets->count(), 'unidades' => $tickets->sum('unidades'),
-            'ticket' => $tickets->isEmpty() ? 0 : $ingresos / $tickets->count(),
+            'ingresos' => $ingresos, 'ventas' => $salidasPeriodo->count(), 'unidades' => $salidasPeriodo->sum('unidades'),
+            'ingresoPromedioPorSalida' => $salidasPeriodo->isEmpty() ? 0 : $ingresos / $salidasPeriodo->count(),
             'dias' => collect(array_values($dias)), 'semana' => $semana, 'mapa' => $mapa,
-            'maximo' => max(array_map('max', $mapa)), 'horaPunta' => $tickets->isEmpty() ? null : array_search(max($horas), $horas),
-            'diaFuerte' => $tickets->isEmpty() ? null : $comparables->sortByDesc('promedio')->first(),
-            'diaDebil' => $tickets->isEmpty() ? null : $comparables->sortBy('promedio')->first(),
+            'maximo' => max(array_map('max', $mapa)), 'horaPunta' => $salidasPeriodo->isEmpty() ? null : array_search(max($horas), $horas),
+            'diaFuerte' => $salidasPeriodo->isEmpty() ? null : $comparables->sortByDesc('promedio')->first(),
+            'diaDebil' => $salidasPeriodo->isEmpty() ? null : $comparables->sortBy('promedio')->first(),
             'productos' => $productos, 'categorias' => $categorias,
         ];
     }
@@ -169,7 +169,7 @@ class ReporteService
                 yield [$lote->codigo, $lote->nombre, $lote->vencimiento, $lote->cantidad, $lote->valor];
             }
         } elseif ($seccion === 'habitos') {
-            yield ['Día', 'Hora', 'Transacciones del período'];
+            yield ['Día', 'Hora', 'Salidas del período'];
             foreach ($datos['semana'] as $dia => $resumen) {
                 foreach ($datos['mapa'][$dia] as $hora => $cantidad) {
                     yield [$resumen['nombre'], sprintf('%02d:00', $hora), $cantidad];
@@ -178,11 +178,11 @@ class ReporteService
         } else {
             yield ['Resumen de ventas', 'Valor'];
             yield ['Ventas CLP (incluye fiado; excluye mermas)', $datos['ingresos']];
-            yield ['Transacciones', $datos['ventas']];
+            yield ['Salidas', $datos['ventas']];
             yield ['Unidades', $datos['unidades']];
-            yield ['Ticket promedio CLP', $datos['ticket']];
+            yield ['Ingreso promedio por salida CLP', $datos['ingresoPromedioPorSalida']];
             yield [];
-            yield ['Fecha', 'Ventas CLP', 'Transacciones'];
+            yield ['Fecha', 'Ventas CLP', 'Salidas'];
             foreach ($datos['dias'] as $dia) {
                 yield [$dia['fecha'], $dia['ingresos'], $dia['ventas']];
             }
