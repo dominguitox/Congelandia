@@ -27,9 +27,9 @@
                 <tbody>@foreach(array_chunk($calendario['dias'], 7) as $semana)<tr>
                     @foreach($semana as $celda)
                         @php($fecha = $celda['fecha']->toDateString())
-                        <td @class(['reportes-cal-adyacente' => $celda['adyacente'], 'reportes-cal-seleccion' => $dia === $fecha])>
+                        <td @class(['reportes-cal-adyacente' => $celda['adyacente'], 'reportes-cal-seleccion' => $dia === $fecha, 'reportes-cal-hoy' => $celda['fecha']->isToday()])>
                             <a class="reportes-cal-dia" href="{{ $urlDia($fecha) }}" aria-label="Consultar ventas del {{ $celda['fecha']->format('d/m/Y') }}" @if($celda['fecha']->isToday()) aria-current="date" @endif>
-                                <time datetime="{{ $fecha }}">{{ $celda['fecha']->format('d/m') }}</time>{{ $celda['fecha']->isToday() ? ' · Hoy' : '' }}{{ $dia === $fecha ? ' · Seleccionado' : '' }}
+                                <time datetime="{{ $fecha }}">{{ $celda['fecha']->format('d/m') }}</time>@if($celda['fecha']->isToday()) <span class="reportes-cal-hoy-etiqueta">Hoy</span>@endif{{ $dia === $fecha ? ' · Seleccionado' : '' }}
                             </a>
                             <small class="reportes-cal-resumen">{{ $moneda($celda['ventas']?->ingresos ?? 0) }} · {{ $numero($celda['ventas']?->ventas ?? 0) }} salidas</small>
                             <div class="reportes-cal-eventos">
