@@ -346,6 +346,65 @@
    RESPONSIVE
    ========================================================= */
 
+.cobro-productos {
+    padding-left: 20px;
+    overflow-wrap: anywhere;
+}
+
+.cobro-total,
+.cobro-resumen > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cobro-total strong {
+    font-size: var(--fs-xl);
+}
+
+.cobro-pago {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.cobro-pago-acciones {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cobro-billetes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.cobro-resumen {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+.cobro-vuelto {
+    color: var(--color-success);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+}
+
+@media (max-width: 480px) {
+    .cobro-pago {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 @media (max-width: 1000px) {
 
     .pos-grid {

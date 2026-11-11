@@ -25,6 +25,9 @@ use App\Http\Controllers\Auth\Logout;
 // SITIO PÚBLICO
 // =========================================================
 
+Route::get('/offline', [\App\Http\Controllers\PwaController::class, 'index'])->name('offline.index');
+Route::get('/offline-sw.js', [\App\Http\Controllers\PwaController::class, 'worker']);
+
 Route::get(
     '/',
     [PublicController::class, 'index']
@@ -64,6 +67,10 @@ Route::post(
 // =========================================================
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/offline/datos', [\App\Http\Controllers\OfflineController::class, 'datos'])->name('offline.datos');
+    Route::get('/offline/sesion', [\App\Http\Controllers\OfflineController::class, 'sesion'])->name('offline.sesion');
+    Route::post('/offline/sincronizar', [\App\Http\Controllers\OfflineController::class, 'sincronizar'])->name('offline.sync');
 
     Route::get('/ajustes', [AjustesController::class, 'index'])
         ->middleware('role:Administrador')->name('ajustes.index');
