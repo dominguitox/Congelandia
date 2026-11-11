@@ -201,12 +201,7 @@ a:hover {
     line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
-    transition: transform .18s ease, background-color .18s ease,
-        color .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-
-.pub-btn:hover {
-    transform: translateY(-2px);
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease;
 }
 
 .pub-btn:focus-visible {
@@ -679,6 +674,46 @@ a:hover {
     background: linear-gradient(180deg, transparent 55%, rgba(8, 43, 69, .22));
 }
 
+.pub-hero__offer-caption {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 1;
+    padding: 24px 24px 44px;
+    background: linear-gradient(rgba(0, 0, 0, .82), transparent);
+    color: #fff;
+}
+
+.pub-hero__offer-caption strong,
+.pub-hero__offer-caption span {
+    display: block;
+}
+
+.pub-hero__offer-caption strong {
+    font-family: var(--pub-display);
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    line-height: 1.2;
+}
+
+.pub-hero__offer-caption span {
+    margin-top: 6px;
+    font-weight: 700;
+}
+
+.pub-hero__placeholder {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    padding: 20px;
+    background: var(--pub-primary-soft);
+    color: var(--pub-primary-deep);
+    text-align: center;
+}
+
+.pub-hero__photo > .pub-hero__placeholder {
+    height: 100%;
+    aspect-ratio: auto;
+}
+
 .pub-hero__float {
     position: absolute;
     left: -6px;
@@ -851,13 +886,12 @@ a:hover {
     border-radius: var(--pub-radius-sm);
     color: var(--pub-ink);
     text-align: center;
-    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease;
 }
 
 .pub-cat:hover {
-    transform: translateY(-4px);
     border-color: var(--pub-primary);
-    box-shadow: var(--pub-shadow-card);
+    background: var(--pub-bg-alt);
     color: var(--pub-ink);
 }
 
@@ -901,13 +935,12 @@ a:hover {
     border-radius: var(--pub-radius);
     overflow: hidden;
     box-shadow: var(--pub-shadow-card);
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    transition: background-color .2s ease, border-color .2s ease;
 }
 
 .pub-product:hover {
-    transform: translateY(-6px);
     border-color: var(--pub-line-strong);
-    box-shadow: var(--pub-shadow-pop);
+    background: var(--pub-bg-alt);
 }
 
 .pub-product__media {
@@ -923,11 +956,6 @@ a:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform .5s ease;
-}
-
-.pub-product:hover .pub-product__media img {
-    transform: scale(1.045);
 }
 
 .pub-product__badges {

@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Inicio')
-@section('descripcion', 'Congelados de calidad para tu mesa: empanadas, carnes, verduras y más. Revisa el catálogo y coordina tu pedido por WhatsApp.')
+@section('descripcion', 'Congelados de calidad para tu mesa. Revisa nuestras ofertas y el catálogo, y coordina tu pedido por WhatsApp.')
 
 @section('content')
     @php
@@ -22,8 +22,8 @@
                 </h1>
 
                 <p class="pub-hero__lead">
-                    Empanadas, carnes, verduras y más, conservados en cadena de frío
-                    para que solo tengas que calentar y disfrutar.
+                    Productos de calidad, conservados en cadena de frío para que disfrutes más
+                    y planifiques tus compras fácilmente.
                 </p>
 
                 <div class="pub-hero__actions">
@@ -85,25 +85,14 @@
             </div>
 
             <div class="pub-hero__media">
-                <div class="pub-hero__photo">
-                    <img src="{{ asset('images/hero/tomates.webp') }}" alt="Tomates frescos de Congelandia"
-                        width="1000" height="1250">
-                </div>
-
-                <div class="pub-hero__float">
-                    <img src="{{ asset('images/hero/empanadas.webp') }}" alt="Empanadas de queso listas para freír"
-                        width="860" height="1120">
-                    <strong>Empanadas de queso</strong>
-                    <span>Listas para freír</span>
-                </div>
-
-                <div class="pub-sticker" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="1.8" stroke-linecap="round">
-                        <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
-                    </svg>
-                    <span>Cadena<br>de frío</span>
-                </div>
+                @forelse($ofertasHero as $producto)
+                    @include('public.partials.hero-oferta', ['producto' => $producto, 'principal' => $loop->first])
+                @empty
+                    <div class="pub-empty">
+                        <h2>Ofertas vigentes</h2>
+                        <p>Pronto tendremos nuevas ofertas. Mientras tanto, explora nuestro cat?logo.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>

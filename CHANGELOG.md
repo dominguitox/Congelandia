@@ -1,5 +1,14 @@
 # Historial de publicaciones
 
+## 1.6.2 — 2026-11-11
+
+### Cambios del código
+
+- fix(public): restaurar composicion del hero y seccion de productos (c56877a)
+- feat(public): destacar ofertas y simplificar hovers (6f5f919)
+
+Código de origen: c56877a28f1a55811351b589e67ba79b299f545d
+
 ## 1.6.1 — 2026-11-11
 
 fix 1.6.0

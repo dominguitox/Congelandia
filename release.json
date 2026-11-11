@@ -1,7 +1,7 @@
 {
-  "numero": "1.6.1",
-  "comentarios": "fix 1.6.0\n\n### Cambios del código\n\n- Simplificar flujo offline y cobro en efectivo (ebc0b9b)\n\nCódigo de origen: a92537c1b4261af56c8f13716c057dd85e51e06d",
-  "fecha_creacion": "2026-11-11T15:31:57.255Z",
-  "commit": "a92537c1b4261af56c8f13716c057dd85e51e06d",
+  "numero": "1.6.2",
+  "comentarios": "### Cambios del código\n\n- fix(public): restaurar composicion del hero y seccion de productos (c56877a)\n- feat(public): destacar ofertas y simplificar hovers (6f5f919)\n\nCódigo de origen: c56877a28f1a55811351b589e67ba79b299f545d",
+  "fecha_creacion": "2026-11-11T16:57:41.965Z",
+  "commit": "c56877a28f1a55811351b589e67ba79b299f545d",
   "public_directory": "public_html"
 }

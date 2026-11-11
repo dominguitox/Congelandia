@@ -15,11 +15,20 @@ class PublicController extends Controller
     {
         $version = Version::actual();
 
-        $productos = Producto::with(['imagenes', 'precioActual', 'categoria'])
-            ->withMax(['promociones as mayor_descuento' => fn ($query) => $query->vigentes()], 'porcentajeDescuento')
+        $consultaProductos = Producto::with(['imagenes', 'precioActual', 'categoria'])
+            ->withMax(['promociones as mayor_descuento' => fn ($query) => $query->vigentes()], 'porcentajeDescuento');
+
+        $productos = (clone $consultaProductos)
             ->orderByDesc('mayor_descuento')
             ->orderBy('nombre')
             ->limit(6)
+            ->get();
+
+        $ofertasHero = (clone $consultaProductos)
+            ->whereHas('promociones', fn ($query) => $query->vigentes())
+            ->orderByDesc('mayor_descuento')
+            ->orderBy('nombre')
+            ->limit(2)
             ->get();
 
         $categorias = $this->categoriasConProductos();
@@ -27,6 +36,7 @@ class PublicController extends Controller
 
         return view('public.index', compact(
             'productos',
+            'ofertasHero',
             'categorias',
             'totalProductos',
             'version'
