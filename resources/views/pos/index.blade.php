@@ -68,7 +68,13 @@
                             data-precio-normal="{{ $precioNormal }}"
                             data-precio-oferta="{{ $precioOferta }}"
                             data-descuento="{{ $descuentoOferta }}"
-                            data-stock="{{ $producto->stock }}" role="button" tabindex="0">
+                            data-stock="{{ $producto->stock }}" role="group" tabindex="0">
+
+                            <button type="button" class="producto-card-fijar" aria-pressed="false"
+                                aria-label="Fijar {{ $producto->nombre }} al inicio del listado"
+                                title="Fijar producto" data-nombre-producto="{{ $producto->nombre }}">
+                                <span aria-hidden="true">★</span>
+                            </button>
 
                             <div class="producto-card-imagen" aria-hidden="true">
                                 @if ($producto->imagenProducto)
