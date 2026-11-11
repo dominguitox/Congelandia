@@ -201,12 +201,7 @@ a:hover {
     line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
-    transition: transform .18s ease, background-color .18s ease,
-        color .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-
-.pub-btn:hover {
-    transform: translateY(-2px);
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease;
 }
 
 .pub-btn:focus-visible {
@@ -652,97 +647,41 @@ a:hover {
 
 .pub-hero__media {
     position: relative;
-    min-height: 520px;
+    min-height: 0;
 }
 
-.pub-hero__photo {
-    position: relative;
-    width: 88%;
-    margin-left: auto;
-    aspect-ratio: 4 / 5;
-    border-radius: calc(var(--pub-radius) + 10px);
-    overflow: hidden;
-    box-shadow: var(--pub-shadow-pop);
-    background: var(--pub-bg-alt);
+.pub-hero__offers-heading {
+    margin-bottom: 16px;
 }
 
-.pub-hero__photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.pub-hero__photo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 55%, rgba(8, 43, 69, .22));
-}
-
-.pub-hero__float {
-    position: absolute;
-    left: -6px;
-    bottom: 12px;
-    width: 210px;
-    padding: 10px;
-    background: var(--pub-surface);
-    border: 1px solid var(--pub-line);
-    border-radius: 22px;
-    box-shadow: var(--pub-shadow-pop);
-    transform: rotate(-3deg);
-}
-
-.pub-hero__float img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 15px;
-}
-
-.pub-hero__float strong {
-    display: block;
-    margin: 10px 4px 0;
+.pub-hero__offers-heading h2 {
+    margin: 6px 0 0;
     font-family: var(--pub-display);
-    font-size: 1.05rem;
-    line-height: 1.15;
+    font-size: clamp(1.45rem, 2vw, 1.9rem);
+    line-height: 1.1;
     color: var(--pub-ink);
 }
 
-.pub-hero__float span {
-    display: block;
-    margin: 2px 4px 4px;
-    font-size: .74rem;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--pub-primary-deep);
+.pub-hero__media .pub-hero__offers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
 }
 
-.pub-sticker {
-    position: absolute;
-    top: 16px;
-    right: 4px;
-    display: grid;
-    place-items: center;
-    width: 118px;
-    height: 118px;
-    padding: 12px;
-    border-radius: 50%;
-    background: var(--pub-accent);
-    color: var(--pub-accent-ink);
-    text-align: center;
-    font-size: .66rem;
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    box-shadow: 0 18px 30px -20px rgba(8, 43, 69, .6);
-    transform: rotate(8deg);
+.pub-hero__offers-grid .pub-product__body {
+    padding: 14px;
 }
 
-.pub-sticker svg {
-    margin-bottom: 4px;
+.pub-hero__offers-grid .pub-product__title {
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+}
+
+.pub-hero__offers-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 20px;
+    border: 1px solid var(--pub-line);
+    background: var(--pub-surface);
+    color: var(--pub-ink-soft);
 }
 
 .pub-hero__snow {
@@ -851,13 +790,12 @@ a:hover {
     border-radius: var(--pub-radius-sm);
     color: var(--pub-ink);
     text-align: center;
-    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease;
 }
 
 .pub-cat:hover {
-    transform: translateY(-4px);
     border-color: var(--pub-primary);
-    box-shadow: var(--pub-shadow-card);
+    background: var(--pub-bg-alt);
     color: var(--pub-ink);
 }
 
@@ -901,13 +839,12 @@ a:hover {
     border-radius: var(--pub-radius);
     overflow: hidden;
     box-shadow: var(--pub-shadow-card);
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    transition: background-color .2s ease, border-color .2s ease;
 }
 
 .pub-product:hover {
-    transform: translateY(-6px);
     border-color: var(--pub-line-strong);
-    box-shadow: var(--pub-shadow-pop);
+    background: var(--pub-bg-alt);
 }
 
 .pub-product__media {
@@ -923,11 +860,6 @@ a:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform .5s ease;
-}
-
-.pub-product:hover .pub-product__media img {
-    transform: scale(1.045);
 }
 
 .pub-product__badges {

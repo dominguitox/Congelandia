@@ -17,9 +17,10 @@ class PublicController extends Controller
 
         $productos = Producto::with(['imagenes', 'precioActual', 'categoria'])
             ->withMax(['promociones as mayor_descuento' => fn ($query) => $query->vigentes()], 'porcentajeDescuento')
+            ->whereHas('promociones', fn ($query) => $query->vigentes())
             ->orderByDesc('mayor_descuento')
             ->orderBy('nombre')
-            ->limit(6)
+            ->limit(2)
             ->get();
 
         $categorias = $this->categoriasConProductos();
