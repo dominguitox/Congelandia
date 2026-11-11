@@ -328,7 +328,7 @@ body.pub-body {
 
 /* Foto con marco duro */
 .pub-hero__media {
-    min-height: 0;
+    min-height: 530px;
 }
 
 .pub-hero__photo {

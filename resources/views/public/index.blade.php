@@ -85,18 +85,14 @@
             </div>
 
             <div class="pub-hero__media">
-                <div class="pub-hero__offers-heading">
-                    <span class="pub-eyebrow pub-eyebrow--accent">Ofertas vigentes</span>
-                    <h2>Las mejores ofertas</h2>
-                </div>
-
-                <div class="pub-products-grid pub-hero__offers-grid">
-                    @forelse($productos as $producto)
-                        @include('public.partials.producto-card', ['producto' => $producto])
-                    @empty
-                        <p class="pub-hero__offers-empty">No hay ofertas vigentes por ahora.</p>
-                    @endforelse
-                </div>
+                @forelse($ofertasHero as $producto)
+                    @include('public.partials.hero-oferta', ['producto' => $producto, 'principal' => $loop->first])
+                @empty
+                    <div class="pub-empty">
+                        <h2>Ofertas vigentes</h2>
+                        <p>Pronto tendremos nuevas ofertas. Mientras tanto, explora nuestro cat?logo.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -175,6 +171,47 @@
                         <span class="pub-cat__count">{{ $categoria->productos_count }}</span>
                     </a>
                 @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="pub-section pub-section--alt">
+        <div class="pub-container">
+            <div class="pub-section-head">
+                <div>
+                    <span class="pub-eyebrow pub-eyebrow--accent">Selección</span>
+                    <h2>Para llenar tu congelador</h2>
+                    <p>Una muestra de lo que puedes encontrar en el catálogo.</p>
+                </div>
+                <a class="pub-link-arrow" href="{{ route('public.catalogo') }}">
+                    Ver todo
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="pub-products-grid">
+                @forelse($productos as $producto)
+                    @include('public.partials.producto-card', ['producto' => $producto])
+                @empty
+                    <div class="pub-empty" style="grid-column: 1 / -1;">
+                        <div class="pub-empty__icon">
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                                <path d="M12 2v20M4.2 6.5l15.6 11M19.8 6.5l-15.6 11" />
+                            </svg>
+                        </div>
+                        <h2>Todavía no hay productos publicados</h2>
+                        <p>Estamos preparando el catálogo. Vuelve pronto o escríbenos para consultar disponibilidad.</p>
+                        @if($waUrl)
+                            <a class="pub-btn pub-btn--primary" href="{{ $waUrl }}" target="_blank" rel="noopener">
+                                Consultar por WhatsApp
+                            </a>
+                        @endif
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>

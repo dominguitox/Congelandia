@@ -4,7 +4,7 @@ use App\Models\Producto;
 use App\Models\Promocion;
 use Illuminate\Support\Facades\Artisan;
 
-test('la portada muestra solo los dos productos con mayores ofertas vigentes', function () {
+test('la portada destaca las dos mayores ofertas en el hero y mantiene productos debajo de categorias', function () {
     Artisan::call('migrate:fresh');
 
     $crearProducto = function (string $codigo, string $nombre, ?float $descuento = null, bool $vigente = true): void {
@@ -31,12 +31,15 @@ test('la portada muestra solo los dos productos con mayores ofertas vigentes', f
 
     $this->get(route('public.index'))
         ->assertOk()
-        ->assertViewHas('productos', fn ($productos) => $productos->pluck('codigo')->all() === ['OFERTA-35', 'OFERTA-20'])
+        ->assertViewHas('ofertasHero', fn ($productos) => $productos->pluck('codigo')->all() === ['OFERTA-35', 'OFERTA-20'])
+        ->assertViewHas('productos', fn ($productos) => $productos->count() === 5)
+        ->assertSee('class="pub-hero__photo"', false)
+        ->assertSee('class="pub-hero__float"', false)
+        ->assertSeeInOrder(['Explora por categoría', 'Para llenar tu congelador', 'pub-products-grid'])
         ->assertSee('Oferta 35')
         ->assertSee('Oferta 20')
-        ->assertDontSee('Oferta 10')
-        ->assertDontSee('Producto sin oferta')
-        ->assertDontSee('Oferta vencida')
+        ->assertSee('Oferta 10')
+        ->assertSee('Producto sin oferta')
         ->assertDontSee('Tomates frescos')
         ->assertDontSee('Empanadas de queso');
 });
