@@ -7,10 +7,14 @@ on:
         description: 'Nueva versión (ejemplo: 1.3.0)'
         required: true
         type: string
-      comentarios:
-        description: 'Resumen de cambios (opcional; también se genera la lista de commits)'
+      cambios:
+        description: 'Un cambio por línea, empezando con Nueva función:, Mejora: o Corrección:, y una descripción concreta.'
+        required: true
         type: string
-        default: ''
+      resumen_cliente:
+        description: 'Párrafo final: qué mejoró para el cliente y por qué le sirve.'
+        required: true
+        type: string
       carpeta_publica:
         description: 'Carpeta que sirve el dominio. Mantener la misma en futuras publicaciones.'
         type: choice
@@ -52,7 +56,8 @@ jobs:
       QUEUE_CONNECTION: sync
       MAIL_MAILER: array
       VERSION: ${{ inputs.version }}
-      COMMENTS: ${{ inputs.comentarios }}
+      CHANGES: ${{ inputs.cambios }}
+      CLIENT_SUMMARY: ${{ inputs.resumen_cliente }}
       PUBLIC_DIRECTORY: ${{ inputs.carpeta_publica }}
     steps:
       - uses: actions/checkout@v7
@@ -68,6 +73,7 @@ jobs:
         run: |
           echo "PACKAGE_DIR=$RUNNER_TEMP/directadmin-package" >> "$GITHUB_ENV"
           echo "NOTES_FILE=$RUNNER_TEMP/release-notes.md" >> "$GITHUB_ENV"
+          echo "RELEASE_CONTENT_FILE=$RUNNER_TEMP/release-content.json" >> "$GITHUB_ENV"
           echo "PREVIOUS_CHANGELOG_FILE=$RUNNER_TEMP/previous-changelog.md" >> "$GITHUB_ENV"
 
       - name: Validar versión y generar notas
@@ -91,7 +97,7 @@ jobs:
 
       - name: Probar el empaquetado y Laravel con SQLite
         run: |
-          node --test tools/deploy/build.test.mjs tools/deploy/pipeline.test.mjs
+          node --test tools/deploy/build.test.mjs tools/deploy/pipeline.test.mjs resources/js/version-notice.test.mjs
           php artisan view:cache
           php artisan route:cache
           php artisan route:clear
@@ -112,6 +118,7 @@ jobs:
           APP_ENV: production
           VERSION: ${{ steps.release.outputs.version }}
           SOURCE_COMMIT: ${{ steps.release.outputs.commit }}
+          RELEASE_PREPARED_AT: ${{ steps.release.outputs.prepared_at }}
         run: |
           php artisan view:clear
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress

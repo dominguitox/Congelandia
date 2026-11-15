@@ -1,4 +1,5 @@
 @php($appTheme = app(\App\Support\DeviceTheme::class)->resolve(request()))
+@php($versionActual = auth()->check() ? \App\Models\Version::actual() : null)
 <!DOCTYPE html>
 <html lang="es" data-theme="{{ $appTheme['style'] }}" data-color="{{ $appTheme['color'] }}">
 
@@ -58,6 +59,10 @@
     {{-- Contenido principal --}}
 
     <main class="app-main">
+
+        @if($versionActual)
+            @include('partials.version-notice', ['version' => $versionActual])
+        @endif
 
         @if(auth()->check())
             @include('partials.offline')
