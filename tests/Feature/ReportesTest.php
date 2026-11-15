@@ -90,11 +90,14 @@ test('inventario descuenta salidas de todos los tipos y no repite el stock en ca
     salidaReporte($this->usuario->idUsuario, $this->merma, '2026-11-03 10:00:00', [[3, 0, false]]);
     salidaReporte($this->usuario->idUsuario, $this->venta, '2026-11-03 11:00:00', [[5, 1000, false]], true);
 
-    $this->actingAs($this->usuario)->get('/reportes?seccion=inventario')
-        ->assertOk()->assertSee('Cantidades estimadas')
-        ->assertViewHas('datos', fn ($datos) => $datos['bajoStock']->first()->stock === 8
-            && $datos['reposicion'] === 12 && $datos['lotes']->count() === 1
-            && $datos['lotes']->first()->cantidad === 8 && $datos['valorRiesgo'] == 8000);
+    $response = $this->actingAs($this->usuario)->get('/reportes?seccion=inventario')
+        ->assertOk()->assertSee('Cantidades estimadas');
+    $datos = $response->viewData('datos');
+    expect($datos['bajoStock']->first()->stock)->toBe(8)
+        ->and($datos['reposicion'])->toBe(12)
+        ->and($datos['lotes'])->toHaveCount(1)
+        ->and($datos['lotes']->first()->cantidad)->toBe(8)
+        ->and($datos['valorRiesgo'])->toEqual(8000);
 });
 
 test('reportes muestra estados vacios y exporta el mismo filtro con proteccion de formulas', function () {
