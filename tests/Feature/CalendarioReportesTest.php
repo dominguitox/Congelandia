@@ -121,7 +121,10 @@ test('ofertas identifican inicio continuacion termino y oferta del mismo dia sin
     foreach (['2026-10-31' => 'Comienza hoy', '2026-11-01' => null, '2026-11-03' => 'Termina hoy'] as $fecha => $tramo) {
         $evento = $xpath->query('//td[.//time[@datetime="'.$fecha.'"]]//details[@data-oferta-id="'.$id.'"]')->item(0);
         expect($evento)->not->toBeNull();
-        expect($evento->textContent)->toContain('Oferta #'.$id);
+        $resumen = $xpath->query('./summary', $evento)->item(0);
+        $detalle = $xpath->query('./p', $evento)->item(0);
+        expect($resumen->textContent)->toContain('Helado A · 15%')->not->toContain('Oferta #', 'Vencida');
+        expect($detalle->textContent)->toContain('Oferta #'.$id, 'Vencida', '#A', '31/10/2026 12:00 al 03/11/2026 18:00');
         if ($tramo !== null) {
             expect($evento->textContent)->toContain($tramo);
         } else {
