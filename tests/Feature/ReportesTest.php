@@ -2,12 +2,11 @@
 
 use App\Models\User;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
+    Artisan::call('migrate:fresh');
     config(['app.key' => 'base64:'.base64_encode(str_repeat('r', 32))]);
     $this->withoutVite();
     $this->travelTo(CarbonImmutable::parse('2026-11-06 12:00:00'));
