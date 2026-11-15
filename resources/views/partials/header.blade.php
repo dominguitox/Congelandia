@@ -16,6 +16,10 @@
 
         <a @class(['navbar-brand fw-bold mb-0 h1', 'title-bar-text' => $appTheme['style'] === 'win7']) href="/">Congelandia</a>
 
+        @auth
+            <button type="button" class="app-update-notice" data-app-update data-current-version="{{ $versionActual?->numero }}" data-version-url="{{ route('version.actual') }}" hidden>Actualización disponible, haz clic aquí para actualizar</button>
+        @endauth
+
         <div class="ms-auto text-white app-user">
             <span class="app-user-name me-2">{{ auth()->user()->nombre ?? 'Nombre del usuario' }}</span>
             <span class="badge bg-info text-dark">{{ auth()->user()->rol ?? 'Rol' }}</span>
