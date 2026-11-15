@@ -1,6 +1,6 @@
 {
-  "numero": "1.7.2",
-  "comentarios": "# Congelandia 1.7.2 — 2026-11-15\n\n## Cambios\n- **Mejora:** El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades.\n\n## Para ti\nPara el campo **resumen_cliente**, puedes usar:  ```text El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios. ```",
+  "numero": "1.7.3",
+  "comentarios": "# Congelandia 1.7.3 — 2026-11-15\n\n## Cambios\n- **Mejora:** El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades.\n\n## Para ti\nEl aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios.",
   "novedades": {
     "cambios": [
       {
@@ -8,9 +8,9 @@
         "descripcion": "El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades."
       }
     ],
-    "resumen_cliente": "Para el campo **resumen_cliente**, puedes usar:  ```text El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios. ```"
+    "resumen_cliente": "El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios."
   },
-  "fecha_creacion": "2026-11-15T17:55:22.074Z",
-  "commit": "799e1c9330114c746ebbc62c577c32db7b24838a",
+  "fecha_creacion": "2026-11-15T18:25:35.528Z",
+  "commit": "5e3758727b0ee8e687d26b5f76947a6fbd30e494",
   "public_directory": "public_html"
 }

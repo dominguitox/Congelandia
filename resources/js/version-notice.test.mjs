@@ -13,17 +13,19 @@ class Element extends EventTarget {
 function setup(version, storage) {
     const notice = new Element(version);
     const trigger = new Element();
+    const dismiss = new Element();
     const modalElement = new Element();
     let showCount = 0;
     const Modal = { getOrCreateInstance: () => ({ show: () => showCount++ }) };
     const elements = {
         '[data-version-notice]': notice,
         '[data-version-notice-open]': trigger,
+        '[data-version-notice-dismiss]': dismiss,
         '#versionNovedadesModal': modalElement,
     };
     const root = { querySelector: (selector) => elements[selector] ?? null };
     initializeVersionNotice(root, storage, Modal);
-    return { notice, trigger, modalElement, root, Modal, showCount: () => showCount };
+    return { notice, trigger, dismiss, modalElement, root, Modal, showCount: () => showCount };
 }
 
 test('descartar novedades persiste solo esa versión y una versión nueva vuelve a aparecer', () => {
@@ -38,6 +40,8 @@ test('descartar novedades persiste solo esa versión y una versión nueva vuelve
     firstPage.trigger.dispatchEvent(new Event('click'));
     assert.equal(firstPage.showCount(), 1);
     firstPage.modalElement.dispatchEvent(new Event('hidden.bs.modal'));
+    assert.equal(firstPage.notice.hidden, false);
+    firstPage.dismiss.dispatchEvent(new Event('click'));
     assert.equal(firstPage.notice.hidden, true);
 
     const reloadedPage = setup('1.2.0', storage);

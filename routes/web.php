@@ -68,6 +68,12 @@ Route::post(
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/version-actual', function () {
+        $version = \App\Models\Version::actual();
+        return response()->json(['numero' => $version?->novedadesParaCliente() ? $version->numero : null])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+    })->name('version.actual');
+
     Route::get('/offline/datos', [\App\Http\Controllers\OfflineController::class, 'datos'])->name('offline.datos');
     Route::get('/offline/sesion', [\App\Http\Controllers\OfflineController::class, 'sesion'])->name('offline.sesion');
     Route::post('/offline/sincronizar', [\App\Http\Controllers\OfflineController::class, 'sincronizar'])->name('offline.sync');

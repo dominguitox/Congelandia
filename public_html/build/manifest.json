@@ -132,7 +132,7 @@
     "name": "sync"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BAeb6eyY.css",
+    "file": "assets/app-CfDvlxz4.css",
     "name": "app",
     "names": [
       "app.css"
@@ -303,7 +303,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CdyJfNZr.js",
+    "file": "assets/app-BJ1w8llT.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
