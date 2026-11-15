@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.7.2 — 2026-11-15
+
+## Cambios
+- **Mejora:** El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades.
+
+## Para ti
+Para el campo **resumen_cliente**, puedes usar:  ```text El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios. ```
+
 # Congelandia 1.7.1 — 2026-11-15
 
 ## Cambios

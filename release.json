@@ -1,16 +1,16 @@
 {
-  "numero": "1.7.1",
-  "comentarios": "# Congelandia 1.7.1 — 2026-11-15\n\n## Cambios\n- **Nueva función:** Consulta las novedades de cada versión desde un aviso en los módulos de Congelandia.\n\n## Para ti\nAhora puedes revisar qué cambió en Congelandia desde un aviso disponible en los módulos. Al cerrarlo, este equipo recordará que ya viste las novedades de esa versión.",
+  "numero": "1.7.2",
+  "comentarios": "# Congelandia 1.7.2 — 2026-11-15\n\n## Cambios\n- **Mejora:** El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades.\n\n## Para ti\nPara el campo **resumen_cliente**, puedes usar:  ```text El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios. ```",
   "novedades": {
     "cambios": [
       {
-        "tipo": "Nueva función",
-        "descripcion": "Consulta las novedades de cada versión desde un aviso en los módulos de Congelandia."
+        "tipo": "Mejora",
+        "descripcion": "El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades."
       }
     ],
-    "resumen_cliente": "Ahora puedes revisar qué cambió en Congelandia desde un aviso disponible en los módulos. Al cerrarlo, este equipo recordará que ya viste las novedades de esa versión."
+    "resumen_cliente": "Para el campo **resumen_cliente**, puedes usar:  ```text El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios. ```"
   },
-  "fecha_creacion": "2026-11-15T17:40:20.128Z",
+  "fecha_creacion": "2026-11-15T17:55:22.074Z",
   "commit": "799e1c9330114c746ebbc62c577c32db7b24838a",
   "public_directory": "public_html"
 }
