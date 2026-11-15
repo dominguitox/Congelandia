@@ -1,4 +1,5 @@
-import 'bootstrap';
+import { Modal } from 'bootstrap';
+import { initializeVersionNotice } from './version-notice.js';
 
 /* =========================================================
    MENU LATERAL EN MOVIL
@@ -8,6 +9,14 @@ import 'bootstrap';
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    let storage = null;
+    try {
+        storage = window.localStorage;
+    } catch {
+        // La notificación sigue disponible si el navegador bloquea el almacenamiento local.
+    }
+    initializeVersionNotice(document, storage, Modal);
 
     const sidebar = document.getElementById('sidebar');
     const toggle = document.getElementById('btnSidebar');

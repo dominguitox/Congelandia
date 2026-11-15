@@ -1,0 +1,68 @@
+.version-notice[hidden] {
+    display: none !important;
+}
+
+.version-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+.version-notice__copy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+}
+
+.version-notice__trigger {
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 0.35rem;
+    padding: 0.45rem 0.7rem;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    background: transparent;
+}
+
+.version-notice__trigger:hover,
+.version-notice__trigger:focus-visible {
+    background: rgb(255 255 255 / 35%);
+}
+
+.version-notice__trigger:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.version-notice__changes {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.25rem;
+}
+
+.version-notice__changes li span {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#versionNovedadesResumen {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+    .version-notice {
+        align-items: flex-start;
+    }
+
+    .version-notice__copy {
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+}

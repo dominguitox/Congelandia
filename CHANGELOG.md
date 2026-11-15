@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.7.1 — 2026-11-15
+
+## Cambios
+- **Nueva función:** Consulta las novedades de cada versión desde un aviso en los módulos de Congelandia.
+
+## Para ti
+Ahora puedes revisar qué cambió en Congelandia desde un aviso disponible en los módulos. Al cerrarlo, este equipo recordará que ya viste las novedades de esa versión.
+
 ## 1.6.2 — 2026-11-11
 
 ### Cambios del código

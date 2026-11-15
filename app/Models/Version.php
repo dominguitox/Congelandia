@@ -25,6 +25,7 @@ class Version extends Model
             return (new self)->forceFill([
                 'numero' => $release['numero'],
                 'comentarios' => $release['comentarios'],
+                'novedades' => $release['novedades'] ?? null,
                 'fecha_creacion' => $release['fecha_creacion'],
                 'commit' => $release['commit'],
                 'activa' => true,
@@ -33,5 +34,38 @@ class Version extends Model
 
         // Compatibilidad con instalaciones anteriores y desarrollo local.
         return self::where('activa', 1)->latest('id')->first();
+    }
+
+    /**
+     * Devuelve solo notas editoriales válidas. Las entregas antiguas guardan
+     * comentarios libres que pueden contener asuntos técnicos o commits.
+     */
+    public function novedadesParaCliente(): ?array
+    {
+        $version = $this->numero;
+        $novedades = $this->getAttribute('novedades');
+        $fecha = $this->fecha_creacion;
+        if (!is_string($version) || !preg_match('/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/', $version)
+            || !is_string($fecha) || strtotime($fecha) === false || !is_array($novedades)) {
+            return null;
+        }
+
+        $summary = $novedades['resumen_cliente'] ?? null;
+        $changes = $novedades['cambios'] ?? null;
+        if (!is_string($summary) || trim($summary) === '' || !is_array($changes) || $changes === []) {
+            return null;
+        }
+
+        $types = ['Nueva función', 'Mejora', 'Corrección'];
+        foreach ($changes as $change) {
+            if (!is_array($change)
+                || !isset($change['tipo'], $change['descripcion'])
+                || !is_string($change['tipo']) || !in_array($change['tipo'], $types, true)
+                || !is_string($change['descripcion']) || trim($change['descripcion']) === '') {
+                return null;
+            }
+        }
+
+        return ['cambios' => $changes, 'resumen_cliente' => trim($summary)];
     }
 }

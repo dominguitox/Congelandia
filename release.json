@@ -1,7 +1,16 @@
 {
-  "numero": "1.6.2",
-  "comentarios": "### Cambios del código\n\n- fix(public): restaurar composicion del hero y seccion de productos (c56877a)\n- feat(public): destacar ofertas y simplificar hovers (6f5f919)\n\nCódigo de origen: c56877a28f1a55811351b589e67ba79b299f545d",
-  "fecha_creacion": "2026-11-11T16:57:41.965Z",
-  "commit": "c56877a28f1a55811351b589e67ba79b299f545d",
+  "numero": "1.7.1",
+  "comentarios": "# Congelandia 1.7.1 — 2026-11-15\n\n## Cambios\n- **Nueva función:** Consulta las novedades de cada versión desde un aviso en los módulos de Congelandia.\n\n## Para ti\nAhora puedes revisar qué cambió en Congelandia desde un aviso disponible en los módulos. Al cerrarlo, este equipo recordará que ya viste las novedades de esa versión.",
+  "novedades": {
+    "cambios": [
+      {
+        "tipo": "Nueva función",
+        "descripcion": "Consulta las novedades de cada versión desde un aviso en los módulos de Congelandia."
+      }
+    ],
+    "resumen_cliente": "Ahora puedes revisar qué cambió en Congelandia desde un aviso disponible en los módulos. Al cerrarlo, este equipo recordará que ya viste las novedades de esa versión."
+  },
+  "fecha_creacion": "2026-11-15T17:40:20.128Z",
+  "commit": "799e1c9330114c746ebbc62c577c32db7b24838a",
   "public_directory": "public_html"
 }

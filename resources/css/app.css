@@ -25,6 +25,7 @@
 @import './components/forms.css';
 @import './components/badges.css';
 @import './components/modals.css';
+@import './components/version-notice.css';
 @import './components/search.css';
 @import './components/states.css';
 @import './components/bootstrap-theme.css';
