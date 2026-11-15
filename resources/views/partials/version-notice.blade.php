@@ -13,6 +13,7 @@
             aria-haspopup="dialog"
             aria-controls="versionNovedadesModal"
         >Ver novedades</button>
+        <button type="button" class="btn-close" data-version-notice-dismiss aria-label="Descartar novedades de la versión {{ $version->numero }}"></button>
     </section>
 
     <div class="modal fade" id="versionNovedadesModal" tabindex="-1" aria-labelledby="versionNovedadesTitulo" aria-describedby="versionNovedadesResumen" aria-hidden="true">
