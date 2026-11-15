@@ -10,9 +10,13 @@ El servidor recibe una entrega terminada mediante su herramienta Git. GitHub com
 - `deploy-v1.3.0` conserva su entrega compilada exacta. Permite restaurarla sin recompilar ni volver a instalar dependencias.
 - La Release **Congelandia 1.3.0** contiene sus notas y el ZIP `congelandia-deploy-v1.3.0.zip`. Los enlaces automáticos de GitHub **Source code** contienen código fuente, no la entrega preparada.
 
-La versión se escribe manualmente: corrección `1.3.1`, funcionalidad nueva `1.4.0`, cambio incompatible `2.0.0`. La automatización valida el formato, exige un número mayor al instalado en `deploy` y rechaza etiquetas reutilizadas. El changelog se genera con los commits que no sean merges desde la entrega anterior, más los comentarios opcionales. En la primera entrega recoge hasta 100 commits.
+La versión se escribe manualmente: corrección `1.3.1`, funcionalidad nueva `1.4.0`, cambio incompatible `2.0.0`. La automatización valida el formato, exige un número mayor al instalado en `deploy` y rechaza etiquetas reutilizadas. El `CHANGELOG.md` conserva las notas editoriales de cada entrega; no se redactan cambios a partir de los asuntos de commits.
 
-La web lee la versión y las notas desde `release.json`, fuera de la carpeta pública. No necesita modificar la base de datos para informar su versión. En desarrollo y en instalaciones antiguas sin ese archivo, conserva la lectura de la tabla `versiones`. `/version-info` requiere iniciar sesión, igual que antes. Las fechas indican cuándo se preparó la entrega, no cuándo se pulsó Deploy en el hosting.
+La web lee la versión y las notas desde `release.json`, fuera de la carpeta pública. La metadata editorial nueva guarda `novedades.cambios` (cada elemento con tipo y descripción) y `novedades.resumen_cliente`; la fecha y la versión se toman de la propia entrega. El aviso aparece en los módulos autenticados y el navegador registra su descarte en `localStorage` por número de versión. No se sincroniza entre equipos.
+
+Las entregas antiguas que solo contienen `comentarios` siguen funcionando y conservan `/version-info`. Como esos comentarios pueden ser técnicos o una lista de commits, no se muestran como novedades al cliente. En ausencia de metadata editorial válida, simplemente no aparece el aviso. En desarrollo o en instalaciones antiguas sin `release.json`, se conserva la lectura de la tabla `versiones`.
+
+Las fechas indican cuándo se preparó la entrega, no cuándo se pulsó Deploy en el hosting. Las notas de cada Release tienen tres bloques: identidad de Congelandia, versión y fecha; cambios clasificados como “Nueva función”, “Mejora” o “Corrección”; y un párrafo final sobre el beneficio para el cliente. No se generan resúmenes a partir de asuntos de commits.
 
 ## 2. Activar la automatización una vez
 
@@ -30,12 +34,12 @@ Los cambios sin commit o que solo existan en el PC no se incluyen: el workflow t
 1. Integrar los cambios aprobados en `main` y comprobar que CI termine en verde.
 2. Abrir el repositorio en GitHub → **Actions** → **Preparar despliegue DirectAdmin** → **Run workflow**.
 3. Elegir la rama **main**.
-4. Introducir una versión nueva, por ejemplo **1.3.0**, y, opcionalmente, un resumen comprensible de los cambios.
+4. Introducir una versión nueva, por ejemplo **1.3.0**. Completar **Cambios** con un ítem por línea, cada uno empezando con `Nueva función:`, `Mejora:` o `Corrección:` y una descripción concreta. Completar **Resumen para el cliente** con un párrafo breve y directo sobre qué mejoró y por qué le sirve. Ambos campos son obligatorios; el workflow falla con un mensaje claro si falta información o una categoría no es válida.
 5. Elegir la carpeta pública:
    - **public_html**: para el directorio habitual de DirectAdmin. La entrega renombra `public` a `public_html`; Laravel adapta también `public_path()` para encontrar los compilados y guardar las fotos en el lugar correcto.
    - **public**: si el proveedor ya configuró el dominio para servir el directorio `public` de Laravel.
 6. Pulsar **Run workflow** y esperar a que todos los pasos estén en verde.
-7. Revisar la nueva Release y las notas. Ya está preparada la rama `deploy`; todavía no se ha actualizado el hosting.
+7. Revisar la nueva Release, `CHANGELOG.md` y la rama `deploy`. Ya está preparada la entrega; todavía no se ha actualizado el hosting.
 
 Mantener la misma carpeta pública en futuras publicaciones. La automatización rechaza un cambio de carpeta sobre una entrega ya preparada para evitar romper las rutas y separar las fotos de productos.
 

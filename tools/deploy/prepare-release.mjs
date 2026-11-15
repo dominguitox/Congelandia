@@ -1,21 +1,28 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, writeFileSync } from 'node:fs';
 import { normalizeVersion } from './build.mjs';
+import { composeReleaseNotes, parseEditorialChanges } from './release-notes.mjs';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 const hasRef = (ref) => spawnSync('git', ['rev-parse', '--verify', '--quiet', ref]).status === 0;
 const version = normalizeVersion(process.env.VERSION);
 const commit = git('rev-parse', 'HEAD');
+const novedades = {
+    cambios: parseEditorialChanges(process.env.CHANGES),
+    resumen_cliente: String(process.env.CLIENT_SUMMARY ?? '').trim(),
+};
+if (!novedades.resumen_cliente) {
+    throw new Error('Debes escribir el resumen final para el cliente antes de preparar la Release.');
+}
 for (const tag of [`v${version}`, `deploy-v${version}`]) {
     if (hasRef(`refs/tags/${tag}`)) throw new Error(`La versión ${version} ya existe. Usa otro número o restaura su entrega.`);
 }
 
-let previous = null;
 let previousChangelog = '';
 if (hasRef('refs/remotes/origin/deploy')) {
     const metadata = spawnSync('git', ['show', 'origin/deploy:release.json'], { encoding: 'utf8' });
     if (metadata.status === 0) {
-        previous = JSON.parse(metadata.stdout);
+        const previous = JSON.parse(metadata.stdout);
         const older = normalizeVersion(previous.numero).split('.').map(BigInt);
         const newer = version.split('.').map(BigInt);
         const difference = newer.findIndex((part, index) => part !== older[index]);
@@ -31,9 +38,10 @@ if (hasRef('refs/remotes/origin/deploy')) {
         previousChangelog = git('show', 'origin/deploy:CHANGELOG.md');
     }
 }
-const commits = git('log', '--no-merges', '--format=- %s (%h)', ...(previous ? [`${previous.commit}..${commit}`] : ['-100', commit]));
-const comments = (process.env.COMMENTS ?? '').trim();
-const notes = [comments, '### Cambios del código', commits || '- Sin cambios de código respecto de la entrega anterior.', `Código de origen: ${commit}`].filter(Boolean).join('\n\n');
+
+const preparedAt = new Date().toISOString();
+const notes = composeReleaseNotes(version, preparedAt, novedades);
 writeFileSync(process.env.NOTES_FILE, `${notes}\n`);
+writeFileSync(process.env.RELEASE_CONTENT_FILE, `${JSON.stringify(novedades, null, 2)}\n`);
 writeFileSync(process.env.PREVIOUS_CHANGELOG_FILE, previousChangelog);
-appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ncommit=${commit}\n`);
+appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ncommit=${commit}\nprepared_at=${preparedAt}\n`);

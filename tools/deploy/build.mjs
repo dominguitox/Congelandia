@@ -1,6 +1,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { composeReleaseNotes } from './release-notes.mjs';
 
 export function normalizeVersion(value) {
     const version = String(value ?? '').trim().replace(/^v/, '');
@@ -10,7 +11,7 @@ export function normalizeVersion(value) {
     return version;
 }
 
-export function buildDeployment({ source, destination, version, commit, notes, previousChangelog = '', publicDirectory = 'public_html', builtAt = new Date().toISOString() }) {
+export function buildDeployment({ source, destination, version, commit, novedades, previousChangelog = '', publicDirectory = 'public_html', builtAt = new Date().toISOString() }) {
     source = resolve(source);
     destination = resolve(destination);
     version = normalizeVersion(version);
@@ -61,15 +62,17 @@ export function buildDeployment({ source, destination, version, commit, notes, p
         writeFileSync(join(destination, directory, '.gitignore'), '*\n!.gitignore\n');
     }
     writeFileSync(join(destination, '.gitignore'), `.env\n.env.*\n!.env.example\n/storage/**\n/${publicDirectory}/images/productos/\n/${publicDirectory}/storage/\n/${publicDirectory}/hot\n/bootstrap/cache/*.php\n`);
+    const notes = composeReleaseNotes(version, builtAt, novedades);
     const release = {
         numero: version,
-        comentarios: notes.trim(),
+        comentarios: notes,
+        novedades,
         fecha_creacion: builtAt,
         commit,
         public_directory: publicDirectory,
     };
     writeFileSync(join(destination, 'release.json'), `${JSON.stringify(release, null, 2)}\n`);
-    writeFileSync(join(destination, 'CHANGELOG.md'), `# Historial de publicaciones\n\n## ${version} — ${builtAt.slice(0, 10)}\n\n${notes.trim()}\n\n${previousChangelog.replace(/^# Historial de publicaciones\s*/, '').trim()}\n`);
+    writeFileSync(join(destination, 'CHANGELOG.md'), `# Historial de publicaciones\n\n${notes}\n\n${previousChangelog.replace(/^# Historial de publicaciones\s*/, '').trim()}\n`);
     return release;
 }
 
@@ -79,8 +82,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
         destination: process.env.PACKAGE_DIR,
         version: process.env.VERSION,
         commit: process.env.SOURCE_COMMIT,
-        notes: readFileSync(process.env.NOTES_FILE, 'utf8'),
+        novedades: JSON.parse(readFileSync(process.env.RELEASE_CONTENT_FILE, 'utf8')),
         previousChangelog: readFileSync(process.env.PREVIOUS_CHANGELOG_FILE, 'utf8'),
         publicDirectory: process.env.PUBLIC_DIRECTORY,
+        builtAt: process.env.RELEASE_PREPARED_AT,
     });
 }

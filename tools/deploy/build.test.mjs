@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { buildDeployment, normalizeVersion } from './build.mjs';
+import { composeReleaseNotes, parseEditorialChanges } from './release-notes.mjs';
 
 function fixture(t) {
     const root = mkdtempSync(join(tmpdir(), 'congelandia-deploy-test-'));
@@ -18,7 +19,7 @@ function fixture(t) {
     for (const secret of ['.env', 'auth.json', 'database/database.sqlite', 'database/sql/datos.sql', 'public/hot', 'public/fonts-manifest.dev.json', 'public/images/productos/customer.jpg', 'public/storage/private.jpg', 'bootstrap/cache/config.php', 'bootstrap/cache/services.php', 'storage/logs/laravel.log', 'storage/framework/sessions/session', 'node_modules/private.txt', '.github/workflows/deploy.yml']) write(secret, 'DO NOT SHIP');
     return {
         source, write,
-        options: { source, destination: join(root, 'package'), version: 'v1.2.0', commit: 'a'.repeat(40), notes: 'Reporte nuevo', builtAt: '2026-11-08T12:00:00.000Z' },
+        options: { source, destination: join(root, 'package'), version: 'v1.2.0', commit: 'a'.repeat(40), novedades: { cambios: [{ tipo: 'Mejora', descripcion: 'Ahora puedes consultar reportes desde el calendario.' }], resumen_cliente: 'Encontrar las fechas importantes toma menos tiempo.' }, builtAt: '2026-11-08T12:00:00.000Z' },
     };
 }
 
@@ -34,6 +35,8 @@ for (const publicDirectory of ['public', 'public_html']) {
         assert.equal(metadata.numero, '1.2.0');
         assert.equal(metadata.commit, options.commit);
         assert.equal(metadata.public_directory, publicDirectory);
+        assert.deepEqual(metadata.novedades, options.novedades);
+        assert.doesNotMatch(metadata.comentarios, new RegExp(options.commit));
     });
 }
 
@@ -64,4 +67,20 @@ test('valida las versiones usadas en etiquetas y comandos Git', () => {
     for (const version of ['../main', '1.2', '1.2.3\nother', '1.2.3;echo', '01.2.3', '1.2.3-rc1']) {
         assert.throws(() => normalizeVersion(version));
     }
+});
+
+test('compone exactamente identidad, cambios clasificados y beneficio para el cliente', () => {
+    const novedades = {
+        cambios: parseEditorialChanges('Nueva función: Consulta el calendario de ofertas por día.\nMejora: El inventario destaca los productos próximos a vencer.'),
+        resumen_cliente: 'Puedes planificar tus compras con información más fácil de encontrar.',
+    };
+    const notes = composeReleaseNotes('1.2.0', '2026-11-08T12:00:00.000Z', novedades);
+    assert.deepEqual(notes.split(/\n\n(?=## )/), [
+        '# Congelandia 1.2.0 — 2026-11-08',
+        '## Cambios\n- **Nueva función:** Consulta el calendario de ofertas por día.\n- **Mejora:** El inventario destaca los productos próximos a vencer.',
+        '## Para ti\nPuedes planificar tus compras con información más fácil de encontrar.',
+    ]);
+    assert.throws(() => parseEditorialChanges('Se cambió el código'), /Cada cambio debe ocupar una línea/);
+    assert.throws(() => composeReleaseNotes('1.2.0', '2026-11-08', { cambios: [], resumen_cliente: 'x' }), /Faltan cambios editoriales/);
+    assert.throws(() => composeReleaseNotes('1.2.0', '2026-11-08', { cambios: novedades.cambios, resumen_cliente: '' }), /resumen para el cliente/);
 });

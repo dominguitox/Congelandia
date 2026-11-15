@@ -44,9 +44,10 @@ test(`publicar, actualizar y restaurar conserva datos (deploy ${legacy ? 'antigu
         const notesFile = join(runner, 'notes');
         const previousFile = join(runner, 'previous');
         const commit = git('rev-parse', 'HEAD');
-        const env = { ...process.env, RUNNER_TEMP: runner.replaceAll('\\', '/'), PACKAGE_DIR: packageDir.replaceAll('\\', '/'), VERSION: version, SOURCE_COMMIT: commit, COMMENTS: 'Resumen manual', PUBLIC_DIRECTORY: publicDirectory, GITHUB_OUTPUT: output, NOTES_FILE: notesFile, PREVIOUS_CHANGELOG_FILE: previousFile };
+        const env = { ...process.env, RUNNER_TEMP: runner.replaceAll('\\', '/'), PACKAGE_DIR: packageDir.replaceAll('\\', '/'), VERSION: version, SOURCE_COMMIT: commit, CHANGES: 'Nueva función: Consulta reportes en un calendario fácil de leer.', CLIENT_SUMMARY: 'Encontrar las fechas de actividad requiere menos tiempo.', PUBLIC_DIRECTORY: publicDirectory, GITHUB_OUTPUT: output, NOTES_FILE: notesFile, RELEASE_CONTENT_FILE: join(runner, 'release-content.json'), PREVIOUS_CHANGELOG_FILE: previousFile };
         run(process.execPath, ['tools/deploy/prepare-release.mjs'], { env });
-        const release = { numero: version, commit, comentarios: readFileSync(notesFile, 'utf8'), fecha_creacion: '2026-11-08T00:00:00Z', public_directory: publicDirectory };
+        const preparedAt = readFileSync(output, 'utf8').match(/^prepared_at=(.+)$/m)[1];
+        const release = { numero: version, commit, comentarios: readFileSync(notesFile, 'utf8'), novedades: JSON.parse(readFileSync(env.RELEASE_CONTENT_FILE, 'utf8')), fecha_creacion: preparedAt, public_directory: publicDirectory };
         writeFileSync(join(packageDir, 'release.json'), JSON.stringify(release));
         writeFileSync(join(packageDir, 'CHANGELOG.md'), `${version}\n${release.comentarios}\n${readFileSync(previousFile, 'utf8')}`);
         mkdirSync(join(packageDir, 'public_html'));
@@ -69,8 +70,8 @@ test(`publicar, actualizar y restaurar conserva datos (deploy ${legacy ? 'antigu
     git('add', 'application.txt');
     git('commit', '-m', 'Agrega reportes');
     const second = prepareAndPublish('1.1.0');
-    assert.match(readFileSync(second.notesFile, 'utf8'), /Agrega reportes/);
-    assert.doesNotMatch(readFileSync(second.notesFile, 'utf8'), /Aplicación inicial/);
+    assert.match(readFileSync(second.notesFile, 'utf8'), /Nueva función:\*\* Consulta reportes en un calendario fácil de leer/);
+    assert.doesNotMatch(readFileSync(second.notesFile, 'utf8'), /Agrega reportes|Aplicación inicial|[a-f0-9]{40}/);
     assert.equal(git('rev-list', '--count', 'origin/deploy'), legacy ? '3' : '2');
     checkoutHosting();
     assert.equal(readFileSync(join(hosting, '.env'), 'utf8'), 'PRIVATE');
