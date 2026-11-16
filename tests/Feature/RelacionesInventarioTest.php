@@ -157,7 +157,7 @@ test('la validacion recupera el formulario y los nombres nuevos sin guardarlos',
     $this->from(route('inventario.index'))->post(route('productos.crearProducto'), array_replace($this->nuevoProducto, [
         'precioVenta' => -1, 'idCategoria' => 'nuevo', 'nuevaCategoria' => 'Categoría conservada',
         'idProveedor' => 'nuevo', 'nuevoProveedor' => 'Proveedor conservado', 'stockInicial' => 2,
-    ]))->assertSessionHasErrors(['precioVenta', 'precioCompra', 'fechaVencimiento']);
+    ]))->assertSessionHasErrors(['precioVenta', 'precioCompra']);
     $this->get(route('inventario.index'))->assertOk()->assertSee('Categoría conservada')->assertSee('Proveedor conservado')
         ->assertSee('data-modal-error="modalCrearProducto"', false)->assertSee('collapse show', false);
     expect(Categoria::count())->toBe(0)->and(Proveedor::count())->toBe(0);

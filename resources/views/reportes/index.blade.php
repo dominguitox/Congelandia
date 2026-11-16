@@ -2,6 +2,7 @@
 @section('title', 'Reportes')
 @push('css')
     @vite(['resources/css/reportes.css'])
+    @if($seccion === 'inventario') @vite(['resources/js/solicitudes-proveedor.js']) @endif
 @endpush
 
 @section('content')
@@ -9,7 +10,7 @@
     $numero = fn ($valor) => number_format($valor, 0, ',', '.');
     $moneda = fn ($valor) => '$'.number_format($valor, 0, ',', '.');
     $filtros = ['seccion' => $seccion, 'fecha_inicio' => $fechaInicio, 'fecha_fin' => $fechaFin];
-    $secciones = ['ventas' => 'Resumen de ventas', 'inventario' => 'Inventario y riesgo', 'habitos' => 'Hábitos de compra'];
+    $secciones = ['ventas' => 'Resumen de ventas', 'inventario' => 'Inventario y reposición', 'habitos' => 'Hábitos de compra'];
 @endphp
 <div class="page reportes-page">
     <div class="page-header">

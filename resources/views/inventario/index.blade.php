@@ -507,10 +507,6 @@
                                     <label for="precioCompra" class="form-label">Costo de Compra (Lote) ($)</label>
                                     <input type="number" step="0.01" class="form-control" name="precioCompra" id="precioCompra" value="{{ old('_modal') === 'modalCrearProducto' ? old('precioCompra') : '' }}">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
-                                    <input type="date" class="form-control" name="fechaVencimiento" id="fechaVencimiento" value="{{ old('_modal') === 'modalCrearProducto' ? old('fechaVencimiento') : '' }}">
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -637,11 +633,6 @@
                             <input type="number" step="0.01" min="0" class="form-control @error('precioCompra') is-invalid @enderror" name="precioCompra" id="ingreso_precioCompra" value="{{ old('precioCompra') }}" required>
                             @error('precioCompra') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
-                            <label for="ingreso_fechaVencimiento" class="form-label">Fecha de vencimiento *</label>
-                            <input type="date" class="form-control @error('fechaVencimiento') is-invalid @enderror" name="fechaVencimiento" id="ingreso_fechaVencimiento" value="{{ old('fechaVencimiento') }}" min="{{ now()->toDateString() }}" required>
-                            @error('fechaVencimiento') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
                     </div>
                 </div>
 
@@ -687,7 +678,6 @@
                             <label for="salida_motivo" class="form-label">Motivo *</label>
                             <select class="form-select @error('motivo') is-invalid @enderror" name="motivo" id="salida_motivo" required>
                                 <option value="">Seleccione motivo...</option>
-                                <option value="Merma por Vencimiento" @selected(old('motivo') === 'Merma por Vencimiento')>Merma por vencimiento</option>
                                 <option value="Merma por Daño" @selected(old('motivo') === 'Merma por Daño')>Merma por daño</option>
                             </select>
                             @error('motivo') <div class="invalid-feedback">{{ $message }}</div> @enderror

@@ -118,6 +118,9 @@ Route::middleware('auth')->group(function () {
         [ReporteController::class, 'index']
     )->middleware('role:Administrador')->name('reportes.index');
 
+    Route::post('/reportes/solicitudes', [ReporteController::class, 'prepararSolicitud'])
+        ->middleware('role:Administrador')->name('reportes.solicitudes');
+
 
     // =====================================================
     // INVENTARIO

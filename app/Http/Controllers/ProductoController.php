@@ -35,7 +35,6 @@ class ProductoController extends Controller
                 : ['idProveedor' => ['exclude'], 'nuevoProveedor' => ['exclude']]),
             'stockInicial' => 'nullable|integer|min:0',
             'precioCompra' => [Rule::requiredIf(fn () => $request->integer('stockInicial') > 0), 'nullable', 'numeric', 'min:0'],
-            'fechaVencimiento' => [Rule::requiredIf(fn () => $request->integer('stockInicial') > 0), 'nullable', 'date', 'after_or_equal:today'],
             'imagen' => 'nullable|image|max:2048',
         ]);
 
@@ -70,7 +69,7 @@ class ProductoController extends Controller
                         'codigoProducto' => $request->codigo,
                         'cantidad' => $request->stockInicial,
                         'precioCompra' => $request->precioCompra,
-                        'fechaVencimiento' => $request->fechaVencimiento,
+                        'fechaVencimiento' => null,
                     ]);
                 }
                 if ($request->hasFile('imagen')) {
@@ -127,7 +126,6 @@ class ProductoController extends Controller
             ...$this->reglasRelacion($request, 'idProveedor', 'nuevoProveedor', 'proveedor'),
             'cantidad' => ['required', 'integer', 'min:1'],
             'precioCompra' => ['required', 'numeric', 'min:0'],
-            'fechaVencimiento' => ['required', 'date', 'after_or_equal:today'],
             '_modal' => ['required', 'in:modalRegistrarIngreso'],
         ]);
 
@@ -153,7 +151,7 @@ class ProductoController extends Controller
                 'codigoProducto' => $producto->codigo,
                 'cantidad' => $datos['cantidad'],
                 'precioCompra' => $datos['precioCompra'],
-                'fechaVencimiento' => $datos['fechaVencimiento'],
+                'fechaVencimiento' => null,
             ]);
         });
 

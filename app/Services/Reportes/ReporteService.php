@@ -90,26 +90,19 @@ class ReporteService
 
     public function inventario(): array
     {
-        $hoy = CarbonImmutable::today();
         $entradas = DB::table($this->tabla('Detalle_Ingreso').' as d')
             ->join($this->tabla('Ingreso').' as i', 'd.idIngreso', '=', 'i.idIngreso')
             ->whereNull('d.deleted_at')->whereNull('i.deleted_at')->where('i.fecha', '<=', now())
-            ->select('d.idDetalle', 'd.codigoProducto', 'd.cantidad', 'd.fechaVencimiento')
-            ->orderBy('d.fechaVencimiento')->orderBy('d.idDetalle')->get()->groupBy('codigoProducto');
+            ->select('d.codigoProducto', 'd.cantidad')->get()->groupBy('codigoProducto');
         $salidas = $this->salidas()->join($this->tabla('Detalle_Salida').' as d', 'd.idSalida', '=', 's.idSalida')
             ->whereNull('d.deleted_at')->where('s.fecha', '<=', now())
             ->select('d.codigoProducto')->selectRaw('SUM(d.cantidad) as cantidad')->groupBy('d.codigoProducto')
             ->pluck('cantidad', 'codigoProducto');
-        $precio = DB::table($this->tabla('Lista_Precio').' as lp')->select('lp.precioVenta')
-            ->whereColumn('lp.codigoProducto', 'p.codigo')->whereNull('lp.deleted_at')
-            ->where('lp.fechaInicio', '<=', now())->whereNull('lp.fechaFin')
-            ->orderByDesc('lp.fechaInicio')->orderByDesc('lp.idPrecio')->limit(1);
         $productos = DB::table($this->tabla('Producto').' as p')
             ->leftJoin($this->tabla('Categoria').' as c', 'c.idCategoria', '=', 'p.idCategoria')
             ->whereNull('p.deleted_at')->select('p.codigo', 'p.nombre', 'c.nombre as categoria')
-            ->selectSub($precio, 'precio')->orderBy('p.nombre')->get();
+            ->orderBy('p.nombre')->get();
         $bajoStock = collect();
-        $lotes = collect();
         foreach ($productos as $producto) {
             $ingresos = $entradas->get($producto->codigo, collect());
             $descontar = (int) $salidas->get($producto->codigo, 0);
@@ -121,52 +114,35 @@ class ReporteService
                     'reponer' => 20 - $stock,
                 ]);
             }
-            // Estimación FEFO: no existe una relación entre la salida y su lote real.
-            foreach ($ingresos as $ingreso) {
-                $consumido = min($descontar, (int) $ingreso->cantidad);
-                $descontar -= $consumido;
-                $restante = (int) $ingreso->cantidad - $consumido;
-                $dias = (int) $hoy->diffInDays(CarbonImmutable::parse($ingreso->fechaVencimiento), false);
-                if ($restante > 0 && $dias <= 15) {
-                    $lotes->push((object) [
-                        'codigo' => $producto->codigo, 'nombre' => $producto->nombre,
-                        'vencimiento' => $ingreso->fechaVencimiento, 'dias' => $dias, 'cantidad' => $restante,
-                        'valor' => $producto->precio === null ? null : $restante * (float) $producto->precio,
-                    ]);
-                }
-            }
         }
-        $ventanas = collect([
-            ['nombre' => 'Vencidos', 'min' => PHP_INT_MIN, 'max' => -1],
-            ['nombre' => '0–3 días', 'min' => 0, 'max' => 3],
-            ['nombre' => '4–7 días', 'min' => 4, 'max' => 7],
-            ['nombre' => '8–15 días', 'min' => 8, 'max' => 15],
-        ])->map(function ($ventana) use ($lotes) {
-            $grupo = $lotes->whereBetween('dias', [$ventana['min'], $ventana['max']]);
-
-            return $ventana + ['valor' => $grupo->sum('valor'), 'cantidad' => $grupo->sum('cantidad')];
-        });
 
         return [
-            'bajoStock' => $bajoStock->sortBy('stock')->values(), 'lotes' => $lotes->sortBy('dias')->values(),
-            'valorRiesgo' => $lotes->sum('valor'), 'sinPrecio' => $lotes->whereNull('valor')->count(),
-            'reposicion' => $bajoStock->sum('reponer'), 'ventanas' => $ventanas,
+            'bajoStock' => $bajoStock->sortBy('stock')->values(),
+            'reposicion' => $bajoStock->sum('reponer'),
             'criticos' => $bajoStock->where('stock', '<=', 3)->count(),
         ];
+    }
+
+    /** Proveedores activos con ingresos y detalles vigentes hasta ahora. */
+    public function proveedoresPorProducto(): \Illuminate\Support\Collection
+    {
+        return DB::table($this->tabla('Detalle_Ingreso').' as d')
+            ->join($this->tabla('Ingreso').' as i', 'i.idIngreso', '=', 'd.idIngreso')
+            ->join($this->tabla('Proveedor').' as pr', 'pr.idProveedor', '=', 'i.idProveedor')
+            ->join($this->tabla('Producto').' as p', 'p.codigo', '=', 'd.codigoProducto')
+            ->whereNull('d.deleted_at')->whereNull('i.deleted_at')
+            ->whereNull('pr.deleted_at')->whereNull('p.deleted_at')->where('i.fecha', '<=', now())
+            ->select('d.codigoProducto', 'pr.idProveedor', 'pr.nombre', 'pr.telefono', 'pr.correo')
+            ->distinct()->orderBy('pr.nombre')->get()->groupBy('codigoProducto');
     }
 
     public function filasCsv(string $seccion, array $datos): iterable
     {
         if ($seccion === 'inventario') {
-            yield ['Inventario actual', 'Estimación FEFO: verificar lotes físicos. Umbral bajo stock: 10; objetivo: 20.'];
+            yield ['Inventario actual', 'Umbral bajo stock: 10; objetivo: 20.'];
             yield ['Código', 'Producto', 'Stock actual', 'Reposición sugerida'];
             foreach ($datos['bajoStock'] as $producto) {
                 yield [$producto->codigo, $producto->nombre, $producto->stock, $producto->reponer];
-            }
-            yield [];
-            yield ['Código', 'Producto', 'Vencimiento', 'Unidades estimadas FEFO', 'Valor estimado a precio de venta CLP'];
-            foreach ($datos['lotes'] as $lote) {
-                yield [$lote->codigo, $lote->nombre, $lote->vencimiento, $lote->cantidad, $lote->valor];
             }
         } elseif ($seccion === 'habitos') {
             yield ['Día', 'Hora', 'Transacciones del período'];

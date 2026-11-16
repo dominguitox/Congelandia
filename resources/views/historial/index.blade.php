@@ -389,38 +389,6 @@
                                 @endforelse
 
 
-                                {{-- Fecha de vencimiento solo para ingresos --}}
-
-                                @if(
-                                    $movimiento['tipo_clase'] === 'ingreso' &&
-                                    collect($movimiento['detalles'])->contains(
-                                        fn($item) => !empty($item['vencimiento'])
-                                    )
-                                )
-
-                                    <div class="vencimientos">
-
-                                        <strong>
-                                            Fechas de vencimiento
-                                        </strong>
-
-                                        @foreach($movimiento['detalles'] as $item)
-
-                                            @if(!empty($item['vencimiento']))
-
-                                                <span>
-                                                    {{ $item['producto'] }}:
-                                                    {{ \Carbon\Carbon::parse($item['vencimiento'])->format('d/m/Y') }}
-                                                </span>
-
-                                            @endif
-
-                                        @endforeach
-
-                                    </div>
-
-                                @endif
-
                             </div>
 
                         </td>

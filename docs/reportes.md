@@ -5,7 +5,7 @@ Disponible en `/reportes` para administradores autenticados, de acuerdo con el c
 ## Vistas
 
 - **Resumen de ventas:** monto vendido, transacciones, unidades, ticket promedio, evolución diaria, categorías y productos más vendidos.
-- **Inventario y riesgo:** stock actual, reposición sugerida, vencimientos y valor en riesgo estimado.
+- **Inventario y reposición:** stock actual, reposición sugerida y preparación de solicitudes a proveedores.
 - **Hábitos de compra:** transacciones por día y hora, hora punta y comparación de venta media diaria por día de la semana.
 
 Las vistas de ventas y hábitos comparten un período inclusivo de hasta 366 días (30 días por defecto). El inventario siempre refleja los movimientos registrados hasta el momento de la consulta. Cada vista permite descargar CSV UTF-8 con separador `;`.
@@ -17,8 +17,6 @@ Las vistas de ventas y hábitos comparten un período inclusivo de hasta 366 dí
 - Los productos eliminados conservan su participación en ventas históricas. Los productos sin categoría se agrupan en «Sin categoría».
 - El stock suma ingresos y resta todas las salidas, incluidas mermas, excluyendo movimientos eliminados o futuros. Solo se muestran productos activos.
 - Umbrales provisionales: bajo stock `< 10`, crítico `<= 3`, reposición hasta `20` unidades. Un stock negativo se señala para revisión.
-- **Vencimientos estimados:** el esquema no enlaza las salidas con lotes. Se descuentan las salidas del producto empezando por el ingreso que vence primero (FEFO). Los remanentes son una aproximación para revisar físicamente, no trazabilidad real de lotes. Se incluyen vencidos y vencimientos hasta 15 días.
-- El valor en riesgo multiplica los remanentes estimados por el precio de venta vigente sin descuentos. Los lotes sin precio se muestran, pero se excluyen del valor; no es una estimación de ganancia.
 - El mapa muestra totales del período en las 24 horas usando la hora registrada en la app. La comparación semanal divide el monto por las ocurrencias de cada día, incluidos días sin ventas. En empates se muestra el primer día (lunes a domingo) o la primera hora.
 
 ## Implementación y validación
@@ -27,7 +25,7 @@ El [controlador](../app/Http/Controllers/ReporteController.php) valida filtros y
 
 No requiere migraciones ni dependencias nuevas. Compilar los assets con `npm run build` antes de desplegar. Se conserva la ruta existente y su restricción `role:Administrador`; no se alteran los permisos de otros módulos. Las pruebas usan los nombres canónicos de tablas en minúsculas para ser compatibles con MySQL Linux.
 
-Pruebas: `php artisan test tests/Feature/ReportesTest.php` ([casos](../tests/Feature/ReportesTest.php)). Usan SQLite en memoria: autenticación, cálculos, filtros, eliminaciones, estimación FEFO, estados vacíos y CSV con protección de fórmulas.
+Pruebas: `php artisan test tests/Feature/ReportesTest.php` ([casos](../tests/Feature/ReportesTest.php)). Usan SQLite en memoria: autenticación, cálculos, filtros, eliminaciones, estados vacíos y CSV con protección de fórmulas.
 
 ## Actualización del 8 de noviembre de 2026
 

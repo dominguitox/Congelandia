@@ -32,6 +32,10 @@ class ReporteController extends Controller
 
         $datos = $seccion === 'inventario' ? $reportes->inventario() : $reportes->ventas($desde, $hasta);
 
+        if ($seccion === 'inventario' && $request->input('exportar') !== 'csv') {
+            $datos['proveedoresPorProducto'] = $reportes->proveedoresPorProducto();
+        }
+
         if ($request->input('exportar') === 'csv') {
             return response()->streamDownload(function () use ($reportes, $seccion, $datos) {
                 $archivo = fopen('php://output', 'w');
@@ -46,5 +50,39 @@ class ReporteController extends Controller
         }
 
         return view('reportes.index', compact('seccion', 'fechaInicio', 'fechaFin', 'datos'));
+    }
+
+    public function prepararSolicitud(Request $request, ReporteService $reportes)
+    {
+        $entrada = $request->validate([
+            'productos' => ['required', 'array', 'min:1', 'max:500'],
+            'productos.*.codigo' => ['required', 'string', 'max:50', 'distinct'],
+            'productos.*.proveedor' => ['nullable', 'integer', 'min:1'],
+            'productos.*.cantidad' => ['required', 'integer', 'min:1', 'max:100000'],
+        ]);
+        $disponibles = $reportes->inventario()['bajoStock']->keyBy('codigo');
+        $proveedores = $reportes->proveedoresPorProducto();
+        $solicitudes = collect();
+        foreach ($entrada['productos'] as $linea) {
+            if (empty($linea['proveedor'])) {
+                continue;
+            }
+            $producto = $disponibles->get($linea['codigo']);
+            $proveedor = $proveedores->get($linea['codigo'], collect())->firstWhere('idProveedor', $linea['proveedor']);
+            if (! $producto || ! $proveedor) {
+                throw ValidationException::withMessages(['productos' => 'Un producto o proveedor ya no es elegible. Revisa la selección.']);
+            }
+            if (! $solicitudes->has($proveedor->idProveedor)) {
+                $solicitudes->put($proveedor->idProveedor, ['proveedor' => $proveedor, 'lineas' => []]);
+            }
+            $grupo = $solicitudes->get($proveedor->idProveedor);
+            $grupo['lineas'][] = ['producto' => $producto, 'cantidad' => $linea['cantidad']];
+            $solicitudes->put($proveedor->idProveedor, $grupo);
+        }
+        if ($solicitudes->isEmpty()) {
+            throw ValidationException::withMessages(['productos' => 'Selecciona al menos un proveedor para preparar una solicitud.']);
+        }
+
+        return view('reportes.solicitudes', compact('solicitudes'));
     }
 }

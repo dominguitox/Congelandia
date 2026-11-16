@@ -156,3 +156,10 @@ test('un ingreso se valida contra su fecha original aunque se sincronice despué
     $this->postJson(route('offline.sync'), $op)->assertOk();
     $this->assertDatabaseHas('detalle_ingreso', ['fechaVencimiento' => $op['datos']['fechaVencimiento'], 'cantidad' => 5]);
 });
+
+test('un ingreso sin conexion se sincroniza sin fecha de producto', function () {
+    $op = operacionOffline($this, 'ingreso');
+    unset($op['datos']['fechaVencimiento']);
+    $this->postJson(route('offline.sync'), $op)->assertOk();
+    $this->assertDatabaseHas('detalle_ingreso', ['fechaVencimiento' => null, 'cantidad' => 5]);
+});

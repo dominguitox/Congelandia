@@ -178,7 +178,7 @@ function movementFields() {
     const entry = $('kind').value === 'ingreso';
     $('entry-fields').hidden = !entry; $('entry-fields').disabled = !entry;
     $('loss-fields').hidden = entry; $('loss-fields').disabled = entry;
-    $('cost').required = entry; $('expiry').required = entry;
+    $('cost').required = entry;
     const product = account?.snapshot?.productos.find(product => product.codigo === $('product').value);
     $('movement-stock').textContent = product ? 'Stock en este equipo: ' + product.stock : '';
 }
@@ -236,7 +236,7 @@ $('sale-form').addEventListener('submit', event => {
     $('confirm-dialog').showModal();
 });
 $('movement-form').addEventListener('input', () => {
-    draft.movimiento = Object.fromEntries(['kind', 'product', 'quantity', 'supplier', 'cost', 'expiry', 'reason'].map(id => [id, $(id).value]));
+    draft.movimiento = Object.fromEntries(['kind', 'product', 'quantity', 'supplier', 'cost', 'reason'].map(id => [id, $(id).value]));
     movementFields(); save();
 });
 $('movement-form').addEventListener('change', movementFields);
@@ -246,14 +246,11 @@ $('movement-form').addEventListener('submit', event => {
     const quantity = Number($('quantity').value);
     const product = account.snapshot.productos.find(product => product.codigo === $('product').value);
     if (!product || !Number.isSafeInteger(quantity) || quantity < 1 || (!entry && quantity > product.stock)) return message('Revisa la cantidad y el stock disponible en este equipo.', true);
-    const today = new Date();
-    const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    if (entry && $('expiry').value < localDate) return message('El vencimiento debe ser hoy o posterior.', true);
     confirmation = { tipo: $('kind').value, datos: {
         codigoProducto: product.codigo, cantidad: quantity,
-        ...(entry ? { idProveedor: Number($('supplier').value) || null, precioCompra: Number($('cost').value), fechaVencimiento: $('expiry').value } : { motivo: $('reason').value }),
+        ...(entry ? { idProveedor: Number($('supplier').value) || null, precioCompra: Number($('cost').value) } : { motivo: $('reason').value }),
     } };
-    $('confirm-details').textContent = `${entry ? 'Ingreso de mercadería' : $('reason').value}\n${product.nombre}: ${quantity} ${quantity === 1 ? 'unidad' : 'unidades'}` + (entry ? `\nPrecio de compra: ${money($('cost').value)}\nVencimiento: ${$('expiry').value}\nProveedor: ${$('supplier').selectedOptions[0].textContent}` : '');
+    $('confirm-details').textContent = `${entry ? 'Ingreso de mercadería' : $('reason').value}\n${product.nombre}: ${quantity} ${quantity === 1 ? 'unidad' : 'unidades'}` + (entry ? `\nPrecio de compra: ${money($('cost').value)}\nProveedor: ${$('supplier').selectedOptions[0].textContent}` : '');
     $('confirm-dialog').showModal();
 });
 $('confirm-dialog').addEventListener('close', async () => {
