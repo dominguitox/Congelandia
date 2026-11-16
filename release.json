@@ -1,16 +1,16 @@
 {
-  "numero": "1.7.3",
-  "comentarios": "# Congelandia 1.7.3 — 2026-11-15\n\n## Cambios\n- **Mejora:** El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades.\n\n## Para ti\nEl aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios.",
+  "numero": "1.7.4",
+  "comentarios": "# Congelandia 1.7.4 — 2026-11-16\n\n## Cambios\n- **Corrección:** Se puede ocultar el banner que informaba sobre el trabajo offline\n\n## Para ti\n--",
   "novedades": {
     "cambios": [
       {
-        "tipo": "Mejora",
-        "descripcion": "El aviso de novedades permanece visible hasta que lo descartas con su propia equis. Nueva función: El encabezado avisa cuando hay una nueva versión y permite actualizar la página para consultar sus novedades."
+        "tipo": "Corrección",
+        "descripcion": "Se puede ocultar el banner que informaba sobre el trabajo offline"
       }
     ],
-    "resumen_cliente": "El aviso de novedades permanece disponible hasta que la persona usuaria lo descarta. Cuando hay una nueva versión, el encabezado permite actualizar la página y consultar sus cambios."
+    "resumen_cliente": "--"
   },
-  "fecha_creacion": "2026-11-15T18:25:35.528Z",
+  "fecha_creacion": "2026-11-16T19:32:13.381Z",
   "commit": "5e3758727b0ee8e687d26b5f76947a6fbd30e494",
   "public_directory": "public_html"
 }

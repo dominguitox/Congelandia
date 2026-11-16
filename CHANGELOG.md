@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.7.4 — 2026-11-16
+
+## Cambios
+- **Corrección:** Se puede ocultar el banner que informaba sobre el trabajo offline
+
+## Para ti
+--
+
 # Congelandia 1.7.3 — 2026-11-15
 
 ## Cambios
