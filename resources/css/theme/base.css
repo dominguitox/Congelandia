@@ -22,6 +22,7 @@ body {
 
 .app-main {
     margin-top: var(--header-height);
+    padding-top: 1rem;
     margin-left: var(--sidebar-width);
     min-height: calc(100vh - var(--header-height));
     background-color: var(--color-page-bg);

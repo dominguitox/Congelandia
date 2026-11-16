@@ -20,6 +20,12 @@
             <button type="button" class="app-update-notice" data-app-update data-current-version="{{ $versionActual?->numero }}" data-version-url="{{ route('version.actual') }}" hidden>Actualización disponible, haz clic aquí para actualizar</button>
         @endauth
 
+        @auth
+            <button type="button" class="offline-capsule" data-offline-toggle aria-controls="offline-panel" aria-expanded="true">
+                <span data-offline-compact role="status" aria-live="polite">Comprobando copia local…</span>
+            </button>
+        @endauth
+
         <div class="ms-auto text-white app-user">
             <span class="app-user-name me-2">{{ auth()->user()->nombre ?? 'Nombre del usuario' }}</span>
             <span class="badge bg-info text-dark">{{ auth()->user()->rol ?? 'Rol' }}</span>

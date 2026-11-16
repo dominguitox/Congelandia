@@ -1,7 +1,7 @@
 import { localStore, onLocalChange, pending } from './store.js';
 import { prepareOffline, syncQueue } from './sync.js';
 import { onShellUpdate, registerShell } from './register.js';
-import { transferState } from './ui.js';
+import { compactStatus, transferState } from './ui.js';
 
 const panel = document.getElementById('offline-panel');
 if (panel) {
@@ -13,10 +13,22 @@ if (panel) {
     const download = panel.querySelector('[data-offline-prepare]');
     const upload = panel.querySelector('[data-offline-sync]');
     const updateButton = panel.querySelector('[data-offline-update]');
+    const toggle = document.querySelector('[data-offline-toggle]');
+    const compact = toggle?.querySelector('[data-offline-compact]');
+    const minimize = panel.querySelector('[data-offline-minimize]');
+    const setExpanded = expanded => {
+        panel.hidden = !expanded;
+        toggle?.setAttribute('aria-expanded', String(expanded));
+        try { localStorage.setItem('congelandia:panel-offline-minimizado', expanded ? '0' : '1'); } catch { /* Solo dura esta página. */ }
+    };
+    try { if (localStorage.getItem('congelandia:panel-offline-minimizado') === '1') setExpanded(false); } catch { /* Mantener visible. */ }
+    toggle?.addEventListener('click', () => setExpanded(panel.hidden));
+    minimize?.addEventListener('click', () => { setExpanded(false); toggle?.focus(); });
     let activity = '';
     async function update() {
         const account = await store.account(user);
         const state = transferState(account, navigator.onLine, activity);
+        if (compact) compact.textContent = compactStatus(account, navigator.onLine, activity);
         status.textContent = `${navigator.onLine ? 'Con conexión' : 'Sin conexión'} · ${state.count} movimientos por enviar · ${account?.snapshot ? 'Datos descargados el ' + new Date(account.snapshot.actualizado).toLocaleString('es-CL') : 'Todavía no descargaste datos en este equipo'}.`;
         download.textContent = state.downloadLabel; download.disabled = state.downloadDisabled;
         upload.textContent = state.uploadLabel; upload.disabled = state.uploadDisabled;
@@ -42,12 +54,15 @@ if (panel) {
         finally { activity = ''; await update(); }
     });
     panel.querySelector('[data-offline-sync]').addEventListener('click', sync);
-    window.addEventListener('online', sync);
+    window.addEventListener('online', () => update().then(sync).catch(error => tell(error.message)));
     window.addEventListener('offline', () => update().catch(error => tell(error.message)));
     onLocalChange(() => update().catch(error => tell(error.message)));
     onShellUpdate(() => { updateButton.hidden = false; });
     updateButton.addEventListener('click', async () => { await store.account(user); location.reload(); });
-    store.bind(user).then(update).then(sync).catch(error => tell(error.message));
+    store.bind(user).then(update).then(sync).catch(error => {
+        if (compact) compact.textContent = 'Estado de copia no disponible';
+        tell(error.message);
+    });
     // Cerrar sesión retira la asociación activa, pero conserva TODAS las colas.
     document.querySelectorAll('form[action$="/logout"]').forEach(form => form.addEventListener('submit', event => {
         if (form.dataset.localUnbound) return;
