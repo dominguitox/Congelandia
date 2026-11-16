@@ -127,12 +127,12 @@
     "file": "assets/roboto-700-normal-YuyVweIx.woff",
     "src": "_roboto-700-normal-YuyVweIx.woff"
   },
-  "_sync-DIW1_JKv.js": {
-    "file": "assets/sync-DIW1_JKv.js",
+  "_sync-B5Q0n4nB.js": {
+    "file": "assets/sync-B5Q0n4nB.js",
     "name": "sync"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CfDvlxz4.css",
+    "file": "assets/app-3eFppVxv.css",
     "name": "app",
     "names": [
       "app.css"
@@ -330,23 +330,23 @@
     "isEntry": true
   },
   "resources/js/offline/bridge.js": {
-    "file": "assets/bridge-D5i0f4I-.js",
+    "file": "assets/bridge-dokmVrog.js",
     "name": "bridge",
     "src": "resources/js/offline/bridge.js",
     "isEntry": true,
     "imports": [
-      "_sync-DIW1_JKv.js",
+      "_sync-B5Q0n4nB.js",
       "_register-B6Lo0EtQ.js"
     ]
   },
   "resources/js/offline/index.js": {
-    "file": "assets/index-DKvD_YLR.js",
+    "file": "assets/index-6A53BMZ3.js",
     "name": "index",
     "src": "resources/js/offline/index.js",
     "isEntry": true,
     "imports": [
       "_cobro-CQDX0o90.js",
-      "_sync-DIW1_JKv.js",
+      "_sync-B5Q0n4nB.js",
       "_register-B6Lo0EtQ.js"
     ],
     "css": [
@@ -369,14 +369,14 @@
     "isEntry": true
   },
   "resources/js/venta.js": {
-    "file": "assets/venta-Cudtht7C.js",
+    "file": "assets/venta-CZPk4BP8.js",
     "name": "venta",
     "src": "resources/js/venta.js",
     "isEntry": true,
     "imports": [
       "_bootstrap.esm-DM7gpgIx.js",
       "_cobro-CQDX0o90.js",
-      "_sync-DIW1_JKv.js"
+      "_sync-B5Q0n4nB.js"
     ]
   }
 }

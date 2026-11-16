@@ -1,6 +1,6 @@
 {
-  "numero": "1.7.4",
-  "comentarios": "# Congelandia 1.7.4 — 2026-11-16\n\n## Cambios\n- **Corrección:** Se puede ocultar el banner que informaba sobre el trabajo offline\n\n## Para ti\n--",
+  "numero": "1.7.5",
+  "comentarios": "# Congelandia 1.7.5 — 2026-11-16\n\n## Cambios\n- **Corrección:** Se puede ocultar el banner que informaba sobre el trabajo offline\n\n## Para ti\n--",
   "novedades": {
     "cambios": [
       {
@@ -10,7 +10,7 @@
     ],
     "resumen_cliente": "--"
   },
-  "fecha_creacion": "2026-11-16T19:32:13.381Z",
-  "commit": "5e3758727b0ee8e687d26b5f76947a6fbd30e494",
+  "fecha_creacion": "2026-11-16T20:16:35.856Z",
+  "commit": "059940a16dc12d4bfc5efe8a286a128c781a4e25",
   "public_directory": "public_html"
 }
