@@ -6,11 +6,36 @@ let connection;
 export function openDatabase(factory = globalThis.indexedDB, name = DATABASE) {
     return new Promise((resolve, reject) => {
         if (!factory) return reject(new Error('Este navegador no permite IndexedDB. No cierres un cobro sin confirmar.'));
-        const request = factory.open(name, 1);
-        request.onupgradeneeded = () => request.result.createObjectStore('state');
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-        request.onblocked = () => reject(new Error('Cierra las otras pestañas para actualizar el almacenamiento offline.'));
+        let finished = false;
+        const fail = error => { if (!finished) { finished = true; reject(error); } };
+        const open = version => {
+            const request = version === undefined ? factory.open(name) : factory.open(name, version);
+            request.onupgradeneeded = () => {
+                if (finished) { request.transaction.abort(); return; }
+                if (!request.result.objectStoreNames.contains('state')) request.result.createObjectStore('state');
+            };
+            request.onsuccess = () => {
+                const db = request.result;
+                if (finished) { db.close(); return; }
+                if (db.objectStoreNames.contains('state')) {
+                    db.onversionchange = () => { db.close(); connection = undefined; };
+                    finished = true;
+                    resolve(db);
+                    return;
+                }
+                if (db.objectStoreNames.length) {
+                    db.close();
+                    fail(new Error('La copia local tiene una estructura desconocida. No borres los datos del navegador; conserva el equipo para revisarla.'));
+                    return;
+                }
+                const nextVersion = db.version + 1;
+                db.close();
+                open(nextVersion);
+            };
+            request.onerror = () => fail(request.error);
+            request.onblocked = () => fail(new Error('Cierra las otras pestañas de Congelandia y vuelve a intentarlo. Los datos locales se conservan.'));
+        };
+        open();
     });
 }
 
@@ -122,7 +147,7 @@ export class OfflineStore {
 
 export const pending = account => (account?.operations || []).filter(row => row.status !== 'sincronizada');
 export function localStore() {
-    connection ??= openDatabase();
+    connection ??= openDatabase().catch(error => { connection = undefined; throw error; });
     return new OfflineStore(connection);
 }
 export function onLocalChange(callback) { channel?.addEventListener('message', callback); }

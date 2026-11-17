@@ -23,6 +23,50 @@ function sessionOr(handler) {
     return async (url, options) => url === '/offline/sesion' ? response(200, { usuario: 1, csrf: 'memory-only' }) : handler(url, options);
 }
 
+test('repara una base vacía sin almacén state y permite guardar datos', async () => {
+    const factory = new IDBFactory();
+    const name = crypto.randomUUID();
+    const empty = await new Promise((resolve, reject) => {
+        const request = factory.open(name, 1);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+    empty.close();
+    const db = await openDatabase(factory, name);
+    assert.equal(db.version, 2);
+    const store = new OfflineStore(db);
+    await store.bind(1);
+    await store.prepare(1, { usuario: { id: 1 }, productos: [] });
+    assert.equal((await store.account(1)).user, 1);
+    db.close();
+});
+
+test('no altera una base con estructura desconocida que podría contener datos', async () => {
+    const factory = new IDBFactory();
+    const name = crypto.randomUUID();
+    const old = await new Promise((resolve, reject) => {
+        const request = factory.open(name, 1);
+        request.onupgradeneeded = () => request.result.createObjectStore('otro').put('conservar', 'clave');
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+    old.close();
+    await assert.rejects(openDatabase(factory, name), /estructura desconocida/);
+    const original = await new Promise((resolve, reject) => {
+        const request = factory.open(name);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+    assert.deepEqual([...original.objectStoreNames], ['otro']);
+    const value = await new Promise((resolve, reject) => {
+        const request = original.transaction('otro').objectStore('otro').get('clave');
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+    assert.equal(value, 'conservar');
+    original.close();
+});
+
 test('guarda borrador y cola en IndexedDB y los recupera tras cerrar la conexión', async () => {
     const { store, db, factory, name } = await fixture();
     await store.saveDraft(1, { carrito: [{ id: 'A', cantidad: 3, precio: 500 }], pagos: [{ idMetodo: 1, monto: 1500 }], recibido: 2000 });
@@ -162,5 +206,24 @@ test('una merma no borra el carrito de una venta en preparación', async () => {
     await store.enqueue(1, operation('merma', 1));
     assert.equal((await store.account(1)).draft.carrito.length, 1);
     assert.equal((await store.account(1)).draft.movimiento, undefined);
+    db.close();
+});
+
+test('una venta rechazada por catálogo retirado conserva la cola y no sustituye la copia', async () => {
+    const { store, db } = await fixture();
+    const first = operation(); const second = operation();
+    await store.enqueue(1, first); await store.enqueue(1, second);
+    let count = 0;
+    await assert.rejects(syncQueue(store, 1, sessionOr(async () => {
+        count++;
+        return response(422, { errors: { 'pagos.0.idMetodo': ['Un método de pago de la venta ya no está disponible. Conserva el movimiento para revisión.'] } });
+    })), /método de pago/);
+    const account = await store.account(1);
+    assert.equal(count, 1);
+    assert.equal(account.operations[0].status, 'rechazada');
+    assert.equal(account.operations[1].status, 'pendiente');
+    assert.deepEqual(account.operations.map(row => row.operation.id), [first.id, second.id]);
+    await assert.rejects(store.prepare(1, { usuario: { id: 1 }, productos: [] }));
+    assert.equal((await store.account(1)).snapshot.productos[0].stock, 6);
     db.close();
 });
