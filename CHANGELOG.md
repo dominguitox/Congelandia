@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.9.0 — 2026-11-17
+
+## Cambios
+- **Nueva función:** botón Generar en el modal de Nuevo Producto para crear un código de barras interno de 13 dígitos. Mejora: el código interno usa prefijo 20, fecha de creación y número de secuencia del día, sin números aleatorios. Mejora: al guardar se avisa si el código ya existe y se ofrece generarlo de nuevo o ingresar otro distinto.
+
+## Para ti
+Ahora puedes registrar productos que llegan sin código de barras generando uno interno automáticamente. El código incluye la fecha y el número de producto del día, lo que evita repeticiones y facilita ordenar el inventario.
+
 # Congelandia 1.8.1 — 2026-11-17
 
 ## Cambios

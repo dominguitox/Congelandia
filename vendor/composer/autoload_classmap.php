@@ -49,6 +49,7 @@ return array(
     'App\\Services\\CobroVenta' => $baseDir . '/app/Services/CobroVenta.php',
     'App\\Services\\Reportes\\ReporteService' => $baseDir . '/app/Services/Reportes/ReporteService.php',
     'App\\Services\\SincronizarOffline' => $baseDir . '/app/Services/SincronizarOffline.php',
+    'App\\Support\\CodigoBarrasInterno' => $baseDir . '/app/Support/CodigoBarrasInterno.php',
     'App\\Support\\DeviceTheme' => $baseDir . '/app/Support/DeviceTheme.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',

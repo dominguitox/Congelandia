@@ -529,6 +529,7 @@ class ComposerStaticInit18a67455c438e79ec8a3d61f66287e7f
         'App\\Services\\CobroVenta' => __DIR__ . '/../..' . '/app/Services/CobroVenta.php',
         'App\\Services\\Reportes\\ReporteService' => __DIR__ . '/../..' . '/app/Services/Reportes/ReporteService.php',
         'App\\Services\\SincronizarOffline' => __DIR__ . '/../..' . '/app/Services/SincronizarOffline.php',
+        'App\\Support\\CodigoBarrasInterno' => __DIR__ . '/../..' . '/app/Support/CodigoBarrasInterno.php',
         'App\\Support\\DeviceTheme' => __DIR__ . '/../..' . '/app/Support/DeviceTheme.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',

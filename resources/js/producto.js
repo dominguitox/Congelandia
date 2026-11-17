@@ -43,6 +43,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, true);
 
+    const botonGenerarCodigo = document.getElementById('btnGenerarCodigo');
+    const codigoInput = document.getElementById('codigo');
+    const codigoEstado = document.getElementById('codigoEstado');
+
+    if (botonGenerarCodigo && codigoInput && codigoEstado) {
+        let codigoGenerado = null;
+
+        const anunciarCodigo = (mensaje, tipo = 'info') => {
+            codigoEstado.textContent = mensaje;
+            codigoEstado.classList.toggle('text-danger', tipo === 'error');
+            codigoEstado.classList.toggle('text-success', tipo === 'success');
+        };
+
+        codigoInput.addEventListener('input', () => {
+            if (codigoGenerado !== null && codigoInput.value !== codigoGenerado) {
+                codigoGenerado = null;
+                anunciarCodigo('Código editado. Puedes escanear, escribir o generar otro código interno.');
+            }
+        });
+
+        botonGenerarCodigo.addEventListener('click', async () => {
+            const textoOriginal = botonGenerarCodigo.textContent;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+
+            botonGenerarCodigo.disabled = true;
+            botonGenerarCodigo.setAttribute('aria-busy', 'true');
+            botonGenerarCodigo.textContent = 'Generando…';
+            anunciarCodigo('Generando código interno…');
+
+            try {
+                const respuesta = await fetch(botonGenerarCodigo.dataset.generarUrl, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                    },
+                });
+                const datos = await respuesta.json().catch(() => ({}));
+
+                if (respuesta.status === 419) {
+                    throw new Error('Tu sesión expiró. Recarga la página y vuelve a intentarlo.');
+                }
+                if (!respuesta.ok || typeof datos.codigo !== 'string') {
+                    throw new Error(datos.message || 'No se pudo generar el código. Intenta nuevamente.');
+                }
+
+                codigoInput.value = datos.codigo;
+                codigoGenerado = datos.codigo;
+                anunciarCodigo(datos.mensaje || `Código interno ${datos.formato || 'EAN-13'} generado. Revísalo o edítalo antes de guardar.`, 'success');
+                codigoInput.focus();
+                codigoInput.setSelectionRange(codigoInput.value.length, codigoInput.value.length);
+            } catch (error) {
+                anunciarCodigo(error.message || 'No se pudo generar el código. Intenta nuevamente.', 'error');
+            } finally {
+                botonGenerarCodigo.disabled = false;
+                botonGenerarCodigo.removeAttribute('aria-busy');
+                botonGenerarCodigo.textContent = textoOriginal;
+            }
+        });
+    }
+
     const modalIngreso = document.getElementById('modalRegistrarIngreso');
     const modalSalida = document.getElementById('modalRegistrarSalida');
     const productoSalida = document.getElementById('salida_codigoProducto');
