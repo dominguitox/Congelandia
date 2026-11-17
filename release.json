@@ -1,6 +1,6 @@
 {
-  "numero": "1.8.0",
-  "comentarios": "# Congelandia 1.8.0 — 2026-11-17\n\n## Cambios\n- **Corrección:** recuperación del almacenamiento local cuando falta su estructura. Mejora: mensajes más claros para movimientos pendientes con datos que ya no existen.\n\n## Para ti\nSe mejoró la recuperación del trabajo sin conexión y aclaramos los avisos cuando un movimiento pendiente necesita revisión.",
+  "numero": "1.8.1",
+  "comentarios": "# Congelandia 1.8.1 — 2026-11-17\n\n## Cambios\n- **Corrección:** recuperación del almacenamiento local cuando falta su estructura. Mejora: mensajes más claros para movimientos pendientes con datos que ya no existen.\n\n## Para ti\nSe mejoró la recuperación del trabajo sin conexión y aclaramos los avisos cuando un movimiento pendiente necesita revisión.",
   "novedades": {
     "cambios": [
       {
@@ -10,7 +10,7 @@
     ],
     "resumen_cliente": "Se mejoró la recuperación del trabajo sin conexión y aclaramos los avisos cuando un movimiento pendiente necesita revisión."
   },
-  "fecha_creacion": "2026-11-17T01:51:15.025Z",
-  "commit": "059940a16dc12d4bfc5efe8a286a128c781a4e25",
+  "fecha_creacion": "2026-11-17T01:58:57.342Z",
+  "commit": "554425b30ed10e1cc9098a45d3d201cf2fc07d97",
   "public_directory": "public_html"
 }
