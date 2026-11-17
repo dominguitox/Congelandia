@@ -446,15 +446,24 @@
                     @endif
                     <h6 class="text-primary fw-bold mb-3">Datos del Catálogo</h6>
                     <div class="row g-3 mb-3">
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             <label for="codigo" class="form-label">Código de Barras *</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Haz clic aquí para escanear" required value="{{ old('_modal') === 'modalCrearProducto' ? old('codigo') : '' }}">
-                                <button class="btn btn-primary fw-bold" type="button" id="btnEscanear">Escanear</button>
+                            <div class="d-flex align-items-start gap-2">
+                                <div class="input-group flex-grow-1">
+                                    <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Haz clic aquí para escanear" required autocomplete="off" aria-describedby="codigoAyuda codigoEstado" value="{{ old('_modal') === 'modalCrearProducto' ? old('codigo') : '' }}">
+                                    <button class="btn btn-primary fw-bold" type="button" id="btnEscanear">Escanear</button>
+                                </div>
+                                <button class="btn btn-outline-primary fw-bold flex-shrink-0" type="button" id="btnGenerarCodigo"
+                                    data-generar-url="{{ route('productos.generarCodigoInterno') }}"
+                                    aria-label="Generar código interno EAN-13 de 13 dígitos" aria-describedby="codigoAyuda codigoEstado">Generar</button>
                             </div>
+                            <div class="form-text" id="codigoAyuda">
+                                Escanea o escribe un código de origen. <strong>Generar</strong> crea un EAN-13 interno de 13 dígitos: prefijo 20, fecha de hoy y número de secuencia del día. No es un código GS1 registrado ni garantiza compatibilidad con sistemas externos.
+                            </div>
+                            <div class="form-text" id="codigoEstado" role="status" aria-live="polite"></div>
                         </div>
 
-                        <div class="col-md-7">
+                        <div class="col-md-6">
                             <label for="nombre" class="form-label">Nombre del Producto *</label>
                             <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ej. Hamburguesa de Res" required value="{{ old('_modal') === 'modalCrearProducto' ? old('nombre') : '' }}">
                         </div>

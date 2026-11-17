@@ -326,4 +326,9 @@ Route::middleware([
         [ProductoController::class, 'crearProducto']
     )->name('productos.crearProducto');
 
+    Route::post(
+        '/productos/codigo-interno',
+        [ProductoController::class, 'generarCodigoInterno']
+    )->name('productos.generarCodigoInterno');
+
 });
