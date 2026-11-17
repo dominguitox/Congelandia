@@ -156,3 +156,85 @@ test('un ingreso se valida contra su fecha original aunque se sincronice despué
     $this->postJson(route('offline.sync'), $op)->assertOk();
     $this->assertDatabaseHas('detalle_ingreso', ['fechaVencimiento' => $op['datos']['fechaVencimiento'], 'cantidad' => 5]);
 });
+
+test('venta capturada offline entra en conflicto si otro equipo agoto el stock', function () {
+    $op = operacionOffline($this);
+    $salida = Salida::create(['fecha' => now(), 'idTipo' => $this->tipoVenta, 'idUsuario' => $this->user->idUsuario, 'totalSalida' => 5000]);
+    $salida->detalles()->create(['codigoProducto' => 'OFF-1', 'cantidad' => 10, 'precioCobrado' => 500]);
+
+    $this->postJson(route('offline.sync'), $op)->assertConflict()
+        ->assertJsonPath('conflictos.0.campo', 'stock')->assertJsonPath('conflictos.0.local', 10)
+        ->assertJsonPath('conflictos.0.servidor', 0);
+    $this->assertDatabaseCount('salida', 1);
+    $this->assertDatabaseCount('pago_salida', 0);
+    $this->assertDatabaseHas('operaciones_offline', ['id' => $op['id'], 'estado' => 'conflicto']);
+    expect((int) Producto::conDetalle()->firstOrFail()->stock)->toBe(0);
+});
+
+test('producto eliminado despues de descargar se registra como conflicto sin aplicar movimientos', function (string $tipo) {
+    $op = operacionOffline($this, $tipo);
+    Producto::where('codigo', 'OFF-1')->delete();
+    $this->postJson(route('offline.sync'), $op)->assertConflict()
+        ->assertJsonPath('conflictos.0.campo', 'producto')->assertJsonPath('conflictos.0.producto', 'OFF-1');
+    $this->assertDatabaseCount('salida', 0);
+    $this->assertDatabaseCount('pago_salida', 0);
+    $this->assertDatabaseHas('operaciones_offline', ['id' => $op['id'], 'estado' => 'conflicto']);
+    expect(json_decode(DB::table('operaciones_offline')->value('datos'), true))->toEqual($op);
+})->with(['venta', 'ingreso', 'merma']);
+
+test('metodo de pago eliminado rechaza sin guardar venta ni pagos', function () {
+    $op = operacionOffline($this);
+    DB::table('metodo_pago')->where('idMetodo', $this->efectivo)->update(['deleted_at' => now()]);
+    $this->postJson(route('offline.sync'), $op)->assertUnprocessable()->assertJsonValidationErrors('pagos.0.idMetodo')
+        ->assertJsonPath('message', 'Un método de pago de la venta ya no está disponible. Conserva el movimiento para revisión.');
+    $this->assertDatabaseCount('salida', 0);
+    $this->assertDatabaseCount('pago_salida', 0);
+    $this->assertDatabaseCount('operaciones_offline', 0);
+});
+
+test('venta de varias lineas es atomica si un producto quedo sin stock', function () {
+    Producto::create(['codigo' => 'OFF-2', 'nombre' => 'Otro producto']);
+    DB::table('lista_precio')->insert(['codigoProducto' => 'OFF-2', 'precioVenta' => 500, 'fechaInicio' => now()->subDay()]);
+    $ingreso = Ingreso::create(['fecha' => now(), 'idUsuario' => $this->user->idUsuario, 'totalCompra' => 100]);
+    $ingreso->detalles()->create(['codigoProducto' => 'OFF-2', 'cantidad' => 1, 'precioCompra' => 100, 'fechaVencimiento' => now()->addMonth()->toDateString()]);
+    $op = operacionOffline($this);
+    $op['datos']['productos'][] = ['id' => 'OFF-2', 'cantidad' => 2, 'precio' => 500, 'stock' => 10];
+    $op['datos']['pagos'][0]['monto'] = 2000;
+    $this->postJson(route('offline.sync'), $op)->assertConflict()->assertJsonPath('conflictos.0.producto', 'OFF-2');
+    $this->assertDatabaseCount('salida', 0);
+    $this->assertDatabaseCount('pago_salida', 0);
+    expect((int) Producto::conDetalle()->where('codigo', 'OFF-1')->firstOrFail()->stock)->toBe(10);
+});
+
+test('cargas invalidas se rechazan sin efectos parciales', function (string $campo, mixed $valor) {
+    $op = operacionOffline($this);
+    data_set($op, $campo, $valor);
+    $this->postJson(route('offline.sync'), $op)->assertUnprocessable();
+    $this->assertDatabaseCount('salida', 0);
+    $this->assertDatabaseCount('pago_salida', 0);
+    $this->assertDatabaseCount('operaciones_offline', 0);
+})->with([
+    ['id', 'no-es-uuid'], ['tipo', 'desconocido'], ['fechaLocal', 'no-es-fecha'],
+    ['datos.productos.0.cantidad', 0], ['datos.productos.0.cantidad', -1],
+    ['datos.productos.0.precio', -1], ['datos.productos.0.stock', -1],
+    ['datos.pagos.0.monto', -1], ['datos.productos', []],
+]);
+
+test('producto inexistente registra conflicto conservando la carga original', function () {
+    $op = operacionOffline($this);
+    $op['datos']['productos'][0]['id'] = 'YA-BORRADO';
+    $this->postJson(route('offline.sync'), $op)->assertConflict()->assertJsonPath('conflictos.0.producto', 'YA-BORRADO');
+    $this->assertDatabaseCount('salida', 0);
+    expect(json_decode(DB::table('operaciones_offline')->value('datos'), true))->toEqual($op);
+});
+
+test('proveedor eliminado entrega mensaje comprensible sin registrar ingreso', function () {
+    $proveedor = DB::table('proveedor')->insertGetId(['nombre' => 'Temporal'], 'idProveedor');
+    $op = operacionOffline($this, 'ingreso');
+    $op['datos']['idProveedor'] = $proveedor;
+    DB::table('proveedor')->where('idProveedor', $proveedor)->update(['deleted_at' => now()]);
+    $this->postJson(route('offline.sync'), $op)->assertUnprocessable()
+        ->assertJsonPath('errors.idProveedor.0', 'El proveedor del ingreso ya no está disponible. Conserva el movimiento para revisión.');
+    expect(Ingreso::count())->toBe(1);
+    $this->assertDatabaseCount('operaciones_offline', 0);
+});
