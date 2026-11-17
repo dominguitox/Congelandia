@@ -1,16 +1,16 @@
 {
-  "numero": "1.7.5",
-  "comentarios": "# Congelandia 1.7.5 — 2026-11-16\n\n## Cambios\n- **Corrección:** Se puede ocultar el banner que informaba sobre el trabajo offline\n\n## Para ti\n--",
+  "numero": "1.8.0",
+  "comentarios": "# Congelandia 1.8.0 — 2026-11-17\n\n## Cambios\n- **Corrección:** recuperación del almacenamiento local cuando falta su estructura. Mejora: mensajes más claros para movimientos pendientes con datos que ya no existen.\n\n## Para ti\nSe mejoró la recuperación del trabajo sin conexión y aclaramos los avisos cuando un movimiento pendiente necesita revisión.",
   "novedades": {
     "cambios": [
       {
         "tipo": "Corrección",
-        "descripcion": "Se puede ocultar el banner que informaba sobre el trabajo offline"
+        "descripcion": "recuperación del almacenamiento local cuando falta su estructura. Mejora: mensajes más claros para movimientos pendientes con datos que ya no existen."
       }
     ],
-    "resumen_cliente": "--"
+    "resumen_cliente": "Se mejoró la recuperación del trabajo sin conexión y aclaramos los avisos cuando un movimiento pendiente necesita revisión."
   },
-  "fecha_creacion": "2026-11-16T20:16:35.856Z",
+  "fecha_creacion": "2026-11-17T01:51:15.025Z",
   "commit": "059940a16dc12d4bfc5efe8a286a128c781a4e25",
   "public_directory": "public_html"
 }

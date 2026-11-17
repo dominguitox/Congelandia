@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.8.0 — 2026-11-17
+
+## Cambios
+- **Corrección:** recuperación del almacenamiento local cuando falta su estructura. Mejora: mensajes más claros para movimientos pendientes con datos que ya no existen.
+
+## Para ti
+Se mejoró la recuperación del trabajo sin conexión y aclaramos los avisos cuando un movimiento pendiente necesita revisión.
+
 # Congelandia 1.7.5 — 2026-11-16
 
 ## Cambios
