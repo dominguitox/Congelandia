@@ -1,16 +1,16 @@
 {
-  "numero": "1.9.0",
-  "comentarios": "# Congelandia 1.9.0 — 2026-11-17\n\n## Cambios\n- **Nueva función:** botón Generar en el modal de Nuevo Producto para crear un código de barras interno de 13 dígitos. Mejora: el código interno usa prefijo 20, fecha de creación y número de secuencia del día, sin números aleatorios. Mejora: al guardar se avisa si el código ya existe y se ofrece generarlo de nuevo o ingresar otro distinto.\n\n## Para ti\nAhora puedes registrar productos que llegan sin código de barras generando uno interno automáticamente. El código incluye la fecha y el número de producto del día, lo que evita repeticiones y facilita ordenar el inventario.",
+  "numero": "1.10.0",
+  "comentarios": "# Congelandia 1.10.0 — 2026-11-19\n\n## Cambios\n- **Nueva función:** Agregar calendario simplificado a reportes\n\n## Para ti\n--",
   "novedades": {
     "cambios": [
       {
         "tipo": "Nueva función",
-        "descripcion": "botón Generar en el modal de Nuevo Producto para crear un código de barras interno de 13 dígitos. Mejora: el código interno usa prefijo 20, fecha de creación y número de secuencia del día, sin números aleatorios. Mejora: al guardar se avisa si el código ya existe y se ofrece generarlo de nuevo o ingresar otro distinto."
+        "descripcion": "Agregar calendario simplificado a reportes"
       }
     ],
-    "resumen_cliente": "Ahora puedes registrar productos que llegan sin código de barras generando uno interno automáticamente. El código incluye la fecha y el número de producto del día, lo que evita repeticiones y facilita ordenar el inventario."
+    "resumen_cliente": "--"
   },
-  "fecha_creacion": "2026-11-17T02:54:49.324Z",
-  "commit": "347fe5fab640a6655027e49ef7bcd464f50a270c",
+  "fecha_creacion": "2026-11-19T14:03:09.395Z",
+  "commit": "212579a9e5df6065b78cb85422d53e8d48551d27",
   "public_directory": "public_html"
 }

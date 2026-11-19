@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.10.0 — 2026-11-19
+
+## Cambios
+- **Nueva función:** Agregar calendario simplificado a reportes
+
+## Para ti
+--
+
 # Congelandia 1.9.0 — 2026-11-17
 
 ## Cambios
