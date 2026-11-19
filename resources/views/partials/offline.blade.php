@@ -1,5 +1,8 @@
 <aside id="offline-panel" data-user="{{ auth()->id() }}" class="alert alert-info m-3" aria-label="Trabajo offline">
-    <strong>Trabajar sin internet</strong>
+    <div class="d-flex align-items-center justify-content-between gap-2">
+        <strong>Trabajar sin internet</strong>
+        <button type="button" class="btn btn-sm btn-outline-primary" data-offline-minimize aria-controls="offline-panel">Minimizar</button>
+    </div>
     <p data-offline-status role="status" aria-live="polite">Comprobando copia local…</p>
     <p data-offline-message role="status" aria-live="polite"></p>
     <div class="row g-3 my-1">

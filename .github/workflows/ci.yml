@@ -90,6 +90,9 @@ jobs:
       - name: Comprobar cola offline
         run: node --test tools/offline/*.test.mjs
 
+      - name: Comprobar avisos de versión
+        run: node --test resources/js/version-notice.test.mjs resources/js/update-notice.test.mjs
+
       - name: Comprobar vistas y rutas
         run: |
           php artisan view:cache
