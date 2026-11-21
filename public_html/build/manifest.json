@@ -168,7 +168,7 @@
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-UVEOSrM5.css",
+    "file": "assets/dashboard-cIHxsTGj.css",
     "name": "dashboard",
     "names": [
       "dashboard.css"
@@ -195,7 +195,7 @@
     "isEntry": true
   },
   "resources/css/pos.css": {
-    "file": "assets/pos-CABnD0sT.css",
+    "file": "assets/pos-CAr_nX17.css",
     "name": "pos",
     "names": [
       "pos.css"
@@ -369,7 +369,7 @@
     "isEntry": true
   },
   "resources/js/venta.js": {
-    "file": "assets/venta-k4TRexUl.js",
+    "file": "assets/venta-k_XjGyHP.js",
     "name": "venta",
     "src": "resources/js/venta.js",
     "isEntry": true,

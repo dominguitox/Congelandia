@@ -70,6 +70,23 @@
     color: var(--color-text-faint);
 }
 
+.dashboard-ventas-paginacion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 0 var(--space-xl) var(--space-lg);
+    color: var(--color-text-soft);
+    font-size: var(--fs-xs);
+}
+
+.dashboard-ventas-paginacion-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
 /* =========================================================
    BLOQUES DE ALERTAS
    ========================================================= */
@@ -102,6 +119,10 @@
 
     .dashboard-ventas-list {
         padding: var(--space-md) var(--space-lg);
+    }
+
+    .dashboard-ventas-paginacion {
+        padding-inline: var(--space-lg);
     }
 
     .dashboard-alerta-titulo {

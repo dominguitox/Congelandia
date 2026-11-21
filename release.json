@@ -1,16 +1,16 @@
 {
-  "numero": "1.10.0",
-  "comentarios": "# Congelandia 1.10.0 — 2026-11-19\n\n## Cambios\n- **Nueva función:** Agregar calendario simplificado a reportes\n\n## Para ti\n--",
+  "numero": "1.11.0",
+  "comentarios": "# Congelandia 1.11.0 — 2026-11-21\n\n## Cambios\n- **Nueva función:** El punto de venta permite elegir entre cuadrícula, imágenes grandes y lista; la vista elegida se recuerda en el navegador. Mejora: El panel general permite recorrer las ventas recientes por páginas y consultar ventas anteriores. Corrección: El punto de venta puede iniciar cuando no está disponible el almacenamiento del carrito antiguo, siempre que IndexedDB esté disponible.\n\n## Para ti\nAhora puedes elegir cómo ver los productos al vender y consultar más fácilmente las ventas anteriores desde el panel general. También se mejoró el inicio del punto de venta ante problemas con el almacenamiento antiguo del navegador.",
   "novedades": {
     "cambios": [
       {
         "tipo": "Nueva función",
-        "descripcion": "Agregar calendario simplificado a reportes"
+        "descripcion": "El punto de venta permite elegir entre cuadrícula, imágenes grandes y lista; la vista elegida se recuerda en el navegador. Mejora: El panel general permite recorrer las ventas recientes por páginas y consultar ventas anteriores. Corrección: El punto de venta puede iniciar cuando no está disponible el almacenamiento del carrito antiguo, siempre que IndexedDB esté disponible."
       }
     ],
-    "resumen_cliente": "--"
+    "resumen_cliente": "Ahora puedes elegir cómo ver los productos al vender y consultar más fácilmente las ventas anteriores desde el panel general. También se mejoró el inicio del punto de venta ante problemas con el almacenamiento antiguo del navegador."
   },
-  "fecha_creacion": "2026-11-19T14:03:09.395Z",
-  "commit": "212579a9e5df6065b78cb85422d53e8d48551d27",
+  "fecha_creacion": "2026-11-21T22:46:08.335Z",
+  "commit": "a32b6621dded1454065e913358d96c89e64ab05b",
   "public_directory": "public_html"
 }

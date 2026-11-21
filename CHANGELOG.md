@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.11.0 — 2026-11-21
+
+## Cambios
+- **Nueva función:** El punto de venta permite elegir entre cuadrícula, imágenes grandes y lista; la vista elegida se recuerda en el navegador. Mejora: El panel general permite recorrer las ventas recientes por páginas y consultar ventas anteriores. Corrección: El punto de venta puede iniciar cuando no está disponible el almacenamiento del carrito antiguo, siempre que IndexedDB esté disponible.
+
+## Para ti
+Ahora puedes elegir cómo ver los productos al vender y consultar más fácilmente las ventas anteriores desde el panel general. También se mejoró el inicio del punto de venta ante problemas con el almacenamiento antiguo del navegador.
+
 # Congelandia 1.10.0 — 2026-11-19
 
 ## Cambios

@@ -21,6 +21,43 @@
    BUSCADOR DE PRODUCTOS
    ========================================================= */
 
+.pos-productos-controles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    min-width: 0;
+}
+
+.pos-vistas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pos-vistas button {
+    min-height: 36px;
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+}
+
+.pos-vistas button[aria-pressed="true"] {
+    border-color: var(--color-primary);
+    background: var(--color-primary-softer);
+    color: var(--color-primary-hover);
+    font-weight: 700;
+}
+
+.pos-vistas button:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 .buscador-producto {
     width: 320px;
     height: var(--control-height-sm);
@@ -233,6 +270,47 @@
     grid-column: 1 / -1;
 }
 
+.pos-productos[data-vista="grande"] {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+}
+
+.pos-productos[data-vista="grande"] .producto-card {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+}
+
+.pos-productos[data-vista="grande"] .producto-card-imagen {
+    grid-row: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+}
+
+.pos-productos[data-vista="grande"] .producto-card-top {
+    grid-column: 1;
+}
+
+.pos-productos[data-vista="lista"] {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.pos-productos[data-vista="lista"] .producto-card {
+    grid-template-columns: 52px minmax(0, 1fr) minmax(100px, auto);
+}
+
+.pos-productos[data-vista="lista"] .producto-card-pie {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    flex-wrap: wrap;
+    padding: 32px 0 0;
+    border: 0;
+}
+
+.producto-card-info, .producto-card-nombre, .producto-card-categoria {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 /* =========================================================
    BOLETA / CARRITO
    ========================================================= */
@@ -411,6 +489,11 @@
     .buscador-producto {
         width: 100%;
     }
+
+    .pos-productos-controles {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 767.98px) {
@@ -449,6 +532,17 @@
 
     .producto-card-pie {
         flex-wrap: wrap;
+    }
+
+    .pos-productos[data-vista="lista"] .producto-card {
+        grid-template-columns: 44px minmax(0, 1fr);
+    }
+
+    .pos-productos[data-vista="lista"] .producto-card-pie {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        padding-top: 6px;
+        border-top: 1px solid var(--color-border-soft);
     }
 }
 
