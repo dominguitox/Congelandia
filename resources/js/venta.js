@@ -12,17 +12,57 @@ const productosFijadosKey = 'pos:productos-fijados';
 let productosFijados = [];
 let ordenOriginalProductos = new Map();
 
+function iniciarVistaProductos() {
+    const grilla = document.getElementById('grillaProductos');
+    const botones = [...document.querySelectorAll('[data-vista-productos]')];
+    const vistas = new Set(botones.map((boton) => boton.dataset.vistaProductos));
+    const aplicarVista = (vista) => {
+        grilla.dataset.vista = vista;
+        botones.forEach((boton) => boton.setAttribute('aria-pressed', String(boton.dataset.vistaProductos === vista)));
+    };
+
+    let vista = 'cuadricula';
+    try {
+        const guardada = localStorage.getItem('pos:vista-productos');
+        if (vistas.has(guardada)) vista = guardada;
+    } catch (error) {
+        // La vista predeterminada sigue disponible sin almacenamiento.
+    }
+    aplicarVista(vista);
+
+    botones.forEach((boton) => boton.addEventListener('click', () => {
+        const seleccion = boton.dataset.vistaProductos;
+        aplicarVista(seleccion);
+        try {
+            localStorage.setItem('pos:vista-productos', seleccion);
+        } catch (error) {
+            // La selección sigue activa durante esta visita.
+        }
+    }));
+}
+
 // Al cargar la página, dibujamos inmediatamente los productos si existen en caché
 document.addEventListener("DOMContentLoaded", async () => {
+    iniciarVistaProductos();
     try {
         await almacenamiento.bind(usuarioLocal);
         const cuenta = await almacenamiento.account(usuarioLocal);
         carrito = cuenta?.draft?.pending?.carrito || cuenta?.draft?.carrito || [];
         // Migrar el antiguo borrador solo después de guardarlo en IndexedDB.
-        if (!cuenta && localStorage.getItem('carrito')) {
-            carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        let carritoAnterior = null;
+        try {
+            if (!cuenta) carritoAnterior = localStorage.getItem('carrito');
+        } catch (error) {
+            // El almacenamiento antiguo es opcional; IndexedDB permite seguir vendiendo.
+        }
+        if (carritoAnterior) {
+            carrito = JSON.parse(carritoAnterior) || [];
             await almacenamiento.saveDraft(usuarioLocal, { carrito });
-            localStorage.removeItem('carrito');
+            try {
+                localStorage.removeItem('carrito');
+            } catch (error) {
+                // El borrador ya se guardó en IndexedDB.
+            }
         }
     } catch (error) {
         document.getElementById('resultado-venta').textContent = 'No se pudo abrir el almacenamiento local: ' + error.message;
