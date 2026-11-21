@@ -49,10 +49,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         const cuenta = await almacenamiento.account(usuarioLocal);
         carrito = cuenta?.draft?.pending?.carrito || cuenta?.draft?.carrito || [];
         // Migrar el antiguo borrador solo después de guardarlo en IndexedDB.
-        if (!cuenta && localStorage.getItem('carrito')) {
-            carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        let carritoAnterior = null;
+        try {
+            if (!cuenta) carritoAnterior = localStorage.getItem('carrito');
+        } catch (error) {
+            // El almacenamiento antiguo es opcional; IndexedDB permite seguir vendiendo.
+        }
+        if (carritoAnterior) {
+            carrito = JSON.parse(carritoAnterior) || [];
             await almacenamiento.saveDraft(usuarioLocal, { carrito });
-            localStorage.removeItem('carrito');
+            try {
+                localStorage.removeItem('carrito');
+            } catch (error) {
+                // El borrador ya se guardó en IndexedDB.
+            }
         }
     } catch (error) {
         document.getElementById('resultado-venta').textContent = 'No se pudo abrir el almacenamiento local: ' + error.message;
