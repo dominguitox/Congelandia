@@ -40,13 +40,18 @@
                     <h3>Productos</h3>
                     <p>Haz clic en un producto para agregarlo a la boleta</p>
                 </div>
-                <div class="toolbar">
+                <div class="toolbar pos-productos-controles">
                     <div class="buscador-producto">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="m21 21-4.3-4.3"></path>
                         </svg>
                         <input type="text" id="buscarProducto" placeholder="Buscar por código o nombre..." autocomplete="off">
+                    </div>
+                    <div class="pos-vistas" role="group" aria-label="Vista de productos">
+                        <button type="button" data-vista-productos="cuadricula" aria-pressed="true">Cuadrícula</button>
+                        <button type="button" data-vista-productos="grande" aria-pressed="false">Imágenes grandes</button>
+                        <button type="button" data-vista-productos="lista" aria-pressed="false">Lista</button>
                     </div>
                 </div>
             </div>
