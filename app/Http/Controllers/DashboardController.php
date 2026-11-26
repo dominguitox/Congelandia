@@ -20,10 +20,12 @@ class DashboardController extends Controller
     public function index()
     {
         try {
-            $salidas = Salida::with('detalles.producto')->get();
-            $salidasRecientes = Salida::with('detalles.producto')
-                ->orderBy('fecha', 'desc')
-                ->get();
+            $salidasRecientes = Salida::with(['detalles', 'usuario'])
+                ->orderByDesc('fecha')
+                ->orderByDesc('idSalida')
+                ->paginate(10, ['*'], 'pagina_ventas')
+                ->withQueryString()
+                ->fragment('ventas-recientes');
 
 
             // 1. Cálculos exclusivos para HOY
@@ -68,7 +70,6 @@ class DashboardController extends Controller
             $categorias = Categoria::whereNull('deleted_at')->get();
 
             return view('dashboard.index', compact(
-                'salidas',
                 'salidasHoy',
                 'salidasRecientes',
                 'totalVentasHoy',

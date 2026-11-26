@@ -14,7 +14,9 @@ use App\Models\ListaPrecio;
 use App\Models\Producto;
 use App\Models\Promocion;
 use App\Models\Proveedor;
+use App\Support\CodigoBarrasInterno;
 use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -36,6 +38,10 @@ class ProductoController extends Controller
             'stockInicial' => 'nullable|integer|min:0',
             'precioCompra' => [Rule::requiredIf(fn () => $request->integer('stockInicial') > 0), 'nullable', 'numeric', 'min:0'],
             'imagen' => 'nullable|image|max:2048',
+        ], [
+            'codigo.required' => 'Ingresa un código de producto o genera uno interno.',
+            'codigo.max' => 'El código no puede superar los 50 caracteres.',
+            'codigo.unique' => 'Este código ya está registrado. Genera un código interno nuevo o ingresa otro distinto.',
         ]);
 
         try {
@@ -88,9 +94,56 @@ class ProductoController extends Controller
 
             return redirect()->back()->with('success', 'Producto creado e ingresado al stock correctamente.');
 
+        } catch (QueryException $e) {
+            // La validación unique puede quedar obsoleta si otra solicitud
+            // registra el mismo código entre la validación y el INSERT.
+            if ($this->esCodigoDuplicado($e)) {
+                throw ValidationException::withMessages([
+                    'codigo' => 'Este código ya está registrado. Genera un código interno nuevo o ingresa otro distinto.',
+                ]);
+            }
+
+            return redirect()->back()->withInput()->with('error', 'Error al crear el producto: '.$e->getMessage());
         } catch (Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Error al crear el producto: '.$e->getMessage());
         }
+    }
+
+    public function generarCodigoInterno()
+    {
+        $fecha = now();
+        $prefijo = CodigoBarrasInterno::prefijoFecha($fecha);
+
+        // Solo se consideran códigos con el patrón interno de esa fecha. Se
+        // incluyen los eliminados porque su código sigue ocupando la clave
+        // primaria y no debe reutilizarse.
+        $secuencia = (int) Producto::withTrashed()
+            ->where('codigo', 'like', $prefijo.'%')
+            ->pluck('codigo')
+            ->map(fn ($codigo) => CodigoBarrasInterno::secuenciaDe((string) $codigo, $fecha) ?? 0)
+            ->max();
+
+        for ($intento = 0; $intento < 10; $intento++) {
+            $secuencia++;
+
+            if ($secuencia > CodigoBarrasInterno::MAX_SECUENCIA) {
+                break;
+            }
+
+            $codigo = CodigoBarrasInterno::formatear($fecha, $secuencia);
+
+            if (! Producto::withTrashed()->whereKey($codigo)->exists()) {
+                return response()->json([
+                    'codigo' => $codigo,
+                    'formato' => CodigoBarrasInterno::FORMATO,
+                    'mensaje' => 'Código interno del día '.$fecha->format('d-m-Y').' generado. Revísalo o edítalo antes de guardar.',
+                ])->header('Cache-Control', 'no-store, private');
+            }
+        }
+
+        return response()->json([
+            'message' => 'Se agotó la secuencia diaria de códigos internos ('.CodigoBarrasInterno::MAX_SECUENCIA.'). Ingresa un código manualmente.',
+        ], 503)->header('Cache-Control', 'no-store, private');
     }
 
     public function listarProductos(Request $request)
@@ -306,6 +359,14 @@ class ProductoController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Error al editar el producto: '.$e->getMessage());
         }
+    }
+
+    private function esCodigoDuplicado(QueryException $e): bool
+    {
+        $mensaje = $e->getMessage();
+
+        return str_contains($mensaje, 'UNIQUE constraint failed: producto.codigo')
+            || (str_contains($mensaje, 'Duplicate entry') && str_contains($mensaje, 'producto'));
     }
 
     private function reglasRelacion(Request $request, string $campo, string $nombre, string $tabla): array

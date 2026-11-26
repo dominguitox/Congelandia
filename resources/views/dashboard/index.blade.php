@@ -118,7 +118,7 @@
     <div class="dashboard-grid">
 
         {{-- Ventas recientes --}}
-        <div class="panel">
+        <div class="panel" id="ventas-recientes">
 
             <div class="panel-head">
                 <div>
@@ -130,10 +130,6 @@
             <div class="panel-body panel-body--flush">
 
                 <div class="dashboard-ventas-list">
-                     {{-- salidas => ordena salidas desde la mas antigua 
-                          salidasRecientes => ordena salidas desde la mas nueva (usar esta!!) 
-                          salidasHoy => salidas solo hoy (desde la mas vieja)
-                     --}}
                     @forelse($salidasRecientes as $salida)
                     <div class="venta-item">
 
@@ -159,6 +155,20 @@
                     @endforelse
 
                 </div>
+
+                @if($salidasRecientes->hasPages())
+                    <nav class="dashboard-ventas-paginacion" aria-label="Paginación de ventas recientes">
+                        <span>Mostrando {{ $salidasRecientes->firstItem() }}–{{ $salidasRecientes->lastItem() }} de {{ $salidasRecientes->total() }} ventas</span>
+                        <div class="dashboard-ventas-paginacion-acciones">
+                            @if($salidasRecientes->previousPageUrl())
+                                <a class="btn-soft" href="{{ $salidasRecientes->previousPageUrl() }}" rel="prev">Ventas más recientes</a>
+                            @endif
+                            @if($salidasRecientes->nextPageUrl())
+                                <a class="btn-soft" href="{{ $salidasRecientes->nextPageUrl() }}" rel="next">Ventas anteriores</a>
+                            @endif
+                        </div>
+                    </nav>
+                @endif
 
             </div>
 

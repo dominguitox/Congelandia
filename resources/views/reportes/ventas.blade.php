@@ -1,9 +1,9 @@
 <div class="stats-grid">
     @foreach([
         ['Ventas del período', $moneda($datos['ingresos']), 'Incluye ventas al fiado'],
-        ['Transacciones', $numero($datos['ventas']), 'Tickets de venta válidos'],
+        ['Salidas', $numero($datos['ventas']), 'Salidas de venta válidas'],
         ['Unidades vendidas', $numero($datos['unidades']), 'Excluye mermas y eliminados'],
-        ['Ticket promedio', $moneda($datos['ticket']), 'Monto por transacción'],
+        ['Ingreso promedio por salida', $moneda($datos['ingresoPromedioPorSalida']), 'Monto por salida'],
     ] as [$label, $valor, $detalle])
         <div class="stat-tile"><div class="stat-tile-info"><span>{{ $label }}</span><strong>{{ $valor }}</strong><small>{{ $detalle }}</small></div></div>
     @endforeach
@@ -19,7 +19,7 @@
                 <div class="reportes-chart-scroll" tabindex="0" aria-label="Gráfico de ventas diarias, desplazable">
                     <div class="reportes-barras" style="--barras: {{ $datos['dias']->count() }}">
                         @foreach($datos['dias'] as $dia)
-                            <div class="reportes-barra-col" title="{{ $dia['fecha'] }}: {{ $moneda($dia['ingresos']) }}, {{ $dia['ventas'] }} ventas">
+                            <div class="reportes-barra-col" title="{{ $dia['fecha'] }}: {{ $moneda($dia['ingresos']) }}, {{ $dia['ventas'] }} salidas">
                                 <div class="reportes-barra-pista"><div class="reportes-barra" style="--valor: {{ round(100 * $dia['ingresos'] / max(1, $datos['dias']->max('ingresos')), 2) }}%"></div></div>
                                 <span>{{ \Carbon\Carbon::parse($dia['fecha'])->format('d/m') }}</span>
                             </div>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <details class="reportes-detalle"><summary>Ver cifras por día</summary>
-                    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Fecha</th><th>Transacciones</th><th>Ventas</th></tr></thead><tbody>
+                    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Fecha</th><th>Salidas</th><th>Ventas</th></tr></thead><tbody>
                         @foreach($datos['dias'] as $dia)<tr><td>{{ \Carbon\Carbon::parse($dia['fecha'])->format('d/m/Y') }}</td><td>{{ $numero($dia['ventas']) }}</td><td>{{ $moneda($dia['ingresos']) }}</td></tr>@endforeach
                     </tbody></table></div>
                 </details>

@@ -1,5 +1,16 @@
 import { pending } from './store.js';
 
+export function compactStatus(account, online, activity = '') {
+    const rows = pending(account);
+    const date = new Date(account?.snapshot?.actualizado);
+    const copy = account?.snapshot?.actualizado && !Number.isNaN(date.getTime())
+        ? `Copia ${date.toLocaleString('es-CL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`
+        : 'Sin copia';
+    const pendingText = rows.length ? `${rows.length} pendiente${rows.length === 1 ? '' : 's'}` : 'Sin pendientes';
+    const connection = activity === 'upload' ? 'Enviando' : activity === 'download' ? 'Descargando' : online ? 'En línea' : 'Sin conexión';
+    return `${connection} · ${pendingText} · ${copy}`;
+}
+
 export function transferState(account, online, activity = '') {
     const rows = pending(account);
     const count = rows.length;

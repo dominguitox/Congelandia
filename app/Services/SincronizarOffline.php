@@ -137,7 +137,12 @@ class SincronizarOffline
                 'motivo' => ['required', Rule::in(['Merma por Vencimiento', 'Merma por Daño'])],
             ],
         };
-        $datos = Validator::make($operacion['datos'], $reglas)->validate();
+        $datos = Validator::make($operacion['datos'], $reglas, [
+            'idTipo.exists' => 'El tipo de venta ya no está disponible. Conserva el movimiento para revisión.',
+            'rutCliente.exists' => 'El cliente de la venta ya no está disponible. Conserva el movimiento para revisión.',
+            'pagos.*.idMetodo.exists' => 'Un método de pago de la venta ya no está disponible. Conserva el movimiento para revisión.',
+            'idProveedor.exists' => 'El proveedor del ingreso ya no está disponible. Conserva el movimiento para revisión.',
+        ])->validate();
         if ($operacion['tipo'] === 'ingreso') {
             Validator::make(['totalCompra' => $datos['cantidad'] * $datos['precioCompra']], ['totalCompra' => 'numeric|max:9999999999'])->validate();
         }
