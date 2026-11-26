@@ -74,12 +74,6 @@ class ProveedorController extends Controller
                         $producto->ultimoPrecioCompra =
                             $detalle->precioCompra;
 
-                        /*
-                         * Guardamos la última fecha de vencimiento.
-                         */
-                        $producto->ultimaFechaVencimiento =
-                            $detalle->fechaVencimiento;
-
                         $productos->push($producto);
                     }
                 }

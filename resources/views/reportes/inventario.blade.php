@@ -1,17 +1,54 @@
 <div class="stats-grid">
     @foreach([
         ['Productos bajo stock', $datos['bajoStock']->count(), $datos['criticos'].' con 3 unidades o menos'],
-        ['Lotes para revisar', $datos['lotes']->count(), 'Vencidos o por vencer en 15 días'],
-        ['Valor en riesgo estimado', $moneda($datos['valorRiesgo']), 'A precio de venta, sin descuentos'],
         ['Reposición sugerida', $numero($datos['reposicion']).' uds.', 'Para llegar a 20 por producto'],
     ] as [$label, $valor, $detalle])
         <div class="stat-tile"><div class="stat-tile-info"><span>{{ $label }}</span><strong>{{ $valor }}</strong><small>{{ $detalle }}</small></div></div>
     @endforeach
 </div>
+<section class="panel solicitudes-panel">
+    <div class="panel-head"><div><h2 id="solicitudes-titulo">Solicitudes a proveedores</h2><p>{{ $datos['bajoStock']->count() }} productos por revisar · Selecciona solo los que quieras solicitar.</p></div></div>
+    <div class="panel-body">
+        @if($datos['bajoStock']->isEmpty())
+            <p>No hay productos que reponer.</p>
+        @else
+            <details class="solicitudes-detalle" @if($errors->any()) open @endif>
+            <summary><span>Preparar solicitudes</span><span class="solicitudes-indicador" aria-hidden="true"></span></summary>
+            <p>Elige un proveedor con ingresos registrados y revisa las cantidades. No se guarda ni se envía ningún pedido.</p>
+            <form method="POST" action="{{ route('reportes.solicitudes') }}" aria-labelledby="solicitudes-titulo">
+                @csrf
+                <div class="solicitud-busqueda"><label for="buscar-solicitud">Buscar producto o código</label><input class="form-control" id="buscar-solicitud" type="search" autocomplete="off"><p id="solicitud-resultados" role="status"></p></div>
+                <div class="data-table-wrap solicitud-lista" role="region" aria-label="Productos sugeridos" tabindex="0"><table class="data-table solicitud-tabla"><thead><tr><th scope="col">Producto</th><th scope="col">Stock</th><th scope="col">Proveedor</th><th scope="col">Cantidad</th></tr></thead><tbody>
+                @foreach($datos['bajoStock'] as $producto)
+                    @php($opciones = $datos['proveedoresPorProducto']->get($producto->codigo, collect()))
+                    <tr class="solicitud-fila" data-busqueda="{{ $producto->nombre }} {{ $producto->codigo }}">
+                        <td><span class="celda-principal">{{ $producto->nombre }}</span><span class="celda-sub">{{ $producto->codigo }}</span>
+                        <input type="hidden" name="productos[{{ $loop->index }}][codigo]" value="{{ $producto->codigo }}">
+                        </td><td>{{ $numero($producto->stock) }}</td><td>
+                        <label class="visually-hidden" for="proveedor-{{ $loop->index }}">Proveedor para {{ $producto->nombre }}</label>
+                        <select class="form-control" id="proveedor-{{ $loop->index }}" name="productos[{{ $loop->index }}][proveedor]">
+                            <option value="">No incluir</option>
+                            @if($opciones->isEmpty())<option disabled>Sin proveedor asociado</option>@endif
+                            @foreach($opciones as $proveedor)
+                                <option value="{{ $proveedor->idProveedor }}" @selected(old('productos.'.$loop->parent->index.'.proveedor') == $proveedor->idProveedor)>{{ $proveedor->nombre }}</option>
+                            @endforeach
+                        </select>
+                        @if($opciones->isEmpty())<small>Sin proveedor asociado</small>@endif
+                        </td><td><label class="visually-hidden" for="cantidad-{{ $loop->index }}">Cantidad de {{ $producto->nombre }}</label>
+                        <input class="form-control" id="cantidad-{{ $loop->index }}" name="productos[{{ $loop->index }}][cantidad]" type="number" min="1" max="100000" required value="{{ old('productos.'.$loop->index.'.cantidad', $producto->reponer) }}">
+                        </td></tr>
+                @endforeach
+                </tbody></table></div>
+                <button class="btn-solid" type="submit">Preparar mensajes</button>
+            </form>
+            </details>
+        @endif
+    </div>
+</section>
 <div class="reportes-columnas">
     <section class="panel">
         <div class="panel-head"><div><h2>Prioridad de reposición</h2><p>Umbral provisional: menos de 10 unidades. Objetivo: 20.</p></div></div>
-        <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Producto</th><th>Stock actual</th><th>Reponer</th></tr></thead><tbody>
+        <div class="data-table-wrap prioridad-lista" role="region" aria-label="Prioridad de reposición" tabindex="0"><table class="data-table"><thead><tr><th>Producto</th><th>Stock actual</th><th>Reponer</th></tr></thead><tbody>
             @forelse($datos['bajoStock'] as $producto)
                 <tr><td><span class="celda-principal">{{ $producto->nombre }}</span><span class="celda-sub">{{ $producto->categoria }} · {{ $producto->codigo }}</span></td>
                     <td><span class="pill pill--{{ $producto->stock <= 3 ? 'danger' : 'warning' }}">{{ $producto->stock < 0 ? 'Revisar: ' : '' }}{{ $numero($producto->stock) }} uds.</span></td><td>{{ $numero($producto->reponer) }} uds.</td></tr>
@@ -20,28 +57,4 @@
             @endforelse
         </tbody></table></div>
     </section>
-    <section class="panel">
-        <div class="panel-head"><div><h2>Riesgo por vencimiento</h2><p>Valor estimado según fecha de vencimiento.</p></div></div>
-        <div class="panel-body reportes-ranking">
-            @foreach($datos['ventanas'] as $ventana)
-                <div><div class="reportes-ranking-label"><strong>{{ $ventana['nombre'] }}</strong><span>{{ $moneda($ventana['valor']) }}</span></div>
-                    <div class="reportes-progreso reportes-progreso--{{ $loop->index < 2 ? 'danger' : 'warning' }}"><span style="width: {{ 100 * $ventana['valor'] / max(1, $datos['ventanas']->max('valor')) }}%"></span></div>
-                    <small>{{ $numero($ventana['cantidad']) }} unidades estimadas</small>
-                </div>
-            @endforeach
-            @if($datos['sinPrecio'])<p class="reportes-nota">{{ $datos['sinPrecio'] }} lotes sin precio vigente: sus unidades se muestran, pero no se incluyen en el valor.</p>@endif
-        </div>
-    </section>
 </div>
-<section class="panel">
-    <div class="panel-head"><div><h2>Vencimientos para revisar</h2><p>Primero los vencidos y luego los más cercanos.</p></div><span class="pill pill--warning">Cantidades estimadas</span></div>
-    <div class="panel-body"><p class="reportes-nota">La app no vincula salidas con lotes. Esta estimación descuenta las salidas del producto empezando por el lote que vence primero (FEFO). Confirma las cantidades físicas antes de tomar una decisión. Los productos vencidos requieren revisión y retiro.</p></div>
-    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Producto</th><th>Vencimiento</th><th>Prioridad</th><th>Unidades estimadas</th><th>Valor estimado</th></tr></thead><tbody>
-        @forelse($datos['lotes'] as $lote)
-            <tr><td><span class="celda-principal">{{ $lote->nombre }}</span><span class="celda-sub">{{ $lote->codigo }}</span></td><td>{{ \Carbon\Carbon::parse($lote->vencimiento)->format('d/m/Y') }}</td>
-                <td><span class="pill pill--{{ $lote->dias <= 3 ? 'danger' : 'warning' }}">{{ $lote->dias < 0 ? 'Vencido' : ($lote->dias === 0 ? 'Vence hoy' : 'En '.$lote->dias.' días') }}</span></td><td>{{ $numero($lote->cantidad) }}</td><td>{{ $lote->valor === null ? 'Sin precio' : $moneda($lote->valor) }}</td></tr>
-        @empty
-            <tr><td colspan="5"><div class="empty-state"><strong>Sin vencimientos próximos estimados</strong><p>No se estiman unidades vencidas ni por vencer dentro de 15 días.</p></div></td></tr>
-        @endforelse
-    </tbody></table></div>
-</section>

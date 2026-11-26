@@ -31,7 +31,7 @@ test('rechaza datos invalidos en el ingreso sin crear registros', function (arra
 })->with([
     'sin datos' => [
         [],
-        ['codigoProducto', 'cantidad', 'precioCompra', 'fechaVencimiento', '_modal'],
+        ['codigoProducto', 'cantidad', 'precioCompra', '_modal'],
     ],
     'producto inexistente' => [
         ['codigoProducto' => 'NO-EXISTE', 'cantidad' => 5, 'precioCompra' => 1000,
@@ -47,11 +47,6 @@ test('rechaza datos invalidos en el ingreso sin crear registros', function (arra
         ['codigoProducto' => 'VAL-1', 'cantidad' => 5, 'precioCompra' => -100,
             'fechaVencimiento' => now()->addMonth()->toDateString(), '_modal' => 'modalRegistrarIngreso'],
         ['precioCompra'],
-    ],
-    'vencimiento pasado' => [
-        ['codigoProducto' => 'VAL-1', 'cantidad' => 5, 'precioCompra' => 1000,
-            'fechaVencimiento' => now()->subDay()->toDateString(), '_modal' => 'modalRegistrarIngreso'],
-        ['fechaVencimiento'],
     ],
     'modal incorrecto' => [
         ['codigoProducto' => 'VAL-1', 'cantidad' => 5, 'precioCompra' => 1000,

@@ -42,6 +42,7 @@
     margin-bottom: var(--space-xl);
 }
 .reportes-columnas > .panel { min-width: 0; margin-top: 0; }
+.reportes-columnas:has(> .panel:only-child) { grid-template-columns: minmax(0, 1fr); }
 .reportes-ranking { display: grid; gap: var(--space-xl); }
 .reportes-ranking-label { display: flex; justify-content: space-between; gap: var(--space-md); font-size: var(--fs-sm); }
 .reportes-ranking-label strong { overflow-wrap: anywhere; }
@@ -116,3 +117,20 @@
     .reportes-tab { text-align: center; }
     .reportes-ranking-label { flex-wrap: wrap; }
 }
+.solicitud-mensaje label { display: block; margin-top: .75rem; }
+.solicitudes-panel { margin-bottom: var(--space-xl); }
+.solicitudes-detalle summary { display: inline-flex; gap: 1rem; align-items: center; justify-content: space-between; padding: .75rem 1.1rem; background: var(--color-primary); color: var(--color-text-light); border-radius: var(--radius-md); font-weight: 600; cursor: pointer; list-style: none; }
+.solicitudes-detalle summary::-webkit-details-marker { display: none; }
+.solicitudes-detalle summary:hover { background: var(--color-primary-hover); }
+.solicitudes-indicador { width: .55rem; height: .55rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); margin-top: -.25rem; }
+.solicitudes-detalle[open] .solicitudes-indicador { transform: rotate(225deg); margin-top: .25rem; }
+.solicitudes-detalle > p { color: var(--color-text-muted); margin-top: 1rem; }
+.solicitud-lista, .prioridad-lista { max-height: 30rem; overflow: auto; }
+.solicitud-lista thead, .prioridad-lista thead { position: sticky; top: 0; z-index: 1; }
+.solicitud-fila[hidden] { display: none; }
+.solicitud-busqueda { max-width: 28rem; margin-block: 1rem; }
+.solicitud-busqueda label { display: block; }
+.solicitud-tabla { margin-bottom: 1rem; }
+.solicitud-tabla input[type=number] { min-width: 6rem; max-width: 8rem; }
+.solicitud-tabla select { min-width: 12rem; }
+.solicitud-acciones { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-top: 1rem; }

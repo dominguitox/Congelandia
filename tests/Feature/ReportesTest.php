@@ -90,13 +90,10 @@ test('inventario descuenta salidas de todos los tipos y no repite el stock en ca
     salidaReporte($this->usuario->idUsuario, $this->venta, '2026-11-03 11:00:00', [[5, 1000, false]], true);
 
     $response = $this->actingAs($this->usuario)->get('/reportes?seccion=inventario')
-        ->assertOk()->assertSee('Cantidades estimadas');
+        ->assertOk()->assertDontSee('Riesgo por vencimiento');
     $datos = $response->viewData('datos');
     expect($datos['bajoStock']->first()->stock)->toBe(8)
-        ->and($datos['reposicion'])->toBe(12)
-        ->and($datos['lotes'])->toHaveCount(1)
-        ->and($datos['lotes']->first()->cantidad)->toBe(8)
-        ->and($datos['valorRiesgo'])->toEqual(8000);
+        ->and($datos['reposicion'])->toBe(12);
 });
 
 test('reportes muestra estados vacios y exporta el mismo filtro con proteccion de formulas', function () {
@@ -111,7 +108,7 @@ test('reportes muestra estados vacios y exporta el mismo filtro con proteccion d
     expect($respuesta->streamedContent())->toContain("'=1+1", '1600', '2026-11-02');
 });
 
-test('inventario conserva alertas vencidas y avisa cuando no hay precio vigente', function () {
+test('inventario y csv no muestran fechas de productos', function () {
     $proveedor = DB::table('proveedor')->insertGetId(['nombre' => 'Proveedor'], 'idProveedor');
     $ingreso = DB::table('ingreso')->insertGetId([
         'fecha' => '2026-11-01 09:00:00', 'idProveedor' => $proveedor,
@@ -122,12 +119,10 @@ test('inventario conserva alertas vencidas y avisa cuando no hay precio vigente'
         'precioCompra' => 500, 'fechaVencimiento' => '2026-11-05',
     ]);
     $this->actingAs($this->usuario)->get('/reportes?seccion=inventario')
-        ->assertOk()->assertSee('Vencido')->assertSee('Sin precio')
-        ->assertViewHas('datos', fn ($datos) => $datos['lotes']->first()->dias === -1
-            && $datos['sinPrecio'] === 1 && $datos['valorRiesgo'] == 0);
+        ->assertOk()->assertDontSee('Vencido')->assertDontSee('Vencimientos para revisar');
 
     $csv = $this->actingAs($this->usuario)->get('/reportes?seccion=inventario&exportar=csv')->assertOk();
-    expect($csv->streamedContent())->toContain('FEFO', '2026-11-05', 'HELADO');
+    expect($csv->streamedContent())->toContain('HELADO')->not->toContain('FEFO', '2026-11-05');
 });
 
 test('exportacion de habitos conserva cada salida una sola vez', function () {
@@ -163,3 +158,83 @@ test('rechaza fechas invalidas rangos invertidos demasiado largos y secciones de
     [['fecha_inicio' => '2025-01-01', 'fecha_fin' => '2026-11-06']],
     [['seccion' => 'desconocida']],
 ]);
+
+function ingresoProveedorReporte(int $usuario, int $proveedor, bool $ingresoEliminado = false, bool $detalleEliminado = false): void
+{
+    $id = DB::table('ingreso')->insertGetId([
+        'fecha' => '2026-11-01 09:00:00', 'idProveedor' => $proveedor,
+        'idUsuario' => $usuario, 'totalCompra' => 500, 'deleted_at' => $ingresoEliminado ? now() : null,
+    ], 'idIngreso');
+    DB::table('detalle_ingreso')->insert([
+        'idIngreso' => $id, 'codigoProducto' => 'HELADO', 'cantidad' => 1,
+        'precioCompra' => 500, 'fechaVencimiento' => '2026-12-01', 'deleted_at' => $detalleEliminado ? now() : null,
+    ]);
+}
+
+test('sugerencias muestra proveedores con historial valido y prepara cantidades editadas', function () {
+    $uno = DB::table('proveedor')->insertGetId(['nombre' => 'Proveedor Uno', 'telefono' => '+56912345678', 'correo' => 'uno@example.test'], 'idProveedor');
+    $dos = DB::table('proveedor')->insertGetId(['nombre' => 'Proveedor Dos'], 'idProveedor');
+    ingresoProveedorReporte($this->usuario->idUsuario, $uno);
+    ingresoProveedorReporte($this->usuario->idUsuario, $dos);
+    DB::table('producto')->insert(['codigo' => 'SIN', 'nombre' => 'Sin historial']);
+    $this->actingAs($this->usuario)->get('/reportes?seccion=inventario')
+        ->assertOk()->assertSee('Proveedor Uno')->assertSee('Proveedor Dos')->assertSee('Sin proveedor asociado');
+    $this->post('/reportes/solicitudes', ['productos' => [
+        ['codigo' => 'HELADO', 'proveedor' => $uno, 'cantidad' => 7],
+        ['codigo' => 'SIN', 'proveedor' => '', 'cantidad' => 20],
+    ]])->assertOk()->assertSee('7 unidades')->assertSee('Abrir WhatsApp')->assertSee('Redactar correo')->assertDontSee('Sin historial');
+    $this->post('/reportes/solicitudes', ['productos' => [
+        ['codigo' => 'HELADO', 'proveedor' => $dos, 'cantidad' => 5],
+    ]])->assertOk()->assertSee('Sin teléfono válido')->assertSee('Sin correo válido');
+});
+
+test('sugerencias rechaza proveedor sin historial o con historial eliminado', function () {
+    $sin = DB::table('proveedor')->insertGetId(['nombre' => 'Sin historial'], 'idProveedor');
+    $eliminado = DB::table('proveedor')->insertGetId(['nombre' => 'Ingreso eliminado'], 'idProveedor');
+    $detalle = DB::table('proveedor')->insertGetId(['nombre' => 'Detalle eliminado'], 'idProveedor');
+    ingresoProveedorReporte($this->usuario->idUsuario, $eliminado, true);
+    ingresoProveedorReporte($this->usuario->idUsuario, $detalle, false, true);
+    foreach ([$sin, $eliminado, $detalle] as $id) {
+        $this->actingAs($this->usuario)->postJson('/reportes/solicitudes', ['productos' => [
+            ['codigo' => 'HELADO', 'proveedor' => $id, 'cantidad' => 2],
+        ]])->assertUnprocessable();
+    }
+    $this->actingAs($this->usuario)->postJson('/reportes/solicitudes', ['productos' => [
+        ['codigo' => 'HELADO', 'proveedor' => null, 'cantidad' => 2],
+    ]])->assertUnprocessable();
+});
+
+test('sugerencias protege acceso y valida cantidades y estado vacio', function () {
+    $this->post('/reportes/solicitudes')->assertRedirect(route('login'));
+    $this->usuario->update(['rol' => 'Cajero']);
+    $this->actingAs($this->usuario)->post('/reportes/solicitudes')->assertNotFound();
+    $this->usuario->update(['rol' => 'Administrador']);
+    $this->postJson('/reportes/solicitudes', ['productos' => [['codigo' => 'HELADO', 'proveedor' => 1, 'cantidad' => 0]]])->assertUnprocessable();
+    DB::table('producto')->where('codigo', 'HELADO')->update(['deleted_at' => now()]);
+    $this->get('/reportes?seccion=inventario')->assertOk()->assertSee('No hay productos que reponer.');
+});
+
+test('sugerencias rechaza proveedor o producto eliminados aunque tengan historial', function () {
+    $proveedor = DB::table('proveedor')->insertGetId(['nombre' => 'Proveedor'], 'idProveedor');
+    ingresoProveedorReporte($this->usuario->idUsuario, $proveedor);
+    $payload = ['productos' => [['codigo' => 'HELADO', 'proveedor' => $proveedor, 'cantidad' => 2]]];
+    DB::table('proveedor')->where('idProveedor', $proveedor)->update(['deleted_at' => now()]);
+    $this->actingAs($this->usuario)->postJson('/reportes/solicitudes', $payload)->assertUnprocessable();
+    DB::table('proveedor')->where('idProveedor', $proveedor)->update(['deleted_at' => null]);
+    DB::table('producto')->where('codigo', 'HELADO')->update(['deleted_at' => now()]);
+    $this->postJson('/reportes/solicitudes', $payload)->assertUnprocessable();
+});
+
+test('se preparan solicitudes separadas y se omite producto sin proveedor', function () {
+    $uno = DB::table('proveedor')->insertGetId(['nombre' => 'Proveedor Uno'], 'idProveedor');
+    $dos = DB::table('proveedor')->insertGetId(['nombre' => 'Proveedor Dos'], 'idProveedor');
+    ingresoProveedorReporte($this->usuario->idUsuario, $uno);
+    DB::table('producto')->insert([['codigo' => 'OTRO', 'nombre' => 'Otro producto'], ['codigo' => 'SIN', 'nombre' => 'Sin proveedor']]);
+    $ingreso = DB::table('ingreso')->insertGetId(['fecha' => now(), 'idProveedor' => $dos, 'idUsuario' => $this->usuario->idUsuario, 'totalCompra' => 100], 'idIngreso');
+    DB::table('detalle_ingreso')->insert(['idIngreso' => $ingreso, 'codigoProducto' => 'OTRO', 'cantidad' => 1, 'precioCompra' => 100]);
+    $this->actingAs($this->usuario)->post('/reportes/solicitudes', ['productos' => [
+        ['codigo' => 'HELADO', 'proveedor' => $uno, 'cantidad' => 4],
+        ['codigo' => 'OTRO', 'proveedor' => $dos, 'cantidad' => 6],
+        ['codigo' => 'SIN', 'proveedor' => '', 'cantidad' => 20],
+    ]])->assertOk()->assertSee('Proveedor Uno')->assertSee('Proveedor Dos')->assertSee('4 unidades')->assertSee('6 unidades')->assertDontSee('Sin proveedor');
+});

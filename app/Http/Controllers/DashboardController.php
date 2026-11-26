@@ -50,19 +50,12 @@ class DashboardController extends Controller
 
             $productos = Producto::conDetalle()->get();
             $alertasActivas = 0;
-            $fechaHoyCarbon = Carbon::now()->startOfDay();
             $listaAlertas = [];
 
             foreach ($productos as $producto) {
                 $stockBajo = $producto->stock < 10;
 
-                $diasRestantes = 999; // Valor por defecto si no tiene fecha
-                if ($producto->fechaVencimiento) {
-                    $fechaVence = Carbon::parse($producto->fechaVencimiento)->startOfDay();
-                    $diasRestantes = $fechaHoyCarbon->diffInDays($fechaVence, false);
-                }
-
-                if ($stockBajo || $diasRestantes < 10) {
+                if ($stockBajo) {
                     $listaAlertas[] = ($producto);
                     $alertasActivas++;
                 }
