@@ -63,9 +63,8 @@
                 <fieldset id="entry-fields"><legend>Datos del ingreso</legend>
                     <label for="supplier">Proveedor existente (opcional)</label><select id="supplier"></select>
                     <label for="cost">Precio de compra unitario</label><input id="cost" type="number" min="0" max="9999999999" step="0.01">
-                    <label for="expiry">Fecha de vencimiento</label><input id="expiry" type="date">
                 </fieldset>
-                <fieldset id="loss-fields" hidden disabled><legend>Motivo existente</legend><label for="reason">Motivo de la merma</label><select id="reason"><option>Merma por Vencimiento</option><option>Merma por Daño</option></select></fieldset>
+                <fieldset id="loss-fields" hidden disabled><legend>Motivo existente</legend><label for="reason">Motivo de la merma</label><select id="reason"><option>Merma por Daño</option></select></fieldset>
                 <button type="submit" class="primary">Revisar movimiento</button>
             </form>
         </section>

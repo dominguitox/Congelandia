@@ -1,16 +1,16 @@
 {
-  "numero": "1.11.1",
-  "comentarios": "# Congelandia 1.11.1 — 2026-11-26\n\n## Cambios\n- **Nueva función:** Preparación de solicitudes a proveedores a partir de productos con bajo stock. | Mejora: Selección de proveedores y cantidades para generar mensajes de solicitud. | Corrección: Carga de proveedores en el reporte de inventario.\n\n## Para ti\nAhora puedes revisar los productos con bajo stock, elegir sus proveedores y preparar mensajes con las cantidades que necesitas solicitar. Esto facilita la reposición y reduce el tiempo necesario para organizar los pedidos.",
+  "numero": "1.11.2",
+  "comentarios": "# Congelandia 1.11.2 — 2026-11-26\n\n## Cambios\n- **Nueva función:** Preparación de solicitudes a proveedores a partir de productos con bajo stock.\n\n## Para ti\nAhora puedes revisar los productos con bajo stock, elegir sus proveedores y preparar mensajes con las cantidades que necesitas solicitar. Esto facilita la reposición y reduce el tiempo necesario para organizar los pedidos.",
   "novedades": {
     "cambios": [
       {
         "tipo": "Nueva función",
-        "descripcion": "Preparación de solicitudes a proveedores a partir de productos con bajo stock. | Mejora: Selección de proveedores y cantidades para generar mensajes de solicitud. | Corrección: Carga de proveedores en el reporte de inventario."
+        "descripcion": "Preparación de solicitudes a proveedores a partir de productos con bajo stock."
       }
     ],
     "resumen_cliente": "Ahora puedes revisar los productos con bajo stock, elegir sus proveedores y preparar mensajes con las cantidades que necesitas solicitar. Esto facilita la reposición y reduce el tiempo necesario para organizar los pedidos."
   },
-  "fecha_creacion": "2026-11-26T19:37:05.735Z",
-  "commit": "b71830c874852e83728ee86c33b6a0fb0b320c35",
+  "fecha_creacion": "2026-11-26T19:46:07.920Z",
+  "commit": "fcc861e2920cbfd710ca4f0ea2efe4f23dc1478d",
   "public_directory": "public_html"
 }

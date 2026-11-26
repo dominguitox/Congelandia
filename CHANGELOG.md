@@ -1,5 +1,13 @@
 # Historial de publicaciones
 
+# Congelandia 1.11.2 — 2026-11-26
+
+## Cambios
+- **Nueva función:** Preparación de solicitudes a proveedores a partir de productos con bajo stock.
+
+## Para ti
+Ahora puedes revisar los productos con bajo stock, elegir sus proveedores y preparar mensajes con las cantidades que necesitas solicitar. Esto facilita la reposición y reduce el tiempo necesario para organizar los pedidos.
+
 # Congelandia 1.11.1 — 2026-11-26
 
 ## Cambios

@@ -45,7 +45,7 @@ class CatalogoOffline
                 'metodos' => DB::table('metodo_pago')->whereNull('deleted_at')
                     ->whereRaw('LOWER(nombre) NOT LIKE ?', ['%fiado%'])->orderBy('idMetodo')->get(['idMetodo', 'nombre']),
                 'tipoVenta' => DB::table('tipo_salida')->where('nombre', 'Venta')->whereNull('deleted_at')->value('idTipo'),
-                'motivos' => ['Merma por Vencimiento', 'Merma por Daño'],
+                'motivos' => ['Merma por Daño'],
             ];
         });
     }

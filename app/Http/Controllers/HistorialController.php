@@ -71,7 +71,6 @@ class HistorialController extends Controller
                     'detalle_ingreso.codigoProducto',
                     'detalle_ingreso.cantidad',
                     'detalle_ingreso.precioCompra',
-                    'detalle_ingreso.fechaVencimiento',
                     'producto.nombre as producto'
                 )
                 ->whereNull('detalle_ingreso.deleted_at')
@@ -171,7 +170,6 @@ class HistorialController extends Controller
                             'codigo' => $detalle->codigoProducto,
                             'cantidad' => $detalle->cantidad,
                             'precio' => $detalle->precioCompra,
-                            'vencimiento' => $detalle->fechaVencimiento,
                         ];
 
                     })->values()->all(),
@@ -189,7 +187,7 @@ class HistorialController extends Controller
                 $movimientos->push([
                     'id' => $salida->idSalida,
                     'fecha' => $salida->fecha,
-                    'tipo' => $salida->tipoSalida,
+                    'tipo' => $salida->tipoSalida === 'Merma por Vencimiento' ? 'Merma' : $salida->tipoSalida,
                     'tipo_clase' => 'salida',
                     'referencia' => 'Salida #'.$salida->idSalida,
                     'usuario' => $salida->usuario ?? 'Sin usuario',
@@ -203,7 +201,6 @@ class HistorialController extends Controller
                             'codigo' => $detalle->codigoProducto,
                             'cantidad' => $detalle->cantidad,
                             'precio' => $detalle->precioCobrado,
-                            'vencimiento' => null,
                         ];
 
                     })->values()->all(),
@@ -227,7 +224,7 @@ class HistorialController extends Controller
             $tiposSalida = DB::table('tipo_salida')
                 ->whereNull('deleted_at')
                 ->orderBy('nombre')
-                ->pluck('nombre');
+                ->pluck('nombre')->map(fn ($tipo) => $tipo === 'Merma por Vencimiento' ? 'Merma' : $tipo)->unique()->values();
 
             /*
              * Estadísticas.

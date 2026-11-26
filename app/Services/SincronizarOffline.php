@@ -128,9 +128,7 @@ class SincronizarOffline
                 'stock' => ['required', 'integer'],
                 'idProveedor' => ['nullable', 'integer', $existente('proveedor', 'idProveedor')],
                 'precioCompra' => ['required', 'numeric', 'min:0', 'max:9999999999'],
-                // Un ingreso guardado ayer sigue siendo válido al sincronizar:
-                // el vencimiento se compara con su fecha local original.
-                'fechaVencimiento' => ['required', 'date_format:Y-m-d', 'after_or_equal:'.Carbon::parse($operacion['fechaLocal'])->toDateString()],
+                'fechaVencimiento' => ['nullable', 'date_format:Y-m-d'],
             ],
             'merma' => [
                 'codigoProducto' => ['required', 'string', 'max:255'],

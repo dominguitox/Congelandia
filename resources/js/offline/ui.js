@@ -38,7 +38,7 @@ export const statusLabel = status => ({ pendiente: 'Por enviar', sincronizada: '
 export function operationTitle(operation) {
     if (operation.tipo === 'venta') return 'Venta';
     if (operation.tipo === 'ingreso') return 'Ingreso de mercadería';
-    return operation.datos.motivo === 'Merma por Daño' ? 'Salida por daño' : 'Salida por vencimiento';
+    return operation.datos.motivo === 'Merma por Daño' ? 'Salida por daño' : 'Salida por merma';
 }
 
 export function responseError(status, data = {}) {

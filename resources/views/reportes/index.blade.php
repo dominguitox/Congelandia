@@ -2,6 +2,7 @@
 @section('title', 'Reportes')
 @push('css')
     @vite(['resources/css/reportes.css'])
+    @if($seccion === 'inventario') @vite(['resources/js/solicitudes-proveedor.js']) @endif
 @endpush
 
 @section('content')

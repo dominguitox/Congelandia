@@ -127,8 +127,8 @@
     "file": "assets/roboto-700-normal-YuyVweIx.woff",
     "src": "_roboto-700-normal-YuyVweIx.woff"
   },
-  "_sync-BMyPBKu2.js": {
-    "file": "assets/sync-BMyPBKu2.js",
+  "_sync-DxeHvdXK.js": {
+    "file": "assets/sync-DxeHvdXK.js",
     "name": "sync"
   },
   "resources/css/app.css": {
@@ -249,7 +249,7 @@
     "isEntry": true
   },
   "resources/css/reportes.css": {
-    "file": "assets/reportes-Dp7ly7jo.css",
+    "file": "assets/reportes-C91rZWS4.css",
     "name": "reportes",
     "names": [
       "reportes.css"
@@ -330,23 +330,23 @@
     "isEntry": true
   },
   "resources/js/offline/bridge.js": {
-    "file": "assets/bridge-eDIMfAwQ.js",
+    "file": "assets/bridge-B14nZNEn.js",
     "name": "bridge",
     "src": "resources/js/offline/bridge.js",
     "isEntry": true,
     "imports": [
-      "_sync-BMyPBKu2.js",
+      "_sync-DxeHvdXK.js",
       "_register-B6Lo0EtQ.js"
     ]
   },
   "resources/js/offline/index.js": {
-    "file": "assets/index-y19IPjY0.js",
+    "file": "assets/index-D9tge00Y.js",
     "name": "index",
     "src": "resources/js/offline/index.js",
     "isEntry": true,
     "imports": [
       "_cobro-CQDX0o90.js",
-      "_sync-BMyPBKu2.js",
+      "_sync-DxeHvdXK.js",
       "_register-B6Lo0EtQ.js"
     ],
     "css": [
@@ -368,15 +368,21 @@
     "src": "resources/js/proveedores.js",
     "isEntry": true
   },
+  "resources/js/solicitudes-proveedor.js": {
+    "file": "assets/solicitudes-proveedor-qnrY23Xj.js",
+    "name": "solicitudes-proveedor",
+    "src": "resources/js/solicitudes-proveedor.js",
+    "isEntry": true
+  },
   "resources/js/venta.js": {
-    "file": "assets/venta-k_XjGyHP.js",
+    "file": "assets/venta-gh-ZPT3O.js",
     "name": "venta",
     "src": "resources/js/venta.js",
     "isEntry": true,
     "imports": [
       "_bootstrap.esm-DM7gpgIx.js",
       "_cobro-CQDX0o90.js",
-      "_sync-BMyPBKu2.js"
+      "_sync-DxeHvdXK.js"
     ]
   }
 }
