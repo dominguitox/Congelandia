@@ -30,7 +30,7 @@ El [controlador](../app/Http/Controllers/ReporteController.php) valida filtros y
 
 No requiere migraciones ni dependencias nuevas. Compilar los assets con `npm run build` antes de desplegar. Se conserva la ruta existente y su restricción `role:Administrador`; no se alteran los permisos de otros módulos. Las pruebas usan los nombres canónicos de tablas en minúsculas para ser compatibles con MySQL Linux.
 
-Pruebas: `php artisan test tests/Feature/ReportesTest.php` ([casos](../tests/Feature/ReportesTest.php)). Usan SQLite en memoria: autenticación, cálculos, filtros, eliminaciones, estimación FEFO, estados vacíos y CSV con protección de fórmulas.
+Pruebas: `php artisan test tests/Feature/ReportesTest.php` ([casos](../tests/Feature/ReportesTest.php)). Usan SQLite en memoria: autenticación, cálculos, filtros, eliminaciones, estados vacíos y CSV con protección de fórmulas.
 
 ## Actualización del 8 de noviembre de 2026
 

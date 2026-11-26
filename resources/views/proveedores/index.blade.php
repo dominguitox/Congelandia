@@ -492,24 +492,6 @@
                                                             {{ $producto->cantidadIngresada ?? 0 }}
                                                         </span>
 
-                                                        <span>
-
-                                                            Vence:
-
-                                                            @if($producto->ultimaFechaVencimiento)
-
-                                                                {{ \Carbon\Carbon::parse(
-                                                                    $producto->ultimaFechaVencimiento
-                                                                )->format('d-m-Y') }}
-
-                                                            @else
-
-                                                                Sin registro
-
-                                                            @endif
-
-                                                        </span>
-
                                                     </div>
 
                                                 </div>

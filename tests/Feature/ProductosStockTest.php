@@ -141,7 +141,7 @@ test('abastecimiento inicial incompleto se rechaza antes de crear producto', fun
     $categoria = DB::table('categoria')->insertGetId(['nombre' => 'Helados']);
     $this->actingAs($this->user)->postJson(route('productos.crearProducto'), [
         'codigo' => 'NUEVO', 'nombre' => 'Prueba', 'precioVenta' => 500, 'idCategoria' => $categoria, 'stockInicial' => 3,
-    ])->assertUnprocessable()->assertJsonValidationErrors(['precioCompra', 'fechaVencimiento'])->assertJsonMissingValidationErrors('idProveedor');
+    ])->assertUnprocessable()->assertJsonValidationErrors(['precioCompra'])->assertJsonMissingValidationErrors(['idProveedor', 'fechaVencimiento']);
     expect(Producto::count())->toBe(1);
 });
 
