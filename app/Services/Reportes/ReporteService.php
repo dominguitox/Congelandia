@@ -4,6 +4,7 @@ namespace App\Services\Reportes;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ReporteService
@@ -32,7 +33,7 @@ class ReporteService
         return $this->salidas()
             ->join($this->tabla('Tipo_Salida').' as t', 's.idTipo', '=', 't.idTipo')
             ->join($this->tabla('Detalle_Salida').' as d', 's.idSalida', '=', 'd.idSalida')
-            ->whereRaw('LOWER(TRIM(t.nombre)) = ?', ['venta'])
+            ->whereIn(DB::raw('LOWER(TRIM(t.nombre))'), ['venta', 'salida histórica'])
             ->whereNull('d.deleted_at')
             ->whereBetween('s.fecha', [$desde->startOfDay(), $hasta->endOfDay()]);
     }
@@ -78,6 +79,7 @@ class ReporteService
             ->groupBy('c.idCategoria', 'c.nombre')->orderByDesc('ingresos')->get();
 
         return [
+            'historialReferencia' => DB::table($this->tabla('Tipo_Salida'))->where('nombre', 'Salida histórica')->whereNull('deleted_at')->exists(),
             'ingresos' => $ingresos, 'ventas' => $salidasPeriodo->count(), 'unidades' => $salidasPeriodo->sum('unidades'),
             'ingresoPromedioPorSalida' => $salidasPeriodo->isEmpty() ? 0 : $ingresos / $salidasPeriodo->count(),
             'dias' => collect(array_values($dias)), 'semana' => $semana, 'mapa' => $mapa,
@@ -124,7 +126,7 @@ class ReporteService
     }
 
     /** Proveedores activos con ingresos y detalles vigentes hasta ahora. */
-    public function proveedoresPorProducto(): \Illuminate\Support\Collection
+    public function proveedoresPorProducto(): Collection
     {
         return DB::table($this->tabla('Detalle_Ingreso').' as d')
             ->join($this->tabla('Ingreso').' as i', 'i.idIngreso', '=', 'd.idIngreso')
@@ -138,6 +140,9 @@ class ReporteService
 
     public function filasCsv(string $seccion, array $datos): iterable
     {
+        if ($datos['historialReferencia'] ?? false) {
+            yield ['Histórico', 'Los movimientos históricos usan el precio y costo disponibles del producto; sus importes son de referencia.'];
+        }
         if ($seccion === 'inventario') {
             yield ['Inventario actual', 'Umbral bajo stock: 10; objetivo: 20.'];
             yield ['Código', 'Producto', 'Stock actual', 'Reposición sugerida'];

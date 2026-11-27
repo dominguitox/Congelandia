@@ -24,42 +24,45 @@
             </p>
         </div>
 
-        <div class="historial-filtros">
+        <form class="historial-filtros" method="GET" action="{{ route('historial.index') }}">
 
             <div class="historial-search">
 
-                <span class="search-icon">⌕</span>
+                <label for="buscarMovimiento">Buscar</label>
 
                 <input
                     type="text"
                     id="buscarMovimiento"
+                    name="buscar"
+                    value="{{ $buscar }}"
                     placeholder="Buscar movimiento..."
                     autocomplete="off"
                 >
 
             </div>
 
-            <select id="filtroTipo" class="historial-select">
+            <label for="filtroTipo">Tipo</label>
+            <select id="filtroTipo" name="tipo" class="historial-select">
 
                 <option value="todos">
                     Todos
                 </option>
 
-                <option value="ingreso">
+                <option value="ingreso" @selected($tipo === 'ingreso')>
                     Ingresos
                 </option>
 
                 @foreach($tiposSalida as $tipo)
 
-                    <option value="salida:{{ strtolower($tipo) }}">
+                    <option value="salida:{{ mb_strtolower($tipo) }}" @selected(request('tipo') === 'salida:'.mb_strtolower($tipo))>
                         {{ $tipo }}
                     </option>
 
                 @endforeach
 
             </select>
-
-        </div>
+            <button type="submit" class="btn-outline">Filtrar</button>
+        </form>
 
     </div>
 
@@ -117,6 +120,10 @@
     {{-- =====================================================
          TABLA
     ====================================================== --}}
+
+    @if($hayHistorico)
+        <p>Los movimientos históricos usan el precio y costo disponibles del producto. Sus importes son de referencia.</p>
+    @endif
 
     <div class="historial-card">
 
@@ -188,7 +195,7 @@
                             @if($movimiento['tipo_clase'] === 'ingreso')
 
                                 <span class="tipo-badge tipo-ingreso">
-                                    ↑ Ingreso
+                                    ↑ {{ $movimiento['tipo'] }}
                                 </span>
 
                             @else
@@ -433,6 +440,9 @@
 
     </div>
 
+    <div class="historial-paginacion">
+        {{ $movimientos->onEachSide(2)->links('components.paginacion-tabla', ['nombre' => 'Páginas del historial de movimientos', 'etiqueta' => 'movimientos']) }}
+    </div>
 </div>
 
 @endsection
