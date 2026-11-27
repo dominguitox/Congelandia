@@ -86,7 +86,7 @@ class AnalisisFechasService extends ReporteService
     public function detalleDia(CarbonImmutable $dia)
     {
         return $this->ventasBase($dia, $dia)->join($this->tabla('Producto').' as p', 'p.codigo', '=', 'd.codigoProducto')
-            ->select('s.idSalida', 's.fecha', 'p.nombre', 'd.cantidad', 'd.precioCobrado')
+            ->select('s.idSalida', 's.folio', 's.fecha', 'p.nombre', 'd.cantidad', 'd.precioCobrado')
             ->selectRaw('d.cantidad * d.precioCobrado as ingresos')->orderBy('s.fecha')->orderBy('d.idDetalle')
             ->paginate(25, ['*'], 'pagina_detalle')->withQueryString();
     }

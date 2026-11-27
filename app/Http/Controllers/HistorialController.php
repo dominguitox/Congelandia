@@ -104,6 +104,7 @@ class HistorialController extends Controller
                 )
                 ->select(
                     'salida.idSalida',
+                    'salida.folio',
                     'salida.fecha',
                     'salida.idTipo',
                     'salida.idUsuario',
@@ -189,7 +190,7 @@ class HistorialController extends Controller
                     'fecha' => $salida->fecha,
                     'tipo' => $salida->tipoSalida === 'Merma por Vencimiento' ? 'Merma' : $salida->tipoSalida,
                     'tipo_clase' => 'salida',
-                    'referencia' => 'Salida #'.$salida->idSalida,
+                    'referencia' => $salida->folio ? 'Venta '.$salida->folio : 'Salida #'.$salida->idSalida,
                     'usuario' => $salida->usuario ?? 'Sin usuario',
                     'proveedor' => null,
                     'cantidad' => $detalles->sum('cantidad'),
