@@ -150,12 +150,19 @@ test('pantallas y exportaciones de reportes cuentan salidas con vocabulario unif
     }
 })->with(['ventas', 'inventario', 'habitos', 'calendario']);
 
+test('acepta rangos de hasta diez años', function (array $filtros) {
+    $this->actingAs($this->usuario)->get('/reportes?'.http_build_query($filtros))->assertOk();
+})->with([
+    [['fecha_inicio' => '2025-01-01', 'fecha_fin' => '2026-11-06']],
+    [['fecha_inicio' => '2016-11-07', 'fecha_fin' => '2026-11-06']],
+]);
+
 test('rechaza fechas invalidas rangos invertidos demasiado largos y secciones desconocidas', function (array $filtros) {
     $this->actingAs($this->usuario)->getJson('/reportes?'.http_build_query($filtros))->assertUnprocessable();
 })->with([
     [['fecha_inicio' => '2026-02-30']],
     [['fecha_inicio' => '2026-11-06', 'fecha_fin' => '2026-11-01']],
-    [['fecha_inicio' => '2025-01-01', 'fecha_fin' => '2026-11-06']],
+    [['fecha_inicio' => '2016-11-06', 'fecha_fin' => '2026-11-06']],
     [['seccion' => 'desconocida']],
 ]);
 
