@@ -24,6 +24,15 @@
     outline-offset: 2px;
 }
 
+.historial-paginacion {
+    margin-top: var(--space-lg);
+}
+
+.historial-paginacion .page-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 .historial-search input {
     width: 260px;
     height: var(--control-height-sm);

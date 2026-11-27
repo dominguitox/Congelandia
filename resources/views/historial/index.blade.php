@@ -440,11 +440,9 @@
 
     </div>
 
-    <nav aria-label="Páginas del historial">
-        <p>{{ $movimientos->total() }} resultados · Página {{ $movimientos->currentPage() }} de {{ $movimientos->lastPage() }}</p>
-        @if($movimientos->previousPageUrl())<a class="btn-outline" href="{{ $movimientos->previousPageUrl() }}" rel="prev">Anterior</a>@endif
-        @if($movimientos->nextPageUrl())<a class="btn-outline" href="{{ $movimientos->nextPageUrl() }}" rel="next">Siguiente</a>@endif
-    </nav>
+    <div class="historial-paginacion">
+        {{ $movimientos->onEachSide(2)->links('components.paginacion-tabla', ['nombre' => 'Páginas del historial de movimientos', 'etiqueta' => 'movimientos']) }}
+    </div>
 </div>
 
 @endsection

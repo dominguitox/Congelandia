@@ -165,7 +165,7 @@
                     </thead>
 
                     <tbody>
-                        @forelse($productos as $producto)
+                        @forelse($productosPagina as $producto)
 
                             <tr>
                                 <td>
@@ -254,6 +254,12 @@
         </div>
 
     </div>
+
+    @if($productosPagina->hasPages())
+        <div class="mt-3">
+            {{ $productosPagina->onEachSide(2)->links('components.paginacion-tabla', ['nombre' => 'Páginas de productos del inventario', 'etiqueta' => 'productos']) }}
+        </div>
+    @endif
 
 </div>
 

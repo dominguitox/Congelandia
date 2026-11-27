@@ -9,6 +9,8 @@ class HistorialService
 {
     public function datos(Request $request): array
     {
+        $pagina = filter_var($request->query('page', 1), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        abort_if($pagina === false, 404, 'La página solicitada no existe.');
         $filters = $request->validate(['buscar' => 'nullable|string|max:150', 'tipo' => 'nullable|string|max:100']);
         $buscar = trim($filters['buscar'] ?? '');
         $tipo = $filters['tipo'] ?? 'todos';
@@ -50,7 +52,10 @@ class HistorialService
                 }
             });
         }
-        $movimientos = $query->orderByDesc('m.fecha')->orderBy('m.tipo_clase')->orderByDesc('m.id')->paginate(50)->withQueryString();
+        $totalFiltrado = (clone $query)->count();
+        abort_if($pagina > max(1, (int) ceil($totalFiltrado / 50)), 404, 'La página solicitada no existe.');
+        $movimientos = $query->orderByDesc('m.fecha')->orderBy('m.tipo_clase')->orderByDesc('m.id')
+            ->paginate(50, ['*'], 'page', $pagina, $totalFiltrado)->withQueryString();
         $details = [];
         foreach (['ingreso' => ['detalle_ingreso', 'idIngreso', 'precioCompra'], 'salida' => ['detalle_salida', 'idSalida', 'precioCobrado']] as $direction => [$table, $parent, $price]) {
             $ids = $movimientos->getCollection()->where('tipo_clase', $direction)->pluck('id');

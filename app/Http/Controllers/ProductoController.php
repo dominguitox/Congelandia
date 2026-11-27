@@ -18,6 +18,7 @@ use App\Support\CodigoBarrasInterno;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -148,8 +149,10 @@ class ProductoController extends Controller
 
     public function listarProductos(Request $request)
     {
+        $pagina = filter_var($request->query('page', 1), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        abort_if($pagina === false, 404, 'La página solicitada no existe.');
         try {
-            $productos = Producto::conDetalle()->get();
+            $productos = Producto::conDetalle()->orderBy('producto.nombre')->orderBy('producto.codigo')->get();
             // Descomentar para debug
             // dd($productos);
             $proveedores = Proveedor::whereNull('deleted_at')->get();
@@ -162,11 +165,21 @@ class ProductoController extends Controller
                 ->orderByDesc('fechaInicio')
                 ->get();
 
-            return view('inventario.index', compact('productos', 'proveedores', 'categorias', 'ofertasActivas', 'ofertas'));
-
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error: '.$e->getMessage());
         }
+
+        abort_if($pagina > max(1, (int) ceil($productos->count() / 50)), 404, 'La página solicitada no existe.');
+        // Los formularios y totales usan el catálogo completo; solo se pagina la tabla.
+        $productosPagina = (new LengthAwarePaginator(
+            $productos->forPage($pagina, 50)->values(),
+            $productos->count(),
+            50,
+            $pagina,
+            ['path' => $request->url()],
+        ))->withQueryString();
+
+        return view('inventario.index', compact('productos', 'productosPagina', 'proveedores', 'categorias', 'ofertasActivas', 'ofertas'));
     }
 
     public function registrarIngreso(Request $request)
