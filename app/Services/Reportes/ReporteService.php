@@ -68,6 +68,17 @@ class ReporteService
             $dia['promedio'] = $dia['ocurrencias'] ? $dia['ingresos'] / $dia['ocurrencias'] : null;
         }
         unset($dia);
+        $granularidad = $desde->diffInDays($hasta) > 90 ? 'mes' : 'día';
+        $serieGrafico = $dias;
+        if ($granularidad === 'mes') {
+            $serieGrafico = [];
+            foreach ($dias as $dia) {
+                $mes = substr($dia['fecha'], 0, 7);
+                $serieGrafico[$mes] ??= ['fecha' => $mes, 'ingresos' => 0, 'ventas' => 0];
+                $serieGrafico[$mes]['ingresos'] += $dia['ingresos'];
+                $serieGrafico[$mes]['ventas'] += $dia['ventas'];
+            }
+        }
         $comparables = collect($semana)->where('ocurrencias', '>', 0);
         $productos = (clone $base)->join($this->tabla('Producto').' as p', 'p.codigo', '=', 'd.codigoProducto')
             ->select('p.codigo', 'p.nombre')->selectRaw('SUM(d.cantidad) as unidades, SUM(d.cantidad * d.precioCobrado) as ingresos')
@@ -80,7 +91,8 @@ class ReporteService
         return [
             'ingresos' => $ingresos, 'ventas' => $salidasPeriodo->count(), 'unidades' => $salidasPeriodo->sum('unidades'),
             'ingresoPromedioPorSalida' => $salidasPeriodo->isEmpty() ? 0 : $ingresos / $salidasPeriodo->count(),
-            'dias' => collect(array_values($dias)), 'semana' => $semana, 'mapa' => $mapa,
+            'dias' => collect(array_values($dias)), 'serieGrafico' => collect(array_values($serieGrafico)),
+            'granularidad' => $granularidad, 'semana' => $semana, 'mapa' => $mapa,
             'maximo' => max(array_map('max', $mapa)), 'horaPunta' => $salidasPeriodo->isEmpty() ? null : array_search(max($horas), $horas),
             'diaFuerte' => $salidasPeriodo->isEmpty() ? null : $comparables->sortByDesc('promedio')->first(),
             'diaDebil' => $salidasPeriodo->isEmpty() ? null : $comparables->sortBy('promedio')->first(),

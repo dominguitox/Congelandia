@@ -39,9 +39,9 @@ class ReporteController extends Controller
         $desde = CarbonImmutable::parse($fechaInicio);
         $hasta = CarbonImmutable::parse($fechaFin);
 
-        if ($hasta->lessThan($desde) || $desde->diffInDays($hasta) > 365) {
+        if ($hasta->lessThan($desde) || $hasta->greaterThan($desde->addYears(10)->subDay())) {
             throw ValidationException::withMessages([
-                'fecha_fin' => 'Selecciona un período ordenado de hasta 366 días.',
+                'fecha_fin' => 'Selecciona un período ordenado de hasta 10 años.',
             ]);
         }
 

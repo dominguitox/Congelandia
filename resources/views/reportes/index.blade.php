@@ -51,9 +51,13 @@
                     <div><label for="fecha_inicio" class="form-label">Desde</label><input class="form-control" type="date" name="fecha_inicio" id="fecha_inicio" value="{{ $fechaInicio }}" required></div>
                     <div><label for="fecha_fin" class="form-label">Hasta</label><input class="form-control" type="date" name="fecha_fin" id="fecha_fin" value="{{ $fechaFin }}" required></div>
                     <button class="btn-solid" type="submit">Aplicar período</button>
-                    <a class="btn-soft" href="{{ route('reportes.index', ['seccion' => $seccion]) }}">Últimos 30 días</a>
                 </form>
-                <p class="reportes-nota">{{ \Carbon\Carbon::parse($fechaInicio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($fechaFin)->format('d/m/Y') }} · Incluye ambos días. Valores en pesos chilenos.</p>
+                <nav class="reportes-accesos" aria-label="Períodos sugeridos">
+                    <a class="btn-soft" href="{{ route('reportes.index', ['seccion' => $seccion]) }}">Últimos 30 días</a>
+                    <a class="btn-soft" href="{{ route('reportes.index', ['seccion' => $seccion, 'fecha_inicio' => \Carbon\CarbonImmutable::today()->subMonthsNoOverflow(6)->addDay()->toDateString(), 'fecha_fin' => \Carbon\CarbonImmutable::today()->toDateString()]) }}">Últimos 6 meses</a>
+                    <a class="btn-soft" href="{{ route('reportes.index', ['seccion' => $seccion, 'fecha_inicio' => \Carbon\CarbonImmutable::today()->subYear()->addDay()->toDateString(), 'fecha_fin' => \Carbon\CarbonImmutable::today()->toDateString()]) }}">Último año</a>
+                </nav>
+                <p class="reportes-nota">{{ \Carbon\Carbon::parse($fechaInicio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($fechaFin)->format('d/m/Y') }} · Incluye ambos días. Máximo 10 años. Valores en pesos chilenos.</p>
             </div>
         </div>
     @else

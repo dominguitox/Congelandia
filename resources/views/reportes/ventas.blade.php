@@ -14,21 +14,21 @@
 @else
     <div class="reportes-columnas">
         <section class="panel">
-            <div class="panel-head"><div><h2>Evolución de ventas</h2><p>Monto vendido por día, incluyendo días sin ventas.</p></div></div>
+            <div class="panel-head"><div><h2>Evolución de ventas</h2><p>Monto vendido por {{ $datos['granularidad'] }}, incluyendo períodos sin ventas.</p></div></div>
             <div class="panel-body">
-                <div class="reportes-chart-scroll" tabindex="0" aria-label="Gráfico de ventas diarias, desplazable">
-                    <div class="reportes-barras" style="--barras: {{ $datos['dias']->count() }}">
-                        @foreach($datos['dias'] as $dia)
-                            <div class="reportes-barra-col" title="{{ $dia['fecha'] }}: {{ $moneda($dia['ingresos']) }}, {{ $dia['ventas'] }} salidas">
-                                <div class="reportes-barra-pista"><div class="reportes-barra" style="--valor: {{ round(100 * $dia['ingresos'] / max(1, $datos['dias']->max('ingresos')), 2) }}%"></div></div>
-                                <span>{{ \Carbon\Carbon::parse($dia['fecha'])->format('d/m') }}</span>
+                <div class="reportes-chart-scroll" tabindex="0" aria-label="Gráfico de ventas por {{ $datos['granularidad'] }}, desplazable">
+                    <div class="reportes-barras" style="--barras: {{ $datos['serieGrafico']->count() }}">
+                        @foreach($datos['serieGrafico'] as $periodo)
+                            <div class="reportes-barra-col" title="{{ $periodo['fecha'] }}: {{ $moneda($periodo['ingresos']) }}, {{ $periodo['ventas'] }} salidas">
+                                <div class="reportes-barra-pista"><div class="reportes-barra" style="--valor: {{ round(100 * $periodo['ingresos'] / max(1, $datos['serieGrafico']->max('ingresos')), 2) }}%"></div></div>
+                                <span>{{ \Carbon\Carbon::parse($periodo['fecha'])->format($datos['granularidad'] === 'mes' ? 'm/Y' : 'd/m') }}</span>
                             </div>
                         @endforeach
                     </div>
                 </div>
-                <details class="reportes-detalle"><summary>Ver cifras por día</summary>
-                    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Fecha</th><th>Salidas</th><th>Ventas</th></tr></thead><tbody>
-                        @foreach($datos['dias'] as $dia)<tr><td>{{ \Carbon\Carbon::parse($dia['fecha'])->format('d/m/Y') }}</td><td>{{ $numero($dia['ventas']) }}</td><td>{{ $moneda($dia['ingresos']) }}</td></tr>@endforeach
+                <details class="reportes-detalle"><summary>Ver cifras por {{ $datos['granularidad'] }}</summary>
+                    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Período</th><th>Salidas</th><th>Ventas</th></tr></thead><tbody>
+                        @foreach($datos['serieGrafico'] as $periodo)<tr><td>{{ \Carbon\Carbon::parse($periodo['fecha'])->format($datos['granularidad'] === 'mes' ? 'm/Y' : 'd/m/Y') }}</td><td>{{ $numero($periodo['ventas']) }}</td><td>{{ $moneda($periodo['ingresos']) }}</td></tr>@endforeach
                     </tbody></table></div>
                 </details>
             </div>

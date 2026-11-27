@@ -22,12 +22,14 @@
 .reportes-filtro-panel { margin-bottom: var(--space-xl); }
 .reportes-filtros {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) auto auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
     gap: var(--space-md);
     align-items: end;
 }
 .reportes-filtros .form-control { min-height: var(--control-height); }
 .reportes-filtros > div { min-width: 0; }
+.reportes-accesos { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md); }
+.reportes-accesos .btn-soft { padding: var(--space-xs) var(--space-sm); font-size: var(--fs-sm); }
 .reportes-nota, .reportes-contexto { font-size: var(--fs-sm); color: var(--color-text-muted); line-height: 1.6; }
 .reportes-nota { margin: var(--space-md) 0 0; }
 .reportes-contexto { margin-bottom: var(--space-xl); }
