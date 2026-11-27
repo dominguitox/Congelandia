@@ -7,6 +7,7 @@ use App\Services\Reportes\FeriadosChile;
 use App\Services\Reportes\PronosticoStockService;
 use App\Services\Reportes\ReporteService;
 use Carbon\CarbonImmutable;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -32,6 +33,7 @@ class ReporteController extends Controller
             'pagina_fechas' => ['sometimes', 'integer', 'min:1'],
             'pagina_patrones' => ['sometimes', 'integer', 'min:1'],
             'pagina_detalle' => ['sometimes', 'integer', 'min:1'],
+            'pagina_categorias' => ['sometimes', 'integer', 'min:1'],
         ]);
         $seccion = $filtros['seccion'] ?? 'ventas';
         $fechaInicio = $filtros['fecha_inicio'] ?? now()->subDays(29)->toDateString();
@@ -74,7 +76,19 @@ class ReporteController extends Controller
             }, "reportes-{$seccion}-{$fechaInicio}-{$fechaFin}.csv", ['Content-Type' => 'text/csv; charset=UTF-8']);
         }
 
-        return view('reportes.index', compact('seccion', 'fechaInicio', 'fechaFin', 'datos', 'calendario', 'analisis', 'detalleDia', 'dia', 'patron', 'vista', 'fechaCalendario', 'anio'));
+        $categoriasPaginadas = null;
+        if ($seccion === 'ventas') {
+            $porPagina = 3;
+            $total = $datos['categorias']->count();
+            $pagina = min((int) ($filtros['pagina_categorias'] ?? 1), max(1, (int) ceil($total / $porPagina)));
+            $categoriasPaginadas = new LengthAwarePaginator(
+                $datos['categorias']->forPage($pagina, $porPagina)->values(), $total, $porPagina, $pagina,
+                ['path' => $request->url(), 'pageName' => 'pagina_categorias']
+            );
+            $categoriasPaginadas->appends($request->except('pagina_categorias'));
+        }
+
+        return view('reportes.index', compact('seccion', 'fechaInicio', 'fechaFin', 'datos', 'categoriasPaginadas', 'calendario', 'analisis', 'detalleDia', 'dia', 'patron', 'vista', 'fechaCalendario', 'anio'));
     }
 
     public function prepararSolicitud(Request $request, ReporteService $reportes)

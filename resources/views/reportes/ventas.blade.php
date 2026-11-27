@@ -12,7 +12,7 @@
 @if($datos['ventas'] === 0)
     <div class="panel"><div class="empty-state"><strong>No hay ventas en este período</strong><p>Prueba otras fechas. Los reportes se completarán con las ventas registradas en Congelandia.</p></div></div>
 @else
-    <div class="reportes-columnas">
+    <div class="reportes-columnas reportes-columnas--ventas">
         <section class="panel">
             <div class="panel-head"><div><h2>Evolución de ventas</h2><p>Monto vendido por {{ $datos['granularidad'] }}, incluyendo períodos sin ventas.</p></div></div>
             <div class="panel-body">
@@ -33,16 +33,21 @@
                 </details>
             </div>
         </section>
-        <section class="panel">
+        <section class="panel" id="ventas-por-categoria">
             <div class="panel-head"><div><h2>Ventas por categoría</h2><p>Participación en el monto vendido.</p></div></div>
-            <div class="panel-body reportes-ranking">
-                @foreach($datos['categorias'] as $categoria)
+            <div class="panel-body reportes-ranking reportes-ranking--categorias">
+                @foreach($categoriasPaginadas as $categoria)
                     <div><div class="reportes-ranking-label"><strong>{{ $categoria->nombre }}</strong><span>{{ $moneda($categoria->ingresos) }}</span></div>
                         <div class="reportes-progreso" role="img" aria-label="{{ $categoria->nombre }}: {{ round(100 * $categoria->ingresos / max(1, $datos['ingresos'])) }}% de las ventas"><span style="width: {{ 100 * $categoria->ingresos / max(1, $datos['ingresos']) }}%"></span></div>
                         <small>{{ $numero($categoria->unidades) }} unidades · {{ round(100 * $categoria->ingresos / max(1, $datos['ingresos'])) }}%</small>
                     </div>
                 @endforeach
             </div>
+            @if($categoriasPaginadas->hasPages())
+                <div class="reportes-ranking-paginacion">
+                    {{ $categoriasPaginadas->fragment('ventas-por-categoria')->links('reportes.paginacion', ['etiqueta' => 'categorías de ventas']) }}
+                </div>
+            @endif
         </section>
     </div>
     <section class="panel">
