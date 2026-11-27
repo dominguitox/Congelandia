@@ -19,12 +19,13 @@ class HistorialService
             ->leftJoin('proveedor as p', 'p.idProveedor', '=', 'i.idProveedor')
             ->whereNull('i.deleted_at')
             ->select(['i.idIngreso as id', 'i.fecha', 'u.nombre as usuario', 'p.nombre as proveedor', 'i.totalCompra as total'])
-            ->selectRaw("'ingreso' AS tipo_clase, 'Ingreso' AS tipo, CASE WHEN u.email = ? THEN 1 ELSE 0 END AS historico", [$historicalEmail]);
+            ->selectRaw("'ingreso' AS tipo_clase, 'Ingreso' AS tipo, CASE WHEN u.email = ? THEN 1 ELSE 0 END AS historico, NULL AS folio", [$historicalEmail]);
         $outgoings = DB::table('salida as s')->join('usuario as u', 'u.idUsuario', '=', 's.idUsuario')
             ->join('tipo_salida as t', 't.idTipo', '=', 's.idTipo')->whereNull('s.deleted_at')
             ->select(['s.idSalida as id', 's.fecha', 'u.nombre as usuario'])->selectRaw('NULL AS proveedor')
             ->addSelect('s.totalSalida as total')->selectRaw("'salida' AS tipo_clase")
-            ->addSelect('t.nombre as tipo')->selectRaw('CASE WHEN u.email = ? THEN 1 ELSE 0 END AS historico', [$historicalEmail]);
+            ->addSelect('t.nombre as tipo')->selectRaw('CASE WHEN u.email = ? THEN 1 ELSE 0 END AS historico', [$historicalEmail])
+            ->addSelect('s.folio as folio');
         $all = DB::query()->fromSub($incomes->unionAll($outgoings), 'm');
         $totalMovimientos = (clone $all)->count();
         $totalIngresos = (clone $all)->where('m.tipo_clase', 'ingreso')->count();
@@ -39,7 +40,8 @@ class HistorialService
         if ($buscar !== '') {
             $pattern = '%'.$buscar.'%';
             $query->where(function ($q) use ($pattern, $buscar) {
-                $q->where('m.usuario', 'like', $pattern)->orWhere('m.proveedor', 'like', $pattern)->orWhere('m.tipo', 'like', $pattern);
+                $q->where('m.usuario', 'like', $pattern)->orWhere('m.proveedor', 'like', $pattern)
+                    ->orWhere('m.tipo', 'like', $pattern)->orWhere('m.folio', 'like', $pattern);
                 if (preg_match('/^(?:Ingreso|Salida)?\s*#?(\d+)$/ui', $buscar, $match)) {
                     $q->orWhere('m.id', (int) $match[1]);
                 }
@@ -71,7 +73,7 @@ class HistorialService
             return [
                 'id' => $row->id, 'fecha' => $row->fecha, 'tipo_clase' => $row->tipo_clase,
                 'tipo' => $row->tipo_clase === 'ingreso' && $row->historico ? 'Ingreso histórico' : $type,
-                'referencia' => ($row->tipo_clase === 'ingreso' ? 'Ingreso #' : 'Salida #').$row->id,
+                'referencia' => $row->folio ? 'Venta '.$row->folio : ($row->tipo_clase === 'ingreso' ? 'Ingreso #' : 'Salida #').$row->id,
                 'usuario' => $row->usuario, 'proveedor' => $row->tipo_clase === 'ingreso' ? ($row->proveedor ?? 'Sin proveedor') : null,
                 'cantidad' => $lines->sum('cantidad'), 'total' => $row->total,
                 'detalles' => $lines->map(fn ($line) => ['producto' => $line->producto, 'codigo' => $line->codigo, 'cantidad' => $line->cantidad, 'precio' => $line->precio])->values()->all(),

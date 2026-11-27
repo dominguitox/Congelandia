@@ -21,3 +21,15 @@ test('historial pagina y filtra en toda la base incluyendo codigos y productos',
         ->assertViewHas('movimientos', fn ($rows) => $rows->total() === 65 && $rows->count() === 15);
     $this->get('/historial?buscar=inexistente')->assertOk()->assertViewHas('movimientos', fn ($rows) => $rows->total() === 0);
 });
+
+test('historial muestra y encuentra el folio de una venta nueva', function () {
+    Artisan::call('migrate:fresh');
+    $this->withoutVite();
+    $user = User::create(['nombre' => 'Administrador', 'email' => 'folio@example.test', 'contrasena' => 'secret', 'rol' => 'Administrador', 'activo' => true]);
+    $type = DB::table('tipo_salida')->insertGetId(['nombre' => 'Venta'], 'idTipo');
+    DB::table('salida')->insert(['fecha' => '2026-11-06 10:00:00', 'idTipo' => $type, 'idUsuario' => $user->idUsuario, 'totalSalida' => 500, 'folio' => '#20261106-001']);
+
+    $this->actingAs($user)->get('/historial')->assertOk()->assertSee('Venta #20261106-001');
+    $this->get('/historial?'.http_build_query(['buscar' => '#20261106-001']))->assertOk()
+        ->assertViewHas('movimientos', fn ($rows) => $rows->total() === 1);
+});

@@ -64,7 +64,7 @@ class SincronizarOffline
                     $venta = app(CobroVenta::class)->registrar([
                         ...$datos, 'claveOperacion' => $operacion['id'],
                     ], (int) $usuario->idUsuario)['salida'];
-                    $resultado = ['idSalida' => $venta->idSalida, 'vuelto' => (int) $venta->vuelto];
+                    $resultado = ['idSalida' => $venta->idSalida, 'folio' => $venta->folio, 'vuelto' => (int) $venta->vuelto];
                 } elseif ($operacion['tipo'] === 'ingreso') {
                     $ingreso = Ingreso::create([
                         'fecha' => now(), 'idProveedor' => $datos['idProveedor'] ?? null,

@@ -498,7 +498,10 @@ async function confirmarVenta(event) {
             if (navigator.onLine) {
                 try {
                     await syncQueue(almacenamiento, usuarioLocal);
-                    document.getElementById('resultado-venta').textContent = 'Venta sincronizada. Vuelto: $' + formatoCLP(vuelto) + '.';
+                    const cuentaActualizada = await almacenamiento.account(usuarioLocal);
+                    const confirmada = cuentaActualizada.operations.find(operacion => operacion.operation.id === row.operation.id);
+                    const folio = confirmada?.response?.folio;
+                    document.getElementById('resultado-venta').textContent = 'Venta ' + (folio || 'sincronizada') + '. Vuelto: $' + formatoCLP(vuelto) + '.';
                 } catch (error) {
                     document.getElementById('resultado-venta').textContent += ' ' + error.message + ' Revisa los movimientos en Trabajo offline.';
                 }
@@ -532,7 +535,7 @@ async function confirmarVenta(event) {
         document.getElementById('cliente_select').value = '';
         enviandoCobro = false;
         modalCobro.hide();
-        document.getElementById('resultado-venta').textContent = 'Venta #' + data.idSalida + ' registrada. Vuelto a entregar: $' + formatoCLP(data.vuelto) + '.';
+        document.getElementById('resultado-venta').textContent = 'Venta ' + (data.folio || '#' + data.idSalida) + ' registrada. Vuelto a entregar: $' + formatoCLP(data.vuelto) + '.';
     } catch (error) {
         errorServidorCobro = cobroPendiente
             ? error.message + ' Reintenta el mismo cobro para comprobar su resultado; los datos quedan conservados.'

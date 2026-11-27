@@ -23,7 +23,7 @@
             @endforeach
             @if($detalleDia)
                 <details class="reportes-detalle" open><summary>Detalle de ventas de la fecha · {{ $detalleDia->total() }} líneas</summary><div class="data-table-wrap"><table class="data-table"><thead><tr><th scope="col">Salida</th><th scope="col">Hora</th><th scope="col">Producto</th><th scope="col">Unidades</th><th scope="col">Precio cobrado</th><th scope="col">Ingresos</th></tr></thead><tbody>
-                    @forelse($detalleDia as $linea)<tr><td>#{{ $linea->idSalida }}</td><td>{{ \Carbon\CarbonImmutable::parse($linea->fecha)->format('H:i') }}</td><td>{{ $linea->nombre }}</td><td>{{ $numero($linea->cantidad) }}</td><td>{{ $moneda($linea->precioCobrado) }}</td><td>{{ $moneda($linea->ingresos) }}</td></tr>@empty<tr><td colspan="6">No hay ventas registradas en esta fecha.</td></tr>@endforelse
+                    @forelse($detalleDia as $linea)<tr><td>{{ $linea->folio ?? '#'.$linea->idSalida }}</td><td>{{ \Carbon\CarbonImmutable::parse($linea->fecha)->format('H:i') }}</td><td>{{ $linea->nombre }}</td><td>{{ $numero($linea->cantidad) }}</td><td>{{ $moneda($linea->precioCobrado) }}</td><td>{{ $moneda($linea->ingresos) }}</td></tr>@empty<tr><td colspan="6">No hay ventas registradas en esta fecha.</td></tr>@endforelse
                 </tbody></table></div>{{ $detalleDia->links('reportes.paginacion', ['etiqueta' => 'líneas de venta']) }}</details>
             @endif
         @else

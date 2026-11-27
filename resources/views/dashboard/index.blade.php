@@ -134,7 +134,7 @@
                     <div class="venta-item">
 
                             <div>
-                                <div class="venta-item-titulo">Orden #{{ $salida->idSalida }}</div>
+                                <div class="venta-item-titulo">Orden {{ $salida->folio ?? '#'.$salida->idSalida }}</div>
                                 <div class="venta-item-meta">
                                     {{ \Carbon\Carbon::parse($salida->fecha)->format('d M Y, H:i') }}
                                     •
