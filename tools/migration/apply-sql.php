@@ -8,7 +8,7 @@ $options = getopt('', ['file:', 'accept-proposed-stock', 'accept-history-assumpt
 $file = $options['file'] ?? '';
 $name = basename($file);
 $dsn = getenv('PDV_DSN');
-if (! in_array($name, ['01_catalogo.sql', '02_stock_propuesto.sql', '02_historial.sql', '03_verificar.sql', '04_verificar_historial.sql'], true)
+if (! in_array($name, ['01_catalogo.sql', '02_stock_propuesto.sql', '02_historial.sql', '03_verificar.sql', '04_verificar_historial.sql', '05_categorias.sql'], true)
     || ! is_file($file) || ! $dsn || ! str_starts_with($dsn, 'mysql:') || ! str_contains($dsn, 'dbname=') || getenv('PDV_USER') === false) {
     fwrite(STDERR, "Uso: definir PDV_DSN (mysql:host=...;port=...;dbname=...;charset=utf8mb4), PDV_USER y PDV_PASSWORD; luego php tools/migration/apply-sql.php --file=output/pdv-migration/sql/01_catalogo.sql\n");
     exit(1);
