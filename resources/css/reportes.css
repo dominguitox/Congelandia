@@ -43,6 +43,11 @@
 }
 .reportes-columnas > .panel { min-width: 0; margin-top: 0; }
 .reportes-columnas:has(> .panel:only-child) { grid-template-columns: minmax(0, 1fr); }
+.reportes-columnas--ventas { align-items: stretch; }
+.reportes-columnas--ventas > .panel { display: flex; flex-direction: column; }
+.reportes-ranking--categorias { align-content: start; flex: 1; }
+.reportes-ranking-paginacion { padding: 0 var(--space-xl) var(--space-md); }
+.reportes-ranking-paginacion .reportes-cal-controles { margin-bottom: 0; }
 .reportes-ranking { display: grid; gap: var(--space-xl); }
 .reportes-ranking-label { display: flex; justify-content: space-between; gap: var(--space-md); font-size: var(--fs-sm); }
 .reportes-ranking-label strong { overflow-wrap: anywhere; }
