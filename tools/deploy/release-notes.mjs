@@ -2,13 +2,13 @@ const TYPES = new Set(['Nueva función', 'Mejora', 'Corrección']);
 
 export function parseEditorialChanges(value) {
     const changes = String(value ?? '')
-        .split(/\r?\n/)
+        .split(/\r?\n|\|/u)
         .map((line) => line.trim())
         .filter(Boolean)
         .map((line) => {
             const match = line.match(/^(Nueva función|Mejora|Corrección):\s*(.+)$/u);
             if (!match || !match[2].trim()) {
-                throw new Error('Cada cambio debe ocupar una línea y comenzar con "Nueva función:", "Mejora:" o "Corrección:".');
+                throw new Error('Separa los cambios con " | " o saltos de línea. Cada uno debe comenzar con "Nueva función:", "Mejora:" o "Corrección:".');
             }
             return { tipo: match[1], descripcion: match[2].trim() };
         });
