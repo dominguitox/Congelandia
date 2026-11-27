@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       cambios:
-        description: 'Un cambio por línea, empezando con Nueva función:, Mejora: o Corrección:, y una descripción concreta.'
+        description: 'Escribe Nueva función:, Mejora: o Corrección: antes de cada cambio. Separa varios con | (ej.: Mejora: A | Corrección: B).'
         required: true
         type: string
       resumen_cliente:

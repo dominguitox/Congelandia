@@ -80,7 +80,10 @@ test('compone exactamente identidad, cambios clasificados y beneficio para el cl
         '## Cambios\n- **Nueva función:** Consulta el calendario de ofertas por día.\n- **Mejora:** El inventario destaca los productos próximos a vencer.',
         '## Para ti\nPuedes planificar tus compras con información más fácil de encontrar.',
     ]);
-    assert.throws(() => parseEditorialChanges('Se cambió el código'), /Cada cambio debe ocupar una línea/);
+    const cambiosEnUnaLinea = parseEditorialChanges('Nueva función: Folios de venta | Mejora: Reportes de hasta diez años|Corrección: Precio por categoría');
+    assert.equal(cambiosEnUnaLinea.length, 3);
+    assert.match(composeReleaseNotes('1.2.0', '2026-11-08', { cambios: cambiosEnUnaLinea, resumen_cliente: 'Consulta más clara.' }), /- \*\*Nueva función:\*\* Folios de venta\n- \*\*Mejora:\*\* Reportes de hasta diez años\n- \*\*Corrección:\*\* Precio por categoría/);
+    assert.throws(() => parseEditorialChanges('Se cambió el código'), /Separa los cambios/);
     assert.throws(() => composeReleaseNotes('1.2.0', '2026-11-08', { cambios: [], resumen_cliente: 'x' }), /Faltan cambios editoriales/);
     assert.throws(() => composeReleaseNotes('1.2.0', '2026-11-08', { cambios: novedades.cambios, resumen_cliente: '' }), /resumen para el cliente/);
 });
