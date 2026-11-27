@@ -1,8 +1,10 @@
 <?php
 
+use Congelandia\Migration\PdvHistory;
 use Congelandia\Migration\PdvMigration;
 
 require_once __DIR__.'/../../tools/migration/PdvMigration.php';
+require_once __DIR__.'/../../tools/migration/PdvHistory.php';
 
 function pdvFixture(array $changes = []): string
 {
@@ -19,6 +21,7 @@ function pdvFixture(array $changes = []): string
         ],
     ];
     $data = array_replace($data, $changes);
+    $data['HISTORIAL_INVENTARIO'] = array_map(fn ($row) => $row + ['USUARIO_ID' => 7, 'CAJA_ID' => 1], $data['HISTORIAL_INVENTARIO']);
     $manifest = ['source_sha256' => hash('sha256', 'pdv-fixture'), 'source_modified_at' => '2026-11-26 17:35:08', 'counts' => array_fill_keys(['CLIENTES', 'ABONOS', 'PROV', 'VENTAS', 'VENTATICKETS', 'VENTATICKETS_ARTICULOS', 'FACTURAS', 'MOVIMIENTOS', 'OPERACIONES', 'PROMOCIONES_POR_CANTIDAD'], 0), 'files' => []];
     foreach ($data as $table => $rows) {
         file_put_contents($dir.'/'.$table.'.json', json_encode($rows, JSON_THROW_ON_ERROR));
@@ -85,4 +88,40 @@ test('conserva productos sin nombre y deja inactivos tipos de venta incompatible
     $this->pdvDirs[] = $dir2 = pdvFixture(['PRODUCTOS' => $source]);
     $product = PdvMigration::load($dir2)['products'][0];
     expect($product['name'])->toBe($row['code'])->and($product['name_from_code'])->toBeTrue()->and($product['active'])->toBeFalse();
+});
+
+test('historial convierte ajustes a diferencias y conserva las fechas y precios de referencia', function () {
+    $this->pdvDirs[] = $dir = pdvFixture();
+    $plan = PdvHistory::load($dir);
+    expect($plan['original_count'])->toBe(4)->and($plan['pending'])->toBe([])->and($plan['calculated'])->toBe([]);
+    $adjustment = collect($plan['events'])->firstWhere('source_type', 'a');
+    expect($adjustment['direction'])->toBe('salida')->and($adjustment['quantity'])->toBe(3)->and($adjustment['type'])->toBe('Ajuste histórico')->and($adjustment['amount'])->toBe('0.00');
+    $sale = collect($plan['events'])->firstWhere('source_type', 's');
+    expect($sale['quantity'])->toBe(2)->and($sale['unit'])->toBe('1500.00')->and($sale['amount'])->toBe('3000.00')->and($sale['date'])->toBe('2026-11-24 11:00:00');
+});
+
+test('historial deja fuera productos sin ficha sin crearlos ni asignarles precio', function () {
+    $history = [['ID' => 1, 'CUANDO_FUE' => '2026-11-25 10:00:00', 'TIPO' => 'e', 'HABIA' => 0, 'CANTIDAD' => 6, 'CODIGO_PRODUCTO' => '00123'], ['ID' => 2, 'CUANDO_FUE' => '2026-11-25 11:00:00', 'TIPO' => 's', 'HABIA' => 4, 'CANTIDAD' => 1, 'CODIGO_PRODUCTO' => 'AUSENTE']];
+    $this->pdvDirs[] = $dir = pdvFixture(['HISTORIAL_INVENTARIO' => $history]);
+    $plan = PdvHistory::load($dir);
+    expect($plan['original_count'])->toBe(1)->and($plan['pending'])->toHaveCount(1)->and($plan['products'])->toHaveCount(1);
+    expect(PdvHistory::sql($plan))->not->toContain(PdvMigration::sql('AUSENTE'));
+});
+
+test('historial identifica saldos iniciales y conciliaciones calculadas sin confundirlos con ventas', function () {
+    $history = [['ID' => 1, 'CUANDO_FUE' => '2026-11-25 10:00:00', 'TIPO' => 'e', 'HABIA' => 3, 'CANTIDAD' => 2, 'CODIGO_PRODUCTO' => '00123'], ['ID' => 2, 'CUANDO_FUE' => '2026-11-25 11:00:00', 'TIPO' => 's', 'HABIA' => 7, 'CANTIDAD' => 1, 'CODIGO_PRODUCTO' => '00123']];
+    $this->pdvDirs[] = $dir = pdvFixture(['HISTORIAL_INVENTARIO' => $history]);
+    $plan = PdvHistory::load($dir);
+    expect($plan['calculated'])->toHaveCount(2)->and($plan['events'])->toHaveCount(4)
+        ->and(array_column($plan['calculated'], 'kind'))->toBe(['saldo_inicial', 'conciliacion'])
+        ->and(array_column($plan['calculated'], 'delta'))->toBe([3, 2])
+        ->and(array_column($plan['calculated'], 'amount'))->toBe(['0.00', '0.00']);
+});
+
+test('historial conserva ajustes sin cambio como cantidades cero sin duplicar stock', function () {
+    $history = [['ID' => 1, 'CUANDO_FUE' => '2026-11-25 10:00:00', 'TIPO' => 'a', 'HABIA' => 6, 'CANTIDAD' => 6, 'CODIGO_PRODUCTO' => '00123']];
+    $this->pdvDirs[] = $dir = pdvFixture(['HISTORIAL_INVENTARIO' => $history]);
+    $plan = PdvHistory::load($dir);
+    expect($plan['events'][1]['quantity'])->toBe(0)->and($plan['events'][1]['amount'])->toBe('0.00')
+        ->and(array_sum(array_column($plan['events'], 'delta')))->toBe(6);
 });

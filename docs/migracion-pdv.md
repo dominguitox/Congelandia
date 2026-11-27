@@ -1,5 +1,34 @@
 # Migración única del PDV a Congelandia
 
+## Variante con historial en las tablas actuales
+
+La variante nueva convierte los movimientos identificados a `ingreso`/`detalle_ingreso` y `salida`/`detalle_salida`, sin agregar tablas ni columnas. Usar **una base de ensayo nueva**, con migraciones y los seeders básicos. No aplicar la apertura propuesta de la variante anterior: duplicaría las existencias.
+
+```powershell
+php tools/migration/history-to-mysql.php --input=output/pdv-migration/origen --output=output/pdv-history/sql
+$env:PDV_DSN = 'mysql:host=127.0.0.1;port=13307;dbname=congelandia_historico;charset=utf8mb4'
+$env:PDV_USER = 'pdv_ensayo'
+# Definir la contraseña local del ensayo en PDV_PASSWORD.
+php tools/migration/apply-sql.php --file=output/pdv-history/sql/01_catalogo.sql
+php tools/migration/apply-sql.php --file=output/pdv-history/sql/02_historial.sql --accept-history-assumptions
+php tools/migration/apply-sql.php --file=output/pdv-history/sql/03_verificar.sql
+php tools/migration/apply-sql.php --file=output/pdv-history/sql/04_verificar_historial.sql
+```
+
+Resultados del respaldo recibido: 28.733 movimientos originales importables; 9.217 pendientes correspondientes a 107 códigos sin ficha ni precio recuperable en ninguno de los dos catálogos. Estos pendientes se conservan completos en `movimientos_pendientes.csv`; no se crean productos ficticios. El proceso no es una migración completa de los 37.950 registros mientras existan esos pendientes.
+
+Se crea `Usuario histórico`, con rol Cajero, inactivo y una contraseña aleatoria no entregada, exclusivamente para atribuir registros. No se modifica el inicio de sesión. Todos los movimientos originales conservan su fecha y hora; las cantidades se convierten a diferencias para los ajustes. Los nuevos IDs empiezan en 1 en cada tabla vacía, se dejan preparados los siguientes autoincrementos y la equivalencia de cada registro original queda en `registro_acciones.referencia`, junto con el hash del respaldo, tipo y usuario originales. No se importan cajas.
+
+Tipos de salida: `Salida histórica` para `s`; `Ajuste histórico` para ajustes que disminuyen existencias; `Conciliación histórica` para diferencias calculadas. Las entradas `e` y `d`, así como los ajustes positivos o sin cambio, se representan como ingresos. La interpretación de `d` es una entrada por su efecto en las existencias; no se inventa una relación con una venta ni una devolución comercial.
+
+Ejemplo de ajuste: `HABIA=10`, `CANTIDAD=7`, `TIPO=a` genera una salida de **3**. Los 7.168 ajustes sin cambio de los productos identificados se conservan como detalles de ingreso con cantidad cero. No incrementan existencias ni importes. Para reproducir saldos se derivan 16 movimientos iniciales y 13 conciliaciones adicionales desde los valores `HABIA`; están diferenciados de los movimientos originales y documentados en `ajustes_calculados.csv`. Son cálculos del proceso, no operaciones originales acreditadas: revisar antes del corte definitivo. Resultado: 28.762 movimientos nativos y saldo propuesto total de 2.592, incluidos productos inactivos.
+
+Por acuerdo de migración se usa **un precio por producto**: `PVENTA` de su ficha para las salidas históricas. Para las entradas se conserva `PCOSTO` como costo de referencia; no se interpreta como costo histórico confirmado. Solo `e` y `s` reciben importes calculados; ajustes, conciliaciones, saldos iniciales y entradas `d` tienen total cero. No se crean pagos, proveedores, clientes ni comprobantes. Los 171 costos cero originales se mantienen.
+
+El Historial está paginado, con búsqueda en servidor por usuario, tipo, código y nombre de producto. Los reportes incluyen `Salida histórica` en las fechas originales y excluyen ajustes y conciliaciones; muestran que los importes son de referencia. Una salida original equivale a un movimiento por producto, no necesariamente a un ticket: las cantidades de salidas históricas no deben interpretarse como cantidad de boletas. Los importes de esa parte del reporte son estimaciones con el precio disponible, no recaudación acreditada. La demanda/pronóstico también puede utilizar esas salidas.
+
+Ambos verificadores deben devolver `[]` antes de operar. La importación rechaza un destino con ingresos o salidas y se puede repetir sin duplicar registros. No cambia el archivo Firebird ni publica código. Para probar visualmente la base nueva, configurar la aplicación con la conexión indicada, ejecutar `php artisan config:clear` y abrir inventario, Historial, POS y Reportes. La base del ensayo anterior permanece separada.
+
 ## Alcance
 
 Conversión local de una copia Firebird ODS 10.1 a SQL MySQL 8 para el esquema actual de Congelandia. No instala servicios, no lee la conexión de `.env` y no modifica el archivo original. Solo incorpora catálogo, categorías referenciadas, precios vigentes y una apertura propuesta de inventario.

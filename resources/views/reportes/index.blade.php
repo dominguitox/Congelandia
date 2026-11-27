@@ -37,6 +37,10 @@
         @endforeach
     </nav>
 
+    @if($datos['historialReferencia'] ?? false)
+        <p>Los movimientos históricos usan el precio y costo disponibles del producto. Sus importes son de referencia.</p>
+    @endif
+
     @if($errors->any())
         <div class="alert alert-danger" role="alert">
             @foreach($errors->all() as $error)<p class="mb-0">{{ $error }}</p>@endforeach

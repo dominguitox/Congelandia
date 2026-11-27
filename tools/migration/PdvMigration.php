@@ -179,7 +179,7 @@ final class PdvMigration
         return 'CONVERT(0x'.bin2hex($value).' USING utf8mb4) COLLATE utf8mb4_unicode_ci';
     }
 
-    private static function begin(array $plan, string $stage, string $condition): string
+    public static function begin(array $plan, string $stage, string $condition): string
     {
         $marker = self::sql('pdv:'.$plan['manifest']['source_sha256'].':'.$stage);
 
@@ -193,12 +193,12 @@ final class PdvMigration
             ."SET @pdv_apply = (@pdv_lock = 1 AND @pdv_user IS NOT NULL AND NOT @pdv_done AND ($condition));\n";
     }
 
-    private static function finish(array $plan, string $stage): string
+    public static function finish(array $plan, string $stage): string
     {
         $marker = self::sql('pdv:'.$plan['manifest']['source_sha256'].':'.$stage);
 
         return "INSERT INTO registro_acciones (idUsuario, usuarioNombre, accion, modulo, ruta, referencia, fecha)\n"
-            ."SELECT idUsuario, nombre, 'Importación PDV $stage', 'Migracion', 'tools/migration/pdv-to-mysql.php', $marker, NOW() FROM usuario WHERE idUsuario = @pdv_user AND @pdv_apply = 1;\n"
+            ."SELECT idUsuario, nombre, 'Importación histórica $stage', 'Migracion', 'tools/migration/pdv-to-mysql.php', $marker, NOW() FROM usuario WHERE idUsuario = @pdv_user AND @pdv_apply = 1;\n"
             ."COMMIT;\nSELECT CASE WHEN @pdv_done THEN 'YA_IMPORTADO' WHEN @pdv_apply THEN 'IMPORTADO' ELSE 'BLOQUEADO: comprobar administrador, destino vacío y etapa anterior' END AS resultado;\n"
             ."DO RELEASE_LOCK(@pdv_lock_name);\n";
     }

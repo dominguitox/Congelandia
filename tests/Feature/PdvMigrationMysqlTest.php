@@ -2,12 +2,14 @@
 
 use App\Models\Producto;
 use App\Models\User;
+use Congelandia\Migration\PdvHistory;
 use Congelandia\Migration\PdvMigration;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 require_once __DIR__.'/../../tools/migration/PdvMigration.php';
+require_once __DIR__.'/../../tools/migration/PdvHistory.php';
 
 function executePdvSql(string $sql): array
 {
@@ -79,4 +81,31 @@ test('un error intermedio revierte la transaccion y permite repetir', function (
     $this->assertDatabaseCount('producto', 0);
     $this->assertDatabaseCount('categoria', 0);
     expect(executePdvSql(PdvMigration::catalogSql($this->pdvPlan))[0]['resultado'])->toBe('IMPORTADO');
+});
+
+test('historial nativo usa usuario sin acceso y tipo historico sin inventar pagos ni duplicar stock', function () {
+    $plan = $this->pdvPlan;
+    $plan['products'] = [$plan['products'][0]];
+    $plan['original_count'] = 3;
+    $base = ['source_user' => 7, 'date' => $plan['cutoff'], 'code' => '00123', 'before' => 0, 'kind' => 'original'];
+    $plan['events'] = [
+        $base + ['source_id' => 1, 'source_type' => 'e', 'direction' => 'ingreso', 'quantity' => 10, 'delta' => 10, 'unit' => '1000.00', 'amount' => '10000.00', 'type' => 'Ajuste histórico'],
+        $base + ['source_id' => 2, 'source_type' => 's', 'direction' => 'salida', 'quantity' => 4, 'delta' => -4, 'unit' => '1500.00', 'amount' => '6000.00', 'type' => 'Salida histórica'],
+        $base + ['source_id' => 3, 'source_type' => 'a', 'direction' => 'ingreso', 'quantity' => 0, 'delta' => 0, 'unit' => '1000.00', 'amount' => '0.00', 'type' => 'Ajuste histórico'],
+    ];
+    executePdvSql(PdvMigration::catalogSql($plan));
+    $sql = PdvHistory::sql($plan);
+    expect(executePdvSql($sql)[0]['resultado'])->toBe('IMPORTADO');
+    expect(executePdvSql($sql)[0]['resultado'])->toBe('YA_IMPORTADO');
+    expect(executePdvSql(PdvMigration::verificationSql($plan)))->toBe([])
+        ->and(executePdvSql(PdvHistory::verificationSql($plan)))->toBe([]);
+    $historical = User::where('email', 'historico@congelandia.invalid')->firstOrFail();
+    expect($historical->nombre)->toBe('Usuario histórico')->and($historical->activo)->toBeFalse();
+    $this->assertDatabaseHas('ingreso', ['idUsuario' => $historical->idUsuario]);
+    $this->assertDatabaseHas('salida', ['idUsuario' => $historical->idUsuario]);
+    $this->assertDatabaseCount('pago_salida', 0);
+    $this->get('/historial?buscar=00123')->assertOk()->assertSee('Usuario histórico')->assertSee('Salida histórica');
+    $date = substr($plan['cutoff'], 0, 10);
+    $this->get('/reportes?fecha_inicio='.$date.'&fecha_fin='.$date)->assertOk()
+        ->assertViewHas('datos', fn ($data) => $data['ingresos'] === 6000.0 && $data['historialReferencia']);
 });
