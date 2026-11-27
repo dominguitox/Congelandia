@@ -525,7 +525,7 @@ async function verHistorialCliente(rutCliente)
                             <div>
 
                                 <strong>
-                                    Venta #${venta.idSalida}
+                                    Venta ${venta.folio || '#' + venta.idSalida}
                                 </strong>
 
                                 <span>
@@ -774,7 +774,7 @@ async function abrirModalPago(rutCliente)
 
 
             option.textContent =
-                `Venta #${venta.idSalida} - ${formatearMoneda(venta.saldoPendiente)} pendiente`;
+                `Venta ${venta.folio || '#' + venta.idSalida} - ${formatearMoneda(venta.saldoPendiente)} pendiente`;
 
 
             option.dataset.total =

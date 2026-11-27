@@ -1,16 +1,48 @@
 {
-  "numero": "1.11.2",
-  "comentarios": "# Congelandia 1.11.2 — 2026-11-26\n\n## Cambios\n- **Nueva función:** Preparación de solicitudes a proveedores a partir de productos con bajo stock.\n\n## Para ti\nAhora puedes revisar los productos con bajo stock, elegir sus proveedores y preparar mensajes con las cantidades que necesitas solicitar. Esto facilita la reposición y reduce el tiempo necesario para organizar los pedidos.",
+  "numero": "1.12.0",
+  "comentarios": "# Congelandia 1.12.0 — 2026-11-27\n\n## Cambios\n- **Nueva función:** Herramientas para importar el catálogo y el historial del sistema anterior.\n- **Mejora:** Asignación de categorías a productos y uso de Sin categoría en casos dudosos.\n- **Mejora:** Historial e Inventario paginados con números y salto a página.\n- **Nueva función:** Folio diario para las ventas nuevas.\n- **Mejora:** Reportes de hasta diez años con vista mensual para períodos largos.\n- **Mejora:** Ventas por categoría paginadas en un panel de igual altura.\n- **Mejora:** Inclusión de salidas históricas en reportes como importes de referencia.\n- **Corrección:** Precio y stock visibles en los productos de cada categoría.\n- **Corrección:** Cambios de la Release presentados como entradas separadas.\n\n## Para ti\nAhora es más fácil identificar ventas, consultar el historial y el inventario, y revisar reportes de períodos largos. También se preparó la incorporación de los datos del sistema anterior",
   "novedades": {
     "cambios": [
       {
         "tipo": "Nueva función",
-        "descripcion": "Preparación de solicitudes a proveedores a partir de productos con bajo stock."
+        "descripcion": "Herramientas para importar el catálogo y el historial del sistema anterior."
+      },
+      {
+        "tipo": "Mejora",
+        "descripcion": "Asignación de categorías a productos y uso de Sin categoría en casos dudosos."
+      },
+      {
+        "tipo": "Mejora",
+        "descripcion": "Historial e Inventario paginados con números y salto a página."
+      },
+      {
+        "tipo": "Nueva función",
+        "descripcion": "Folio diario para las ventas nuevas."
+      },
+      {
+        "tipo": "Mejora",
+        "descripcion": "Reportes de hasta diez años con vista mensual para períodos largos."
+      },
+      {
+        "tipo": "Mejora",
+        "descripcion": "Ventas por categoría paginadas en un panel de igual altura."
+      },
+      {
+        "tipo": "Mejora",
+        "descripcion": "Inclusión de salidas históricas en reportes como importes de referencia."
+      },
+      {
+        "tipo": "Corrección",
+        "descripcion": "Precio y stock visibles en los productos de cada categoría."
+      },
+      {
+        "tipo": "Corrección",
+        "descripcion": "Cambios de la Release presentados como entradas separadas."
       }
     ],
-    "resumen_cliente": "Ahora puedes revisar los productos con bajo stock, elegir sus proveedores y preparar mensajes con las cantidades que necesitas solicitar. Esto facilita la reposición y reduce el tiempo necesario para organizar los pedidos."
+    "resumen_cliente": "Ahora es más fácil identificar ventas, consultar el historial y el inventario, y revisar reportes de períodos largos. También se preparó la incorporación de los datos del sistema anterior"
   },
-  "fecha_creacion": "2026-11-26T19:46:07.920Z",
-  "commit": "fcc861e2920cbfd710ca4f0ea2efe4f23dc1478d",
+  "fecha_creacion": "2026-11-27T23:11:27.321Z",
+  "commit": "a53c766d378e9f911ba39e58155e3b1a7213d158",
   "public_directory": "public_html"
 }

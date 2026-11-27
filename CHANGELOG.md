@@ -1,5 +1,21 @@
 # Historial de publicaciones
 
+# Congelandia 1.12.0 — 2026-11-27
+
+## Cambios
+- **Nueva función:** Herramientas para importar el catálogo y el historial del sistema anterior.
+- **Mejora:** Asignación de categorías a productos y uso de Sin categoría en casos dudosos.
+- **Mejora:** Historial e Inventario paginados con números y salto a página.
+- **Nueva función:** Folio diario para las ventas nuevas.
+- **Mejora:** Reportes de hasta diez años con vista mensual para períodos largos.
+- **Mejora:** Ventas por categoría paginadas en un panel de igual altura.
+- **Mejora:** Inclusión de salidas históricas en reportes como importes de referencia.
+- **Corrección:** Precio y stock visibles en los productos de cada categoría.
+- **Corrección:** Cambios de la Release presentados como entradas separadas.
+
+## Para ti
+Ahora es más fácil identificar ventas, consultar el historial y el inventario, y revisar reportes de períodos largos. También se preparó la incorporación de los datos del sistema anterior
+
 # Congelandia 1.11.2 — 2026-11-26
 
 ## Cambios

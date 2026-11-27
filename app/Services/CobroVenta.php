@@ -81,8 +81,10 @@ class CobroVenta
                     throw ValidationException::withMessages(['efectivoRecibido' => $efectivo > 0 ? 'El efectivo recibido no alcanza para cubrir la parte en efectivo.' : 'Solo se puede registrar efectivo recibido cuando se usa ese método.']);
                 }
 
+                $momento = now();
+                $folio = app(FolioVenta::class)->reservar($momento);
                 $salida = Salida::create([
-                    'fecha' => now(), 'idTipo' => $datos['idTipo'], 'idUsuario' => $usuarioId,
+                    'fecha' => $momento, 'folio' => $folio, 'idTipo' => $datos['idTipo'], 'idUsuario' => $usuarioId,
                     'rutCliente' => $datos['rutCliente'] ?? null, 'totalSalida' => $total,
                     'claveOperacion' => $clave, 'firmaCobro' => $clave ? $firma : null,
                     'efectivoRecibido' => $efectivo > 0 ? $recibido : null, 'vuelto' => $recibido - $efectivo,

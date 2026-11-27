@@ -36,7 +36,7 @@ El cliente dejará de aparecer en el listado, pero su historial de ventas se con
                             <div>
 
                                 <strong>
-                                    Venta #${e.idSalida}
+                                    Venta ${e.folio||`#`+e.idSalida}
                                 </strong>
 
                                 <span>
@@ -122,7 +122,7 @@ El cliente dejará de aparecer en el listado, pero su historial de ventas se con
             <option value="">
                 Seleccione una venta
             </option>
-        `,s.forEach(function(e){let t=document.createElement(`option`);t.value=e.idSalida,t.textContent=`Venta #${e.idSalida} - ${u(e.saldoPendiente)} pendiente`,t.dataset.total=e.total,t.dataset.pagado=e.totalPagado,t.dataset.saldo=e.saldoPendiente,r.appendChild(t)}),r.disabled=!1,r.onchange=function(){l()}}catch(e){console.error(e),r.innerHTML=`
+        `,s.forEach(function(e){let t=document.createElement(`option`);t.value=e.idSalida,t.textContent=`Venta ${e.folio||`#`+e.idSalida} - ${u(e.saldoPendiente)} pendiente`,t.dataset.total=e.total,t.dataset.pagado=e.totalPagado,t.dataset.saldo=e.saldoPendiente,r.appendChild(t)}),r.disabled=!1,r.onchange=function(){l()}}catch(e){console.error(e),r.innerHTML=`
             <option value="">
                 Error al cargar las ventas
             </option>

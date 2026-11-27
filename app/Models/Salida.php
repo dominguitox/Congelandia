@@ -17,6 +17,7 @@ class Salida extends Model
 
     protected $fillable = [
         'fecha',
+        'folio',
         'idTipo',
         'idUsuario',
         'rutCliente',

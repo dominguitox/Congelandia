@@ -22,12 +22,14 @@
 .reportes-filtro-panel { margin-bottom: var(--space-xl); }
 .reportes-filtros {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) auto auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
     gap: var(--space-md);
     align-items: end;
 }
 .reportes-filtros .form-control { min-height: var(--control-height); }
 .reportes-filtros > div { min-width: 0; }
+.reportes-accesos { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md); }
+.reportes-accesos .btn-soft { padding: var(--space-xs) var(--space-sm); font-size: var(--fs-sm); }
 .reportes-nota, .reportes-contexto { font-size: var(--fs-sm); color: var(--color-text-muted); line-height: 1.6; }
 .reportes-nota { margin: var(--space-md) 0 0; }
 .reportes-contexto { margin-bottom: var(--space-xl); }
@@ -43,6 +45,11 @@
 }
 .reportes-columnas > .panel { min-width: 0; margin-top: 0; }
 .reportes-columnas:has(> .panel:only-child) { grid-template-columns: minmax(0, 1fr); }
+.reportes-columnas--ventas { align-items: stretch; }
+.reportes-columnas--ventas > .panel { display: flex; flex-direction: column; }
+.reportes-ranking--categorias { align-content: start; flex: 1; }
+.reportes-ranking-paginacion { padding: 0 var(--space-xl) var(--space-md); }
+.reportes-ranking-paginacion .reportes-cal-controles { margin-bottom: 0; }
 .reportes-ranking { display: grid; gap: var(--space-xl); }
 .reportes-ranking-label { display: flex; justify-content: space-between; gap: var(--space-md); font-size: var(--fs-sm); }
 .reportes-ranking-label strong { overflow-wrap: anywhere; }

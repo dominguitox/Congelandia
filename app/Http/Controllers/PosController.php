@@ -58,7 +58,7 @@ class PosController extends Controller
 
             return response()->json([
                 'success' => true, 'message' => 'Venta registrada correctamente.',
-                'idSalida' => $salida->idSalida, 'total' => (int) $salida->totalSalida,
+                'idSalida' => $salida->idSalida, 'folio' => $salida->folio, 'total' => (int) $salida->totalSalida,
                 'efectivoRecibido' => $salida->efectivoRecibido === null ? null : (int) $salida->efectivoRecibido,
                 'vuelto' => (int) $salida->vuelto, 'repetida' => $resultado['repetida'],
             ]);

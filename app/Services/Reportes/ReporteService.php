@@ -4,6 +4,7 @@ namespace App\Services\Reportes;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ReporteService
@@ -32,7 +33,7 @@ class ReporteService
         return $this->salidas()
             ->join($this->tabla('Tipo_Salida').' as t', 's.idTipo', '=', 't.idTipo')
             ->join($this->tabla('Detalle_Salida').' as d', 's.idSalida', '=', 'd.idSalida')
-            ->whereRaw('LOWER(TRIM(t.nombre)) = ?', ['venta'])
+            ->whereIn(DB::raw('LOWER(TRIM(t.nombre))'), ['venta', 'salida histórica'])
             ->whereNull('d.deleted_at')
             ->whereBetween('s.fecha', [$desde->startOfDay(), $hasta->endOfDay()]);
     }
@@ -68,6 +69,17 @@ class ReporteService
             $dia['promedio'] = $dia['ocurrencias'] ? $dia['ingresos'] / $dia['ocurrencias'] : null;
         }
         unset($dia);
+        $granularidad = $desde->diffInDays($hasta) > 90 ? 'mes' : 'día';
+        $serieGrafico = $dias;
+        if ($granularidad === 'mes') {
+            $serieGrafico = [];
+            foreach ($dias as $dia) {
+                $mes = substr($dia['fecha'], 0, 7);
+                $serieGrafico[$mes] ??= ['fecha' => $mes, 'ingresos' => 0, 'ventas' => 0];
+                $serieGrafico[$mes]['ingresos'] += $dia['ingresos'];
+                $serieGrafico[$mes]['ventas'] += $dia['ventas'];
+            }
+        }
         $comparables = collect($semana)->where('ocurrencias', '>', 0);
         $productos = (clone $base)->join($this->tabla('Producto').' as p', 'p.codigo', '=', 'd.codigoProducto')
             ->select('p.codigo', 'p.nombre')->selectRaw('SUM(d.cantidad) as unidades, SUM(d.cantidad * d.precioCobrado) as ingresos')
@@ -78,9 +90,11 @@ class ReporteService
             ->groupBy('c.idCategoria', 'c.nombre')->orderByDesc('ingresos')->get();
 
         return [
+            'historialReferencia' => DB::table($this->tabla('Tipo_Salida'))->where('nombre', 'Salida histórica')->whereNull('deleted_at')->exists(),
             'ingresos' => $ingresos, 'ventas' => $salidasPeriodo->count(), 'unidades' => $salidasPeriodo->sum('unidades'),
             'ingresoPromedioPorSalida' => $salidasPeriodo->isEmpty() ? 0 : $ingresos / $salidasPeriodo->count(),
-            'dias' => collect(array_values($dias)), 'semana' => $semana, 'mapa' => $mapa,
+            'dias' => collect(array_values($dias)), 'serieGrafico' => collect(array_values($serieGrafico)),
+            'granularidad' => $granularidad, 'semana' => $semana, 'mapa' => $mapa,
             'maximo' => max(array_map('max', $mapa)), 'horaPunta' => $salidasPeriodo->isEmpty() ? null : array_search(max($horas), $horas),
             'diaFuerte' => $salidasPeriodo->isEmpty() ? null : $comparables->sortByDesc('promedio')->first(),
             'diaDebil' => $salidasPeriodo->isEmpty() ? null : $comparables->sortBy('promedio')->first(),
@@ -124,7 +138,7 @@ class ReporteService
     }
 
     /** Proveedores activos con ingresos y detalles vigentes hasta ahora. */
-    public function proveedoresPorProducto(): \Illuminate\Support\Collection
+    public function proveedoresPorProducto(): Collection
     {
         return DB::table($this->tabla('Detalle_Ingreso').' as d')
             ->join($this->tabla('Ingreso').' as i', 'i.idIngreso', '=', 'd.idIngreso')
@@ -138,6 +152,9 @@ class ReporteService
 
     public function filasCsv(string $seccion, array $datos): iterable
     {
+        if ($datos['historialReferencia'] ?? false) {
+            yield ['Histórico', 'Los movimientos históricos usan el precio y costo disponibles del producto; sus importes son de referencia.'];
+        }
         if ($seccion === 'inventario') {
             yield ['Inventario actual', 'Umbral bajo stock: 10; objetivo: 20.'];
             yield ['Código', 'Producto', 'Stock actual', 'Reposición sugerida'];

@@ -177,7 +177,7 @@
     "isEntry": true
   },
   "resources/css/historial.css": {
-    "file": "assets/historial-C7ggmUv9.css",
+    "file": "assets/historial-lSxI9tty.css",
     "name": "historial",
     "names": [
       "historial.css"
@@ -249,7 +249,7 @@
     "isEntry": true
   },
   "resources/css/reportes.css": {
-    "file": "assets/reportes-C91rZWS4.css",
+    "file": "assets/reportes-DZ3ih38_.css",
     "name": "reportes",
     "names": [
       "reportes.css"
@@ -318,13 +318,13 @@
     "isEntry": true
   },
   "resources/js/clientes.js": {
-    "file": "assets/clientes-BO0EMJK-.js",
+    "file": "assets/clientes-0Ty5YsLn.js",
     "name": "clientes",
     "src": "resources/js/clientes.js",
     "isEntry": true
   },
   "resources/js/historial.js": {
-    "file": "assets/historial-DkCjQVcb.js",
+    "file": "assets/historial-Dqtf7rzA.js",
     "name": "historial",
     "src": "resources/js/historial.js",
     "isEntry": true
@@ -375,7 +375,7 @@
     "isEntry": true
   },
   "resources/js/venta.js": {
-    "file": "assets/venta-gh-ZPT3O.js",
+    "file": "assets/venta-BoosxB-I.js",
     "name": "venta",
     "src": "resources/js/venta.js",
     "isEntry": true,

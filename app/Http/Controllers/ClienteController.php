@@ -244,6 +244,8 @@ class ClienteController extends Controller
 
                 'idSalida' => $venta->idSalida,
 
+                'folio' => $venta->folio,
+
                 'fecha' => $venta->fecha,
 
                 'total' => $venta->totalSalida,

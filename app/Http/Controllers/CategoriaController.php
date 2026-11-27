@@ -10,7 +10,8 @@ class CategoriaController extends Controller
 {
     public function index()
     {
-        $categorias = Categoria::with('productos')->withCount('productos')->get();
+        $categorias = Categoria::with(['productos' => fn ($query) => $query->conDetalle()])
+            ->withCount('productos')->get();
 
         $estadisticas = [
             'total' => $categorias->count(),

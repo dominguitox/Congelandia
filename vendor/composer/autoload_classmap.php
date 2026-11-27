@@ -47,6 +47,8 @@ return array(
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Services\\CatalogoOffline' => $baseDir . '/app/Services/CatalogoOffline.php',
     'App\\Services\\CobroVenta' => $baseDir . '/app/Services/CobroVenta.php',
+    'App\\Services\\FolioVenta' => $baseDir . '/app/Services/FolioVenta.php',
+    'App\\Services\\HistorialService' => $baseDir . '/app/Services/HistorialService.php',
     'App\\Services\\Reportes\\AnalisisFechasService' => $baseDir . '/app/Services/Reportes/AnalisisFechasService.php',
     'App\\Services\\Reportes\\CalendarioReporteService' => $baseDir . '/app/Services/Reportes/CalendarioReporteService.php',
     'App\\Services\\Reportes\\FeriadosChile' => $baseDir . '/app/Services/Reportes/FeriadosChile.php',
